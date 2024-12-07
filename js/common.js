@@ -1,4 +1,4 @@
-import OpacityControl from './maplibre-gl-opacity.js';
+import OpacityControl from 'https://unpkg.com/maplibre-gl-opacity@1.6.0/src/maplibre-gl-opacity.js';
 
 
 // ########################################
