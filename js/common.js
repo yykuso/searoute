@@ -1,5 +1,4 @@
-import OpacityControl from 'https://unpkg.com/maplibre-gl-opacity@1.6.0/src/maplibre-gl-opacity.js';
-
+import layersControl from './layersControl.js';
 
 // ########################################
 //  URL Query Parameter
@@ -252,15 +251,19 @@ map.on('load', () => {
     const mapOverLayer = {
         gsi_photo_tiles: '地理院 オルソ',
         openseamap_tiles: 'OpenSeaMap',
-        openrailwaymap_tiles: 'openRailwayMap',
+        openrailwaymap_tiles: 'OpenRailwayMap',
     };
     // OpacityControl
-    let Opacity = new OpacityControl({
+    // let Opacity = new OpacityControl({
+    //     baseLayers: mapBaseLayer,
+    //     overLayers: mapOverLayer,
+    // });
+    // map.addControl(Opacity, 'top-right');
+    let layers = new layersControl({
         baseLayers: mapBaseLayer,
         overLayers: mapOverLayer,
-        opacityControl: false,
     });
-    map.addControl(Opacity, 'top-right');
+    map.addControl(layers, 'top-right');
 });
 
 // Navigation Controls
