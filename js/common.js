@@ -42,7 +42,7 @@ const map = new maplibregl.Map({
 });
 
 // Map本体
-map.on('load', () => {
+map.on('load', async () => {
     // ####################
     //  Tiles
     const osmAttribution = "© <a href='https://www.openstreetmap.org/copyright/' target='_blank'>OpenStreetMap</a> contributors";
@@ -239,6 +239,29 @@ map.on('load', () => {
         }
     });
 
+    // 港湾情報
+    const anchorImage = await map.loadImage('./img/anchor.png');
+    map.addImage('anchor_marker', anchorImage.data);
+    map.addSource('port_layers', {
+        type: 'geojson',
+        data: './data/portData.geojson',
+        attribution: "<a href='https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-C02-v3_2.html' target='_blank'>「国土数値情報（港湾データ）」</a>を加工して作成",
+    });
+    map.addLayer({
+        id: 'port_layers',
+        type: 'symbol',
+        source: 'port_layers',
+        layout: {
+            'icon-image': 'anchor_marker',
+            'icon-size': 0.3,
+            'text-field': ['get', 'Name'],
+            'text-font': ['Noto Sans CJK JP Regular'],
+            'text-size': 12,
+            'text-offset': [0, 0.8],
+            'text-anchor': 'top',
+        },
+    });
+
     // BaseLayer
     const mapBaseLayer = {
         osm_tiles: 'OpenStreetMap',
@@ -249,16 +272,12 @@ map.on('load', () => {
     };
     // OverLayer
     const mapOverLayer = {
+        port_layers: '港湾情報',
         gsi_photo_tiles: '地理院 オルソ',
         openseamap_tiles: 'OpenSeaMap',
         openrailwaymap_tiles: 'OpenRailwayMap',
     };
-    // OpacityControl
-    // let Opacity = new OpacityControl({
-    //     baseLayers: mapBaseLayer,
-    //     overLayers: mapOverLayer,
-    // });
-    // map.addControl(Opacity, 'top-right');
+    // Layers Control
     let layers = new layersControl({
         baseLayers: mapBaseLayer,
         overLayers: mapOverLayer,
@@ -271,14 +290,33 @@ map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
 map.addControl(new maplibregl.GeolocateControl(), 'bottom-right');
 map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
 
-// ポップアップを無効化
+
+// ########################################
+// ポップアップ
+// ########################################
+// ポップアップ閉じるボタン表示、自動閉じ無効化
 const popup = new maplibregl.Popup({
     closeButton: true,
-    closeOnClick: true
+    closeOnClick: false,
 });
 
-// ラインをクリックしたときのイベントを登録
-map.on('click', 'sea_route_layers_line', (event) => {
+// ライン・ポイント以外をクリックした場合、既存を閉じる
+map.on('click', (event) => {
+    if (!map.queryRenderedFeatures(event.point, { 
+            layers: [
+                'sea_route_layers_outline',
+                'port_layers',
+            ]
+        }).length) {
+        popup.remove();
+    }
+});
+
+// ########################################
+//  航路ライン イベント
+// ########################################
+// 航路ラインをクリックしたときのイベントを登録
+map.on('click', 'sea_route_layers_outline', (event) => {
     // クリックしたラインのプロパティを取得
     const properties = event.features[0].properties;
 
@@ -292,12 +330,53 @@ map.on('click', 'sea_route_layers_line', (event) => {
         </div>
     `;
 
+    popup.remove();
+
     // ポップアップをクリック地点に表示
     popup
         .setLngLat(event.lngLat)
         .setHTML(popupContent)
         .addTo(map);
 });
+// 航路ライン mouse enter
+map.on('mouseenter', 'sea_route_layers_outline', () => {
+    map.getCanvas().style.cursor = 'pointer';
+});
+
+// 航路ライン mouse leave
+map.on('mouseleave', 'sea_route_layers_outline', () => {
+    map.getCanvas().style.cursor = '';
+});
+
+// ########################################
+//  港湾ポイント イベント
+// ########################################
+// 港湾ポイント クリック
+map.on('click', 'port_layers', (event) => {
+    const properties = event.features[0].properties;
+    const popupContent = `
+        <div>
+            ${properties.Name}<br>
+        </div>
+    `;
+
+    popup.remove();
+
+    popup
+        .setLngLat(event.lngLat)
+        .setHTML(popupContent)
+        .addTo(map);
+});
+// 港湾ポイント mouse enter
+map.on('mouseenter', 'port_layers', () => {
+    map.getCanvas().style.cursor = 'pointer';
+});
+
+// 港湾ポイント mouse leave
+map.on('mouseleave', 'port_layers', () => {
+    map.getCanvas().style.cursor = '';
+});
+
 
 // マップ移動時にURLを更新
 map.on("moveend", () => {
