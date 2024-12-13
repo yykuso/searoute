@@ -1,4 +1,5 @@
 import layersControl from './layersControl.js';
+import { loadAndMergeData } from './dataLoader.js';
 
 // ########################################
 //  URL Query Parameter
@@ -183,9 +184,14 @@ map.on('load', async () => {
     });
 
     // 航路情報
+    var seaRouteGeojson = await loadAndMergeData(
+        './data/seaRoute.geojson',
+        './data/seaRouteDetails.json',
+        'routeId'
+    );
     map.addSource('sea_route_layers', {
         type: 'geojson',
-        data: './data/seaRouteData.geojson',
+        data: seaRouteGeojson,
     });
     map.addLayer({
         id: 'sea_route_layers_outline',
