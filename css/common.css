@@ -11,9 +11,46 @@ body {
     left: 0;
 }
 
+.maplibregl-popup {
+    width: 240px;
+}
+
+.maplibregl-popup-content {
+    border-radius: 12px;
+    width: 240px;
+}
+
+.searoute-popup-box .searoute-businessname {
+    font-size: 1.2em;
+    text-align: center;
+    font-weight: bold;
+}
+
+.searoute-popup-box .searoute-title {
+    font-weight: bold;
+}
+
+.searoute-popup-box .searoute-detail {
+    width: 90%;
+    margin-left: auto;
+}
+
+.port-popup-box .port-name {
+    text-align: center;
+}
+
 #layers-control {
     padding: 10px;
     background-color: white;
     border: 1px solid #ccc;
     color: #323232;
+}
+
+
+.highlight-yellow {
+    text-decoration: underline;
+    text-decoration-thickness: 0.5em;
+    text-decoration-color: rgba(255, 228, 0, 0.4);
+    text-underline-offset: -0.2em;
+    text-decoration-skip-ink: none;
 }

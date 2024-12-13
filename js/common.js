@@ -326,7 +326,7 @@ map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
 // ########################################
 // ポップアップ閉じるボタン表示、自動閉じ無効化
 const popup = new maplibregl.Popup({
-    closeButton: true,
+    closeButton: false,
     closeOnClick: false,
 });
 
@@ -352,11 +352,17 @@ map.on('click', 'sea_route_layers_outline', (event) => {
 
     // ポップアップ内容
     const popupContent = `
-        <div>
-            ${properties.businessName}<br>
-            ${properties.routeName}<br>
-            （${properties.portName1}～${properties.portName2}）<br>
-            <a href="${properties.url}" target="_blank">運航スケジュール</a><br>
+        <div class="searoute-popup-box">
+            <div class="searoute-businessname">${properties.businessName}</div>
+            <hr>
+            <div class="searoute-title highlight-yellow">航路</div>
+            <div class="searoute-detail">${properties.routeName}</div>
+            <div class="searoute-title highlight-yellow">選択部分</div>
+            <div class="searoute-detail">${properties.portName1}～${properties.portName2}</div>
+            <div class="searoute-title highlight-yellow">情報</div>
+            <div class="searoute-detail">${properties.information || "なし"}</div>
+            <div class="searoute-title highlight-yellow">リンク</div>
+            <div class="searoute-detail"><a href="${properties.url}" class="expanded button" target="_blank">運航スケジュール</a></div>
         </div>
     `;
 
@@ -366,6 +372,7 @@ map.on('click', 'sea_route_layers_outline', (event) => {
     popup
         .setLngLat(event.lngLat)
         .setHTML(popupContent)
+        .setMaxWidth("240px")
         .addTo(map);
 });
 // 航路ライン mouse enter
@@ -385,8 +392,8 @@ map.on('mouseleave', 'sea_route_layers_outline', () => {
 map.on('click', 'port_layers', (event) => {
     const properties = event.features[0].properties;
     const popupContent = `
-        <div>
-            ${properties.Name}<br>
+        <div class="port-popup-box">
+            <h2 class="port-name">${properties.Name}</h2>
         </div>
     `;
 
@@ -395,6 +402,7 @@ map.on('click', 'port_layers', (event) => {
     popup
         .setLngLat(event.lngLat)
         .setHTML(popupContent)
+        .setMaxWidth("150px")
         .addTo(map);
 });
 // 港湾ポイント mouse enter

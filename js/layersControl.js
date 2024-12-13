@@ -48,8 +48,9 @@ export default class layersControl {
         // Base Layers
         if (this.baseLayers) {
             Object.keys(this.baseLayers).map((layer) => {
-                this.radioButtonControlAdd(controlContainer, layer);
-                controlContainer.appendChild(document.createElement('br'));
+                const containerDiv = document.createElement('div');
+                this.radioButtonControlAdd(containerDiv, layer);
+                controlContainer.appendChild(containerDiv);
             });
         }
         // border line
@@ -60,8 +61,9 @@ export default class layersControl {
         // Over Layers
         if (this.overLayers) {
             Object.keys(this.overLayers).map((layer) => {
-                this.checkBoxControlAdd(controlContainer, layer);
-                controlContainer.appendChild(document.createElement('br'));
+                const containerDiv = document.createElement('div');
+                this.checkBoxControlAdd(containerDiv, layer);
+                controlContainer.appendChild(containerDiv);
             });
         }
     }
