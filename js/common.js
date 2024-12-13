@@ -55,6 +55,7 @@ map.on('load', async () => {
         tiles: [
             'https://a.tile.openstreetmap.jp/{z}/{x}/{y}.png',
             'https://b.tile.openstreetmap.jp/{z}/{x}/{y}.png',
+            'https://c.tile.openstreetmap.jp/{z}/{x}/{y}.png',
         ],
         tileSize: 256,
         attribution: osmAttribution,
@@ -72,7 +73,8 @@ map.on('load', async () => {
         type: 'raster',
         tiles: [
             'https://a.tile.opentopomap.org/{z}/{x}/{y}.png',
-            'https://b.tile.opentopomap.org/{z}/{x}/{y}.png'
+            'https://b.tile.opentopomap.org/{z}/{x}/{y}.png',
+            'https://c.tile.opentopomap.org/{z}/{x}/{y}.png',
         ],
         tileSize: 256,
         attribution: osmAttribution,
@@ -83,6 +85,9 @@ map.on('load', async () => {
         source: 'otm_tiles',
         minzoom: 2,
         maxzoom: 18,
+        layout: {
+            'visibility': 'none',
+        },
     });
 
     // GSI Pale
@@ -98,6 +103,9 @@ map.on('load', async () => {
         source: 'gsi_pale_tiles',
         minzoom: 2,
         maxzoom: 18,
+        layout: {
+            'visibility': 'none',
+        },
     });
 
     // GSI Std
@@ -113,6 +121,9 @@ map.on('load', async () => {
         source: 'gsi_std_tiles',
         minzoom: 2,
         maxzoom: 18,
+        layout: {
+            'visibility': 'none',
+        },
     });
 
     // GSI Blank
@@ -128,6 +139,9 @@ map.on('load', async () => {
         source: 'gsi_blank_tiles',
         minzoom: 5,
         maxzoom: 18,
+        layout: {
+            'visibility': 'none',
+        },
     });
 
     // ####################
@@ -147,7 +161,10 @@ map.on('load', async () => {
         maxzoom: 18,
         paint: {
             'raster-opacity': 0.5,
-        }
+        },
+        layout: {
+            'visibility': 'none',
+        },
     });
 
     // OpenSeaMap
@@ -163,6 +180,9 @@ map.on('load', async () => {
         source: 'openseamap_tiles',
         minzoom: 2,
         maxzoom: 18,
+        layout: {
+            'visibility': 'none',
+        },
     });
 
     // OpenRailwayMap
@@ -181,6 +201,9 @@ map.on('load', async () => {
         source: 'openrailwaymap_tiles',
         minzoom: 2,
         maxzoom: 19,
+        layout: {
+            'visibility': 'none',
+        },
     });
 
     // 航路情報
@@ -265,6 +288,7 @@ map.on('load', async () => {
             'text-size': 12,
             'text-offset': [0, 0.8],
             'text-anchor': 'top',
+            'visibility': 'none',
         },
     });
 
