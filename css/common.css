@@ -12,12 +12,12 @@ body {
 }
 
 .maplibregl-popup {
-    width: 240px;
+    width: 200px;
 }
 
 .maplibregl-popup-content {
     border-radius: 12px;
-    width: 240px;
+    width: 200px;
 }
 
 .searoute-popup-box .searoute-businessname {

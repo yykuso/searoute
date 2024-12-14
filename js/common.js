@@ -217,6 +217,7 @@ map.on('load', async () => {
         data: seaRouteGeojson,
     });
     map.addLayer({
+        // 線のアウトライン
         id: 'sea_route_layers_outline',
         type: 'line',
         source: 'sea_route_layers',
@@ -231,19 +232,55 @@ map.on('load', async () => {
         }
     });
     map.addLayer({
-        id: 'sea_route_layers_line',
+        // 実線
+        id: 'sea_route_layers_solidline',
         type: 'line',
         source: 'sea_route_layers',
         layout: {
             'line-join': 'round',
             'line-cap': 'round'
         },
+        filter: ['==', ['get', 'note'], null],
         paint: {
             'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': 3,
+            'line-width': ['coalesce', ['get', 'frequency'], 3],
+            'line-dasharray': [1, 0],
         }
     });
     map.addLayer({
+        // 点線
+        id: 'sea_route_layers_dashline',
+        type: 'line',
+        source: 'sea_route_layers',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        filter: ['==', ['get', 'note'], 'season'],
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#000000'],
+            'line-width': ['coalesce', ['get', 'frequency'], 3],
+            'line-dasharray': [1, 2],
+        }
+    });
+    map.addLayer({
+        // 細線
+        id: 'sea_route_layers_thinline',
+        type: 'line',
+        source: 'sea_route_layers',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        filter: ['==', ['get', 'note'], 'suspend'],
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#000000'],
+            'line-width': ['coalesce', ['get', 'frequency'], 3],
+            'line-dasharray': [1, 0],
+        }
+    });
+    map.addLayer({
+        // キャプション
         id: 'sea_route_layers_name',
         type: 'symbol',
         source: 'sea_route_layers',
@@ -354,7 +391,7 @@ map.on('click', 'sea_route_layers_outline', (event) => {
     const popupContent = `
         <div class="searoute-popup-box">
             <div class="searoute-businessname">${properties.businessName}</div>
-            <hr>
+            <hr size="5" color="${properties.color}">
             <div class="searoute-title highlight-yellow">航路</div>
             <div class="searoute-detail">${properties.routeName}</div>
             <div class="searoute-title highlight-yellow">選択部分</div>
