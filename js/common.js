@@ -248,7 +248,7 @@ map.on('load', async () => {
         }
     });
     map.addLayer({
-        // 点線
+        // 破線
         id: 'sea_route_layers_dashline',
         type: 'line',
         source: 'sea_route_layers',
@@ -264,7 +264,7 @@ map.on('load', async () => {
         }
     });
     map.addLayer({
-        // 細線
+        // 点線
         id: 'sea_route_layers_thinline',
         type: 'line',
         source: 'sea_route_layers',
@@ -275,8 +275,8 @@ map.on('load', async () => {
         filter: ['==', ['get', 'note'], 'suspend'],
         paint: {
             'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 3],
-            'line-dasharray': [1, 0],
+            'line-width': ['coalesce', ['get', 'frequency'], 1],
+            'line-dasharray': [1, 4],
         }
     });
     map.addLayer({

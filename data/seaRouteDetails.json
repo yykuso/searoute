@@ -158,8 +158,8 @@
   "url": "http://seapal-kisen.co.jp/price/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#f2163a"
 },
 "40201": {
   "businessName": "網地島ライン",
@@ -167,8 +167,8 @@
   "url": "http://ajishimaline.com/pg117.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#f86812"
 },
 "40301": {
   "businessName": "シードリーム金華山汽船",
@@ -176,8 +176,8 @@
   "url": "http://seadream-kinkasan.com/#liner-area",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#1f98ff"
 },
 "40401": {
   "businessName": "金華山観光クルーズ",
@@ -185,8 +185,8 @@
   "url": "http://kinkasan.com/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#fd9535"
 },
 "40501": {
   "businessName": "潮プランニング",
@@ -194,8 +194,8 @@
   "url": "https://ushio-planning.co.jp/#cal",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#1f408f"
 },
 "40601": {
   "businessName": "塩竈市",
@@ -203,8 +203,8 @@
   "url": "https://urato-island.jp/kisen/",
   "information": "市営汽船",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00719b"
 },
 "40602": {
   "businessName": "塩竈市",
@@ -212,8 +212,8 @@
   "url": "https://urato-island.jp/tosen/",
   "information": "島内間渡船",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0bb398"
 },
 "40603": {
   "businessName": "塩竈市",
@@ -221,8 +221,8 @@
   "url": "https://urato-island.jp/tosen/",
   "information": "島内間渡船",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0bb398"
 },
 "40604": {
   "businessName": "塩竈市",
@@ -230,8 +230,8 @@
   "url": "https://urato-island.jp/tosen/",
   "information": "島内間渡船",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0bb398"
 },
 "40701": {
   "businessName": "丸文松島汽船",
@@ -239,17 +239,17 @@
   "url": "https://www.marubun-kisen.com/yuran/basho.php",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ff8306"
 },
 "40702": {
   "businessName": "丸文松島汽船",
   "routeName": "遊覧船 奥松島・大高森コース",
-  "url": "https://www.marubun-kisen.com/yuran/basho.php",
-  "information": "不定期",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "url": "https://www.marubun-kisen.com/yuran/",
+  "information": "要予約・不定期",
+  "note": "suspend",
+  "frequency": 1,
+  "color": "#ff8306"
 },
 "60101": {
   "businessName": "酒田市",
@@ -257,8 +257,8 @@
   "url": "https://www.city.sakata.lg.jp/sangyo/kotsu/teikisen/index.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#0045b3"
 },
 "80101": {
   "businessName": "取手市",
@@ -266,8 +266,8 @@
   "url": "https://www.city.toride.ibaraki.jp/mizutomidori/bunkakatsudo/kanko/kankomesho/ohorinowatashi.html",
   "information": "小堀の渡し",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#080063"
 },
 "100101": {
   "businessName": "群馬県千代田町",
@@ -275,8 +275,8 @@
   "url": "https://www.town.chiyoda.gunma.jp/kankyo/doboku/doboku002.html",
   "information": "赤岩渡船",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#407611"
 },
 "120101": {
   "businessName": "仁右衛門島",
@@ -284,8 +284,8 @@
   "url": "http://niemonjima.web.fc2.com/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#407611"
 },
 "120201": {
   "businessName": "矢切渡船",
@@ -293,8 +293,8 @@
   "url": "https://www.city.matsudo.chiba.jp/miryoku/kankoumiryokubunka/odekakemap/sanpo-map/yakiri-nogiku.html",
   "information": "矢切の渡し",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#096b09"
 },
 "130101": {
   "businessName": "東海汽船",
@@ -302,8 +302,8 @@
   "url": "https://www.tokaikisen.co.jp/boarding/timetable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#294DA5"
+  "frequency": 3,
+  "color": "#294da5"
 },
 "130102": {
   "businessName": "東海汽船",
@@ -311,8 +311,8 @@
   "url": "https://www.tokaikisen.co.jp/boarding/timetable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#D6CD22"
+  "frequency": 2,
+  "color": "#d6cd22"
 },
 "130103": {
   "businessName": "東海汽船",
@@ -320,44 +320,44 @@
   "url": "https://www.tokaikisen.co.jp/boarding/timetable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#294DA5"
+  "frequency": 2,
+  "color": "#294da5"
 },
 "130104": {
   "businessName": "東海汽船",
   "routeName": "熱海～伊東～大島",
   "url": "https://www.tokaikisen.co.jp/boarding/timetable/",
   "information": "季節運航",
-  "note": null,
-  "frequency": null,
-  "color": "#294DA5"
+  "note": "season",
+  "frequency": 1,
+  "color": "#294da5"
 },
 "130105": {
   "businessName": "東海汽船",
   "routeName": "伊東～大島",
   "url": "https://www.tokaikisen.co.jp/boarding/timetable/",
   "information": "季節運航",
-  "note": null,
-  "frequency": null,
-  "color": "#294DA5"
+  "note": "season",
+  "frequency": 1,
+  "color": "#294da5"
 },
 "130106": {
   "businessName": "東海汽船",
   "routeName": "東京～館山～大島",
   "url": "https://www.tokaikisen.co.jp/boarding/timetable/",
   "information": "季節運航",
-  "note": null,
-  "frequency": null,
-  "color": "#294DA5"
+  "note": "season",
+  "frequency": 1,
+  "color": "#294da5"
 },
 "130107": {
   "businessName": "東海汽船",
   "routeName": "東京～久里浜～大島",
   "url": "https://www.tokaikisen.co.jp/boarding/timetable/",
   "information": "季節運航",
-  "note": null,
-  "frequency": null,
-  "color": "#294DA5"
+  "note": "season",
+  "frequency": 1,
+  "color": "#294da5"
 },
 "130201": {
   "businessName": "神新汽船",
@@ -365,7 +365,7 @@
   "url": "https://shinshin-kisen.jp/service/index.html",
   "information": null,
   "note": null,
-  "frequency": null,
+  "frequency": 2,
   "color": "#219443"
 },
 "130301": {
@@ -374,7 +374,7 @@
   "url": "https://www.ogasawarakaiun.co.jp/service/",
   "information": null,
   "note": null,
-  "frequency": null,
+  "frequency": 1,
   "color": "#373583"
 },
 "130401": {
@@ -383,8 +383,8 @@
   "url": "https://izu-syotou.jp/route01/index.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#E60012"
+  "frequency": 2,
+  "color": "#e60012"
 },
 "130402": {
   "businessName": "伊豆諸島開発",
@@ -392,8 +392,8 @@
   "url": "https://izu-syotou.jp/route02/index.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#E60012"
+  "frequency": 2,
+  "color": "#e60012"
 },
 "130501": {
   "businessName": "商船三井さんふらわあ",
@@ -401,8 +401,8 @@
   "url": "https://www.sunflower.co.jp/route/facilities/timetable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#FF5500"
+  "frequency": 3,
+  "color": "#ff5500"
 },
 "130502": {
   "businessName": "商船三井さんふらわあ",
@@ -410,8 +410,8 @@
   "url": "https://www.ferry-sunflower.co.jp/route/osaka-beppu/time/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#FF5500"
+  "frequency": 2,
+  "color": "#ff5500"
 },
 "130503": {
   "businessName": "商船三井さんふらわあ",
@@ -419,8 +419,8 @@
   "url": "https://www.ferry-sunflower.co.jp/route/kobe-oita/time/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#FF5500"
+  "frequency": 2,
+  "color": "#ff5500"
 },
 "130504": {
   "businessName": "商船三井さんふらわあ",
@@ -428,8 +428,8 @@
   "url": "https://www.ferry-sunflower.co.jp/route/osaka-shibushi/time/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#FF5500"
+  "frequency": 2,
+  "color": "#ff5500"
 },
 "130601": {
   "businessName": "新島村",
@@ -437,53 +437,53 @@
   "url": "https://www.niijima.com/shoukai/access/nishiki/unkou.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d60000"
 },
 "130701": {
   "businessName": "東京都観光汽船",
-  "routeName": "東京都観光汽船",
+  "routeName": "TOKYO CRUISE",
   "url": "https://www.suijobus.co.jp/price/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0071cf"
 },
 "130702": {
   "businessName": "東京都観光汽船",
-  "routeName": "東京都観光汽船",
+  "routeName": "HIMIKO(豊洲経由)",
   "url": "https://www.suijobus.co.jp/price/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 1,
+  "color": "#0071cf"
 },
 "130703": {
   "businessName": "東京都観光汽船",
-  "routeName": "東京都観光汽船",
+  "routeName": "東京ビックサイト・パレットタウン",
   "url": "https://www.suijobus.co.jp/price/",
-  "information": null,
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "information": "休止中",
+  "note": "suspend",
+  "frequency": 1,
+  "color": "#0071cf"
 },
 "130801": {
   "businessName": "東京水辺ライン",
   "routeName": "東京水辺ライン 浅草・お台場クルーズ",
-  "url": "https://qrtranslator.com/0000005757/000015",
+  "url": "https://www.tokyo-park.or.jp/water/waterbus/#a02",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00984a"
 },
 "130802": {
   "businessName": "東京水辺ライン",
   "routeName": "東京水辺ライン 特別ゆらぶら便",
-  "url": "https://qrtranslator.com/0000005757/000015",
+  "url": "https://www.tokyo-park.or.jp/water/waterbus/#a02",
   "information": "不定期運航",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 1,
+  "color": "#00984a"
 },
 "140101": {
   "businessName": "東京湾フェリー",
