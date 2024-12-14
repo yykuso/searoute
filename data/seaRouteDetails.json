@@ -491,8 +491,8 @@
   "url": "https://www.tokyowanferry.com/diagram/schedule/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#e60012"
 },
 "140201": {
   "businessName": "トライアングル",
@@ -500,8 +500,8 @@
   "url": "https://sarushima.jp/information/#timetable",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#3ea4b2"
 },
 "140211": {
   "businessName": "トライアングル",
@@ -509,17 +509,17 @@
   "url": "https://ponponsen.jp/",
   "information": "浦賀の渡船",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#bf1e00"
 },
 "140301": {
   "businessName": "三崎マリンセンター",
   "routeName": "三崎～城ヶ島",
   "url": "https://www.umigyo.co.jp/hakushu.html",
-  "information": null,
+  "information": "城ヶ島渡船",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d4c544"
 },
 "140401": {
   "businessName": "ポートサービス",
@@ -527,17 +527,17 @@
   "url": "https://www.yokohama-cruising.jp/contents/seabass.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0097df"
 },
 "140501": {
   "businessName": "京浜フェリーボート",
   "routeName": "横浜 水上バス",
   "url": "https://www.keihinferry.co.jp/teiki/seabus/",
-  "information": "試験運用",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "information": "運休中",
+  "note": "suspend",
+  "frequency": 1,
+  "color": "#088326"
 },
 "140601": {
   "businessName": "ケーエムシーコーポレーション",
@@ -545,8 +545,8 @@
   "url": "https://reservedcruise.com/yokohama-cruise/teikibin/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 1,
+  "color": "#af914d"
 },
 "140701": {
   "businessName": "藤沢市観光センター",
@@ -554,8 +554,8 @@
   "url": "https://www.fujisawa-kanko.jp/access/bentenmaru.html",
   "information": "べんてん丸",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#005ba8"
 },
 "140801": {
   "businessName": "箱根遊船",
@@ -563,8 +563,8 @@
   "url": "https://www.hakone-yuransen.jp/timetable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#005aab"
 },
 "140901": {
   "businessName": "箱根観光船",
@@ -572,8 +572,8 @@
   "url": "https://www.hakonenavi.jp/hakone-kankosen/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d4461c"
 },
 "150101": {
   "businessName": "佐渡汽船",
@@ -581,35 +581,35 @@
   "url": "https://www.sadokisen.co.jp/timetables/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#e6002d"
 },
 "150102": {
   "businessName": "佐渡汽船",
   "routeName": "直江津～佐渡島（小木）",
   "url": "https://www.sadokisen.co.jp/timetables/",
   "information": "3月～11月",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 2,
+  "color": "#e6002d"
 },
 "150201": {
   "businessName": "へぐら航路",
   "routeName": "輪島～舳倉島",
   "url": "https://hegura.com/guide/",
-  "information": null,
-  "note": null,
+  "information": "運休中",
+  "note": "suspend",
   "frequency": null,
-  "color": "#000000"
+  "color": "#6ebae2"
 },
 "150301": {
   "businessName": "粟島汽船",
   "routeName": "岩船～粟島",
-  "url": "https://www.izu-syotou.jp/route01/index.html",
+  "url": "https://awashimakisen.co.jp/schedule.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#e50012"
 },
 "150401": {
   "businessName": "信濃川ウォーターシャトル",
@@ -617,8 +617,8 @@
   "url": "https://www.watershuttle.co.jp/common/cgi/dia/cal.cgi",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 1,
+  "color": "#1b304b"
 },
 "160101": {
   "businessName": "富山県",
@@ -626,26 +626,26 @@
   "url": "https://www.pref.toyama.jp/1545/kendodukuri/koukyou/koukyoukoutsuu/kj00020284.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#199331"
 },
 "160201": {
   "businessName": "関西電力",
   "routeName": "平の小屋～針の木谷",
-  "url": "https://maps.app.goo.gl/Qw1VZWXfMtx4N3h48",
+  "url": "https://maps.app.goo.gl/3HJNaAjfxwBFUYdX7",
   "information": "平の渡し、6月～10月",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 3,
+  "color": "#ff0000"
 },
 "200101": {
   "businessName": "野尻湖定期船",
   "routeName": "野尻湖 観光船",
   "url": "https://www.nojiriko.co.jp/service.html",
   "information": "季節運航",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 3,
+  "color": "#498013"
 },
 "210101": {
   "businessName": "岐阜市",
@@ -653,8 +653,8 @@
   "url": "https://www.gifucvb.or.jp/sightseeing/detail_kankou.php?eid=00026",
   "information": "小紅の渡し",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ef9aa4"
 },
 "220101": {
   "businessName": "富士急マリンリゾート",
@@ -662,8 +662,8 @@
   "url": "https://www.hatsushima.jp/access/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#2baacc"
 },
 "220201": {
   "businessName": "富士山清水港クルーズ",
@@ -671,8 +671,8 @@
   "url": "https://www.223-ferry.or.jp/timetable.html",
   "information": "駿河湾フェリー",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#1e90ff"
 },
 "220202": {
   "businessName": "富士山清水港クルーズ",
@@ -680,8 +680,8 @@
   "url": "https://www.shimizu-cruise.co.jp/fare/",
   "information": "清水港水上バス",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#f57489"
 },
 "220203": {
   "businessName": "富士山清水港クルーズ",
@@ -689,35 +689,35 @@
   "url": "https://www.shimizu-cruise.co.jp/fare/",
   "information": "清水港水上バス",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#f57489"
 },
 "220301": {
   "businessName": "千鳥観光汽船",
   "routeName": "沼津～大瀬",
   "url": "https://chidorikanko.co.jp/",
   "information": "季節運航",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 2,
+  "color": "#64b2ff"
 },
 "220302": {
   "businessName": "千鳥観光汽船",
   "routeName": "三津～大瀬",
   "url": "https://chidorikanko.co.jp/",
   "information": "季節運航",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 1,
+  "color": "#64b2ff"
 },
 "220401": {
   "businessName": "静岡市",
   "routeName": "井川ダム～大村",
   "url": "https://www.city.shizuoka.lg.jp/032_000005.html",
   "information": "井川湖渡船(ダム航路)・季節運航",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 3,
+  "color": "#1570bb"
 },
 "220402": {
   "businessName": "静岡市",
@@ -725,8 +725,8 @@
   "url": "https://www.city.shizuoka.lg.jp/032_000005.html",
   "information": "井川湖渡船(宮向航路)",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#1570bb"
 },
 "220501": {
   "businessName": "浜名湖遊覧船",
@@ -734,26 +734,26 @@
   "url": "https://www.hamanako-yuransen.com/schedule.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ff0000"
 },
 "220601": {
   "businessName": "ヒリゾ浜渡し組合",
   "routeName": "中木～ヒリゾ浜",
   "url": "https://nakagi.jp/",
   "information": "季節運航",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 2,
+  "color": "#ff0000"
 },
 "220701": {
   "businessName": "沼津我入道漁業協同組合",
   "routeName": "我入道の渡し",
   "url": "https://numazukanko.jp/spot/10027",
   "information": "季節運航",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 3,
+  "color": "#215b8d"
 },
 "230101": {
   "businessName": "太平洋フェリー",
@@ -761,35 +761,35 @@
   "url": "https://www.taiheiyo-ferry.co.jp/koro/schedule.html",
   "information": null,
   "note": null,
-  "frequency": null,
+  "frequency": 2,
   "color": "#21386A"
 },
 "230201": {
   "businessName": "名鉄海上観光船",
   "routeName": "師崎～篠島～日間賀島～師崎",
-  "url": "http://www.meikaijo.co.jp/timetable.html",
+  "url": "https://www.meikaijo.co.jp/timetable",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#b70106"
 },
 "230202": {
   "businessName": "名鉄海上観光船",
   "routeName": "河和～日間賀島～篠島～伊良湖",
-  "url": "http://www.meikaijo.co.jp/timetable.html",
+  "url": "https://www.meikaijo.co.jp/timetable",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#b70106"
 },
 "230203": {
   "businessName": "名鉄海上観光船",
   "routeName": "師崎～日間賀島",
-  "url": "http://www.meikaijo.co.jp/timetable.html",
+  "url": "https://www.meikaijo.co.jp/timetable",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#b70106"
 },
 "230301": {
   "businessName": "西尾市",
@@ -797,17 +797,17 @@
   "url": "https://sakushima.com/guide-top/access/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#1c9ad9"
 },
 "230401": {
   "businessName": "蒲郡観光汽船",
   "routeName": "蒲郡～三河大島",
   "url": "https://www.gamagori.jp/spot/760/",
   "information": "季節運航",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 2,
+  "color": "#00aecc"
 },
 "230501": {
   "businessName": "東山ガーデン",
@@ -815,8 +815,8 @@
   "url": "https://cruise-nagoya.jp/ticket/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 1,
+  "color": "#e91c24"
 },
 "230502": {
   "businessName": "東山ガーデン",
@@ -824,8 +824,8 @@
   "url": "https://cruise-nagoya.jp/ticket/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 1,
+  "color": "#2e5daa"
 },
 "230601": {
   "businessName": "神島観光汽船",
@@ -833,17 +833,17 @@
   "url": "http://www.tees.ne.jp/~hirota-1/suhedule.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#2e5daa"
 },
 "230701": {
   "businessName": "西三河漁業協同組合",
   "routeName": "吉良～梶島",
   "url": "https://www.kira-asari.com/",
   "information": "季節運航",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 2,
+  "color": "#337ab7"
 },
 "230801": {
   "businessName": "豊橋市",
@@ -851,17 +851,17 @@
   "url": "https://www.city.toyohashi.lg.jp/2923.htm",
   "information": "牛川の渡船",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#2cbdae"
 },
 "230901": {
   "businessName": "愛知県",
   "routeName": "一宮市西中野～羽島市下中町",
-  "url": "https://www.city.toyohashi.lg.jp/2923.htm",
-  "information": "中野の渡し",
+  "url": "https://www.pref.aichi.jp/soshiki/ichinomiya-kensetsu/nisinakanotosen.html",
+  "information": "中野の渡し（西中野渡船）",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#4068b1"
 },
 "240101": {
   "businessName": "伊勢湾フェリー",
