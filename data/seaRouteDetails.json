@@ -834,7 +834,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "color": "#2e5daa"
+  "color": "#f0d525"
 },
 "230701": {
   "businessName": "西三河漁業協同組合",
@@ -869,8 +869,8 @@
   "url": "https://www.isewanferry.co.jp/publics/index/21/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#002192"
 },
 "240201": {
   "businessName": "津エアポートライン",
@@ -878,8 +878,8 @@
   "url": "https://www.tsu-airportline.co.jp/timefare/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#1e73be"
 },
 "240302": {
   "businessName": "鳥羽市",
@@ -887,8 +887,8 @@
   "url": "https://www.city.toba.mie.jp/soshiki/t_kanri/gyomu/doro_kotsu/kokyo_kotsu/3151.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00a99d"
 },
 "240301": {
   "businessName": "鳥羽市",
@@ -896,8 +896,8 @@
   "url": "https://www.city.toba.mie.jp/soshiki/t_kanri/gyomu/doro_kotsu/kokyo_kotsu/3151.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00a99d"
 },
 "240303": {
   "businessName": "鳥羽市",
@@ -905,8 +905,8 @@
   "url": "https://www.city.toba.mie.jp/soshiki/t_kanri/gyomu/doro_kotsu/kokyo_kotsu/3151.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00a99d"
 },
 "240304": {
   "businessName": "鳥羽市",
@@ -914,8 +914,8 @@
   "url": "https://www.city.toba.mie.jp/soshiki/t_kanri/gyomu/doro_kotsu/kokyo_kotsu/3151.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00a99d"
 },
 "240305": {
   "businessName": "鳥羽市",
@@ -923,8 +923,8 @@
   "url": "https://www.city.toba.mie.jp/soshiki/t_kanri/gyomu/doro_kotsu/kokyo_kotsu/3151.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00a99d"
 },
 "240401": {
   "businessName": "志摩マリンレジャー",
@@ -932,8 +932,8 @@
   "url": "https://shima-marineleisure.com/cruise/toba/info/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ee87b4"
 },
 "240402": {
   "businessName": "志摩マリンレジャー",
@@ -941,8 +941,8 @@
   "url": "https://shima-marineleisure.com/cruise/bayliner/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ee87b4"
 },
 "240501": {
   "businessName": "志摩市",
@@ -950,8 +950,8 @@
   "url": "https://www.city.shima.mie.jp/kakuka/kensetsubu/kensetsuseibika/shiunkosen.html",
   "information": "運航日注意、県道船",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 1,
+  "color": "#27a84b"
 },
 "240601": {
   "businessName": "大東丸観光",
@@ -959,35 +959,35 @@
   "url": "https://www.watakano.net/access.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ff8e98"
 },
 "240701": {
   "businessName": "石山荘",
   "routeName": "賢島～横山島",
   "url": "http://losmen.info/losmen_gili_isihyamaso_puti-cruise.html",
-  "information": "運航日注意",
+  "information": "営業日注意",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 1,
+  "color": "#27a84b"
 },
 "240801": {
   "businessName": "旧大杉村再生協議会",
   "routeName": "登山道連絡船",
   "url": "http://www.boukyomaru.or.jp/",
   "information": "4月～11月",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 3,
+  "color": "#ff8e98"
 },
 "240901": {
   "businessName": "三瀬の渡し保存会",
   "routeName": "三瀬の渡し",
   "url": "https://web-odai.info/history/kumanokodo_iseji/history/kumanokodo_iseji-4773.html",
-  "information": null,
+  "information": "土日運航",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#26866e"
 },
 "250101": {
   "businessName": "沖島通船",
@@ -995,53 +995,53 @@
   "url": "http://www.biwako-okishima.com/sin-access.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0000ff"
 },
 "250201": {
   "businessName": "オーミマリン",
   "routeName": "彦根～竹生島",
   "url": "https://www.ohmitetudo.co.jp/marine/time-price/chikubushima/",
-  "information": "季節運航",
+  "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#50bfdb"
 },
 "250202": {
   "businessName": "オーミマリン",
   "routeName": "彦根～多景島",
   "url": "https://www.ohmitetudo.co.jp/marine/time-price/takeshima/",
-  "information": "季節運航",
+  "information": "冬季運休",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#50bfdb"
 },
 "250203": {
   "businessName": "オーミマリン",
   "routeName": "彦根～海津大崎",
   "url": "https://www.ohmitetudo.co.jp/marine/time-price/sakura/",
   "information": "季節運航",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 2,
+  "color": "#50bfdb"
 },
 "250204": {
   "businessName": "オーミマリン",
   "routeName": "色ヶ浜桟橋（浦底桟橋）～水島",
   "url": "https://www.ohmitetudo.co.jp/marine/time-price/mizushima/",
   "information": "季節運航",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 2,
+  "color": "#50bfdb"
 },
 "250301": {
   "businessName": "琵琶湖汽船",
   "routeName": "ミシガンクルーズ",
-  "url": "https://www.ohmitetudo.co.jp/marine/time-price/sakura/",
+  "url": "https://www.biwakokisen.co.jp/cruise/michigan/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#2b90c6"
 },
 "250302": {
   "businessName": "琵琶湖汽船",
@@ -1049,17 +1049,17 @@
   "url": "https://www.biwakokisen.co.jp/cruise/chikubu/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#e58726"
 },
 "250303": {
   "businessName": "琵琶湖汽船",
   "routeName": "ぐるっとびわ湖島めぐり",
   "url": "https://www.biwakokisen.co.jp/cruise/gurutto/",
-  "information": null,
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "information": "5～11月 土日運航",
+  "note": "season",
+  "frequency": 1,
+  "color": "#f2939b"
 },
 "270101": {
   "businessName": "名門大洋フェリー",
@@ -1067,7 +1067,7 @@
   "url": "https://www.cityline.co.jp/route",
   "information": null,
   "note": null,
-  "frequency": null,
+  "frequency": 3,
   "color": "#00145A"
 },
 "270301": {
@@ -1076,8 +1076,8 @@
   "url": "https://www.mmjp.or.jp/Capt-Line/capt/timetable/timetable2311.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ec212b"
 },
 "270401": {
   "businessName": "大阪市営渡船",
@@ -1085,8 +1085,8 @@
   "url": "https://www.city.osaka.lg.jp/kensetsu/page/0000011249.html",
   "information": "天保山渡船場",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00956e"
 },
 "270402": {
   "businessName": "大阪市営渡船",
@@ -1094,8 +1094,8 @@
   "url": "https://www.city.osaka.lg.jp/kensetsu/page/0000011251.html",
   "information": "甚兵衛渡船場",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00956e"
 },
 "270403": {
   "businessName": "大阪市営渡船",
@@ -1103,8 +1103,8 @@
   "url": "https://www.city.osaka.lg.jp/kensetsu/page/0000011253.html",
   "information": "千歳渡船場",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00956e"
 },
 "270404": {
   "businessName": "大阪市営渡船",
@@ -1112,8 +1112,8 @@
   "url": "https://www.city.osaka.lg.jp/kensetsu/page/0000011254.html",
   "information": "落合上渡船場",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00956e"
 },
 "270405": {
   "businessName": "大阪市営渡船",
@@ -1121,8 +1121,8 @@
   "url": "https://www.city.osaka.lg.jp/kensetsu/page/0000011256.html",
   "information": "落合下渡船場",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00956e"
 },
 "270406": {
   "businessName": "大阪市営渡船",
@@ -1130,8 +1130,8 @@
   "url": "https://www.city.osaka.lg.jp/kensetsu/page/0000011258.html",
   "information": "千本松渡船場",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00956e"
 },
 "270407": {
   "businessName": "大阪市営渡船",
@@ -1139,8 +1139,8 @@
   "url": "https://www.city.osaka.lg.jp/kensetsu/page/0000011260.html",
   "information": "船町渡船場",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00956e"
 },
 "270408": {
   "businessName": "大阪市営渡船",
@@ -1148,26 +1148,26 @@
   "url": "https://www.city.osaka.lg.jp/kensetsu/page/0000011261.html",
   "information": "木津川渡船場",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00956e"
 },
 "270501": {
   "businessName": "深日洲本ライナー",
   "routeName": "深日～淡路島（洲本）",
   "url": "https://fuke-sumotoliner.com/fare-time/",
-  "information": "期間限定",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "information": "期間限定（2022～2024年）",
+  "note": "suspend",
+  "frequency": 3,
+  "color": "#1e73be"
 },
 "270601": {
   "businessName": "大阪水上バス",
   "routeName": "大阪城港～湊町船着場",
   "url": "https://suijo-bus.osaka/intro/aquamini/",
-  "information": null,
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "information": "期間限定",
+  "note": "season",
+  "frequency": 1,
+  "color": "#247ab6"
 },
 "280101": {
   "businessName": "ジャンボフェリー",
