@@ -2355,7 +2355,7 @@
   "information": "隔日運航",
   "note": null,
   "frequency": 1,
-  "color": "#66cccc"
+  "color": "#7db373"
 },
 "380401": {
   "businessName": "宇和島運輸",
@@ -2651,8 +2651,8 @@
   "url": "https://www.kyu-you.co.jp/route/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ea151d"
 },
 "400302": {
   "businessName": "九州郵船",
@@ -2660,8 +2660,8 @@
   "url": "https://www.kyu-you.co.jp/route/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ea151d"
 },
 "400303": {
   "businessName": "九州郵船",
@@ -2669,8 +2669,8 @@
   "url": "https://www.kyu-you.co.jp/route/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ea151d"
 },
 "400401": {
   "businessName": "壱岐・対馬フェリー",
@@ -2678,8 +2678,8 @@
   "url": "https://iki-tsushima.com/price/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#6ca330"
 },
 "400501": {
   "businessName": "関門汽船",
@@ -2687,8 +2687,8 @@
   "url": "https://www.kanmon-kisen.co.jp/route/kanmon.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#162c99"
 },
 "400502": {
   "businessName": "関門汽船",
@@ -2696,8 +2696,8 @@
   "url": "https://www.kanmon-kisen.co.jp/route/ganryujima.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#12b3cf"
 },
 "400601": {
   "businessName": "北九州市",
@@ -2705,8 +2705,8 @@
   "url": "https://www.city.kitakyushu.lg.jp/shisei/menu01_0513.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#c40000"
 },
 "400602": {
   "businessName": "北九州市",
@@ -2714,17 +2714,26 @@
   "url": "https://www.city.kitakyushu.lg.jp/san-kei/file_0043.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#c40000"
 },
 "400701": {
   "businessName": "宗像市",
   "routeName": "神湊～地島",
   "url": "https://www.city.munakata.lg.jp/w050/040/040/050/050/jinosima/index.html",
-  "information": null,
+  "information": "地島渡船",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ff1901"
+},
+"400702": {
+  "businessName": "宗像市",
+  "routeName": "神湊～大島",
+  "url": "https://www.city.munakata.lg.jp/w050/040/040/050/050/jinosima/index.html",
+  "information": "大島渡船",
+  "note": null,
+  "frequency": 3,
+  "color": "#008738"
 },
 "400801": {
   "businessName": "新宮町",
@@ -2732,8 +2741,8 @@
   "url": "https://www.town.shingu.fukuoka.jp/soshiki/sangyo_shinko/8/1/2/1844.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d6af02"
 },
 "400901": {
   "businessName": "福岡市",
@@ -2741,8 +2750,8 @@
   "url": "https://www.city.fukuoka.lg.jp/kowan/kyakusen/hakata-port/hyo.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0a51a1"
 },
 "400902": {
   "businessName": "福岡市",
@@ -2750,17 +2759,8 @@
   "url": "https://www.city.fukuoka.lg.jp/kowan/kyakusen/hakata-port/hyo.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
-},
-"400904": {
-  "businessName": "福岡市",
-  "routeName": "姪浜～小呂島",
-  "url": "https://www.city.fukuoka.lg.jp/kowan/kyakusen/hakata-port/hyo.html",
-  "information": null,
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0a51a1"
 },
 "400903": {
   "businessName": "福岡市",
@@ -2768,8 +2768,17 @@
   "url": "https://www.city.fukuoka.lg.jp/kowan/kyakusen/hakata-port/hyo.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0a51a1"
+},
+"400904": {
+  "businessName": "福岡市",
+  "routeName": "姪浜～小呂島",
+  "url": "https://www.city.fukuoka.lg.jp/kowan/kyakusen/hakata-port/hyo.html",
+  "information": null,
+  "note": null,
+  "frequency": 2,
+  "color": "#0a51a1"
 },
 "401001": {
   "businessName": "糸島市",
@@ -2777,8 +2786,8 @@
   "url": "https://www.city.itoshima.lg.jp/s006/010/020/020/090/tosen.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0a8a17"
 },
 "410101": {
   "businessName": "佐賀玄海漁業協同組合",
@@ -2786,8 +2795,8 @@
   "url": "https://www.jf-sagagenkai.or.jp/news/%E9%AB%98%E5%B3%B6%E8%88%AA%E8%B7%AF%E6%99%82%E5%88%BB%E8%A1%A8/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#007eff"
 },
 "410201": {
   "businessName": "唐津汽船",
@@ -2795,62 +2804,62 @@
   "url": "http://web.people-i.ne.jp/~karatsu-maru/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#eb8a53"
 },
 "410301": {
   "businessName": "川口汽船",
   "routeName": "呼子～小川島",
   "url": "https://www.city.karatsu.lg.jp/koutsuu/machi/kotsu/koro/jikokuhyou-ogawashima.html",
-  "information": null,
+  "information": "小川島航路",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#7ac0cc"
 },
 "410401": {
   "businessName": "加唐島汽船",
   "routeName": "呼子～加唐島",
   "url": "https://www.city.karatsu.lg.jp/koutsuu/machi/kotsu/koro/jikokuhyou-kakarashima.html",
-  "information": null,
+  "information": "加唐島航路",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#28ab3a"
 },
 "410501": {
   "businessName": "新栄",
   "routeName": "呼子～松島",
   "url": "https://www.city.karatsu.lg.jp/koutsuu/machi/kotsu/koro/jikokugyou-matsushima.html",
-  "information": null,
+  "information": "松島航路",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#1551c6"
 },
 "410601": {
   "businessName": "郵正丸",
   "routeName": "呼子～名護屋～馬渡島",
   "url": "https://www.city.karatsu.lg.jp/koutsuu/machi/kotsu/koro/jikokuhyou-madarashima.html",
-  "information": null,
+  "information": "馬渡島航路",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#dd0000"
 },
 "410701": {
   "businessName": "向島汽船",
   "routeName": "星賀～向島",
   "url": "https://www.city.karatsu.lg.jp/koutsuu/machi/kotsu/koro/jikokuhyou-mukushima.html",
-  "information": null,
+  "information": "向島航路",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d53137"
 },
 "410801": {
   "businessName": "金子廻漕店",
   "routeName": "浦の崎～福島",
-  "url": "https://www.city-matsuura.jp/top/soshikikarasagasu/chiikikeizaikasseika/shokoshinkogakari/2/1015.html",
+  "url": "https://www.city-matsuura.jp/top/soshikikarasagasu/sangyoushinkou/shokoshinkogakari/2/1015.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#c5be12"
 },
 "420101": {
   "businessName": "野母商船",
@@ -2858,8 +2867,8 @@
   "url": "https://www.nomo.co.jp/taiko/timetable.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#f29600"
 },
 "420102": {
   "businessName": "野母商船",
@@ -2867,8 +2876,8 @@
   "url": "https://www.nomo.co.jp/nomo/takasu-shunkan/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#c95b52"
 },
 "420201": {
   "businessName": "安田産業汽船",
@@ -2876,8 +2885,8 @@
   "url": "https://yasuda-gp.net/omura/togitsu",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d49713"
 },
 "420202": {
   "businessName": "安田産業汽船",
@@ -2885,8 +2894,8 @@
   "url": "https://yasuda-gp.net/omura/htb",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#d49713"
 },
 "420203": {
   "businessName": "安田産業汽船",
@@ -2894,8 +2903,8 @@
   "url": "https://yasuda-gp.net/hakata/momochi_hakata",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d49713"
 },
 "420204": {
   "businessName": "安田産業汽船",
@@ -2903,17 +2912,17 @@
   "url": "https://yasuda-gp.net/hakata/uminaka-3",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d49713"
 },
 "420301": {
   "businessName": "対馬市",
   "routeName": "仁位～卯麦～佐志賀～嵯峨～貝鮒～水崎～加志々～長坂浦",
   "url": "https://www.city.tsushima.nagasaki.jp/gyousei/soshiki/nakatsushima/chiikisinkou/tokaisen/851.html",
-  "information": null,
+  "information": "平日運航",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#008080"
 },
 "420401": {
   "businessName": "壱岐市",
@@ -2921,35 +2930,35 @@
   "url": "https://www.city.iki.nagasaki.jp/soshiki/somuka/mishima/985.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#33a02c"
 },
 "420501": {
   "businessName": "勝本町漁業協同組合",
   "routeName": "壱岐島（勝本）～辰の島",
   "url": "https://www.kankai.net/jf-k/",
   "information": "4～11月",
-  "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "note": "season",
+  "frequency": 2,
+  "color": "#0033ff"
 },
 "420601": {
   "businessName": "鷹島汽船",
   "routeName": "今福～飛島～鷹島",
-  "url": "https://www.city-matsuura.jp/top/soshikikarasagasu/chiikikeizaikasseika/shokoshinkogakari/2/1016.html",
+  "url": "https://www.city-matsuura.jp/top/soshikikarasagasu/sangyoushinkou/shokoshinkogakari/2/1016.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#f6731d"
 },
 "420602": {
   "businessName": "鷹島汽船",
   "routeName": "御厨～青島～鷹島～黒島～鷹島",
-  "url": "https://www.city-matsuura.jp/top/soshikikarasagasu/chiikikeizaikasseika/shokoshinkogakari/2/1014.html",
+  "url": "https://www.city-matsuura.jp/top/soshikikarasagasu/sangyoushinkou/shokoshinkogakari/2/1014.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#25d6c4"
 },
 "420701": {
   "businessName": "平戸市",
