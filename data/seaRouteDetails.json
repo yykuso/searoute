@@ -2966,8 +2966,8 @@
   "url": "https://www.city.hirado.nagasaki.jp/kurashi/life/sumai/koutu/ferry/2019-0225-1640-88.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00a76d"
 },
 "420801": {
   "businessName": "竹山運輸",
@@ -2975,8 +2975,8 @@
   "url": "https://www.city.hirado.nagasaki.jp/kurashi/life/sumai/koutu/ferry/fe02.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0066b3"
 },
 "420901": {
   "businessName": "九州商船",
@@ -2984,8 +2984,8 @@
   "url": "https://kyusho.co.jp/publics/index/111/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d7003f"
 },
 "420902": {
   "businessName": "九州商船",
@@ -2993,8 +2993,8 @@
   "url": "https://kyusho.co.jp/publics/index/111/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#52ab44"
 },
 "420903": {
   "businessName": "九州商船",
@@ -3002,8 +3002,8 @@
   "url": "https://kyusho.co.jp/publics/index/111/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d7003f"
 },
 "420904": {
   "businessName": "九州商船",
@@ -3011,8 +3011,8 @@
   "url": "https://kyusho.co.jp/publics/index/111/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d7003f"
 },
 "420905": {
   "businessName": "九州商船",
@@ -3020,8 +3020,8 @@
   "url": "https://kyusho.co.jp/publics/index/111/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d7003f"
 },
 "421001": {
   "businessName": "崎戸商船",
@@ -3029,8 +3029,8 @@
   "url": "https://www.city.saikai.nagasaki.jp/kurashi/kotsu/2/2737.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#36867e"
 },
 "421101": {
   "businessName": "津吉商船",
@@ -3038,8 +3038,8 @@
   "url": "https://www.nomo.co.jp/tsuyoshi/tsuyoshi/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#2584c2"
 },
 "421201": {
   "businessName": "黒島旅客船",
@@ -3047,8 +3047,8 @@
   "url": "https://kuroshimakanko.com/index.php/view/172",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#fc3232"
 },
 "421301": {
   "businessName": "西海沿岸商船",
@@ -3056,8 +3056,8 @@
   "url": "https://www.city.saikai.nagasaki.jp/soshiki/seisaku/1/1_1/2/3742.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#3cc45f"
 },
 "421401": {
   "businessName": "進栄丸",
@@ -3065,17 +3065,17 @@
   "url": "http://www.kanko-sotome.com/ikeshima_access/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#192fd6"
 },
 "421501": {
   "businessName": "瀬川汽船",
   "routeName": "佐世保～横瀬西～小郡～畑下～川内",
-  "url": "https://segawakisen.co.jp/segawajikokuhyo.html",
+  "url": "http://segawakisen.co.jp/segawajikokuhyo.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d4a62e"
 },
 "421601": {
   "businessName": "西海市",
@@ -3083,8 +3083,8 @@
   "url": "https://www.city.saikai.nagasaki.jp/soshiki/shimanokurashi/1/1/2/1199.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#3771a9"
 },
 "421701": {
   "businessName": "江崎海陸運送",
@@ -3092,8 +3092,8 @@
   "url": "https://www.ezakikaiun.com/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#dd0000"
 },
 "421801": {
   "businessName": "五島産業汽船",
@@ -3101,8 +3101,8 @@
   "url": "https://www.goto-sangyo.co.jp/line/line01/#line01",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#00a6e7"
 },
 "421901": {
   "businessName": "五島旅客船",
@@ -3110,8 +3110,8 @@
   "url": "https://goto-ryokyakusen.com/guide/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#2b96d0"
 },
 "422001": {
   "businessName": "木口汽船",
@@ -3119,8 +3119,8 @@
   "url": "https://www.kiguchi-kisen.jp/contents/timetable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#ff4391"
 },
 "422002": {
   "businessName": "木口汽船",
@@ -3128,8 +3128,8 @@
   "url": "https://www.kiguchi-kisen.jp/contents/timetable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#86bdb8"
 },
 "422101": {
   "businessName": "黄島海運",
@@ -3137,8 +3137,8 @@
   "url": "https://www.city.goto.nagasaki.jp/s050/010/020/20220318132223.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#d6b21a"
 },
 "422201": {
   "businessName": "佐世保市",
@@ -3146,8 +3146,8 @@
   "url": "https://www.city.sasebo.lg.jp/benrimap/shisetsu/sonota/270.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#254993"
 },
 "422301": {
   "businessName": "小値賀町",
@@ -3155,8 +3155,8 @@
   "url": "http://ojika.net/tourism/transportation/saikai/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#57b905"
 },
 "422302": {
   "businessName": "小値賀町",
@@ -3164,8 +3164,8 @@
   "url": "http://ojika.net/tourism/transportation/hamayu/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#57b905"
 },
 "422303": {
   "businessName": "小値賀町",
@@ -3173,8 +3173,8 @@
   "url": "http://ojika.net/tourism/transportation/hamayu/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#57b905"
 },
 "422401": {
   "businessName": "五島市",
@@ -3182,8 +3182,8 @@
   "url": "https://www.city.goto.nagasaki.jp/s050/010/020/030/080/20190306195744.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#319f2b"
 },
 "422501": {
   "businessName": "嵯峨島旅客船",
@@ -3191,26 +3191,26 @@
   "url": "https://www.city.goto.nagasaki.jp/s014/020/020/050/20220831171546.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ad3052"
 },
 "422601": {
   "businessName": "有明海自動車航送船組合",
   "routeName": "長洲～多比良",
   "url": "http://www.ariake-ferry.com/timetable/",
-  "information": null,
+  "information": "有明フェリー",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#2d649f"
 },
 "422701": {
   "businessName": "やまさ海運",
   "routeName": "大牟田～島原",
   "url": "https://www.miike-shimabara-line.net/",
-  "information": null,
+  "information": "三池島原ライン",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d95326"
 },
 "422801": {
   "businessName": "九商フェリー",
@@ -3218,8 +3218,8 @@
   "url": "https://www.kyusho-ferry.co.jp/diagram/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#f53540"
 },
 "422901": {
   "businessName": "島原鉄道",
@@ -3227,8 +3227,8 @@
   "url": "https://www.shimatetsu.co.jp/ferry/guide/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#1777a9"
 },
 "430101": {
   "businessName": "熊本フェリー",
@@ -3236,8 +3236,8 @@
   "url": "https://www.kumamotoferry.co.jp/timefare/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0562f9"
 },
 "430201": {
   "businessName": "湯島商船",
@@ -3245,8 +3245,8 @@
   "url": "https://www.city.kamiamakusa.kumamoto.jp/q/aview/406/12810.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#1fae2f"
 },
 "430301": {
   "businessName": "苓北観光汽船",
@@ -3254,8 +3254,8 @@
   "url": "https://www.reihoku-kisen.jp/time-table.php",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#25499d"
 },
 "430401": {
   "businessName": "共同フェリー",
@@ -3263,8 +3263,8 @@
   "url": "https://kyodoferry.com/schedule.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#e6000a"
 },
 "430402": {
   "businessName": "共同フェリー",
@@ -3272,8 +3272,8 @@
   "url": "https://kyodoferry.com/schedule.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#064295"
 },
 "430403": {
   "businessName": "共同フェリー",
@@ -3281,8 +3281,8 @@
   "url": "https://kyodoferry.com/schedule.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#00c854"
 },
 "430404": {
   "businessName": "共同フェリー",
@@ -3290,8 +3290,8 @@
   "url": "https://kyodoferry.com/schedule.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#f6c304"
 },
 "430405": {
   "businessName": "共同フェリー",
@@ -3299,8 +3299,8 @@
   "url": "https://akuneoshima.com/time/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#267416"
 },
 "430406": {
   "businessName": "あまくさ海上タクシー協会",
@@ -3309,7 +3309,7 @@
   "information": "事前予約制",
   "note": null,
   "frequency": null,
-  "color": "#000000"
+  "color": "#bc09a7"
 },
 "430501": {
   "businessName": "シークルーズ",
@@ -3317,8 +3317,8 @@
   "url": "https://www.seacruise.jp/teiki/faretable",
   "information": "天草宝島ライン",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#bb9243"
 },
 "430601": {
   "businessName": "三和商船",
@@ -3326,8 +3326,8 @@
   "url": "https://ezax.co.jp/time/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0944a6"
 },
 "440101": {
   "businessName": "国道九四フェリー",
@@ -3344,8 +3344,8 @@
   "url": "https://www.himeshima.jp/access/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#1b998b"
 },
 "440301": {
   "businessName": "津久見市",
@@ -3353,8 +3353,8 @@
   "url": "https://www.city.tsukumi.oita.jp/soshiki/10/21233.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0c6ed0"
 },
 "440302": {
   "businessName": "津久見市",
@@ -3362,35 +3362,35 @@
   "url": "https://www.city.tsukumi.oita.jp/soshiki/10/21231.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#0c6ed0"
 },
 "440401": {
-  "businessName": "大入島フェリー",
+  "businessName": "大入島観光フェリー",
   "routeName": "佐伯～大入島",
   "url": "http://www.oitasima.net/ohnyujima/access.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#cdba96"
 },
 "440501": {
   "businessName": "豊海運",
   "routeName": "佐伯～大入島",
   "url": "http://www.oitasima.net/ohnyujima/access.html",
-  "information": null,
+  "information": "マリンバス1",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ae2300"
 },
 "440502": {
   "businessName": "豊海運",
   "routeName": "佐伯～大入島",
   "url": "http://www.oitasima.net/ohnyujima/access.html",
-  "information": null,
+  "information": "マリンバス2",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#ff6600"
 },
 "440601": {
   "businessName": "佐伯市",
@@ -3398,8 +3398,8 @@
   "url": "https://www.city.saiki.oita.jp/kiji0033261/index.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#1c9322"
 },
 "440602": {
   "businessName": "佐伯市",
@@ -3407,8 +3407,8 @@
   "url": "https://www.city.saiki.oita.jp/kiji0033261/index.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#1c9322"
 },
 "450101": {
   "businessName": "宮崎カーフェリー",
@@ -3425,8 +3425,8 @@
   "url": "https://www.city.nobeoka.miyazaki.jp/soshiki/4/2870.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#e33045"
 },
 "450202": {
   "businessName": "日豊汽船",
@@ -3434,8 +3434,8 @@
   "url": "https://www.city.nobeoka.miyazaki.jp/soshiki/4/2870.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0066cc"
 },
 "450301": {
   "businessName": "日南市",
@@ -3443,8 +3443,8 @@
   "url": "https://www.city.nichinan.lg.jp/soshikikarasagasu/nangochochiikishinkocenter/2/1312.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ed1b24"
 },
 "460101": {
   "businessName": "マルエーフェリー",
