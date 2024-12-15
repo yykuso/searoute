@@ -1175,8 +1175,8 @@
   "url": "https://ferry.co.jp/home/kobe-takamatsu/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#668CAD"
+  "frequency": 3,
+  "color": "#668cad"
 },
 "280201": {
   "businessName": "こうべ未来都市機構",
@@ -1184,8 +1184,8 @@
   "url": "https://www.kobe-access.jp/time",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0083c2"
 },
 "280301": {
   "businessName": "淡路ジェノバライン",
@@ -1193,8 +1193,8 @@
   "url": "http://www.jenova-line.co.jp/jikoku.php",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0083c2"
 },
 "280401": {
   "businessName": "沼島汽船",
@@ -1202,17 +1202,17 @@
   "url": "https://www.city.minamiawaji.hyogo.jp/soshiki/kyoudou/nusima1.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#82c06c"
 },
 "280501": {
   "businessName": "高速いえしま",
   "routeName": "姫路～家島",
-  "url": "https://www.kousoku-ieshima.jp/%E6%99%82%E5%88%BB%E8%A1%A8_2",
+  "url": "https://kousoku-ieshima.jp/%e6%99%82%e5%88%bb%e8%a1%a8/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#004430"
 },
 "280601": {
   "businessName": "高福ライナー",
@@ -1220,53 +1220,53 @@
   "url": "https://h-ieshima.jp/liner.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#20a9fa"
 },
 "280701": {
   "businessName": "坊勢輝汽船",
   "routeName": "姫路～男鹿島～坊勢島",
-  "url": "https://bouzehikarikisen.moo.jp/page1.html",
+  "url": "https://bouzehikarikisen.moo.jp/custom.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#f18215"
 },
 "280801": {
   "businessName": "輝観光",
   "routeName": "坊勢島～西島",
   "url": "https://www.shizen-ieshima.com/access.html?selectcatno=004",
-  "information": null,
+  "information": "いえしま自然体験センター",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0168cf"
 },
 "280901": {
   "businessName": "坊勢渡船",
   "routeName": "坊勢島～家島（網手）",
-  "url": "http://www.heart-y.ne.jp/tosen/",
+  "url": "https://www.heart-y.ne.jp/tosen/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ff0000"
 },
 "281001": {
   "businessName": "姫路市家島事務所",
   "routeName": "家島～男鹿島",
   "url": "http://www.nakamurasou.shop/detail/liner.html",
-  "information": "暫定連絡船",
+  "information": "暫定連絡船・日曜運休",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ff0000"
 },
 "281101": {
   "businessName": "玄武洞観光",
   "routeName": "玄武洞駅～玄武洞",
-  "url": "https://www.city.toyohashi.lg.jp/2923.htm",
-  "information": "牛川の渡船",
+  "url": "https://genbudo-museum.jp/news/2625/",
+  "information": "牛川の渡船・予約制",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#f0316e"
 },
 "300101": {
   "businessName": "南海フェリー",
@@ -1274,26 +1274,26 @@
   "url": "https://nankai-ferry.co.jp/timetable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#005fa4"
 },
 "300201": {
   "businessName": "友ヶ島汽船",
   "routeName": "加太～友ヶ島",
-  "url": "https://tomogashimakisen.com/main/%E9%81%8B%E8%88%AA%E6%99%82%E5%88%BB",
-  "information": null,
+  "url": "https://tomogashimakisen.com/main/",
+  "information": "水曜運休",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#1668b8"
 },
 "300301": {
   "businessName": "安居の渡し保存会",
   "routeName": "安居の渡し",
   "url": "https://www.town.shirahama.wakayama.jp/kanko/taiken/1452760025050.html",
-  "information": null,
+  "information": "土曜・日曜・祝日運航",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0762b0"
 },
 "320101": {
   "businessName": "隠岐汽船",
@@ -1301,8 +1301,8 @@
   "url": "https://www.oki-kisen.co.jp/timetable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#d90305"
 },
 "320201": {
   "businessName": "島前町村組合",
@@ -1310,8 +1310,8 @@
   "url": "https://www.okikankou.com/inter-island-ferry/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#1d2088"
 },
 "330101": {
   "businessName": "大生汽船",
@@ -2334,10 +2334,10 @@
   "businessName": "松山・小倉フェリー",
   "routeName": "小倉～松山",
   "url": "http://www.matsuyama-kokuraferry.co.jp/contents/timetable.html",
-  "information": null,
+  "information": "隔日運航",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 1,
+  "color": "#66cccc"
 },
 "380401": {
   "businessName": "宇和島運輸",
@@ -2345,8 +2345,8 @@
   "url": "https://www.uwajimaunyu.co.jp/timetable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#bf9c50"
 },
 "380402": {
   "businessName": "宇和島運輸",
@@ -2354,8 +2354,8 @@
   "url": "https://www.uwajimaunyu.co.jp/timetable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#bf9c50"
 },
 "380501": {
   "businessName": "新居浜市",
@@ -2606,8 +2606,8 @@
   "url": "https://tqf.co.jp/time_schedule/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#FA0000"
+  "frequency": 2,
+  "color": "#fa0000"
 },
 "400201": {
   "businessName": "阪九フェリー",
@@ -2615,8 +2615,8 @@
   "url": "https://www.han9f.co.jp/timetable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#E10915"
+  "frequency": 2,
+  "color": "#e10915"
 },
 "400202": {
   "businessName": "阪九フェリー",
@@ -2624,8 +2624,8 @@
   "url": "https://www.han9f.co.jp/timetable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#E10915"
+  "frequency": 2,
+  "color": "#e10915"
 },
 "400301": {
   "businessName": "九州郵船",
@@ -3308,8 +3308,8 @@
   "url": "https://www.koku94.jp/operation",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#e92031"
 },
 "440201": {
   "businessName": "姫島村",
@@ -3389,8 +3389,8 @@
   "url": "https://www.miyazakicarferry.com/schedule/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#E39300"
+  "frequency": 2,
+  "color": "#e39300"
 },
 "450201": {
   "businessName": "日豊汽船",
@@ -3423,19 +3423,19 @@
   "businessName": "マルエーフェリー",
   "routeName": "鹿児島～奄美大島～徳之島～沖永良部島～与論島～本部～那覇",
   "url": "https://www.aline-ferry.com/kagoshima/time/",
-  "information": null,
+  "information": "隔日運航",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 1,
+  "color": "#fd0000"
 },
 "460201": {
   "businessName": "マリックスライン",
   "routeName": "鹿児島～奄美大島～徳之島～沖永良部島～与論島～本部～那覇",
   "url": "https://www.marix-line.co.jp/cgi-bin/19carriage/cgi/index.cgi",
-  "information": null,
+  "information": "隔日運航",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 1,
+  "color": "#4d94c8"
 },
 "460301": {
   "businessName": "奄美海運",
@@ -3443,17 +3443,17 @@
   "url": "https://www.aline-ferry.com/amami/time/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#f68001"
 },
 "460401": {
   "businessName": "十島村",
   "routeName": "鹿児島～口之島～中之島～諏訪之瀬島～平島～悪石島～小宝島～宝島～奄美大島",
   "url": "http://www.tokara.jp/ferryinfo/ferrytoshima/",
-  "information": null,
+  "information": "週2往復",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 1,
+  "color": "#3f93df"
 },
 "460501": {
   "businessName": "種子屋久高速船",
@@ -3603,10 +3603,10 @@
   "businessName": "大東海運",
   "routeName": "泊～南大東～北大東",
   "url": "https://daitoline.co.jp/schedule",
-  "information": null,
+  "information": "週1～2回往復",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 1,
+  "color": "#8224e3"
 },
 "470201": {
   "businessName": "伊平屋村",
