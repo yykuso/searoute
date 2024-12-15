@@ -2381,8 +2381,8 @@
   "url": "https://www.city.niihama.lg.jp/soshiki/koutsu/tokaisenjikokuhyo.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#0074ca"
 },
 "380601": {
   "businessName": "芸予汽船",
@@ -2390,8 +2390,8 @@
   "url": "https://geiyokisen.com/#schedule",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#5a72bc"
 },
 "380701": {
   "businessName": "上島町",
@@ -2399,8 +2399,8 @@
   "url": "https://www.town.kamijima.lg.jp/site/access/5640.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ff0000"
 },
 "380702": {
   "businessName": "上島町",
@@ -2408,8 +2408,8 @@
   "url": "https://www.town.kamijima.lg.jp/site/access/5639.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#f8a500"
 },
 "380801": {
   "businessName": "シーセブン",
@@ -2417,8 +2417,8 @@
   "url": "https://www.city.imabari.ehime.jp/kanko/access/pdf/ship_hakata-oshima.pdf",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#12cc30"
 },
 "380901": {
   "businessName": "津島渡船",
@@ -2426,8 +2426,8 @@
   "url": "https://www.city.imabari.ehime.jp/kanko/access/imabari-tsusima.pdf",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#bf0cd1"
 },
 "381001": {
   "businessName": "今治市",
@@ -2435,17 +2435,17 @@
   "url": "https://www.city.imabari.ehime.jp/chiiki/tosen/sazanami.html",
   "information": "さざなみ渡船",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ff0000"
 },
 "381101": {
   "businessName": "くるしま",
   "routeName": "波止浜～来島～小島～馬島",
-  "url": "https://www.city.imabari.ehime.jp/kanko/access/kurushima.pdf?1",
+  "url": "https://www.city.imabari.ehime.jp/kanko/access/kurushima.pdf",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#07a53a"
 },
 "381201": {
   "businessName": "大三島ブルーライン",
@@ -2453,8 +2453,8 @@
   "url": "https://omishima-bl.net/#schedule",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#096bD4"
 },
 "381202": {
   "businessName": "大三島ブルーライン",
@@ -2462,8 +2462,8 @@
   "url": "https://omishima-bl.net/#schedule",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#e7d90c"
 },
 "381301": {
   "businessName": "新喜峰",
@@ -2471,8 +2471,8 @@
   "url": "https://www.pref.ehime.jp/chu99914/navi/shima/aijima/index.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#2abe3f"
 },
 "381401": {
   "businessName": "松山市",
@@ -2480,8 +2480,8 @@
   "url": "https://www.city.matsuyama.ehime.jp/shisetsu/kuko/mituwatasi.html",
   "information": "三津の渡し",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#aa1e2d"
 },
 "381402": {
   "businessName": "松山市",
@@ -2489,8 +2489,8 @@
   "url": "https://www.city.matsuyama.ehime.jp/kanko/kankoguide/shitestukoen/kashima/tosen.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#aa1e2d"
 },
 "381501": {
   "businessName": "石崎汽船",
@@ -2498,26 +2498,26 @@
   "url": "http://www.ishizakikisen.co.jp/contents/timetable.shtml",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#2151b0"
 },
 "381601": {
   "businessName": "中島汽船",
   "routeName": "松山～睦月島～野忽那島～中島",
-  "url": "http://www.nakajima-sci.sakura.ne.jp/feri-jikoku.html",
+  "url": "http://www.nakajimakisen.co.jp/contents/time-table.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#cc0033"
 },
 "381602": {
   "businessName": "中島汽船",
   "routeName": "松山～釣島～中島～二神島～津和地島～怒和島～中島",
-  "url": "http://www.nakajima-sci.sakura.ne.jp/feri-jikoku.html",
+  "url": "http://www.nakajimakisen.co.jp/contents/time-table.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#003399"
 },
 "381701": {
   "businessName": "ごごしま",
@@ -2525,8 +2525,8 @@
   "url": "http://gogoshima-ferry.com/timetable_faretable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#f5ab2e"
 },
 "381702": {
   "businessName": "ごごしま",
@@ -2534,8 +2534,8 @@
   "url": "http://gogoshima-ferry.com/timetable_faretable/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#f5ab2e"
 },
 "381801": {
   "businessName": "青島海運",
@@ -2543,8 +2543,8 @@
   "url": "https://www.city.ozu.ehime.jp/soshiki/nagahamash/0375.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#054fd0"
 },
 "381901": {
   "businessName": "田中輸送",
@@ -2552,8 +2552,8 @@
   "url": "https://tanakayuso.co.jp/timetable-fares/",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#00d084"
 },
 "382001": {
   "businessName": "盛運汽船",
@@ -2561,8 +2561,8 @@
   "url": "http://www.seiunkisen.co.jp/unkouannai.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#267cd1"
 },
 "382002": {
   "businessName": "盛運汽船",
@@ -2570,8 +2570,8 @@
   "url": "http://www.seiunkisen.co.jp/unkouannai.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#267cd1"
 },
 "382003": {
   "businessName": "盛運汽船",
@@ -2579,8 +2579,8 @@
   "url": "http://www.seiunkisen.co.jp/unkouannai.html",
   "information": "平日運航",
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 1,
+  "color": "#267cd1"
 },
 "382101": {
   "businessName": "西海観光船",
@@ -2588,8 +2588,8 @@
   "url": "https://nishiumi.info/kashima-kouro-ehime-ainan.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#3ca6cc"
 },
 "390101": {
   "businessName": "高知県",
@@ -2597,8 +2597,8 @@
   "url": "https://www.pref.kochi.lg.jp/soshiki/170106/tosen1.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#ea3918"
 },
 "390201": {
   "businessName": "須崎市",
@@ -2606,8 +2606,8 @@
   "url": "https://www.city.susaki.lg.jp/life/detail.php?hdnKey=3548",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 3,
+  "color": "#a9442B"
 },
 "390301": {
   "businessName": "宿毛市",
@@ -2615,8 +2615,8 @@
   "url": "https://www.city.sukumo.kochi.jp/docs-05/p0325.html",
   "information": null,
   "note": null,
-  "frequency": null,
-  "color": "#000000"
+  "frequency": 2,
+  "color": "#b31239"
 },
 "400101": {
   "businessName": "東京九州フェリー",
