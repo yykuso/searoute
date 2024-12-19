@@ -62,7 +62,12 @@ export default class layersControl {
         if (this.overLayers) {
             Object.keys(this.overLayers).map((layer) => {
                 const containerDiv = document.createElement('div');
-                this.checkBoxControlAdd(containerDiv, layer);
+                const isVisible = this.overLayers[layer].visible || false;
+                if (typeof this.overLayers[layer] === 'object' && this.overLayers[layer].layers) {
+                    this.checkBoxControlAdd(containerDiv, layer, isVisible, this.overLayers[layer].layers);
+                } else {
+                    this.checkBoxControlAdd(containerDiv, layer, isVisible);
+                }
                 controlContainer.appendChild(containerDiv);
             });
         }
@@ -106,30 +111,50 @@ export default class layersControl {
     }
 
     // Make CheckBox Button (Overlay Layers)
-    checkBoxControlAdd(container, layerId) {
+    checkBoxControlAdd(container, layerId, isVisible, subLayers = []) {
         const checkBox = document.createElement('input');
         checkBox.setAttribute('type', 'checkbox');
         checkBox.id = layerId;
 
-        // Unview All Layers
-        this.map.setLayoutProperty(layerId, 'visibility', 'none');
+        // Initialize (Default Overlay Layers)
+        if (isVisible) {
+            checkBox.checked = true;
+            this.setLayerVisibility(layerId, 'visible', subLayers);
+        } else {
+            this.setLayerVisibility(layerId, 'none', subLayers);
+        }
         container.appendChild(checkBox);
         
         // Event
         checkBox.addEventListener('change', (event) => {
             // View or Unview Selected Layers
             if (event.target.checked) {
-                this.map.setLayoutProperty(layerId, 'visibility', 'visible');
+                this.setLayerVisibility(layerId, 'visible', subLayers);
             } else {
-                this.map.setLayoutProperty(layerId, 'visibility', 'none');
+                this.setLayerVisibility(layerId, 'none', subLayers);
             }
         });
 
         // Add Layers Name
         const layerName = document.createElement('label');
         layerName.htmlFor = layerId;
-        layerName.appendChild(document.createTextNode(this.overLayers[layerId]));
+        layerName.appendChild(document.createTextNode(this.overLayers[layerId].name || this.overLayers[layerId]));
         container.appendChild(layerName);
+    }
+
+    // Set Layer Visibility
+    setLayerVisibility(layerId, visibility, subLayers = []) {
+        if (subLayers.length > 0) {
+            subLayers.forEach(layer => {
+                if (this.map.getLayer(layer)) {
+                    this.map.setLayoutProperty(layer, 'visibility', visibility);
+                }
+            });
+        } else {
+            if (this.map.getLayer(layerId)) {
+                this.map.setLayoutProperty(layerId, 'visibility', visibility);
+            }
+        }
     }
 
     // Control Event Mouseover

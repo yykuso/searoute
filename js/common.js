@@ -339,10 +339,33 @@ map.on('load', async () => {
     };
     // OverLayer
     const mapOverLayer = {
-        port_layers: '港湾情報',
-        gsi_photo_tiles: '地理院 オルソ',
-        openseamap_tiles: 'OpenSeaMap',
-        openrailwaymap_tiles: 'OpenRailwayMap',
+        sea_route_layers: {
+            name: '航路情報',
+            visible: true,
+            layers: [
+                'sea_route_layers_outline',
+                'sea_route_layers_solidline',
+                'sea_route_layers_dashline',
+                'sea_route_layers_thinline',
+                'sea_route_layers_name'
+            ]
+        },
+        port_layers: {
+            name: '港湾情報',
+            visible: false,
+        },
+        gsi_photo_tiles: {
+            name: '地理院 オルソ',
+            visible: false,
+        },
+        openseamap_tiles: {
+            name: 'OpenSeaMap',
+            visible: false,
+        },
+        openrailwaymap_tiles: {
+            name: 'OpenRailwayMap',
+            visible: false,
+        },
     };
     // Layers Control
     let layers = new layersControl({
