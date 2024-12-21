@@ -1,0 +1,101 @@
+{
+"JP000101": {
+    "businessName": "関釜フェリー（釜関フェリー）",
+    "routeName": "下関〜釜山",
+    "url": "https://www.kampuferry.co.jp/passenger_info/schedule/index.html",
+    "information": null,
+    "note": null,
+    "frequency": 2,
+    "color": "#dc0000"
+},
+"JP000201": {
+    "businessName": "カメリアライン",
+    "routeName": "博多〜釜山",
+    "url": "https://www.camellia-line.co.jp/dia/",
+    "information": null,
+    "note": null,
+    "frequency": 2,
+    "color": "#007f3e"
+},
+"JP000301": {
+    "businessName": "ＪＲ九州高速船",
+    "routeName": "博多〜釜山",
+    "url": "https://www.jrbeetle.com/time-table/",
+    "information": "休止中",
+    "note": "suspend",
+    "frequency": 2,
+    "color": "#be0009"
+},
+"KR000101": {
+    "businessName": "パンスター（サンスターライン）",
+    "routeName": "釜山〜比田勝〜厳原",
+    "url": "https://www.panstar.jp/tsushimalink/",
+    "information": "PANSTAR TSUSHIMA LINK",
+    "note": null,
+    "frequency": 2,
+    "color": "#f08100"
+},
+"KR000102": {
+    "businessName": "パンスター（サンスターライン）",
+    "routeName": "釜山〜大阪南港",
+    "url": "https://www.panstar.jp/plyschedule/",
+    "information": "PANSTAR DREAM",
+    "note": null,
+    "frequency": 1,
+    "color": "#f08100"
+},
+"KR000201": {
+    "businessName": "스타라인（スターライン）",
+    "routeName": "釜山〜比田勝",
+    "url": "https://www.thenina.co.kr/html/?pcode=27",
+    "information": "NINA",
+    "note": null,
+    "frequency": 2,
+    "color": "#57bec8"
+},
+"KR000301": {
+    "businessName": "大亜高速海運",
+    "routeName": "釜山〜対馬",
+    "url": "http://www.daea.com/",
+    "information": "OCEAN FLOWER",
+    "note": "suspend",
+    "frequency": 1,
+    "color": "#6372d9"
+},
+"KR000401": {
+    "businessName": "DUWON商船",
+    "routeName": "境港〜東海〜ウラジオストク",
+    "url": "http://duwonship.iceserver.co.kr/en/reservation/schedule.asp",
+    "information": "EASTERN DREAM",
+    "note": null,
+    "frequency": 1,
+    "color": "#1765c5"
+},
+"RU000101": {
+    "businessName": "サハリン海洋汽船（北海道サハリン航路）",
+    "routeName": "コルサコフ～稚内",
+    "url": "https://www.city.wakkanai.hokkaido.jp/sangyo/saharin/teikikouro/",
+    "information": "季節限定・休止中",
+    "note": "suspend",
+    "frequency": 1,
+    "color": "#0a74ca"
+},
+"CN000101": {
+    "businessName": "日中国際フェリー",
+    "routeName": "上海〜神戸",
+    "url": "https://www.shinganjin.com/schedule/",
+    "information": null,
+    "note": null,
+    "frequency": 1,
+    "color": "#d32f2f"
+},
+"CN000102": {
+    "businessName": "日中国際フェリー",
+    "routeName": "上海〜大阪",
+    "url": "https://www.shinganjin.com/schedule/",
+    "information": null,
+    "note": null,
+    "frequency": 1,
+    "color": "#d32f2f"
+}
+}

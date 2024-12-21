@@ -305,6 +305,105 @@ map.on('load', async () => {
         }
     });
 
+    // 航路情報(国際)
+    var seaRouteGeojson = await loadAndMergeData(
+        './data/internationalSeaRoute.geojson',
+        './data/internationalSeaRouteDetails.json',
+        'routeId'
+    );
+    map.addSource('international_sea_route_layers', {
+        type: 'geojson',
+        data: seaRouteGeojson,
+    });
+    map.addLayer({
+        // 線のアウトライン
+        id: 'international_sea_route_layers_outline',
+        type: 'line',
+        source: 'international_sea_route_layers',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        paint: {
+            'line-color': '#FFFFFF',
+            'line-width': 9,
+            'line-opacity': 0.5
+        }
+    });
+    map.addLayer({
+        // 実線
+        id: 'international_sea_route_layers_solidline',
+        type: 'line',
+        source: 'international_sea_route_layers',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        filter: ['==', ['get', 'note'], null],
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#000000'],
+            'line-width': ['coalesce', ['get', 'frequency'], 3],
+            'line-dasharray': [1, 0],
+        }
+    });
+    map.addLayer({
+        // 破線
+        id: 'international_sea_route_layers_dashline',
+        type: 'line',
+        source: 'international_sea_route_layers',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        filter: ['==', ['get', 'note'], 'season'],
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#000000'],
+            'line-width': ['coalesce', ['get', 'frequency'], 3],
+            'line-dasharray': [1, 2],
+        }
+    });
+    map.addLayer({
+        // 点線
+        id: 'international_sea_route_layers_thinline',
+        type: 'line',
+        source: 'international_sea_route_layers',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        filter: ['==', ['get', 'note'], 'suspend'],
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#000000'],
+            'line-width': ['coalesce', ['get', 'frequency'], 1],
+            'line-dasharray': [1, 4],
+        }
+    });
+    map.addLayer({
+        // キャプション
+        id: 'international_sea_route_layers_name',
+        type: 'symbol',
+        source: 'international_sea_route_layers',
+        layout: {
+            'symbol-placement': 'line',
+            "text-offset": [0, 1],
+            'text-field': [
+                'format', 
+                ['get', 'businessName'],{},
+                ' (',{},
+                ['get', 'routeName'],{},
+                ') ',{}
+            ],
+            'text-font': ['Noto Sans CJK JP Regular'],
+            'text-size': 9
+        },
+        paint: {
+            'text-color': ['coalesce', ['get', 'color'], '#000000'],
+            'text-halo-color': '#FFFFFF',
+            'text-halo-width': 2,
+            'text-halo-blur': 2
+        }
+    });
+    
     // 港湾情報
     const anchorImage = await map.loadImage('./img/anchor.png');
     map.addImage('anchor_marker', anchorImage.data);
@@ -348,6 +447,17 @@ map.on('load', async () => {
                 'sea_route_layers_dashline',
                 'sea_route_layers_thinline',
                 'sea_route_layers_name'
+            ]
+        },
+        international_sea_route_layers: {
+            name: '国際航路',
+            visible: false,
+            layers: [
+                'international_sea_route_layers_outline',
+                'international_sea_route_layers_solidline',
+                'international_sea_route_layers_dashline',
+                'international_sea_route_layers_thinline',
+                'international_sea_route_layers_name'
             ]
         },
         port_layers: {
@@ -395,6 +505,7 @@ map.on('click', (event) => {
     if (!map.queryRenderedFeatures(event.point, { 
             layers: [
                 'sea_route_layers_outline',
+                'international_sea_route_layers_outline',
                 'port_layers',
             ]
         }).length) {
@@ -442,6 +553,49 @@ map.on('mouseenter', 'sea_route_layers_outline', () => {
 
 // 航路ライン mouse leave
 map.on('mouseleave', 'sea_route_layers_outline', () => {
+    map.getCanvas().style.cursor = '';
+});
+
+// ########################################
+//  国際航路ライン イベント
+// ########################################
+// 航路ラインをクリックしたときのイベントを登録
+map.on('click', 'international_sea_route_layers_outline', (event) => {
+    // クリックしたラインのプロパティを取得
+    const properties = event.features[0].properties;
+
+    // ポップアップ内容
+    const popupContent = `
+        <div class="searoute-popup-box">
+            <div class="searoute-businessname">${properties.businessName}</div>
+            <hr size="5" color="${properties.color}">
+            <div class="searoute-title highlight-yellow">航路</div>
+            <div class="searoute-detail">${properties.routeName}</div>
+            <div class="searoute-title highlight-yellow">選択部分</div>
+            <div class="searoute-detail">${properties.portName1}～${properties.portName2}</div>
+            <div class="searoute-title highlight-yellow">情報</div>
+            <div class="searoute-detail">${properties.information || "なし"}</div>
+            <div class="searoute-title highlight-yellow">リンク</div>
+            <div class="searoute-detail"><a href="${properties.url}" class="expanded button" target="_blank">運航スケジュール</a></div>
+        </div>
+    `;
+
+    popup.remove();
+
+    // ポップアップをクリック地点に表示
+    popup
+        .setLngLat(event.lngLat)
+        .setHTML(popupContent)
+        .setMaxWidth("240px")
+        .addTo(map);
+});
+// 航路ライン mouse enter
+map.on('mouseenter', 'international_sea_route_layers_outline', () => {
+    map.getCanvas().style.cursor = 'pointer';
+});
+
+// 航路ライン mouse leave
+map.on('mouseleave', 'international_sea_route_layers_outline', () => {
     map.getCanvas().style.cursor = '';
 });
 
