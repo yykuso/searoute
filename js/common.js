@@ -144,6 +144,28 @@ map.on('load', async () => {
         },
     });
 
+    // TransportMap
+    map.addSource('transportmap_tiles', {
+        type: 'raster',
+        tiles: [
+            'https://a.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=e2a13af0ede642faa4f3e766cc345f72',
+            'https://b.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=e2a13af0ede642faa4f3e766cc345f72',
+            'https://c.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=e2a13af0ede642faa4f3e766cc345f72',
+        ],
+        tileSize: 256,
+        attribution: "Map style: &copy; <a href='https://thunderforest.com' target='_blank'>Thunderforest</a>",
+    });
+    map.addLayer({
+        id: 'transportmap_tiles',
+        type: 'raster',
+        source: 'transportmap_tiles',
+        minzoom: 2,
+        maxzoom: 19,
+        layout: {
+            'visibility': 'none',
+        },
+    });
+
     // ####################
     //  Layers
     // GSI Seamlessphoto
@@ -191,6 +213,7 @@ map.on('load', async () => {
         tiles: [
             'https://a.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
             'https://b.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
+            'https://c.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
         ],
         tileSize: 256,
         attribution: "Map style: &copy; <a href='https://www.OpenRailwayMap.org' target='_blank'>OpenRailwayMap</a>",
@@ -432,6 +455,7 @@ map.on('load', async () => {
     const mapBaseLayer = {
         osm_tiles: 'OpenStreetMap',
         otm_tiles: 'OpenTopoMap',
+        transportmap_tiles: 'TransportMap',
         gsi_pale_tiles: '地理院 淡色地図',
         gsi_std_tiles: '地理院 標準地図',
         gsi_blank_tiles: '地理院 白地図',
