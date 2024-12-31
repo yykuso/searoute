@@ -345,7 +345,8 @@ map.on('load', async () => {
         source: 'international_sea_route_layers',
         layout: {
             'line-join': 'round',
-            'line-cap': 'round'
+            'line-cap': 'round',
+            'visibility': 'none',
         },
         paint: {
             'line-color': '#FFFFFF',
@@ -360,7 +361,8 @@ map.on('load', async () => {
         source: 'international_sea_route_layers',
         layout: {
             'line-join': 'round',
-            'line-cap': 'round'
+            'line-cap': 'round',
+            'visibility': 'none',
         },
         filter: ['==', ['get', 'note'], null],
         paint: {
@@ -376,7 +378,8 @@ map.on('load', async () => {
         source: 'international_sea_route_layers',
         layout: {
             'line-join': 'round',
-            'line-cap': 'round'
+            'line-cap': 'round',
+            'visibility': 'none',
         },
         filter: ['==', ['get', 'note'], 'season'],
         paint: {
@@ -392,7 +395,8 @@ map.on('load', async () => {
         source: 'international_sea_route_layers',
         layout: {
             'line-join': 'round',
-            'line-cap': 'round'
+            'line-cap': 'round',
+            'visibility': 'none',
         },
         filter: ['==', ['get', 'note'], 'suspend'],
         paint: {
@@ -417,13 +421,15 @@ map.on('load', async () => {
                 ') ',{}
             ],
             'text-font': ['Noto Sans CJK JP Regular'],
-            'text-size': 9
+            'text-size': 9,
+            'visibility': 'none',
         },
         paint: {
             'text-color': ['coalesce', ['get', 'color'], '#000000'],
             'text-halo-color': '#FFFFFF',
             'text-halo-width': 2,
-            'text-halo-blur': 2
+            'text-halo-blur': 2,
+            'visibility': 'none',
         }
     });
     
@@ -556,6 +562,8 @@ map.on('click', 'sea_route_layers_outline', (event) => {
             <div class="searoute-detail">${properties.portName1}～${properties.portName2}</div>
             <div class="searoute-title highlight-yellow">情報</div>
             <div class="searoute-detail">${properties.information || "なし"}</div>
+            <div class="searoute-title highlight-yellow">船舶</div>
+            <div class="searoute-detail">${properties.shipName || "-"}</div>
             <div class="searoute-title highlight-yellow">リンク</div>
             <div class="searoute-detail"><a href="${properties.url}" class="expanded button" target="_blank">運航スケジュール</a></div>
         </div>
@@ -599,6 +607,8 @@ map.on('click', 'international_sea_route_layers_outline', (event) => {
             <div class="searoute-detail">${properties.portName1}～${properties.portName2}</div>
             <div class="searoute-title highlight-yellow">情報</div>
             <div class="searoute-detail">${properties.information || "なし"}</div>
+            <div class="searoute-title highlight-yellow">船舶</div>
+            <div class="searoute-detail">${properties.shipName || "-"}</div>
             <div class="searoute-title highlight-yellow">リンク</div>
             <div class="searoute-detail"><a href="${properties.url}" class="expanded button" target="_blank">運航スケジュール</a></div>
         </div>
