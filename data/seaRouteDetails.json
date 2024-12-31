@@ -1,17 +1,8 @@
 {
-"comment": {
-  "businessName": "運行会社名",
-  "routeName": "航路全体の名称",
-  "url": "時刻表へのURL",
-  "information": "運行形態の注釈、ない場合はnull",
-  "note": "季節運行・定期運行はseason、休止中はsuspend、それ以外はnull",
-  "frequency": "運行頻度、1日1往復未満は1、1・2往復以上は2、3往復以上は3",
-  "color": "航路のカラー"
-},
 "10101": {
   "businessName": "ハートランドフェリー",
   "routeName": "稚内～利礼島（鴛泊）～礼文（香深）",
-  "url": "http://www.heartlandferry.jp/timetable/",
+  "url": "https://heartlandferry.jp/timetable/",
   "information": null,
   "note": null,
   "frequency": 3,
@@ -20,7 +11,7 @@
 "10102": {
   "businessName": "ハートランドフェリー",
   "routeName": "利礼島（沓形）～礼文（香深）",
-  "url": "http://www.heartlandferry.jp/timetable/",
+  "url": "https://heartlandferry.jp/timetable/",
   "information": "6月～9月",
   "note": "season",
   "frequency": 1,
@@ -29,7 +20,7 @@
 "10103": {
   "businessName": "オクシリアイランドフェリー",
   "routeName": "江差～奥尻島",
-  "url": "http://www.heartlandferry.jp/timetable/",
+  "url": "https://heartlandferry.jp/timetable/",
   "information": null,
   "note": null,
   "frequency": 2,
@@ -38,7 +29,7 @@
 "10104": {
   "businessName": "オクシリアイランドフェリー",
   "routeName": "瀬棚～奥尻島",
-  "url": "http://www.heartlandferry.jp/timetable/",
+  "url": "https://heartlandferry.jp/timetable/",
   "information": "運航休止",
   "note": "suspend",
   "frequency": 1,
@@ -881,18 +872,18 @@
   "frequency": 3,
   "color": "#1e73be"
 },
-"240302": {
+"240301": {
   "businessName": "鳥羽市",
-  "routeName": "鳥羽～答志島（和具・答志）",
+  "routeName": "鳥羽～坂手島",
   "url": "https://www.city.toba.mie.jp/soshiki/t_kanri/gyomu/doro_kotsu/kokyo_kotsu/3151.html",
   "information": null,
   "note": null,
   "frequency": 3,
   "color": "#00a99d"
 },
-"240301": {
+"240302": {
   "businessName": "鳥羽市",
-  "routeName": "鳥羽～坂手島",
+  "routeName": "鳥羽～答志島（和具・答志）",
   "url": "https://www.city.toba.mie.jp/soshiki/t_kanri/gyomu/doro_kotsu/kokyo_kotsu/3151.html",
   "information": null,
   "note": null,
@@ -3599,15 +3590,6 @@
   "frequency": 3,
   "color": "#0327f3"
 },
-"461702": {
-  "businessName": "瀬戸内町",
-  "routeName": "古仁屋～請島～与路島",
-  "url": "https://www.town.setouchi.lg.jp/senpaku/jikokuhyou.html",
-  "information": null,
-  "note": null,
-  "frequency": 2,
-  "color": "#ff0000"
-},
 "461701": {
   "businessName": "瀬戸内町",
   "routeName": "古仁屋～加計呂麻島（瀬相）",
@@ -3616,6 +3598,15 @@
   "note": null,
   "frequency": 3,
   "color": "#50a0c6"
+},
+"461702": {
+  "businessName": "瀬戸内町",
+  "routeName": "古仁屋～請島～与路島",
+  "url": "https://www.town.setouchi.lg.jp/senpaku/jikokuhyou.html",
+  "information": null,
+  "note": null,
+  "frequency": 2,
+  "color": "#ff0000"
 },
 "461801": {
   "businessName": "鹿児島市",
