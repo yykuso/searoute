@@ -1,13 +1,17 @@
+import { updateBaseMap, toggleOverLayer } from './common.js';
+
 // レイヤーコントロールボタンの制御
 export default class layersControl {
     constructor(options) {
         this.baseLayers = options.baseLayers || null;
         this.overLayers = options.overLayers || null;
+        this.geojsonLayers = options.geojsonLayers || null;
+        this.defaultBaseLayer = options.defaultBaseLayer || null;
     }
     
     onAdd(map) {
         this.map = map;
-        this.layersControlAdd();
+        this.addLayersControl();
         return this.container;
     }
 
@@ -22,24 +26,23 @@ export default class layersControl {
     //     - div toggle
     //     - div list (baseLayers / border / overLayers)
     //
-    layersControlAdd() {
+    addLayersControl() {
         // Control 全体
         this.container = document.createElement('div');
         this.container.className = 'maplibregl-ctrl maplibregl-ctrl-group';
         this.container.id = 'layers-control';
 
-        // Toggle
+        // ボタン
         const toggleContainer = document.createElement('div');
         toggleContainer.className = 'maplibregl-ctrl-layers-toggle';
         this.container.appendChild(toggleContainer);
         this.container.addEventListener('mouseover', this.handleOver.bind(this));
         this.container.addEventListener('mouseout', this.handleOut.bind(this));
-
         const toggleIcon = document.createElement('i');
         toggleIcon.className = 'fa-solid fa-layer-group fa-lg';
         toggleContainer.appendChild(toggleIcon);
 
-        // List
+        // Radioボタン
         const controlContainer = document.createElement('div');
         controlContainer.className = 'maplibregl-ctrl-layers-list';
         this.container.appendChild(controlContainer);
@@ -49,58 +52,74 @@ export default class layersControl {
         if (this.baseLayers) {
             Object.keys(this.baseLayers).map((layer) => {
                 const containerDiv = document.createElement('div');
-                this.radioButtonControlAdd(containerDiv, layer);
+                this.addRadioButton(containerDiv, layer);
                 controlContainer.appendChild(containerDiv);
             });
         }
+
         // border line
         if (this.baseLayers && this.overLayers) {
             const hr = document.createElement('hr');
             controlContainer.appendChild(hr);
         }
+        
         // Over Layers
         if (this.overLayers) {
             Object.keys(this.overLayers).map((layer) => {
                 const containerDiv = document.createElement('div');
                 const isVisible = this.overLayers[layer].visible || false;
-                if (typeof this.overLayers[layer] === 'object' && this.overLayers[layer].layers) {
-                    this.checkBoxControlAdd(containerDiv, layer, isVisible, this.overLayers[layer].layers);
-                } else {
-                    this.checkBoxControlAdd(containerDiv, layer, isVisible);
-                }
+                this.addCheckBoxControl(containerDiv, layer, isVisible, this.overLayers[layer].name, 'overLayer');
+                controlContainer.appendChild(containerDiv);
+            });
+        }
+        
+        // border line
+        if (this.overLayers && this.geojsonLayers) {
+            const hr = document.createElement('hr');
+            controlContainer.appendChild(hr);
+        }
+        
+        // Over Layers
+        if (this.geojsonLayers) {
+            Object.keys(this.geojsonLayers).map((layer) => {
+                const containerDiv = document.createElement('div');
+                const isVisible = this.geojsonLayers[layer].visible || false;
+                this.addCheckBoxControl(containerDiv, layer, isVisible, this.geojsonLayers[layer].name, 'geojsonLayer');
                 controlContainer.appendChild(containerDiv);
             });
         }
     }
 
     // Make Radio Button (Base Layers)
-    radioButtonControlAdd(container, layerId) {
+    addRadioButton(container, layerId) {
         const radioButton = document.createElement('input');
         radioButton.setAttribute('type', 'radio');
         radioButton.id = layerId;
+        radioButton.name = 'mapStyle';
         
         // Initialize (Default Base Layers)
-        const initLayer = Object.keys(this.baseLayers)[0];
-        if (layerId === initLayer) {
+        const initLayer = this.defaultBaseLayer;
+        if (initLayer == null) {
             radioButton.checked = true;
-            this.map.setLayoutProperty(layerId, 'visibility', 'visible');
-        } else {
-            this.map.setLayoutProperty(layerId, 'visibility', 'none');
+            this.defaultBaseLayer = layerId;
+            updateBaseMap(Number(layerId));
+        } else if (Number(layerId) === initLayer) {
+            radioButton.checked = true;
+            updateBaseMap(Number(layerId));
         }
         container.appendChild(radioButton);
         
         // Event
         radioButton.addEventListener('change', (event) => {
             // View Selected Layers
-            event.target.checked = true;
-            this.map.setLayoutProperty(layerId, 'visibility', 'visible');
+            // event.target.checked = true;
+            updateBaseMap(Number(layerId));
             // Unview Selected Layers
-            Object.keys(this.baseLayers).map((layer) => {
-                if (layer !== event.target.id) {
-                    document.getElementById(layer).checked = false;
-                    this.map.setLayoutProperty(layer, 'visibility', 'none');
-                }
-            });
+            // Object.keys(this.baseLayers).map((layer) => {
+            //     if (layer !== event.target.id) {
+            //         document.getElementById(layer).checked = false;
+            //     }
+            // });
         });
         
         // Add Layers Name
@@ -111,34 +130,28 @@ export default class layersControl {
     }
 
     // Make CheckBox Button (Overlay Layers)
-    checkBoxControlAdd(container, layerId, isVisible, subLayers = []) {
+    addCheckBoxControl(container, layerId, isVisible, displayName, name) {
         const checkBox = document.createElement('input');
         checkBox.setAttribute('type', 'checkbox');
         checkBox.id = layerId;
+        checkBox.name = name;
 
         // Initialize (Default Overlay Layers)
         if (isVisible) {
             checkBox.checked = true;
-            this.setLayerVisibility(layerId, 'visible', subLayers);
-        } else {
-            this.setLayerVisibility(layerId, 'none', subLayers);
         }
         container.appendChild(checkBox);
         
         // Event
         checkBox.addEventListener('change', (event) => {
-            // View or Unview Selected Layers
-            if (event.target.checked) {
-                this.setLayerVisibility(layerId, 'visible', subLayers);
-            } else {
-                this.setLayerVisibility(layerId, 'none', subLayers);
-            }
+            toggleOverLayer(layerId);
+            checkBox.check = true;
         });
 
         // Add Layers Name
         const layerName = document.createElement('label');
         layerName.htmlFor = layerId;
-        layerName.appendChild(document.createTextNode(this.overLayers[layerId].name || this.overLayers[layerId]));
+        layerName.appendChild(document.createTextNode(displayName));
         container.appendChild(layerName);
     }
 

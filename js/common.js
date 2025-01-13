@@ -1,672 +1,325 @@
 import layersControl from './layersControl.js';
-import { loadAndMergeData } from './dataLoader.js';
+import { addRasterLayer } from './rasterLayers.js';
+import { addGeoJsonLayer, addMarker, addResetClickEvent } from './geoJsonLayers.js';
+import { initCenterZoom, setCookie } from './cookieControler.js';
 
-// ########################################
-//  URL Query Parameter
-// ########################################
-// URLから緯度・経度・ズームを取得
-function getMapStateFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    const lat = parseFloat(params.get("lat")) || 35.3622;
-    const lng = parseFloat(params.get("lng")) || 138.7313;
-    const zoom = parseFloat(params.get("zoom")) || 4;
-    return { lat, lng, zoom };
-}
-
-// URLに緯度・経度・ズームを反映
-function updateURL(lat, lng, zoom) {
-    const params = new URLSearchParams();
-    params.set("lat", lat.toFixed(5));
-    params.set("lng", lng.toFixed(5));
-    params.set("zoom", zoom.toFixed(2));
-    history.replaceState(null, "", `?${params.toString()}`);
-}
-
-// URLから初期状態を取得
-const { lat, lng, zoom } = getMapStateFromURL();
-
-
-// ########################################
-//  Map
-// ########################################
-const map = new maplibregl.Map({
-    container: 'map',
-    center: [lng, lat],
-    zoom: zoom,
-    // style: 'https://tile.openstreetmap.jp/styles/osm-bright-ja/style.json'
-    style: {
-        version: 8,
-        sources: {},
-        layers: [],
-        glyphs: 'https://glyphs.geolonia.com/{fontstack}/{range}.pbf'
-    },
-});
+/* マップの命名規則
+    VectorTile = 背景マップ   = style
+    RasterTile = オーバーレイ = layer = id: 'tile_*'
+    GeoJSON    = オーバーレイ = layer = id: 'geojson_*'
+*/
 
 // Map本体
-map.on('load', async () => {
-    // ####################
-    //  Tiles
-    const osmAttribution = "© <a href='https://www.openstreetmap.org/copyright/' target='_blank'>OpenStreetMap</a> contributors";
-    const gsiAttribution = "<a href='https://maps.gsi.go.jp/development/ichiran.html' target='_blank'>国土地理院</a>";
+export var map = null;
+export const thunderforestApikey = 'e2a13af0ede642faa4f3e766cc345f72';
 
-    // OpenStreetMap
-    map.addSource('osm_tiles', {
-        type: 'raster',
-        tiles: [
-            'https://a.tile.openstreetmap.jp/{z}/{x}/{y}.png',
-            'https://b.tile.openstreetmap.jp/{z}/{x}/{y}.png',
-            'https://c.tile.openstreetmap.jp/{z}/{x}/{y}.png',
-        ],
-        tileSize: 256,
-        attribution: osmAttribution,
-    });
-    map.addLayer({
-        id: 'osm_tiles',
-        type: 'raster',
-        source: 'osm_tiles',
-        minzoom: 2,
-        maxzoom: 18,
-    });
+// マップスタイル
+export const mapStyle = {
+    "EMPTY_MAP": 0,
+    "OSM_BRIGHT_MAP": 10,
+    "OSM_PLANET_MAP": 11,
+    "OTM_MAP": 12,
+    "OPEN_SEA_MAP": 13,
+    "RAILWAY_MAP": 14,
+    "GSI_STD_MAP": 20,
+    "GSI_PALE_MAP": 21,
+    "GSI_BLANK_MAP": 22,
+    "GSI_PHOTO_MAP": 23,
+    "GSI_RELIEF_MAP": 24,
+    "TRANSPORT_MAP": 30,
+}
 
-    // OpenTopoMap
-    map.addSource('otm_tiles', {
-        type: 'raster',
-        tiles: [
-            'https://a.tile.opentopomap.org/{z}/{x}/{y}.png',
-            'https://b.tile.opentopomap.org/{z}/{x}/{y}.png',
-            'https://c.tile.opentopomap.org/{z}/{x}/{y}.png',
-        ],
-        tileSize: 256,
-        attribution: osmAttribution,
-    });
-    map.addLayer({
-        id: 'otm_tiles',
-        type: 'raster',
-        source: 'otm_tiles',
-        minzoom: 2,
-        maxzoom: 18,
-        layout: {
-            'visibility': 'none',
-        },
-    });
+// レイヤーの表示優先順位
+export const layerPriorities = [
+    'tile_gsi_photo',
+    'tile_gsi_relief',
+    'tile_railwaymap',
+    'tile_openseamap',
+    'geojson_sea_route',
+    'geojson_international_sea_route',
+    'geojson_port',
+];
 
-    // GSI Pale
-    map.addSource('gsi_pale_tiles', {
-        type: 'raster',
-        tiles: ['https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png'],
-        tileSize: 256,
-        attribution: gsiAttribution,
-    });
-    map.addLayer({
-        id: 'gsi_pale_tiles',
-        type: 'raster',
-        source: 'gsi_pale_tiles',
-        minzoom: 2,
-        maxzoom: 18,
-        layout: {
-            'visibility': 'none',
-        },
-    });
+// 現在の状態
+var currentMap = mapStyle["EMPTY_MAP"];
+var currentLayer = [];
 
-    // GSI Std
-    map.addSource('gsi_std_tiles', {
-        type: 'raster',
-        tiles: ['https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png'],
-        tileSize: 256,
-        attribution: gsiAttribution,
-    });
-    map.addLayer({
-        id: 'gsi_std_tiles',
-        type: 'raster',
-        source: 'gsi_std_tiles',
-        minzoom: 2,
-        maxzoom: 18,
-        layout: {
-            'visibility': 'none',
-        },
-    });
+// 初期化
+initMap();
 
-    // GSI Blank
-    map.addSource('gsi_blank_tiles', {
-        type: 'raster',
-        tiles: ['https://cyberjapandata.gsi.go.jp/xyz/blank/{z}/{x}/{y}.png'],
-        tileSize: 256,
-        attribution: gsiAttribution,
-    });
-    map.addLayer({
-        id: 'gsi_blank_tiles',
-        type: 'raster',
-        source: 'gsi_blank_tiles',
-        minzoom: 5,
-        maxzoom: 18,
-        layout: {
-            'visibility': 'none',
-        },
-    });
+toggleOverLayer('geojson_sea_route')
 
-    // TransportMap
-    map.addSource('transportmap_tiles', {
-        type: 'raster',
-        tiles: [
-            'https://a.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=e2a13af0ede642faa4f3e766cc345f72',
-            'https://b.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=e2a13af0ede642faa4f3e766cc345f72',
-            'https://c.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=e2a13af0ede642faa4f3e766cc345f72',
-        ],
-        tileSize: 256,
-        attribution: "Map style: &copy; <a href='https://thunderforest.com' target='_blank'>Thunderforest</a>",
-    });
-    map.addLayer({
-        id: 'transportmap_tiles',
-        type: 'raster',
-        source: 'transportmap_tiles',
-        minzoom: 2,
-        maxzoom: 19,
-        layout: {
-            'visibility': 'none',
-        },
-    });
-
-    // ####################
-    //  Layers
-    // GSI Seamlessphoto
-    map.addSource('gsi_photo_tiles', {
-        type: 'raster',
-        tiles: ['https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg'],
-        tileSize: 256,
-        attribution: gsiAttribution,
-    });
-    map.addLayer({
-        id: 'gsi_photo_tiles',
-        type: 'raster',
-        source: 'gsi_photo_tiles',
-        minzoom: 2,
-        maxzoom: 18,
-        paint: {
-            'raster-opacity': 0.5,
-        },
-        layout: {
-            'visibility': 'none',
-        },
-    });
-
-    // OpenSeaMap
-    map.addSource('openseamap_tiles', {
-        type: 'raster',
-        tiles: ['https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png'],
-        tileSize: 256,
-        attribution: "Map style: <a href='https://www.openseamap.org' target='_blank'>OpenSeaMap</a> contributors",
-    });
-    map.addLayer({
-        id: 'openseamap_tiles',
-        type: 'raster',
-        source: 'openseamap_tiles',
-        minzoom: 2,
-        maxzoom: 18,
-        layout: {
-            'visibility': 'none',
-        },
-    });
-
-    // OpenRailwayMap
-    map.addSource('openrailwaymap_tiles', {
-        type: 'raster',
-        tiles: [
-            'https://a.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
-            'https://b.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
-            'https://c.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
-        ],
-        tileSize: 256,
-        attribution: "Map style: &copy; <a href='https://www.OpenRailwayMap.org' target='_blank'>OpenRailwayMap</a>",
-    });
-    map.addLayer({
-        id: 'openrailwaymap_tiles',
-        type: 'raster',
-        source: 'openrailwaymap_tiles',
-        minzoom: 2,
-        maxzoom: 19,
-        layout: {
-            'visibility': 'none',
-        },
-    });
-
-    // 航路情報
-    var seaRouteGeojson = await loadAndMergeData(
-        './data/seaRoute.geojson',
-        './data/seaRouteDetails.json',
-        'routeId'
-    );
-    map.addSource('sea_route_layers', {
-        type: 'geojson',
-        data: seaRouteGeojson,
-    });
-    map.addLayer({
-        // 線のアウトライン
-        id: 'sea_route_layers_outline',
-        type: 'line',
-        source: 'sea_route_layers',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        paint: {
-            'line-color': '#FFFFFF',
-            'line-width': 9,
-            'line-opacity': 0.5
-        }
-    });
-    map.addLayer({
-        // 実線
-        id: 'sea_route_layers_solidline',
-        type: 'line',
-        source: 'sea_route_layers',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], null],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 3],
-            'line-dasharray': [1, 0],
-        }
-    });
-    map.addLayer({
-        // 破線
-        id: 'sea_route_layers_dashline',
-        type: 'line',
-        source: 'sea_route_layers',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], 'season'],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 3],
-            'line-dasharray': [1, 2],
-        }
-    });
-    map.addLayer({
-        // 点線
-        id: 'sea_route_layers_thinline',
-        type: 'line',
-        source: 'sea_route_layers',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], 'suspend'],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 1],
-            'line-dasharray': [1, 4],
-        }
-    });
-    map.addLayer({
-        // キャプション
-        id: 'sea_route_layers_name',
-        type: 'symbol',
-        source: 'sea_route_layers',
-        layout: {
-            'symbol-placement': 'line',
-            "text-offset": [0, 1],
-            'text-field': [
-                'format', 
-                ['get', 'businessName'],{},
-                ' (',{},
-                ['get', 'routeName'],{},
-                ') ',{}
-            ],
-            'text-font': ['Noto Sans CJK JP Regular'],
-            'text-size': 9
-        },
-        paint: {
-            'text-color': ['coalesce', ['get', 'color'], '#000000'],
-            'text-halo-color': '#FFFFFF',
-            'text-halo-width': 2,
-            'text-halo-blur': 2
-        }
-    });
-
-    // 航路情報(国際)
-    var seaRouteGeojson = await loadAndMergeData(
-        './data/internationalSeaRoute.geojson',
-        './data/internationalSeaRouteDetails.json',
-        'routeId'
-    );
-    map.addSource('international_sea_route_layers', {
-        type: 'geojson',
-        data: seaRouteGeojson,
-    });
-    map.addLayer({
-        // 線のアウトライン
-        id: 'international_sea_route_layers_outline',
-        type: 'line',
-        source: 'international_sea_route_layers',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round',
-            'visibility': 'none',
-        },
-        paint: {
-            'line-color': '#FFFFFF',
-            'line-width': 9,
-            'line-opacity': 0.5
-        }
-    });
-    map.addLayer({
-        // 実線
-        id: 'international_sea_route_layers_solidline',
-        type: 'line',
-        source: 'international_sea_route_layers',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round',
-            'visibility': 'none',
-        },
-        filter: ['==', ['get', 'note'], null],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 3],
-            'line-dasharray': [1, 0],
-        }
-    });
-    map.addLayer({
-        // 破線
-        id: 'international_sea_route_layers_dashline',
-        type: 'line',
-        source: 'international_sea_route_layers',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round',
-            'visibility': 'none',
-        },
-        filter: ['==', ['get', 'note'], 'season'],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 3],
-            'line-dasharray': [1, 2],
-        }
-    });
-    map.addLayer({
-        // 点線
-        id: 'international_sea_route_layers_thinline',
-        type: 'line',
-        source: 'international_sea_route_layers',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round',
-            'visibility': 'none',
-        },
-        filter: ['==', ['get', 'note'], 'suspend'],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 1],
-            'line-dasharray': [1, 4],
-        }
-    });
-    map.addLayer({
-        // キャプション
-        id: 'international_sea_route_layers_name',
-        type: 'symbol',
-        source: 'international_sea_route_layers',
-        layout: {
-            'symbol-placement': 'line',
-            "text-offset": [0, 1],
-            'text-field': [
-                'format', 
-                ['get', 'businessName'],{},
-                ' (',{},
-                ['get', 'routeName'],{},
-                ') ',{}
-            ],
-            'text-font': ['Noto Sans CJK JP Regular'],
-            'text-size': 9,
-            'visibility': 'none',
-        },
-        paint: {
-            'text-color': ['coalesce', ['get', 'color'], '#000000'],
-            'text-halo-color': '#FFFFFF',
-            'text-halo-width': 2,
-            'text-halo-blur': 2,
-            'visibility': 'none',
-        }
-    });
+// マップの初期化
+function initMap() {
+    // デフォルト設定
+    const [mapCenter, mapZoom] = initCenterZoom();
     
-    // 港湾情報
-    const anchorImage = await map.loadImage('./img/anchor.png');
-    map.addImage('anchor_marker', anchorImage.data);
-    map.addSource('port_layers', {
-        type: 'geojson',
-        data: './data/portData.geojson',
-        attribution: "<a href='https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-C02-v3_2.html' target='_blank'>「国土数値情報（港湾データ）」</a>を加工して作成",
-    });
-    map.addLayer({
-        id: 'port_layers',
-        type: 'symbol',
-        source: 'port_layers',
-        layout: {
-            'icon-image': 'anchor_marker',
-            'icon-size': 0.3,
-            'text-field': ['get', 'Name'],
-            'text-font': ['Noto Sans CJK JP Regular'],
-            'text-size': 12,
-            'text-offset': [0, 0.8],
-            'text-anchor': 'top',
-            'visibility': 'none',
-        },
+    // mapLibreGLの初期化
+    map =  new maplibregl.Map({
+        container: 'map',
+        style: getMapStyle(currentMap), // 地図のスタイル
+        center: mapCenter, // 中心座標
+        zoom: mapZoom, // ズームレベル
+        pitch: 0 // 傾き
     });
 
-    // BaseLayer
-    const mapBaseLayer = {
-        osm_tiles: 'OpenStreetMap',
-        otm_tiles: 'OpenTopoMap',
-        transportmap_tiles: 'TransportMap',
-        gsi_pale_tiles: '地理院 淡色地図',
-        gsi_std_tiles: '地理院 標準地図',
-        gsi_blank_tiles: '地理院 白地図',
-    };
-    // OverLayer
-    const mapOverLayer = {
-        sea_route_layers: {
-            name: '航路情報',
-            visible: true,
-            layers: [
-                'sea_route_layers_outline',
-                'sea_route_layers_solidline',
-                'sea_route_layers_dashline',
-                'sea_route_layers_thinline',
-                'sea_route_layers_name'
-            ]
-        },
-        international_sea_route_layers: {
-            name: '国際航路',
-            visible: false,
-            layers: [
-                'international_sea_route_layers_outline',
-                'international_sea_route_layers_solidline',
-                'international_sea_route_layers_dashline',
-                'international_sea_route_layers_thinline',
-                'international_sea_route_layers_name'
-            ]
-        },
-        port_layers: {
-            name: '港湾情報',
-            visible: false,
-        },
-        gsi_photo_tiles: {
-            name: '地理院 オルソ',
-            visible: false,
-        },
-        openseamap_tiles: {
-            name: 'OpenSeaMap',
-            visible: false,
-        },
-        openrailwaymap_tiles: {
-            name: 'OpenRailwayMap',
-            visible: false,
-        },
-    };
-    // Layers Control
-    let layers = new layersControl({
-        baseLayers: mapBaseLayer,
-        overLayers: mapOverLayer,
+    // コントロールを追加
+    map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+    map.addControl(new maplibregl.GeolocateControl(), 'bottom-right');
+    map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
+
+    // 初期地図
+    // updateBaseMap(mapStyle["OSM_BRIGHT_MAP"]);
+
+    // 画面移動時に発火
+    map.on("moveend", () => {
+        const center = map.getCenter();
+        const zoom = map.getZoom();
+
+        // Cookieに保存
+        setCookie("mapCenter", JSON.stringify([center.lng, center.lat]), 30);
+        setCookie("mapZoom", zoom, 30);
     });
-    map.addControl(layers, 'top-right');
-});
 
-// Navigation Controls
-map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
-map.addControl(new maplibregl.GeolocateControl(), 'bottom-right');
-map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
+    // イベントを追加
+    addResetClickEvent();
+}
 
+/**
+ * マップのスタイルファイルを取得する関数
+ * RasterLayerの場合はEMPTYを返す
+ * @param {number} style - Style ID
+ * @returns {string} - Styleファイル
+ */
+function getMapStyle(style) {
+	switch (style) {
+		case mapStyle["OSM_PLANET_MAP"]:
+			return "https://tile.openstreetmap.jp/styles/openmaptiles/style.json";
+		case mapStyle["OSM_BRIGHT_MAP"]:
+			return "https://tile.openstreetmap.jp/styles/osm-bright-ja/style.json";
+        case mapStyle["GSI_STD_MAP"]:
+            return "https://gsi-cyberjapan.github.io/gsivectortile-mapbox-gl-js/std.json";
+        case mapStyle["GSI_PALE_MAP"]:
+            return "https://gsi-cyberjapan.github.io/gsivectortile-mapbox-gl-js/pale.json";
+        case mapStyle["GSI_BLANK_MAP"]:
+            return "https://gsi-cyberjapan.github.io/gsivectortile-mapbox-gl-js/blank.json";
+		case mapStyle["EMPTY_MAP"]:
+			return "./style/empty.json";
+        default:
+			return "./style/empty.json";
+	}
+}
 
-// ########################################
-// ポップアップ
-// ########################################
-// ポップアップ閉じるボタン表示、自動閉じ無効化
-const popup = new maplibregl.Popup({
-    closeButton: false,
-    closeOnClick: false,
-});
-
-// ライン・ポイント以外をクリックした場合、既存を閉じる
-map.on('click', (event) => {
-    if (!map.queryRenderedFeatures(event.point, { 
-            layers: [
-                'sea_route_layers_outline',
-                'international_sea_route_layers_outline',
-                'port_layers',
-            ]
-        }).length) {
-        popup.remove();
+// 背景マップの更新
+export function updateBaseMap(afterMap) {
+    
+    // 同じマップの場合は何もしない
+    if (currentMap == afterMap) {
+        return;
     }
+
+    // 現在がrasterの場合はレイヤーを削除
+    switch (currentMap) {
+        case mapStyle["OTM_MAP"]:
+            removeLayerSource("tile_otm", "tile_otm");
+            break;
+        case mapStyle["TRANSPORT_MAP"]:
+            removeLayerSource("tile_transportmap", "tile_transportmap");
+            break;
+    }
+
+    // マップスタイルを変更（rasterタイルの場合はEMPLY_MAP）
+    changeStyle(getMapStyle(afterMap));
+    currentMap = afterMap;
+
+    // rasterの場合はレイヤーを追加
+    map.once('styledata', () => {
+        switch (afterMap) {
+            case mapStyle["OTM_MAP"]:
+                addRasterLayer(mapStyle["OTM_MAP"]);
+                updateLayerOrder();
+                break;
+            case mapStyle["TRANSPORT_MAP"]:
+                addRasterLayer(mapStyle["TRANSPORT_MAP"]);
+                updateLayerOrder();
+                break;
+        }
+    });
+}
+
+// スタイルの変更
+async function changeStyle(newStyleJson) {
+
+    // OverLayer(Source,Layer)を保持する
+    map.setStyle(newStyleJson, {
+        transformStyle: (previousStyle, nextStyle) => {
+            var custom_layers = previousStyle.layers.filter(layer => {
+                return layer.id.startsWith('geojson') || layer.id.startsWith('tile');
+            });
+            var layers = nextStyle.layers.concat(custom_layers);
+        
+            var sources = nextStyle.sources;
+            for (const [key, value] of Object.entries(previousStyle.sources)) {
+                if (key.startsWith('geojson') || key.startsWith('tile')) {
+                    sources[key] = value;
+                }
+            }
+
+            return {
+                ...nextStyle,
+                sources: sources,
+                layers: layers,
+            };
+        },
+        diff: !currentMap,
+    });
+
+    // 画像データを再読み込み
+    if (currentLayer.includes('geojson_port')) {
+        addMarker('anchor_marker', './img/anchor.png');
+    }
+
+}
+
+// レイヤーの表示順を更新
+function updateLayerOrder() {
+    layerPriorities.forEach((layerId) => {
+        if (currentLayer.includes(layerId)) {
+            map.getStyle().layers.forEach((layer) => {
+                if (layer.id.startsWith(layerId)) {
+                    map.moveLayer(layer.id);
+                }
+            });
+        }
+    });
+}
+
+function removeLayerSource(layerId, sourceId = layerId) {
+	removeLayer(layerId);
+	removeSource(sourceId);
+}
+
+function removeLayer(layerId) {
+    const layers = map.getStyle().layers;
+    layers.forEach((layer) => {
+        if (layer.id.startsWith(layerId)) {
+            map.removeLayer(layer.id);
+        }
+    });
+    // currentLayerから削除
+    currentLayer = currentLayer.filter((layer) => layer !== layerId);
+}
+
+function removeSource(sourceId) {
+	if (map.getSource(sourceId)) {
+        map.removeSource(sourceId);
+    }
+}
+
+// GeoJsonLayerの表示切り替え
+export async function toggleOverLayer(layerId, sourceId = layerId) {
+    if (currentLayer.includes(layerId)) {
+        removeLayerSource(layerId, sourceId);
+        // removeClickEvent(layerId);
+    } else {
+        await addOverLayer(layerId);
+    }
+}
+
+/**
+ * OverLayer(Tile/GeoJson)を追加する関数
+ * @param {string} layerId - OverLayerID
+ */
+async function addOverLayer(layerId) {
+    if (layerId.startsWith('tile')) {
+        // Tileレイヤ
+        switch (layerId) {
+            case 'tile_gsi_photo':
+                addRasterLayer(mapStyle["GSI_PHOTO_MAP"]);
+                break;
+            case 'tile_gsi_relief':
+                addRasterLayer(mapStyle["GSI_RELIEF_MAP"]);
+                break;
+            case 'tile_openseamap':
+                addRasterLayer(mapStyle["OPEN_SEA_MAP"]);
+                break;
+            case 'tile_railwaymap':
+                addRasterLayer(mapStyle["RAILWAY_MAP"]);
+                break;
+            default:
+                console.log('[Error] Layer not found : addOverLayer( ' + layerId + ' )');
+                return;
+        }
+    } else if (layerId.startsWith('geojson')) {
+        // GeoJsonレイヤ
+        addGeoJsonLayer(layerId);
+    } else {
+        // Error
+        console.log('[Error] Layer not found : addOverLayer( ' + layerId + ' )');
+        return;
+    }
+
+    // 追加後の後処理
+    map.once('styledata', () => {
+        currentLayer.push(layerId);
+        updateLayerOrder();
+    });
+}
+
+
+// BaseLayer
+const mapBaseLayer = {
+    [mapStyle["OSM_BRIGHT_MAP"]]: 'OSM Bright',
+    [mapStyle["OSM_PLANET_MAP"]]: 'OSM Planet',
+    [mapStyle["GSI_STD_MAP"]]: '地理院 標準',
+    [mapStyle["GSI_PALE_MAP"]]: '地理院 淡色',
+    [mapStyle["GSI_STD_MAP"]]: '地理院 標準',
+    [mapStyle["GSI_BLANK_MAP"]]: '地理院 白地図',
+    [mapStyle["OTM_MAP"]]: 'OpenTopoMap',
+    [mapStyle["TRANSPORT_MAP"]]: 'TransportMap',
+};
+// default BaseLayer
+// const defaultBaseLayer = mapStyle["OSM_BRIGHT_MAP"];
+// OverLayer
+const mapOverLayer = {
+    tile_gsi_photo: {
+        name: '地理院 写真',
+        visible: false,
+    },
+    tile_gsi_relief: {
+        name: '地理院 標高図',
+        visible: false,
+    },
+    tile_railwaymap: {
+        name: 'OpenRailwayMap',
+        visible: false,
+    },
+    tile_openseamap: {
+        name: 'OpenSeaMap',
+        visible: false,
+    },
+};
+// geojsonLayer
+const geojsonLayer = {
+    geojson_port: {
+        name: '港湾情報',
+        visible: false,
+    },
+    geojson_sea_route: {
+        name: '国内航路',
+        visible: true,
+    },
+    geojson_international_sea_route: {
+        name: '国際航路',
+        visible: false,
+    },
+};
+// Layers Control
+let layers = new layersControl({
+    baseLayers: mapBaseLayer,
+    // defaultBaseLayer: defaultBaseLayer,
+    overLayers: mapOverLayer,
+    geojsonLayers: geojsonLayer,
 });
+map.addControl(layers, 'top-right');
 
-// ########################################
-//  航路ライン イベント
-// ########################################
-// 航路ラインをクリックしたときのイベントを登録
-map.on('click', 'sea_route_layers_outline', (event) => {
-    // クリックしたラインのプロパティを取得
-    const properties = event.features[0].properties;
-
-    // ポップアップ内容
-    const popupContent = `
-        <div class="searoute-popup-box">
-            <div class="searoute-businessname">${properties.businessName}</div>
-            <hr size="5" color="${properties.color}">
-            <div class="searoute-title highlight-yellow">航路</div>
-            <div class="searoute-detail">${properties.routeName}</div>
-            <div class="searoute-title highlight-yellow">選択部分</div>
-            <div class="searoute-detail">${properties.portName1}～${properties.portName2}</div>
-            <div class="searoute-title highlight-yellow">情報</div>
-            <div class="searoute-detail">${properties.information || "なし"}</div>
-            <div class="searoute-title highlight-yellow">船舶</div>
-            <div class="searoute-detail">${properties.shipName || "-"}</div>
-            <div class="searoute-title highlight-yellow">リンク</div>
-            <div class="searoute-detail"><a href="${properties.url}" class="expanded button" target="_blank">運航スケジュール</a></div>
-        </div>
-    `;
-
-    popup.remove();
-
-    // ポップアップをクリック地点に表示
-    popup
-        .setLngLat(event.lngLat)
-        .setHTML(popupContent)
-        .setMaxWidth("240px")
-        .addTo(map);
-});
-// 航路ライン mouse enter
-map.on('mouseenter', 'sea_route_layers_outline', () => {
-    map.getCanvas().style.cursor = 'pointer';
-});
-
-// 航路ライン mouse leave
-map.on('mouseleave', 'sea_route_layers_outline', () => {
-    map.getCanvas().style.cursor = '';
-});
-
-// ########################################
-//  国際航路ライン イベント
-// ########################################
-// 航路ラインをクリックしたときのイベントを登録
-map.on('click', 'international_sea_route_layers_outline', (event) => {
-    // クリックしたラインのプロパティを取得
-    const properties = event.features[0].properties;
-
-    // ポップアップ内容
-    const popupContent = `
-        <div class="searoute-popup-box">
-            <div class="searoute-businessname">${properties.businessName}</div>
-            <hr size="5" color="${properties.color}">
-            <div class="searoute-title highlight-yellow">航路</div>
-            <div class="searoute-detail">${properties.routeName}</div>
-            <div class="searoute-title highlight-yellow">選択部分</div>
-            <div class="searoute-detail">${properties.portName1}～${properties.portName2}</div>
-            <div class="searoute-title highlight-yellow">情報</div>
-            <div class="searoute-detail">${properties.information || "なし"}</div>
-            <div class="searoute-title highlight-yellow">船舶</div>
-            <div class="searoute-detail">${properties.shipName || "-"}</div>
-            <div class="searoute-title highlight-yellow">リンク</div>
-            <div class="searoute-detail"><a href="${properties.url}" class="expanded button" target="_blank">運航スケジュール</a></div>
-        </div>
-    `;
-
-    popup.remove();
-
-    // ポップアップをクリック地点に表示
-    popup
-        .setLngLat(event.lngLat)
-        .setHTML(popupContent)
-        .setMaxWidth("240px")
-        .addTo(map);
-});
-// 航路ライン mouse enter
-map.on('mouseenter', 'international_sea_route_layers_outline', () => {
-    map.getCanvas().style.cursor = 'pointer';
-});
-
-// 航路ライン mouse leave
-map.on('mouseleave', 'international_sea_route_layers_outline', () => {
-    map.getCanvas().style.cursor = '';
-});
-
-// ########################################
-//  港湾ポイント イベント
-// ########################################
-// 港湾ポイント クリック
-map.on('click', 'port_layers', (event) => {
-    const properties = event.features[0].properties;
-    const popupContent = `
-        <div class="port-popup-box">
-            <h2 class="port-name">${properties.Name}</h2>
-        </div>
-    `;
-
-    popup.remove();
-
-    popup
-        .setLngLat(event.lngLat)
-        .setHTML(popupContent)
-        .setMaxWidth("150px")
-        .addTo(map);
-});
-// 港湾ポイント mouse enter
-map.on('mouseenter', 'port_layers', () => {
-    map.getCanvas().style.cursor = 'pointer';
-});
-
-// 港湾ポイント mouse leave
-map.on('mouseleave', 'port_layers', () => {
-    map.getCanvas().style.cursor = '';
-});
-
-
-// マップ移動時にURLを更新
-map.on("moveend", () => {
-    const center = map.getCenter();
-    const zoom = map.getZoom();
-    updateURL(center.lat, center.lng, zoom);
-});
