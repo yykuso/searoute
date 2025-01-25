@@ -1,4 +1,4 @@
-import { loadAndMergeData } from './dataLoader.js';
+import { loadData, loadAndMergeData } from './dataLoader.js';
 import { map } from './common.js';
 
 // EventHandle情報の保存
@@ -49,10 +49,11 @@ export async function addMarker(id, url){
 async function addGeoJsonPortLayer() {
     // マーカー読み込み
     addMarker('anchor_marker', './img/anchor.png');
+    var portGeojson = await loadData('./data/portData.geojson');
 
     map.addSource('geojson_port', {
         type: 'geojson',
-        data: './data/portData.geojson',
+        data: portGeojson,
         attribution: "<a href='https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-C02-v3_2.html' target='_blank'>「国土数値情報（港湾データ）」</a>を加工して作成",
     });
     map.addLayer({
