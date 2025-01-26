@@ -109,6 +109,16 @@
   "shipName": "ZIYULAN",
   "color": "#0d0b90"
 },
+"KR000801": {
+  "businessName": "연태훼리（ヨンテフェリー）",
+  "routeName": "平沢～煙台",
+  "url": "http://www.yantaiferry.com/kor/passenger/passenger_sch.asp",
+  "information": null,
+  "note": null,
+  "frequency": 1,
+  "shipName": "OCEAN BLUE WHALE",
+  "color": "#21b942"
+},
 "CN000101": {
   "businessName": "日中国際フェリー",
   "routeName": "上海〜神戸",
