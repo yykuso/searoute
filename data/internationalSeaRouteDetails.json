@@ -69,15 +69,45 @@
   "shipName": "EASTERN DREAM",
   "color": "#1765c5"
 },
-"RU000101": {
-  "businessName": "サハリン海洋汽船（北海道サハリン航路）",
-  "routeName": "コルサコフ～稚内",
-  "url": "http://www.hokkaido-nomad.co.jp/HSL/schedule.html",
-  "information": "季節限定・休止中",
-  "note": "suspend",
+"KR000501": {
+  "businessName": "석도국제훼리（石島国際フェリー）",
+  "routeName": "群山～石道",
+  "url": "https://www.shidaoferry.com/bbs/content.php?co_id=sub02_02",
+  "information": null,
+  "note": null,
   "frequency": 1,
-  "shipName": "PENGUIN32",
-  "color": "#0a74ca"
+  "shipName": "GUNSAN PEARL",
+  "color": "#e41615"
+},
+"KR000601": {
+  "businessName": "영성대룡해운（大龍海運）",
+  "routeName": "平沢～永城",
+  "url": "https://dalongferry.co.kr/shipInfo/flightSchedule",
+  "information": null,
+  "note": null,
+  "frequency": 1,
+  "shipName": "ORIENTAL PEARL VIII",
+  "color": "#ffc600"
+},
+"KR000701": {
+  "businessName": "연운항훼리（連雲港フェリー）",
+  "routeName": "仁川～連雲",
+  "url": "https://www.lygferry.com/index.html",
+  "information": null,
+  "note": null,
+  "frequency": 1,
+  "shipName": "HARMONY YUN GANG",
+  "color": "#d0a307"
+},
+"KR000702": {
+  "businessName": "연운항훼리（連雲港フェリー）",
+  "routeName": "平沢～連雲",
+  "url": "https://www.lygferry.com/index.html",
+  "information": null,
+  "note": null,
+  "frequency": 1,
+  "shipName": "ZIYULAN",
+  "color": "#0d0b90"
 },
 "CN000101": {
   "businessName": "日中国際フェリー",
@@ -98,5 +128,35 @@
   "frequency": 1,
   "shipName": "鍳真号",
   "color": "#d32f2f"
+},
+"CN000201": {
+  "businessName": "膠東海運",
+  "routeName": "威海～平沢",
+  "url": "https://www.google.com/search?q=%22%E8%86%A0%E6%9D%B1%E6%B5%B7%E9%81%8B%22",
+  "information": null,
+  "note": null,
+  "frequency": 1,
+  "shipName": "NEW GRAND PEACE（新永安号）",
+  "color": "#872a2d"
+},
+"CN000301": {
+  "businessName": "日照海通班轮",
+  "routeName": "日照～平沢",
+  "url": "http://rizhaoferry.co.kr/ch/sailing/sail02.php",
+  "information": null,
+  "note": null,
+  "frequency": 1,
+  "shipName": "RIZHAO ORIENT",
+  "color": "#df2f28"
+},
+"RU000101": {
+  "businessName": "サハリン海洋汽船（北海道サハリン航路）",
+  "routeName": "コルサコフ～稚内",
+  "url": "http://www.hokkaido-nomad.co.jp/HSL/schedule.html",
+  "information": "季節限定・休止中",
+  "note": "suspend",
+  "frequency": 1,
+  "shipName": "PENGUIN32",
+  "color": "#0a74ca"
 }
 }
