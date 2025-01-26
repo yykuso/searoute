@@ -159,6 +159,16 @@
   "shipName": "かもしか",
   "color": "#00a82c"
 },
+"30101": {
+  "businessName": "岩手県北自動車",
+  "routeName": "出崎ふ頭~浄土ヶ浜",
+  "url": "https://www.jodo-yuransen.jp/timetable/",
+  "information": null,
+  "note": null,
+  "frequency": 3,
+  "shipName": "宮古うみねこ丸",
+  "color": "#00a692"
+},
 "40101": {
   "businessName": "シーパル女川汽船",
   "routeName": "女川～出島～江島",
@@ -268,6 +278,16 @@
   "frequency": 1,
   "shipName": null,
   "color": "#ff8306"
+},
+"40801": {
+  "businessName": "東松島観光物産公社",
+  "routeName": "松島～奥松島",
+  "url": "https://higashimatsushima-kanko.com/pleasure_boat/",
+  "information": "奥松島嵯峨渓遊覧船、日曜日運航",
+  "note": null,
+  "frequency": 1,
+  "shipName": "第二嵯峨, 第五嵯峨, 嵯峨みらい",
+  "color": "#0e0e0e"
 },
 "60101": {
   "businessName": "酒田市",
@@ -436,7 +456,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": "さんふらわあ さっぽろ, さんふらわあ ふらの, さんふらわあ しれとこ, さんふらわあ だいせつ",
+  "shipName": "さんふらわあ さっぽろ, さんふらわあ ふらの, さんふらわあ しれとこ, さんふらわあ かむい",
   "color": "#ff5500"
 },
 "130502": {
@@ -636,7 +656,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "ときわ丸, おけさ丸, ぎんが, つばさ, すいせい",
   "color": "#e6002d"
 },
 "150102": {
@@ -646,7 +666,7 @@
   "information": "3月～11月",
   "note": "season",
   "frequency": 2,
-  "shipName": null,
+  "shipName": "こがね丸",
   "color": "#e6002d"
 },
 "150201": {
@@ -655,8 +675,8 @@
   "url": "https://hegura.com/guide/",
   "information": "運休中",
   "note": "suspend",
-  "frequency": null,
-  "shipName": null,
+  "frequency": 2,
+  "shipName": "希海",
   "color": "#6ebae2"
 },
 "150301": {
@@ -666,7 +686,7 @@
   "information": null,
   "note": null,
   "frequency": 2,
-  "shipName": null,
+  "shipName": "フェリーニューあわしま, awaline きらら",
   "color": "#e50012"
 },
 "150401": {
@@ -676,17 +696,17 @@
   "information": null,
   "note": null,
   "frequency": 1,
-  "shipName": null,
+  "shipName": "アナスタシア号, ベアトリス号",
   "color": "#1b304b"
 },
 "160101": {
   "businessName": "富山県",
   "routeName": "越ノ潟～堀岡",
   "url": "https://www.pref.toyama.jp/1545/kendodukuri/koukyou/koukyoukoutsuu/kj00020284.html",
-  "information": null,
+  "information": "越ノ潟フェリー",
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "こしのかた, 海竜",
   "color": "#199331"
 },
 "160201": {
@@ -699,6 +719,26 @@
   "shipName": null,
   "color": "#ff0000"
 },
+"160301": {
+  "businessName": "富岩船舶",
+  "routeName": "富岩運河観水公園～岩瀬カナル会館",
+  "url": "https://fugan-suijo-line.jp/?tid=100024",
+  "information": "富岩水上ライン",
+  "note": null,
+  "frequency": 3,
+  "shipName": "fugan, sora, kansui, もみじ",
+  "color": "#86c7d7"
+},
+"160401": {
+  "businessName": "庄川遊覧船",
+  "routeName": "小牧～大牧",
+  "url": "https://shogawa-yuran.co.jp/wp/timetable/",
+  "information": "庄川峡遊覧船",
+  "note": null,
+  "frequency": 3,
+  "shipName": "やまぶき, クルーズ庄川, はやぶさ丸",
+  "color": "#00a2ba"
+},
 "200101": {
   "businessName": "野尻湖定期船",
   "routeName": "野尻湖 観光船",
@@ -706,8 +746,18 @@
   "information": "季節運航",
   "note": "season",
   "frequency": 3,
-  "shipName": null,
+  "shipName": "雅, 第三野尻湖丸",
   "color": "#498013"
+},
+"200201": {
+  "businessName": "天龍ライン遊舟",
+  "routeName": "天龍峡温泉～唐笠",
+  "url": "https://tenryuline.com/",
+  "information": "天竜ライン下り",
+  "note": null,
+  "frequency": 3,
+  "shipName": null,
+  "color": "#2a5f07"
 },
 "210101": {
   "businessName": "岐阜市",
@@ -726,7 +776,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "イルドバカンス3世号, イルドバカンスプレミア",
   "color": "#2baacc"
 },
 "220201": {
@@ -736,7 +786,7 @@
   "information": "駿河湾フェリー",
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "富士",
   "color": "#1e90ff"
 },
 "220202": {
@@ -786,7 +836,7 @@
   "information": "井川湖渡船(ダム航路)・季節運航",
   "note": "season",
   "frequency": 3,
-  "shipName": null,
+  "shipName": "赤石丸",
   "color": "#1570bb"
 },
 "220402": {
@@ -796,7 +846,7 @@
   "information": "井川湖渡船(宮向航路)",
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "赤石丸",
   "color": "#1570bb"
 },
 "220501": {
@@ -828,6 +878,16 @@
   "frequency": 3,
   "shipName": null,
   "color": "#215b8d"
+},
+"220801": {
+  "businessName": "淡島マリンパーク",
+  "routeName": "重寺岸壁～離宮桟橋",
+  "url": "https://www.marinepark.jp/enjoy/information/",
+  "information": null,
+  "note": null,
+  "frequency": 3,
+  "shipName": "アワシマ13号, アワシマ15号, アワシマ16号",
+  "color": "#073190"
 },
 "230101": {
   "businessName": "太平洋フェリー",
@@ -866,7 +926,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "しまゆり",
   "color": "#b70106"
 },
 "230301": {
@@ -876,7 +936,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "第三さちかぜ, はまかぜ",
   "color": "#1c9ad9"
 },
 "230401": {
@@ -896,7 +956,7 @@
   "information": null,
   "note": null,
   "frequency": 1,
-  "shipName": null,
+  "shipName": "スーパーコメット",
   "color": "#e91c24"
 },
 "230502": {
@@ -906,7 +966,7 @@
   "information": null,
   "note": null,
   "frequency": 1,
-  "shipName": null,
+  "shipName": "東山ガーデン1",
   "color": "#2e5daa"
 },
 "230601": {
@@ -916,7 +976,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "かみしま",
   "color": "#f0d525"
 },
 "230701": {
@@ -936,7 +996,7 @@
   "information": "牛川の渡船",
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "ちぎり丸",
   "color": "#2cbdae"
 },
 "230901": {
@@ -946,7 +1006,7 @@
   "information": "中野の渡し（西中野渡船）",
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "第五中野丸",
   "color": "#4068b1"
 },
 "240101": {
@@ -956,7 +1016,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "鳥羽丸, 伊勢丸, 知多丸",
   "color": "#002192"
 },
 "240201": {
@@ -966,7 +1026,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "フェニックス カトレア",
   "color": "#1e73be"
 },
 "240301": {
@@ -1026,7 +1086,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "龍宮城, フラワーマーメイド, みつしま",
   "color": "#ee87b4"
 },
 "240402": {
@@ -1036,7 +1096,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "おくしま, おおさき",
   "color": "#ee87b4"
 },
 "240501": {
@@ -1076,7 +1136,7 @@
   "information": "4月～11月",
   "note": "season",
   "frequency": 3,
-  "shipName": null,
+  "shipName": "望郷丸",
   "color": "#ff8e98"
 },
 "240901": {
@@ -1085,7 +1145,7 @@
   "url": "https://web-odai.info/history/kumanokodo_iseji/history/kumanokodo_iseji-4773.html",
   "information": "土日運航",
   "note": null,
-  "frequency": 2,
+  "frequency": 1,
   "shipName": null,
   "color": "#26866e"
 },
@@ -1096,7 +1156,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "おきしま",
   "color": "#0000ff"
 },
 "250201": {
@@ -1114,7 +1174,7 @@
   "routeName": "彦根～多景島",
   "url": "https://www.ohmitetudo.co.jp/marine/time-price/takeshima/",
   "information": "冬季運休",
-  "note": null,
+  "note": "season",
   "frequency": 2,
   "shipName": null,
   "color": "#50bfdb"
@@ -1146,7 +1206,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "ミシガン",
   "color": "#2b90c6"
 },
 "250302": {
@@ -1156,7 +1216,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "いんたーらーけん, リオグランデ, べんてん",
   "color": "#e58726"
 },
 "250303": {
@@ -1306,7 +1366,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "umi, sora",
   "color": "#0083c2"
 },
 "280301": {
@@ -1316,7 +1376,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "まりん・あわじ, まりーんふらわあ2, レットスター2, ジェノバⅠ",
   "color": "#0083c2"
 },
 "280401": {
@@ -1326,7 +1386,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "しまかぜ , しまちどり",
   "color": "#82c06c"
 },
 "280501": {
@@ -1336,7 +1396,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "家島ライフ, まうら, まうらⅡ",
   "color": "#004430"
 },
 "280601": {
@@ -1346,7 +1406,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "高福ライナー",
   "color": "#20a9fa"
 },
 "280701": {
@@ -1356,7 +1416,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "はるか, ぼうぜ２, クイーンぼうぜ",
   "color": "#f18215"
 },
 "280801": {
@@ -1376,7 +1436,7 @@
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "あーす",
   "color": "#ff0000"
 },
 "281001": {
@@ -1386,7 +1446,7 @@
   "information": "暫定連絡船・日曜運休",
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "いえしま",
   "color": "#ff0000"
 },
 "281101": {
@@ -1532,11 +1592,11 @@
 "330701": {
   "businessName": "六口丸海運",
   "routeName": "児島～本島",
-  "url": "http://mukujimaru.co.jp/teikisen.html",
+  "url": "https://mukujimaru.co.jp/service01",
   "information": null,
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "ムクジマルホープ",
   "color": "#0033cc"
 },
 "340101": {
@@ -3112,51 +3172,51 @@
 "410301": {
   "businessName": "川口汽船",
   "routeName": "呼子～小川島",
-  "url": "https://www.city.karatsu.lg.jp/koutsuu/machi/kotsu/koro/jikokuhyou-ogawashima.html",
+  "url": "https://www.city.karatsu.lg.jp/page/1542.html",
   "information": "小川島航路",
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "そよかぜ",
   "color": "#7ac0cc"
 },
 "410401": {
   "businessName": "加唐島汽船",
   "routeName": "呼子～加唐島",
-  "url": "https://www.city.karatsu.lg.jp/koutsuu/machi/kotsu/koro/jikokuhyou-kakarashima.html",
+  "url": "https://www.city.karatsu.lg.jp/page/1538.html",
   "information": "加唐島航路",
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "かから丸",
   "color": "#28ab3a"
 },
 "410501": {
   "businessName": "新栄",
   "routeName": "呼子～松島",
-  "url": "https://www.city.karatsu.lg.jp/koutsuu/machi/kotsu/koro/jikokugyou-matsushima.html",
+  "url": "https://www.city.karatsu.lg.jp/page/1539.html",
   "information": "松島航路",
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "新栄",
   "color": "#1551c6"
 },
 "410601": {
   "businessName": "郵正丸",
   "routeName": "呼子～名護屋～馬渡島",
-  "url": "https://www.city.karatsu.lg.jp/koutsuu/machi/kotsu/koro/jikokuhyou-madarashima.html",
+  "url": "https://www.city.karatsu.lg.jp/page/15178.html",
   "information": "馬渡島航路",
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "ゆうしょう",
   "color": "#dd0000"
 },
 "410701": {
   "businessName": "向島汽船",
   "routeName": "星賀～向島",
-  "url": "https://www.city.karatsu.lg.jp/koutsuu/machi/kotsu/koro/jikokuhyou-mukushima.html",
+  "url": "https://www.city.karatsu.lg.jp/page/1541.html",
   "information": "向島航路",
   "note": null,
   "frequency": 3,
-  "shipName": null,
+  "shipName": "むくしま",
   "color": "#d53137"
 },
 "410801": {
