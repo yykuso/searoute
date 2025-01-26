@@ -569,7 +569,7 @@
   "shipName": "NEW KUROFUNE, Sea Friend 8, Sea Friend ZERO",
   "color": "#3ea4b2"
 },
-"140211": {
+"140202": {
   "businessName": "トライアングル",
   "routeName": "浦賀西～浦賀東",
   "url": "https://ponponsen.jp/",
@@ -578,6 +578,16 @@
   "frequency": 3,
   "shipName": "愛宕丸",
   "color": "#bf1e00"
+},
+"140203": {
+  "businessName": "トライアングル",
+  "routeName": "第二海堡上陸ツアー",
+  "url": "https://daini-kaiho.jp/tour",
+  "information": "ツアー会社経由",
+  "note": "season",
+  "frequency": 1,
+  "shipName": null,
+  "color": "#003876"
 },
 "140301": {
   "businessName": "三崎マリンセンター",
@@ -2928,6 +2938,16 @@
   "frequency": 3,
   "shipName": null,
   "color": "#3ca6cc"
+},
+"382201": {
+  "businessName": "瀬戸内しまなみリーディング",
+  "routeName": "能島上陸＆潮流クルーズ",
+  "url": "https://s-leading.co.jp/kanko_noshima",
+  "information": "土休日運航",
+  "note": null,
+  "frequency": 2,
+  "shipName": null,
+  "color": "#c21720"
 },
 "390101": {
   "businessName": "高知県",
