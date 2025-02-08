@@ -27,6 +27,7 @@ export const mapStyle = {
     "GSI_PHOTO_MAP": 23,
     "GSI_RELIEF_MAP": 24,
     "TRANSPORT_MAP": 30,
+    "OSM_CUSTOM_MAP": 90,
 }
 
 // レイヤーの表示優先順位
@@ -103,6 +104,8 @@ function getMapStyle(style) {
             return "https://gsi-cyberjapan.github.io/gsivectortile-mapbox-gl-js/pale.json";
         case mapStyle["GSI_BLANK_MAP"]:
             return "https://gsi-cyberjapan.github.io/gsivectortile-mapbox-gl-js/blank.json";
+        case mapStyle["OSM_CUSTOM_MAP"]:
+            return "./style/osm-bright-style.json";
 		case mapStyle["EMPTY_MAP"]:
 			return "./style/empty.json";
         default:
@@ -269,6 +272,7 @@ async function addOverLayer(layerId) {
 
 // BaseLayer
 const mapBaseLayer = {
+    [mapStyle["OSM_CUSTOM_MAP"]]: 'OSM Custom',
     [mapStyle["OSM_BRIGHT_MAP"]]: 'OSM Bright',
     [mapStyle["OSM_PLANET_MAP"]]: 'OSM Planet',
     [mapStyle["GSI_STD_MAP"]]: '地理院 標準',
@@ -317,7 +321,7 @@ const geojsonLayer = {
 // Layers Control
 let layers = new layersControl({
     baseLayers: mapBaseLayer,
-    // defaultBaseLayer: defaultBaseLayer,
+    defaultBaseLayer: mapStyle["OSM_CUSTOM_MAP"],
     overLayers: mapOverLayer,
     geojsonLayers: geojsonLayer,
 });

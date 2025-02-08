@@ -93,7 +93,7 @@ async function addGeoJsonSeaRouteLayer() {
         },
         paint: {
             'line-color': '#FFFFFF',
-            'line-width': 9,
+            'line-width': 8,
             'line-opacity': 0.5
         }
     });
@@ -194,7 +194,7 @@ async function addGeoJsonInternationalSeaRouteLayer() {
         },
         paint: {
             'line-color': '#FFFFFF',
-            'line-width': 9,
+            'line-width': 8,
             'line-opacity': 0.5
         }
     });
