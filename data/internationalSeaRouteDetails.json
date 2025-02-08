@@ -40,7 +40,7 @@
   "color": "#f08100"
 },
 "KR000201": {
-  "businessName": "스타라인（スターライン）",
+  "businessName": "Starline",
   "routeName": "釜山〜比田勝",
   "url": "https://www.thenina.co.kr/html/?pcode=27",
   "information": null,
@@ -70,17 +70,57 @@
   "color": "#1765c5"
 },
 "KR000501": {
-  "businessName": "석도국제훼리（石島国際フェリー）",
-  "routeName": "群山～石道",
-  "url": "https://www.shidaoferry.com/bbs/content.php?co_id=sub02_02",
+  "businessName": "Dain Ferry",
+  "routeName": "仁川～大連",
+  "url": "https://www.dainferry.co.kr/shipinfo/schedule.php",
+  "information": "VPN必須",
+  "note": null,
+  "frequency": 1,
+  "shipName": "BIRYONG",
+  "color": "#03348c"
+},
+"KR000601": {
+  "businessName": "Pan Korea Yingkou Ferry",
+  "routeName": "仁川～営口",
+  "url": "http://www.yingkouferry.co.kr/passenger/shipSchedule.php",
   "information": null,
   "note": null,
   "frequency": 1,
-  "shipName": "GUNSAN PEARL",
-  "color": "#e41615"
+  "shipName": "ARAFURA LILY",
+  "color": "#2f5e70"
 },
-"KR000601": {
-  "businessName": "영성대룡해운（大龍海運）",
+"KR000701": {
+  "businessName": "Jinchon Ferry",
+  "routeName": "仁川～天津",
+  "url": "http://www.jinchon.co.kr/",
+  "information": "休止中",
+  "note": "suspend",
+  "frequency": 1,
+  "shipName": "TIAN REN",
+  "color": "#031b9f"
+},
+"KR000801": {
+  "businessName": "Weidong Ferry（威東フェリー）",
+  "routeName": "仁川～威海",
+  "url": "https://www.weidong.com/eng/schedule/list.do?menuKey=458",
+  "information": "VPN必須",
+  "note": null,
+  "frequency": 1,
+  "shipName": "NEW GOLDEN BRIDGE VII",
+  "color": "#1e6fc2"
+},
+"KR000802": {
+  "businessName": "Weidong Ferry（威東フェリー）",
+  "routeName": "仁川～青島",
+  "url": "https://www.weidong.com/eng/schedule/list.do?menuKey=458",
+  "information": "VPN必須",
+  "note": null,
+  "frequency": 1,
+  "shipName": "NEW GOLDEN BRIDGE V",
+  "color": "#1e6fc2"
+},
+"KR000901": {
+  "businessName": "Dalong Ferry（大龍海運）",
   "routeName": "平沢～永城",
   "url": "https://dalongferry.co.kr/shipInfo/flightSchedule",
   "information": null,
@@ -89,35 +129,15 @@
   "shipName": "ORIENTAL PEARL VIII",
   "color": "#ffc600"
 },
-"KR000701": {
-  "businessName": "연운항훼리（連雲港フェリー）",
-  "routeName": "仁川～連雲",
-  "url": "https://www.lygferry.com/index.html",
+"KR001001": {
+  "businessName": "Shidao International Ferry（石島国際フェリー）",
+  "routeName": "群山～石道",
+  "url": "https://www.shidaoferry.com/bbs/content.php?co_id=sub02_02",
   "information": null,
   "note": null,
   "frequency": 1,
-  "shipName": "HARMONY YUN GANG",
-  "color": "#d0a307"
-},
-"KR000702": {
-  "businessName": "연운항훼리（連雲港フェリー）",
-  "routeName": "平沢～連雲",
-  "url": "https://www.lygferry.com/index.html",
-  "information": null,
-  "note": null,
-  "frequency": 1,
-  "shipName": "ZIYULAN",
-  "color": "#0d0b90"
-},
-"KR000801": {
-  "businessName": "연태훼리（ヨンテフェリー）",
-  "routeName": "平沢～煙台",
-  "url": "http://www.yantaiferry.com/kor/passenger/passenger_sch.asp",
-  "information": null,
-  "note": null,
-  "frequency": 1,
-  "shipName": "OCEAN BLUE WHALE",
-  "color": "#21b942"
+  "shipName": "GUNSAN PEARL",
+  "color": "#e41615"
 },
 "CN000101": {
   "businessName": "日中国際フェリー",
@@ -126,7 +146,7 @@
   "information": "旅客取扱休止中",
   "note": "suspend",
   "frequency": 1,
-  "shipName": "鍳真号",
+  "shipName": "JIAN ZHEN HAO",
   "color": "#d32f2f"
 },
 "CN000102": {
@@ -136,11 +156,51 @@
   "information": "旅客取扱休止中",
   "note": "suspend",
   "frequency": 1,
-  "shipName": "鍳真号",
+  "shipName": "JIAN ZHEN HAO",
   "color": "#d32f2f"
 },
 "CN000201": {
-  "businessName": "膠東海運",
+  "businessName": "Dandong International Ferry",
+  "routeName": "丹東～仁川",
+  "url": "https://www.dandongferry.co.kr/",
+  "information": "休止中",
+  "note": "suspend",
+  "frequency": 1,
+  "shipName": "ORIENTAL PEARL Ⅵ",
+  "color": "#e02600"
+},
+"CN000301": {
+  "businessName": "Qin-in Shipping",
+  "routeName": "秦皇島～仁川",
+  "url": "https://www.qininferry.com/pages/Vessel_vesselCalendar.php",
+  "information": null,
+  "note": null,
+  "frequency": 1,
+  "shipName": "XIN YU JIN XIANG",
+  "color": "#d93b29"
+},
+"CN000401": {
+  "businessName": "Hanjoong Ferry Lines",
+  "routeName": "煙台～仁川",
+  "url": "https://www.hanjoongferry.co.kr/",
+  "information": null,
+  "note": null,
+  "frequency": 1,
+  "shipName": "XIN XIANG XUE LAN",
+  "color": "#004098"
+},
+"CN000501": {
+  "businessName": "Yantai Ferry（烟台フェリー）",
+  "routeName": "煙台～平沢",
+  "url": "http://www.yantaiferry.com/kor/passenger/passenger_sch.asp",
+  "information": null,
+  "note": null,
+  "frequency": 1,
+  "shipName": "OCEAN BLUE WHALE",
+  "color": "#21b942"
+},
+"CN000601": {
+  "businessName": "Jiaodong Shipping（膠東海運）",
   "routeName": "威海～平沢",
   "url": "https://www.google.com/search?q=%22%E8%86%A0%E6%9D%B1%E6%B5%B7%E9%81%8B%22",
   "information": null,
@@ -149,8 +209,18 @@
   "shipName": "NEW GRAND PEACE（新永安号）",
   "color": "#872a2d"
 },
-"CN000301": {
-  "businessName": "日照海通班轮",
+"CN000701": {
+  "businessName": "Huadong Shipping（華東海運）",
+  "routeName": "石道～仁川",
+  "url": "https://www.huadong.co.kr/info/passenger.html",
+  "information": null,
+  "note": null,
+  "frequency": 1,
+  "shipName": "HUADONG PEARL VIII",
+  "color": "#8f4522"
+},
+"CN000801": {
+  "businessName": "Rizhao Haitong Ferry（日照海通班轮）",
   "routeName": "日照～平沢",
   "url": "http://rizhaoferry.co.kr/ch/sailing/sail02.php",
   "information": null,
@@ -158,6 +228,26 @@
   "frequency": 1,
   "shipName": "RIZHAO ORIENT",
   "color": "#df2f28"
+},
+"CN000901": {
+  "businessName": "LYG C-K Ferry（連雲港フェリー）",
+  "routeName": "連雲～仁川",
+  "url": "https://www.lygferry.com/index.html",
+  "information": null,
+  "note": null,
+  "frequency": 1,
+  "shipName": "HARMONY YUN GANG",
+  "color": "#d0a307"
+},
+"CN000902": {
+  "businessName": "LYG C-K Ferry（連雲港フェリー）",
+  "routeName": "連雲～平沢",
+  "url": "https://www.lygferry.com/index.html",
+  "information": null,
+  "note": null,
+  "frequency": 1,
+  "shipName": "ZIYULAN",
+  "color": "#0d0b90"
 },
 "RU000101": {
   "businessName": "サハリン海洋汽船（北海道サハリン航路）",
