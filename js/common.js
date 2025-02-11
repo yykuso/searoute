@@ -11,7 +11,6 @@ import { initCenterZoom, setCookie, getCookie } from './cookieControler.js';
 
 // Map本体
 export var map = null;
-export const thunderforestApikey = 'e2a13af0ede642faa4f3e766cc345f72';
 
 // マップスタイル
 export const mapStyle = {
@@ -27,6 +26,7 @@ export const mapStyle = {
     "GSI_PHOTO_MAP": 23,
     "GSI_RELIEF_MAP": 24,
     "TRANSPORT_MAP": 30,
+    "ESRI_PHOTO_MAP": 40,
     "OSM_CUSTOM_MAP": 90,
 }
 
@@ -34,6 +34,7 @@ export const mapStyle = {
 export const layerPriorities = [
     'tile_gsi_photo',
     'tile_gsi_relief',
+    'tile_esriimagery',
     'tile_railwaymap',
     'tile_openseamap',
     'geojson_sea_route',
@@ -82,6 +83,10 @@ map.once('styledata', () => {
         tile_gsi_relief: {
             name: '地理院 標高図',
             visible: isIdInLayer(defaultLayer, 'tile_gsi_relief'),
+        },
+        tile_esriimagery: {
+            name: 'EsriWorldImagery',
+            visible: isIdInLayer(defaultLayer, 'tile_esriimagery'),
         },
         tile_railwaymap: {
             name: 'OpenRailwayMap',
@@ -197,6 +202,9 @@ export function updateBaseMap(afterMap) {
         case mapStyle["TRANSPORT_MAP"]:
             removeLayerSource("tile_transportmap", "tile_transportmap");
             break;
+        case mapStyle["ESRI_PHOTO_MAP"]:
+            removeLayerSource("tile_esriimagery", "tile_esriimagery");
+            break;
     }
 
     // マップスタイルを変更（rasterタイルの場合はEMPLY_MAP）
@@ -212,6 +220,10 @@ export function updateBaseMap(afterMap) {
                 break;
             case mapStyle["TRANSPORT_MAP"]:
                 addRasterLayer(mapStyle["TRANSPORT_MAP"]);
+                updateLayerOrder();
+                break;
+            case mapStyle["ESRI_PHOTO_MAP"]:
+                addRasterLayer(mapStyle["ESRI_PHOTO_MAP"]);
                 updateLayerOrder();
                 break;
         }
@@ -323,6 +335,9 @@ export async function addOverLayer(layerId) {
                 break;
             case 'tile_gsi_relief':
                 addRasterLayer(mapStyle["GSI_RELIEF_MAP"]);
+                break;
+            case 'tile_esriimagery':
+                addRasterLayer(mapStyle["ESRI_PHOTO_MAP"]);
                 break;
             case 'tile_openseamap':
                 addRasterLayer(mapStyle["OPEN_SEA_MAP"]);

@@ -1,9 +1,9 @@
 import {
     map,
-    thunderforestApikey,
     mapStyle,
 } from './common.js';
 
+const thunderforestApikey = 'e2a13af0ede642faa4f3e766cc345f72';
 /**
  * RasterLayerを追加する関数
  * @param {number} layer - RasterLayerのID
@@ -15,6 +15,9 @@ export function addRasterLayer(layer) {
             break;
         case mapStyle["TRANSPORT_MAP"]:
             addTransportMapLayer('tile_transportmap');
+            break;
+        case mapStyle["ESRI_PHOTO_MAP"]:
+            addEsriWorldImageryMapLayer('tile_esriimagery');
             break;
         case mapStyle["OPEN_SEA_MAP"]:
             addOpenSeaMapLayer('tile_openseamap');
@@ -75,6 +78,27 @@ function addTransportMapLayer(id) {
         source: id,
         minzoom: 2,
         maxzoom: 19,
+    });
+}
+
+function addEsriWorldImageryMapLayer(id) {
+    map.addSource(id, {
+        type: 'raster',
+        tiles: [
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        ],
+        tileSize: 256,
+        attribution: "&copy; <a href='https://www.esri.com/'>Esri</a>",
+    });
+    map.addLayer({
+        id: id,
+        type: 'raster',
+        source: id,
+        minzoom: 2,
+        maxzoom: 19,
+        paint: {
+            'raster-opacity': 0.6,
+        },
     });
 }
 
