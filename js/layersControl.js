@@ -1,4 +1,4 @@
-import { updateBaseMap, toggleOverLayer } from './common.js';
+import { updateBaseMap, addOverLayer, removeOverLayer } from './common.js';
 
 // レイヤーコントロールボタンの制御
 export default class layersControl {
@@ -21,18 +21,14 @@ export default class layersControl {
         return;
     }
 
-    // レイヤーリスト作成
-    //   div 
-    //     - div toggle
-    //     - div list (baseLayers / border / overLayers)
-    //
+    // Make Layers Control
     addLayersControl() {
-        // Control 全体
+        // Control Container
         this.container = document.createElement('div');
         this.container.className = 'maplibregl-ctrl maplibregl-ctrl-group';
         this.container.id = 'layers-control';
 
-        // ボタン
+        // Toggle Button
         const toggleContainer = document.createElement('div');
         toggleContainer.className = 'maplibregl-ctrl-layers-toggle';
         this.container.appendChild(toggleContainer);
@@ -42,11 +38,11 @@ export default class layersControl {
         toggleIcon.className = 'fa-solid fa-layer-group fa-lg';
         toggleContainer.appendChild(toggleIcon);
 
-        // Radioボタン
+        // Radio button
         const controlContainer = document.createElement('div');
         controlContainer.className = 'maplibregl-ctrl-layers-list';
         this.container.appendChild(controlContainer);
-        controlContainer.style.display = 'none';
+        controlContainer.style.display = 'none';    // 初期非表示
 
         // Base Layers
         if (this.baseLayers) {
@@ -109,24 +105,16 @@ export default class layersControl {
         }
         container.appendChild(radioButton);
         
-        // Event
-        radioButton.addEventListener('change', (event) => {
-            // View Selected Layers
-            // event.target.checked = true;
-            updateBaseMap(Number(layerId));
-            // Unview Selected Layers
-            // Object.keys(this.baseLayers).map((layer) => {
-            //     if (layer !== event.target.id) {
-            //         document.getElementById(layer).checked = false;
-            //     }
-            // });
-        });
-        
         // Add Layers Name
         const layerName = document.createElement('label');
         layerName.htmlFor = layerId;
         layerName.appendChild(document.createTextNode(this.baseLayers[layerId]));
         container.appendChild(layerName);
+        
+        // Event
+        radioButton.addEventListener('change', (event) => {
+            updateBaseMap(Number(layerId));
+        });
     }
 
     // Make CheckBox Button (Overlay Layers)
@@ -139,20 +127,24 @@ export default class layersControl {
         // Initialize (Default Overlay Layers)
         if (isVisible) {
             checkBox.checked = true;
+            addOverLayer(layerId);
         }
         container.appendChild(checkBox);
         
-        // Event
-        checkBox.addEventListener('change', (event) => {
-            toggleOverLayer(layerId);
-            checkBox.check = true;
-        });
-
         // Add Layers Name
         const layerName = document.createElement('label');
         layerName.htmlFor = layerId;
         layerName.appendChild(document.createTextNode(displayName));
         container.appendChild(layerName);
+
+        // Event
+        checkBox.addEventListener('change', (event) => {
+            if (checkBox.checked) {
+                addOverLayer(layerId);
+            } else {
+                removeOverLayer(layerId);
+            }
+        });
     }
 
     // Set Layer Visibility

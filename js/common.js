@@ -48,8 +48,6 @@ var currentLayer = [];
 // 初期化
 initMap();
 
-toggleOverLayer('geojson_sea_route')
-
 // マップの初期化
 function initMap() {
     // デフォルト設定
@@ -177,11 +175,14 @@ async function changeStyle(newStyleJson) {
         diff: !currentMap,
     });
 
-    // 画像データを再読み込み
+    reAddMaker();
+}
+
+// 画像データを再読み込み
+function reAddMaker() {
     if (currentLayer.includes('geojson_port')) {
         addMarker('anchor_marker', './img/anchor.png');
     }
-
 }
 
 // レイヤーの表示順を更新
@@ -233,7 +234,13 @@ export async function toggleOverLayer(layerId, sourceId = layerId) {
  * OverLayer(Tile/GeoJson)を追加する関数
  * @param {string} layerId - OverLayerID
  */
-async function addOverLayer(layerId) {
+export async function addOverLayer(layerId) {
+    if (currentLayer.includes(layerId)) {
+        // Error
+        console.log('[Warning] Layer already exists : addOverLayer( ' + layerId + ' )');
+        return;
+    }
+
     if (layerId.startsWith('tile')) {
         // Tileレイヤ
         switch (layerId) {
@@ -269,6 +276,20 @@ async function addOverLayer(layerId) {
     });
 }
 
+/**
+ * OverLayer(Tile/GeoJson)を削除する関数
+ * @param {*} layerId - OverLayerID
+ * @param {*} sourceId - OverLayerSourceID
+ */
+export async function removeOverLayer(layerId, sourceId = layerId) {
+    if (!currentLayer.includes(layerId)) {
+        // Error
+        console.log('[Warning] Layer already not exists : removeOverLayer( ' + layerId + ' )');
+        return;
+    } else {
+        removeLayerSource(layerId, sourceId);
+    }
+}
 
 // BaseLayer
 const mapBaseLayer = {
