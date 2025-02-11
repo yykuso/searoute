@@ -53,37 +53,39 @@ export default class layersControl {
             });
         }
 
-        // border line
-        if (this.baseLayers && this.overLayers) {
-            const hr = document.createElement('hr');
-            controlContainer.appendChild(hr);
-        }
-        
-        // Over Layers
-        if (this.overLayers) {
-            Object.keys(this.overLayers).map((layer) => {
-                const containerDiv = document.createElement('div');
-                const isVisible = this.overLayers[layer].visible || false;
-                this.addCheckBoxControl(containerDiv, layer, isVisible, this.overLayers[layer].name, 'overLayer');
-                controlContainer.appendChild(containerDiv);
-            });
-        }
-        
-        // border line
-        if (this.overLayers && this.geojsonLayers) {
-            const hr = document.createElement('hr');
-            controlContainer.appendChild(hr);
-        }
-        
-        // Over Layers
-        if (this.geojsonLayers) {
-            Object.keys(this.geojsonLayers).map((layer) => {
-                const containerDiv = document.createElement('div');
-                const isVisible = this.geojsonLayers[layer].visible || false;
-                this.addCheckBoxControl(containerDiv, layer, isVisible, this.geojsonLayers[layer].name, 'geojsonLayer');
-                controlContainer.appendChild(containerDiv);
-            });
-        }
+        this.map.once("styledata", () => {
+            // border line
+            if (this.baseLayers && this.overLayers) {
+                const hr = document.createElement('hr');
+                controlContainer.appendChild(hr);
+            }
+            
+            // Over Layers
+            if (this.overLayers) {
+                Object.keys(this.overLayers).map((layer) => {
+                    const containerDiv = document.createElement('div');
+                    const isVisible = this.overLayers[layer].visible || false;
+                    this.addCheckBoxControl(containerDiv, layer, isVisible, this.overLayers[layer].name, 'overLayer');
+                    controlContainer.appendChild(containerDiv);
+                });
+            }
+            
+            // border line
+            if (this.overLayers && this.geojsonLayers) {
+                const hr = document.createElement('hr');
+                controlContainer.appendChild(hr);
+            }
+            
+            // Over Layers
+            if (this.geojsonLayers) {
+                Object.keys(this.geojsonLayers).map((layer) => {
+                    const containerDiv = document.createElement('div');
+                    const isVisible = this.geojsonLayers[layer].visible || false;
+                    this.addCheckBoxControl(containerDiv, layer, isVisible, this.geojsonLayers[layer].name, 'geojsonLayer');
+                    controlContainer.appendChild(containerDiv);
+                });
+            }
+        });
     }
 
     // Make Radio Button (Base Layers)

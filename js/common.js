@@ -1,7 +1,7 @@
 import layersControl from './layersControl.js';
 import { addRasterLayer } from './rasterLayers.js';
 import { addGeoJsonLayer, addMarker, addResetClickEvent } from './geoJsonLayers.js';
-import { initCenterZoom, setCookie } from './cookieControler.js';
+import { initCenterZoom, setCookie, getCookie } from './cookieControler.js';
 
 /* マップの命名規則
     VectorTile = 背景マップ   = style
@@ -42,11 +42,84 @@ export const layerPriorities = [
 ];
 
 // 現在の状態
-var currentMap = mapStyle["EMPTY_MAP"];
+var currentMap = null;
 var currentLayer = [];
+var defaultMap = mapStyle["EMPTY_MAP"];
+var defaultLayer = ["geojson_sea_route"];
+
+// Cookieから情報を取得
+if (getCookie("currentMap")) {
+    defaultMap = parseInt(getCookie("currentMap"));
+}
+if (getCookie("currentLayer")) {
+    defaultLayer = getCookie("currentLayer").split(',');
+}
 
 // 初期化
 initMap();
+
+// styleファイルの読み込み後に発火
+map.once('styledata', () => {
+    // BaseLayer
+    const mapBaseLayer = {
+        'OSM Custom': mapStyle["OSM_CUSTOM_MAP"],
+        'OSM Bright': mapStyle["OSM_BRIGHT_MAP"],
+        'OSM Planet': mapStyle["OSM_PLANET_MAP"],
+        '地理院 標準': mapStyle["GSI_STD_MAP"],
+        '地理院 淡色': mapStyle["GSI_PALE_MAP"],
+        '地理院 白地図': mapStyle["GSI_BLANK_MAP"],
+        'OpenTopoMap': mapStyle["OTM_MAP"],
+        'TransportMap': mapStyle["TRANSPORT_MAP"],
+    };
+    // default BaseLayer
+    // const defaultBaseLayer = mapStyle["OSM_BRIGHT_MAP"];
+    // OverLayer
+    const mapOverLayer = {
+        tile_gsi_photo: {
+            name: '地理院 写真',
+            visible: isIdInLayer(defaultLayer, 'tile_gsi_photo'),
+        },
+        tile_gsi_relief: {
+            name: '地理院 標高図',
+            visible: isIdInLayer(defaultLayer, 'tile_gsi_relief'),
+        },
+        tile_railwaymap: {
+            name: 'OpenRailwayMap',
+            visible: isIdInLayer(defaultLayer, 'tile_railwaymap'),
+        },
+        tile_openseamap: {
+            name: 'OpenSeaMap',
+            visible: isIdInLayer(defaultLayer, 'tile_openseamap'),
+        },
+    };
+    // geojsonLayer
+    const geojsonLayer = {
+        geojson_port: {
+            name: '港湾情報',
+            visible: isIdInLayer(defaultLayer, 'geojson_port'),
+        },
+        geojson_sea_route: {
+            name: '国内航路',
+            visible: isIdInLayer(defaultLayer, 'geojson_sea_route'),
+        },
+        geojson_international_sea_route: {
+            name: '国際航路',
+            visible: isIdInLayer(defaultLayer, 'geojson_international_sea_route'),
+        },
+    };
+    // Layers Control
+    let layers = new layersControl({
+        baseLayers: mapBaseLayer,
+        defaultBaseLayer: defaultMap,
+        overLayers: mapOverLayer,
+        geojsonLayers: geojsonLayer,
+    });
+    map.addControl(layers, 'top-right');
+
+});
+
+
+
 
 // マップの初期化
 function initMap() {
@@ -143,6 +216,10 @@ export function updateBaseMap(afterMap) {
                 break;
         }
     });
+    
+    // Cookieに保存
+    setCookie("currentMap", currentMap, 30);
+
 }
 
 // スタイルの変更
@@ -217,15 +294,15 @@ function removeSource(sourceId) {
     }
 }
 
-// GeoJsonLayerの表示切り替え
-export async function toggleOverLayer(layerId, sourceId = layerId) {
-    if (currentLayer.includes(layerId)) {
-        removeLayerSource(layerId, sourceId);
-        // removeClickEvent(layerId);
-    } else {
-        await addOverLayer(layerId);
-    }
-}
+// // GeoJsonLayerの表示切り替え
+// export async function toggleOverLayer(layerId, sourceId = layerId) {
+//     if (currentLayer.includes(layerId)) {
+//         removeLayerSource(layerId, sourceId);
+//         // removeClickEvent(layerId);
+//     } else {
+//         await addOverLayer(layerId);
+//     }
+// }
 
 /**
  * OverLayer(Tile/GeoJson)を追加する関数
@@ -265,12 +342,17 @@ export async function addOverLayer(layerId) {
         console.log('[Error] Layer not found : addOverLayer( ' + layerId + ' )');
         return;
     }
+    
 
     // 追加後の後処理
-    map.once('styledata', () => {
+    map.once('idle', () => {
         currentLayer.push(layerId);
         updateLayerOrder();
+
+        // Cookieに保存
+        setCookie("currentLayer", currentLayer, 30);
     });
+    
 }
 
 /**
@@ -286,61 +368,17 @@ export async function removeOverLayer(layerId, sourceId = layerId) {
     } else {
         removeLayerSource(layerId, sourceId);
     }
+    
+    // Cookieに保存
+    setCookie("currentLayer", currentLayer, 30);
 }
 
-// BaseLayer
-const mapBaseLayer = {
-    'OSM Custom': mapStyle["OSM_CUSTOM_MAP"],
-    'OSM Bright': mapStyle["OSM_BRIGHT_MAP"],
-    'OSM Planet': mapStyle["OSM_PLANET_MAP"],
-    '地理院 標準': mapStyle["GSI_STD_MAP"],
-    '地理院 淡色': mapStyle["GSI_PALE_MAP"],
-    '地理院 白地図': mapStyle["GSI_BLANK_MAP"],
-    'OpenTopoMap': mapStyle["OTM_MAP"],
-    'TransportMap': mapStyle["TRANSPORT_MAP"],
-};
-// default BaseLayer
-// const defaultBaseLayer = mapStyle["OSM_BRIGHT_MAP"];
-// OverLayer
-const mapOverLayer = {
-    tile_gsi_photo: {
-        name: '地理院 写真',
-        visible: false,
-    },
-    tile_gsi_relief: {
-        name: '地理院 標高図',
-        visible: false,
-    },
-    tile_railwaymap: {
-        name: 'OpenRailwayMap',
-        visible: false,
-    },
-    tile_openseamap: {
-        name: 'OpenSeaMap',
-        visible: false,
-    },
-};
-// geojsonLayer
-const geojsonLayer = {
-    geojson_port: {
-        name: '港湾情報',
-        visible: false,
-    },
-    geojson_sea_route: {
-        name: '国内航路',
-        visible: true,
-    },
-    geojson_international_sea_route: {
-        name: '国際航路',
-        visible: false,
-    },
-};
-// Layers Control
-let layers = new layersControl({
-    baseLayers: mapBaseLayer,
-    defaultBaseLayer: mapStyle["OSM_CUSTOM_MAP"],
-    overLayers: mapOverLayer,
-    geojsonLayers: geojsonLayer,
-});
-map.addControl(layers, 'top-right');
-
+/**
+ * defaultLayerにIDの値が存在するかをチェックする関数
+ * @param {string} layer - チェックするレイヤー配列
+ * @param {string} id - チェックするレイヤーID
+ * @returns {boolean} - 存在する場合はtrue、そうでなければfalse
+ */
+function isIdInLayer(Layer, id) {
+    return Layer && Layer.includes(id);
+}
