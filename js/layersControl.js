@@ -88,6 +88,9 @@ export default class layersControl {
 
     // Make Radio Button (Base Layers)
     addRadioButton(container, layerId) {
+        const displayName = layerId;
+        layerId = Number(this.baseLayers[layerId]);
+
         const radioButton = document.createElement('input');
         radioButton.setAttribute('type', 'radio');
         radioButton.id = layerId;
@@ -96,24 +99,26 @@ export default class layersControl {
         // Initialize (Default Base Layers)
         const initLayer = this.defaultBaseLayer;
         if (initLayer == null) {
+            // If DefaultBaseLayer is not set, set the first layer as the default
             radioButton.checked = true;
-            this.defaultBaseLayer = layerId;
-            updateBaseMap(Number(layerId));
-        } else if (Number(layerId) === initLayer) {
+            this.defaultBaseLayer = radioButton.id;
+            updateBaseMap(layerId);
+        } else if (layerId === initLayer) {
+            // If DefaultBaseLayer is set, set the specified layer as the default
             radioButton.checked = true;
-            updateBaseMap(Number(layerId));
+            updateBaseMap(layerId);
         }
         container.appendChild(radioButton);
         
         // Add Layers Name
         const layerName = document.createElement('label');
-        layerName.htmlFor = layerId;
-        layerName.appendChild(document.createTextNode(this.baseLayers[layerId]));
+        layerName.htmlFor = radioButton.id;
+        layerName.appendChild(document.createTextNode(displayName));
         container.appendChild(layerName);
         
         // Event
         radioButton.addEventListener('change', (event) => {
-            updateBaseMap(Number(layerId));
+            updateBaseMap(layerId);
         });
     }
 

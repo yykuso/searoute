@@ -67,9 +67,6 @@ function initMap() {
     map.addControl(new maplibregl.GeolocateControl(), 'bottom-right');
     map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
 
-    // 初期地図
-    // updateBaseMap(mapStyle["OSM_BRIGHT_MAP"]);
-
     // 画面移動時に発火
     map.on("moveend", () => {
         const center = map.getCenter();
@@ -293,15 +290,14 @@ export async function removeOverLayer(layerId, sourceId = layerId) {
 
 // BaseLayer
 const mapBaseLayer = {
-    [mapStyle["OSM_CUSTOM_MAP"]]: 'OSM Custom',
-    [mapStyle["OSM_BRIGHT_MAP"]]: 'OSM Bright',
-    [mapStyle["OSM_PLANET_MAP"]]: 'OSM Planet',
-    [mapStyle["GSI_STD_MAP"]]: '地理院 標準',
-    [mapStyle["GSI_PALE_MAP"]]: '地理院 淡色',
-    [mapStyle["GSI_STD_MAP"]]: '地理院 標準',
-    [mapStyle["GSI_BLANK_MAP"]]: '地理院 白地図',
-    [mapStyle["OTM_MAP"]]: 'OpenTopoMap',
-    [mapStyle["TRANSPORT_MAP"]]: 'TransportMap',
+    'OSM Custom': mapStyle["OSM_CUSTOM_MAP"],
+    'OSM Bright': mapStyle["OSM_BRIGHT_MAP"],
+    'OSM Planet': mapStyle["OSM_PLANET_MAP"],
+    '地理院 標準': mapStyle["GSI_STD_MAP"],
+    '地理院 淡色': mapStyle["GSI_PALE_MAP"],
+    '地理院 白地図': mapStyle["GSI_BLANK_MAP"],
+    'OpenTopoMap': mapStyle["OTM_MAP"],
+    'TransportMap': mapStyle["TRANSPORT_MAP"],
 };
 // default BaseLayer
 // const defaultBaseLayer = mapStyle["OSM_BRIGHT_MAP"];
