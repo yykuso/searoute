@@ -249,6 +249,166 @@
   "shipName": "ZIYULAN",
   "color": "#0d0b90"
 },
+"CN001001": {
+  "businessName": "Xiamen COSCO Shipping（廈門中遠海運）",
+  "routeName": "台中～廈門～大麥嶼",
+  "url": "http://www.coscotw.com.tw/cht/asp/star-sch.asp",
+  "information": null,
+  "note": null,
+  "frequency": 1,
+  "shipName": "COSCO STAR（中远之星）",
+  "color": "#06508b"
+},
+"CN001002": {
+  "businessName": "Xiamen COSCO Shipping（廈門中遠海運）",
+  "routeName": "廈門（五通）～金門（水頭）",
+  "url": "https://ticket.wujiangferry.com.tw/TKQuery/TimeSchedule",
+  "information": null,
+  "note": null,
+  "frequency": 2,
+  "shipName": "XIN WU YUAN（新五緣）",
+  "color": "#06508b"
+},
+"CN001101": {
+  "businessName": "Fujian Cross Strait Ferry（福建海峡高速客滚航运）",
+  "routeName": "平潭～台北",
+  "url": "https://www.taiwancsf.com/",
+  "information": "休止中",
+  "note": "suspend",
+  "frequency": 1,
+  "shipName": "HAI XIA HAO（海峽號）",
+  "color": "#21b942"
+},
+"CN001102": {
+  "businessName": "Fujian Cross Strait Ferry（福建海峡高速客滚航运）",
+  "routeName": "平潭～台中",
+  "url": "https://www.taiwancsf.com/",
+  "information": "休止中",
+  "note": "suspend",
+  "frequency": 1,
+  "shipName": "HAI XIA HAO（海峽號）",
+  "color": "#21b942"
+},
+"CN001201": {
+  "businessName": "Fuzhou Shipping（福州程泰船务）",
+  "routeName": "琅岐～南竿（福澳）",
+  "url": "https://www.matsu.idv.tw/topicdetail.php?f=222&t=143131",
+  "information": null,
+  "note": null,
+  "frequency": 2,
+  "shipName": "AN QI 6 HAO（安麒6號）",
+  "color": "#ee1111"
+},
+"CN001202": {
+  "businessName": "Fuzhou Shipping（福州程泰船务）",
+  "routeName": "黄岐～北竿（白沙）",
+  "url": "https://www.matsu.idv.tw/topicdetail.php?f=222&t=143131",
+  "information": "外国人乗船不可",
+  "note": null,
+  "frequency": 2,
+  "shipName": "AN QI 2 HAO（安麒2號）",
+  "color": "#ee1111"
+},
+"CN001301": {
+  "businessName": "Xiamen Bay Sea Passenger（廈門灣海上旅遊客運）",
+  "routeName": "廈門（五通）～金門（水頭）",
+  "url": "https://ticket.wujiangferry.com.tw/TKQuery/TimeSchedule",
+  "information": null,
+  "note": null,
+  "frequency": 2,
+  "shipName": "Heping Xinxing（和平新星）",
+  "color": "#ee1111"
+},
+"CN001401": {
+  "businessName": "Xiamen Marine Passenger（廈門輪總海上客運旅遊）",
+  "routeName": "廈門（五通）～金門（水頭）",
+  "url": "https://ticket.wujiangferry.com.tw/TKQuery/TimeSchedule",
+  "information": null,
+  "note": null,
+  "frequency": 2,
+  "shipName": "XUN AN（迅安輪）、XIN JIE AN（新捷安）",
+  "color": "#075ef4"
+},
+"CN001402": {
+  "businessName": "Xiamen Marine Passenger（廈門輪總海上客運旅遊）",
+  "routeName": "泉州（石井）～金門（水頭）",
+  "url": "https://ticket.wujiangferry.com.tw/TKQuery/TimeSchedule",
+  "information": null,
+  "note": null,
+  "frequency": 2,
+  "shipName": "BA FANG（八方輪）",
+  "color": "#075ef4"
+},
+"CN001501": {
+  "businessName": "Xiamen Sanlian Shipping（廈門三聯船務企業）",
+  "routeName": "廈門（五通）～金門（水頭）",
+  "url": "https://ticket.wujiangferry.com.tw/TKQuery/TimeSchedule",
+  "information": null,
+  "note": null,
+  "frequency": 2,
+  "shipName": "XIN WU YI（新武夷）",
+  "color": "#c23a2e"
+},
+"TW000101": {
+  "businessName": "North-South Shipping（南北海運股份）",
+  "routeName": "南竿（福澳）～琅岐",
+  "url": "https://www.matsu.idv.tw/topicdetail.php?f=222&t=143131",
+  "information": null,
+  "note": null,
+  "frequency": 2,
+  "shipName": "JI SHUN NO10（吉順10號）",
+  "color": "#db760a"
+},
+"TW000102": {
+  "businessName": "North-South Shipping（南北海運股份）",
+  "routeName": "南竿（福澳）～北竿（白沙）～黄岐",
+  "url": "https://www.matsu.idv.tw/topicdetail.php?f=222&t=143131",
+  "information": "外国人乗船不可",
+  "note": null,
+  "frequency": 2,
+  "shipName": "JI SHUN NO9（吉順9號）",
+  "color": "#db760a"
+},
+"TW000201": {
+  "businessName": "Darong Shipping（大榮海運股份）",
+  "routeName": "金門（水頭）～廈門（五通）",
+  "url": "https://www.darong.com.tw/calendar.aspx",
+  "information": null,
+  "note": null,
+  "frequency": 2,
+  "shipName": "MARCOPOLO 1（馬可波羅1號）",
+  "color": "#f0853e"
+},
+"TW000301": {
+  "businessName": "King Xia Marine（金廈海運股份）",
+  "routeName": "金門（水頭）～廈門（五通）",
+  "url": "http://www.kingxia.com.tw/?menuid=11140&lgid=1&siteid=100527",
+  "information": null,
+  "note": null,
+  "frequency": 2,
+  "shipName": "XIN KING XIANG LOONG（新金祥龍）、KING RUEI LOONG（金瑞龍）",
+  "color": "#131d3f"
+},
+"TW000401": {
+  "businessName": "Kun Long Shipping（坤龍航運股份）",
+  "routeName": "金門（水頭）～廈門（五通）",
+  "url": "https://kmos.com.tw/msg.php?id=28",
+  "information": null,
+  "note": null,
+  "frequency": 2,
+  "shipName": "NEW ORIENTAL（新東方）",
+  "color": "#a40081"
+},
+"TW000501": {
+  "businessName": "Jinan Shipping（金安航運股份）",
+  "routeName": "金門（水頭）～廈門（五通）",
+  "url": "http://jinan.com.tw/#",
+  "information": null,
+  "note": null,
+  "frequency": 2,
+  "shipName": "JIN XING NO6（金星6號）",
+  "color": "#af6971"
+},
 "RU000101": {
   "businessName": "サハリン海洋汽船（北海道サハリン航路）",
   "routeName": "コルサコフ～稚内",
@@ -258,5 +418,15 @@
   "frequency": 1,
   "shipName": "PENGUIN32",
   "color": "#0a74ca"
+},
+"": {
+  "businessName": null,
+  "routeName": null,
+  "url": null,
+  "information": null,
+  "note": null,
+  "frequency": null,
+  "shipName": null,
+  "color": null
 }
 }
