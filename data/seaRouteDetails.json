@@ -2769,6 +2769,16 @@
   "shipName": null,
   "color": "#ff0000"
 },
+"381002": {
+  "businessName": "今治市",
+  "routeName": "今治～宗方～大下～小大下～岡村",
+  "url": "https://www.city.imabari.ehime.jp/chiiki/tosen/sekizen.html",
+  "information": "せきぜん渡船",
+  "note": null,
+  "frequency": 3,
+  "shipName": null,
+  "color": "#ff0000"
+},
 "381101": {
   "businessName": "くるしま",
   "routeName": "波止浜～来島～小島～馬島",
