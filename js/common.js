@@ -124,7 +124,9 @@ map.once('styledata', () => {
 });
 
 
-
+// スマホにおける長押しを検出するための変数
+let touchTimeout;
+let isDragging = false;
 
 // マップの初期化
 function initMap() {
@@ -153,6 +155,31 @@ function initMap() {
         // Cookieに保存
         setCookie("mapCenter", JSON.stringify([center.lng, center.lat]), 30);
         setCookie("mapZoom", zoom, 30);
+    });
+
+    // コンテキストメニューイベントの追加（右クリック）
+    map.on('contextmenu', (event) => {
+        event.preventDefault();
+        showContextMenu(event, 'right');
+    });
+
+    // コンテキストメニューイベントの追加（長押し）
+    map.on('touchstart', (event) => {
+        isDragging = false;
+        touchTimeout = setTimeout(() => {
+            if (!isDragging) {
+                showContextMenu(event, 'left');
+            }
+        }, 1000); // 1秒以上の長押しでコンテキストメニューを表示
+    });
+
+    map.on('touchmove', () => {
+        isDragging = true;
+        clearTimeout(touchTimeout);
+    });
+
+    map.on('touchend', () => {
+        clearTimeout(touchTimeout);
     });
 
     // イベントを追加
@@ -396,4 +423,88 @@ export async function removeOverLayer(layerId, sourceId = layerId) {
  */
 function isIdInLayer(Layer, id) {
     return Layer && Layer.includes(id);
+}
+
+// コンテキストメニューを表示する関数
+function showContextMenu(event, position = 'right') {
+    // 既存のコンテキストメニューを削除
+    const existingMenu = document.getElementById('context-menu');
+    if (existingMenu) {
+        existingMenu.remove();
+    }
+
+    // コンテキストメニューの作成
+    const contextMenu = document.createElement('div');
+    contextMenu.id = 'context-menu';
+
+    // 座標を表示し、コピーするボタンの追加
+    const copyCoordsItem = document.createElement('div');
+    const lngLat = event.lngLat;
+    const coordsText = `${lngLat.lat},${lngLat.lng}`;
+    copyCoordsItem.innerText = `${lngLat.lat.toFixed(5)},${lngLat.lng.toFixed(5)}`;
+    copyCoordsItem.onclick = () => {
+        navigator.clipboard.writeText(coordsText).then(() => {
+            alert('座標がコピーされました');
+        }).catch(err => {
+            console.error('座標のコピーに失敗しました', err);
+        });
+        contextMenu.remove();
+    };
+    contextMenu.appendChild(copyCoordsItem);
+
+    // Googleマップで開くボタンの追加
+    const googleMapsItem = document.createElement('div');
+    googleMapsItem.innerText = 'Googleマップで開く';
+    googleMapsItem.onclick = () => {
+        const lngLat = event.lngLat;
+        const googleMapsUrl = `https://www.google.com/maps?q=${lngLat.lat},${lngLat.lng}`;
+        window.open(googleMapsUrl, '_blank');
+        contextMenu.remove();
+    };
+    contextMenu.appendChild(googleMapsItem);
+
+    // コンテキストメニューを#mapに追加
+    document.getElementById('map').appendChild(contextMenu);
+
+    // 初期位置を設定
+    let left = event.point.x;
+    let top = event.point.y;
+
+    // コンテキストメニューのサイズを取得
+    const menuWidth = contextMenu.offsetWidth;
+    const menuHeight = contextMenu.offsetHeight;
+
+    // ウィンドウのサイズを取得
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    // 画面外に出ないように位置を調整
+    if (position === 'left') {
+        left -= menuWidth;
+        if (left < 0) {
+            left = 0;
+        }
+    } else {
+        if (left + menuWidth > windowWidth) {
+            left = windowWidth - menuWidth;
+        }
+    }
+    if (top + menuHeight > windowHeight) {
+        top = windowHeight - menuHeight;
+    }
+
+    contextMenu.style.left = `${left}px`;
+    contextMenu.style.top = `${top}px`;
+
+
+    // コンテキストメニューを閉じるイベントリスナー
+    document.addEventListener('click', () => {
+        contextMenu.remove();
+    }, { once: true });
+    
+    // マップを動かしたらコンテキストメニューを削除
+    map.on('move', () => {
+        contextMenu.remove();
+    });
+
 }

@@ -20,6 +20,11 @@ body {
     width: 200px;
 }
 
+.searoute-popup-box {
+    max-width: 240px;
+    word-wrap: break-word;
+}
+
 .searoute-popup-box .searoute-businessname {
     font-size: 1.2em;
     text-align: center;
@@ -35,6 +40,15 @@ body {
     margin-left: auto;
 }
 
+.searoute-businessname {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
+}
+
 .port-popup-box .port-name {
     text-align: center;
 }
@@ -46,13 +60,38 @@ body {
     color: #323232;
 }
 
-
 .highlight-yellow {
     text-decoration: underline;
     text-decoration-thickness: 0.5em;
     text-decoration-color: rgba(255, 228, 0, 0.4);
     text-underline-offset: -0.2em;
     text-decoration-skip-ink: none;
+}
+
+#context-menu {
+    position: absolute;
+    background-color: #fff;
+    border: none;
+    padding: 5px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    z-index: 1000;
+}
+
+#context-menu div {
+    padding: 0 12px;
+    border: none;
+    margin: 0;
+    min-height: 25px;
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+    align-items: center;
+    display: flex;
+}
+
+#context-menu div:hover {
+    background-color: #ddd;
 }
 
 #loading {

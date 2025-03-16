@@ -283,9 +283,15 @@ function addSeaRouteClickEvent(id, handleId = id) {
         const coordinates = event.lngLat;
         const properties = event.features[0].properties;
 
+        // businessNameに「（」が含まれる場合に改行を追加
+        let businessName = properties.businessName;
+        if (businessName.includes('（')) {
+            businessName = businessName.replace('（', '<br>（');
+        }
+
         const popupContent = `
             <div class="searoute-popup-box">
-                <div class="searoute-businessname">${properties.businessName}</div>
+                <div class="searoute-businessname">${businessName}</div>
                 <hr size="5" color="${properties.color}">
                 <div class="searoute-title highlight-yellow">航路</div>
                 <div class="searoute-detail">${properties.routeName}</div>
