@@ -147,6 +147,8 @@ function initMap() {
     map.addControl(new maplibregl.GeolocateControl(), 'bottom-right');
     map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
 
+    addSearchBar();
+
     // 画面移動時に発火
     map.on("moveend", () => {
         const center = map.getCenter();
@@ -507,4 +509,65 @@ function showContextMenu(event, position = 'right') {
         contextMenu.remove();
     });
 
+}
+
+// 検索バーを追加する関数
+function addSearchBar() {
+    const geocoderApi = {
+        forwardGeocode: async (config) => {
+            const features = [];
+            try {
+                const request = `https://nominatim.openstreetmap.org/search?q=${config.query}&format=geojson&polygon_geojson=1&addressdetails=1`;
+                const response = await fetch(request);
+                const geojson = await response.json();
+                for (const feature of geojson.features) {
+                    const center = [
+                        feature.bbox[0] + (feature.bbox[2] - feature.bbox[0]) / 2,
+                        feature.bbox[1] + (feature.bbox[3] - feature.bbox[1]) / 2
+                    ];
+                    const point = {
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: center
+                        },
+                        place_name: feature.properties.display_name,
+                        properties: feature.properties,
+                        text: feature.properties.display_name,
+                        place_type: ['place'],
+                        center
+                    };
+                    features.push(point);
+                }
+            } catch (e) {
+                console.log(`[Error] Failed to forwardGeocode with error: ${e}`);
+            }
+
+            return {
+                features
+            };
+        }
+    };
+
+    const geocoder = new MaplibreGeocoder(geocoderApi, {
+        maplibregl: maplibregl,
+        marker: {
+            color: 'red'
+        },
+        placeholder: 'Search',
+        collapsed: true,
+        limit: 10,
+        showResultsWhileTyping: true,
+        OptionalminLength: 2,
+        zoom: 12
+    });
+
+    // geocoderにクラスを追加
+    geocoder.onAdd = function(map) {
+        const container = MaplibreGeocoder.prototype.onAdd.call(this, map);
+        container.classList.add('maplibregl-ctrl-group');
+        return container;
+    };
+
+    map.addControl(geocoder, 'top-left');
 }
