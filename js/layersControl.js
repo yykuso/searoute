@@ -119,6 +119,12 @@ export default class layersControl {
         // Event
         radioButton.addEventListener('change', (event) => {
             updateBaseMap(layerId);
+
+            gtag('event', 'map_basemap_change', {
+                'event_category': 'map',
+                'event_label': displayName,
+                'value': 1
+            });
         });
     }
 
@@ -146,8 +152,21 @@ export default class layersControl {
         checkBox.addEventListener('change', (event) => {
             if (checkBox.checked) {
                 addOverLayer(layerId);
+
+                gtag('event', 'map_overlayer_change', {
+                    'event_category': 'map',
+                    'event_label': displayName,
+                    'value': 1
+                });
+                
             } else {
                 removeOverLayer(layerId);
+
+                gtag('event', 'map_overlayer_change', {
+                    'event_category': 'map',
+                    'event_label': displayName,
+                    'value': 0
+                });
             }
         });
     }

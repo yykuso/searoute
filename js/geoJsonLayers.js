@@ -311,6 +311,12 @@ function addSeaRouteClickEvent(id, handleId = id) {
             .setHTML(popupContent)
             .setMaxWidth("240px")
             .addTo(map);
+
+        gtag('event', 'marker_click', {
+            'event_category': 'map',
+            'event_label': properties.businessName,
+            'value': 1
+        });
     });
     
     map.on('mousemove', handleId, () => {
