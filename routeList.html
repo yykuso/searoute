@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+      <link rel="icon" type="image/x-icon" href="./img/favicon.ico" />
+    <link rel="apple-touch-icon" href="./img/apple-touch-icon.png" sizes="180x180" />
+    <link rel="icon" type="image/png" href="./img/android-chrome-192x192.png" />
+  
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="email=no,telephone=no,address=no">
+    
+    <title>航路一覧 | おでかけ航路マップ</title>
+    <meta name="description" content="日本の航路情報をマップ上で確認できるサイト" />
+  
+    <meta property="og:url" content="https://yykuso.github.io/searoute/" />
+    <meta property="og:title" content="航路一覧 | おでかけ航路マップ" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="日本の航路情報をマップ上で確認できるサイト" />
+    <meta property="og:image" content="https://yykuso.github.io/searoute/img/banner.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@yy_kuso" />
+    <meta name="twitter:creator" content="@yy_kuso" />
+    <meta name="twitter:title" content="航路一覧 | おでかけ航路マップ" />
+    <meta name="twitter:description" content="日本の航路情報をマップ上で確認できるサイト" />
+    <meta name="twitter:image" content="https://yykuso.github.io/searoute/img/twbanner.png" />
+  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+    <link href="./css/route-list.css" rel="stylesheet" />
+  
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-03DRMSWKPW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+  
+      gtag('config', 'G-03DRMSWKPW');
+    </script>
+  </head>
+<body>
+  <header class="header">
+    <div class="wrapper-inner">
+      <p>おでかけ航路マップ</p>
+      <nav>
+        <ul>
+          <li>
+            <a href="./" title="マップ">
+              <i class="fas fa-map"></i>
+              <span>マップ</span>
+            </a>
+          </li>
+          <li>
+            <a href="./routeList.html" title="航路一覧">
+              <i class="fas fa-ship"></i>
+              <span>航路一覧</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <!-- <h1>航路一覧</h1> -->
+  <div class = "sbox"> 
+    <div class = "sbox-inner"> 
+      <input type="text" id="searchbox" placeholder="検索キーワードを入力">
+      <button id="searchbutton">検索</button>
+      <button id="resetbutton">リセット</button>
+    </div>
+    <p id="search-message" style="color: red; font-size: 12px; margin-top: 5px;"></p>
+  </div>
+  <h2>国内航路</h2>
+  <table class="sea-route-table">
+    <thead>
+      <tr>
+        <th class="route-id">航路ID</th>
+        <th class="business-name">事業者名</th>
+        <th class="route-name">航路名</th>
+        <th class="information">情報</th>
+        <th class="url">時刻表</th>
+      </tr>
+    </thead>
+    <tbody>
+    <!-- データがここに挿入される -->
+    </tbody>
+  </table>
+  <h2>国際航路</h2>
+  <table class="international-sea-route-table">
+    <thead>
+      <tr>
+        <th class="route-id">航路ID</th>
+        <th class="business-name">事業者名</th>
+        <th class="route-name">航路名</th>
+        <th class="information">情報</th>
+        <th class="url">時刻表</th>
+      </tr>
+    </thead>
+    <tbody>
+    <!-- データがここに挿入される -->
+    </tbody>
+  </table>
+  <script type="module" src="./js/routeList.js"></script>
+</body>
+</html>

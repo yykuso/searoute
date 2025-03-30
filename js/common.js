@@ -1,4 +1,5 @@
 import layersControl from './layersControl.js';
+import hamburgerControl from './hamburgerContril.js';
 import { addRasterLayer } from './rasterLayers.js';
 import { addGeoJsonLayer, addMarker, addResetClickEvent } from './geoJsonLayers.js';
 import { initCenterZoom, setCookie, getCookie } from './cookieControler.js';
@@ -146,6 +147,7 @@ function initMap() {
     map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
     map.addControl(new maplibregl.GeolocateControl(), 'bottom-right');
     map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
+    map.addControl(new hamburgerControl(), 'top-right');
 
     addSearchBar();
 

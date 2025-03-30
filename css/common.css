@@ -60,6 +60,35 @@ body {
     color: #323232;
 }
 
+#hamburger-control {
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ccc;
+    color: #323232;
+}
+
+.maplibregl-ctrl-layers-toggle {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.maplibregl-ctrl-hamburger-toggle {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.maplibregl-ctrl-hamburger-list a {
+    text-decoration: none;
+    color: #323232;
+}
+
+
 .highlight-yellow {
     text-decoration: underline;
     text-decoration-thickness: 0.5em;

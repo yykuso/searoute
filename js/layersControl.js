@@ -189,12 +189,12 @@ export default class layersControl {
     // Control Event Mouseover
     handleOver() {
         this.container.childNodes[0].style.display = 'none';
-        this.container.childNodes[1].style.display = 'inline';
+        this.container.childNodes[1].style.display = '';
     }
 
     // Control Event Mouseout
     handleOut() {
-        this.container.childNodes[0].style.display = 'inline';
+        this.container.childNodes[0].style.display = '';
         this.container.childNodes[1].style.display = 'none';
     }
 }
