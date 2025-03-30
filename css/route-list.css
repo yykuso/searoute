@@ -39,13 +39,14 @@ body {
     margin: 10px;
     font-size: 0.9rem;
     font-weight: 500;
+    padding-left:0;
 }
 
 .header ul li {
     float: left;
     margin-right: 20px;
     text-align: center;
-    
+    list-style:none;
 }
 
 .header ul li:last-child {
@@ -66,32 +67,18 @@ body {
     margin-bottom: 0.1px;
 }
 
-ul{
-    padding-left:0;
-}
-
-li{
-    list-style:none;
-}
-
-h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 5px;
-}
-
 h2 {
     font-size: 1.2rem;
     font-weight: 700;
     width: 700px;
     max-width: none;
     height: 28px;
+    margin: 5px;
+    background-color: #fff;
     position: -webkit-sticky;
     position: sticky;
     top: 52px;
-    z-index: 1;
-    background-color: #fff;
-    margin: 5px;
+    z-index: 10;
 }
 
 table {
