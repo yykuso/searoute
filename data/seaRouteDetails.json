@@ -1689,16 +1689,6 @@
   "shipName": null,
   "color": "#00a73c"
 },
-"340601": {
-  "businessName": "福本渡船",
-  "routeName": "尾道（土堂）～向島",
-  "url": "https://onomichijp.com/shimanami/fukumoto_tosen.html",
-  "information": null,
-  "note": null,
-  "frequency": 3,
-  "shipName": null,
-  "color": "#ff0000"
-},
 "340701": {
   "businessName": "土生商船",
   "routeName": "三原～佐木島（鷺）～因島～生名島（立石）",
@@ -1711,7 +1701,7 @@
 },
 "340801": {
   "businessName": "弓場汽船",
-  "routeName": "三原～佐木島（鷺）～生口島",
+  "routeName": "三原～生口島",
   "url": "https://habushosen.jp/timetable/timetable06",
   "information": null,
   "note": null,
@@ -1743,8 +1733,8 @@
   "businessName": "しまなみ海運",
   "routeName": "竹原～大崎上島～大崎下島",
   "url": "https://habushosen.jp/timetable/timetable03",
-  "information": null,
-  "note": null,
+  "information": "運休中",
+  "note": "suspend",
   "frequency": 3,
   "shipName": null,
   "color": "#ff4400"
@@ -1863,9 +1853,9 @@
   "businessName": "契島運輸",
   "routeName": "竹原～契島",
   "url": "https://www.toho-zinc.co.jp/chigirishimaunyu/ippanryokyaku.html",
-  "information": "平日のみ",
+  "information": "会社休日は旅客船のみ",
   "note": null,
-  "frequency": 1,
+  "frequency": 3,
   "shipName": null,
   "color": "#003264"
 },
@@ -1988,16 +1978,6 @@
   "frequency": 2,
   "shipName": null,
   "color": "#ea5322"
-},
-"342501": {
-  "businessName": "バンカー・サプライ",
-  "routeName": "広島～似島",
-  "url": "https://bunker-supply.com/ninoshima/",
-  "information": "平日運航",
-  "note": null,
-  "frequency": 2,
-  "shipName": null,
-  "color": "#03b4e8"
 },
 "342502": {
   "businessName": "バンカー・サプライ",
@@ -3755,7 +3735,7 @@
   "url": "https://www.go-minamata.jp/services/service07.html",
   "information": "事前予約制",
   "note": null,
-  "frequency": null,
+  "frequency": 1,
   "shipName": null,
   "color": "#bc09a7"
 },
@@ -4020,12 +4000,22 @@
   "color": "#007739"
 },
 "461201": {
-  "businessName": "南九船舶",
+  "businessName": "なんきゅうドック",
   "routeName": "山川～根占",
   "url": "http://nankyu-ferry.com/time/",
   "information": null,
   "note": null,
   "frequency": 3,
+  "shipName": null,
+  "color": "#d40115"
+},
+"461202": {
+  "businessName": "なんきゅうドック",
+  "routeName": "鹿児島（マリンポート）～鹿屋",
+  "url": "http://nankyu-ferry.com/liner/",
+  "information": null,
+  "note": null,
+  "frequency": 1,
   "shipName": null,
   "color": "#d40115"
 },
