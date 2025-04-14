@@ -1,3 +1,4 @@
 /tools/*
 *.qmd
 *.back
+.vscode

@@ -28,6 +28,10 @@ export async function addGeoJsonLayer(id) {
             addGeoJsonInternationalSeaRouteLayer();
             addSeaRouteClickEvent("geojson_international_sea_route", "geojson_international_sea_route_outline");
             break;
+        case "geojson_limited_sea_route":
+            addGeoJsonLimitedSeaRouteLayer();
+            addSeaRouteClickEvent("geojson_limited_sea_route", "geojson_limited_sea_route_outline");
+            break;
         default:
             console.log('[Error] Layer not found : addGeoJsonLayer( ' + id + ' )');
             return;
@@ -256,6 +260,107 @@ async function addGeoJsonInternationalSeaRouteLayer() {
             "text-offset": [0, 1],
             'text-field': [
                 'format', 
+                ['get', 'businessName'],{},
+                ' (',{},
+                ['get', 'routeName'],{},
+                ') ',{}
+            ],
+            'text-font': ["NotoSansCJKjp-Regular"],
+            'text-size': 9
+        },
+        paint: {
+            'text-color': ['coalesce', ['get', 'color'], '#000000'],
+            'text-halo-color': '#FFFFFF',
+            'text-halo-width': 2,
+            'text-halo-blur': 2
+        }
+    });
+}
+
+async function addGeoJsonLimitedSeaRouteLayer() {
+    // 航路情報(国際)
+    var seaRouteGeojson = await loadAndMergeData(
+        './data/limitedSeaRoute.geojson',
+        './data/limitedSeaRouteDetails.json',
+        'routeId'
+    );
+    map.addSource('geojson_limited_sea_route', {
+        type: 'geojson',
+        data: seaRouteGeojson,
+    });
+    map.addLayer({
+        // 線のアウトライン
+        id: 'geojson_limited_sea_route_outline',
+        type: 'line',
+        source: 'geojson_limited_sea_route',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        paint: {
+            'line-color': '#FF5555',
+            'line-width': 8,
+            'line-opacity': 0.2
+        }
+    });
+    map.addLayer({
+        // 実線
+        id: 'geojson_limited_sea_route_solidline',
+        type: 'line',
+        source: 'geojson_limited_sea_route',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        filter: ['==', ['get', 'note'], null],
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#000000'],
+            'line-width': ['coalesce', ['get', 'frequency'], 3],
+            'line-dasharray': [1, 0],
+        }
+    });
+    map.addLayer({
+        // 破線
+        id: 'geojson_limited_sea_route_dashline',
+        type: 'line',
+        source: 'geojson_limited_sea_route',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        filter: ['==', ['get', 'note'], 'season'],
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#000000'],
+            'line-width': ['coalesce', ['get', 'frequency'], 3],
+            'line-dasharray': [1, 2],
+        }
+    });
+    map.addLayer({
+        // 点線
+        id: 'geojson_limited_sea_route_thinline',
+        type: 'line',
+        source: 'geojson_limited_sea_route',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        filter: ['==', ['get', 'note'], 'suspend'],
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#000000'],
+            'line-width': ['coalesce', ['get', 'frequency'], 1],
+            'line-dasharray': [1, 4],
+        }
+    });
+    map.addLayer({
+        // キャプション
+        id: 'geojson_limited_sea_route_name',
+        type: 'symbol',
+        source: 'geojson_limited_sea_route',
+        layout: {
+            'symbol-placement': 'line',
+            "text-offset": [0, 1],
+            'text-field': [
+                'format',
                 ['get', 'businessName'],{},
                 ' (',{},
                 ['get', 'routeName'],{},

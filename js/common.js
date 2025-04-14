@@ -1,8 +1,8 @@
 import layersControl from './layersControl.js';
-import hamburgerControl from './hamburgerContril.js';
+import hamburgerControl from './hamburgerControl.js';
 import { addRasterLayer } from './rasterLayers.js';
 import { addGeoJsonLayer, addMarker, addResetClickEvent } from './geoJsonLayers.js';
-import { initCenterZoom, setCookie, getCookie } from './cookieControler.js';
+import { initCenterZoom, setCookie, getCookie } from './cookieControl.js';
 
 /* マップの命名規則
     VectorTile = 背景マップ   = style
@@ -40,6 +40,7 @@ export const layerPriorities = [
     'tile_openseamap',
     'geojson_sea_route',
     'geojson_international_sea_route',
+    'geojson_limited_sea_route',
     'geojson_port',
 ];
 
@@ -56,6 +57,10 @@ if (getCookie("currentMap")) {
 if (getCookie("currentLayer")) {
     defaultLayer = getCookie("currentLayer").split(',');
 }
+
+// スマホにおける長押しを検出するための変数
+let touchTimeout;
+let isDragging = false;
 
 // 初期化
 initMap();
@@ -112,6 +117,10 @@ map.once('styledata', () => {
             name: '国際航路',
             visible: isIdInLayer(defaultLayer, 'geojson_international_sea_route'),
         },
+        geojson_limited_sea_route: {
+            name: '期間限定航路',
+            visible: isIdInLayer(defaultLayer, 'geojson_limited_sea_route'),
+        },
     };
     // Layers Control
     let layers = new layersControl({
@@ -124,16 +133,11 @@ map.once('styledata', () => {
 
 });
 
-
-// スマホにおける長押しを検出するための変数
-let touchTimeout;
-let isDragging = false;
-
 // マップの初期化
 function initMap() {
-    // デフォルト設定
+    // マップの中心・拡大をCookieから取得して初期化
     const [mapCenter, mapZoom] = initCenterZoom();
-    
+
     // mapLibreGLの初期化
     map =  new maplibregl.Map({
         container: 'map',
@@ -148,45 +152,15 @@ function initMap() {
     map.addControl(new maplibregl.GeolocateControl(), 'bottom-right');
     map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
     map.addControl(new hamburgerControl(), 'top-right');
+    map.addControl(addGeocoderControl(), 'top-left');
 
-    addSearchBar();
+    // 画面移動後の処理
+    addMoveEndEvent();
 
-    // 画面移動時に発火
-    map.on("moveend", () => {
-        const center = map.getCenter();
-        const zoom = map.getZoom();
+    // コンテキストメニューイベントの追加
+    addContextEvent();
 
-        // Cookieに保存
-        setCookie("mapCenter", JSON.stringify([center.lng, center.lat]), 30);
-        setCookie("mapZoom", zoom, 30);
-    });
-
-    // コンテキストメニューイベントの追加（右クリック）
-    map.on('contextmenu', (event) => {
-        event.preventDefault();
-        showContextMenu(event, 'right');
-    });
-
-    // コンテキストメニューイベントの追加（長押し）
-    map.on('touchstart', (event) => {
-        isDragging = false;
-        touchTimeout = setTimeout(() => {
-            if (!isDragging) {
-                showContextMenu(event, 'left');
-            }
-        }, 1000); // 1秒以上の長押しでコンテキストメニューを表示
-    });
-
-    map.on('touchmove', () => {
-        isDragging = true;
-        clearTimeout(touchTimeout);
-    });
-
-    map.on('touchend', () => {
-        clearTimeout(touchTimeout);
-    });
-
-    // イベントを追加
+    // 既存のポップアップを削除するイベント
     addResetClickEvent();
 }
 
@@ -219,7 +193,7 @@ function getMapStyle(style) {
 
 // 背景マップの更新
 export function updateBaseMap(afterMap) {
-    
+
     // 同じマップの場合は何もしない
     if (currentMap == afterMap) {
         return;
@@ -259,7 +233,7 @@ export function updateBaseMap(afterMap) {
                 break;
         }
     });
-    
+
     // Cookieに保存
     setCookie("currentMap", currentMap, 30);
 
@@ -275,7 +249,7 @@ async function changeStyle(newStyleJson) {
                 return layer.id.startsWith('geojson') || layer.id.startsWith('tile');
             });
             var layers = nextStyle.layers.concat(custom_layers);
-        
+
             var sources = nextStyle.sources;
             for (const [key, value] of Object.entries(previousStyle.sources)) {
                 if (key.startsWith('geojson') || key.startsWith('tile')) {
@@ -337,16 +311,6 @@ function removeSource(sourceId) {
     }
 }
 
-// // GeoJsonLayerの表示切り替え
-// export async function toggleOverLayer(layerId, sourceId = layerId) {
-//     if (currentLayer.includes(layerId)) {
-//         removeLayerSource(layerId, sourceId);
-//         // removeClickEvent(layerId);
-//     } else {
-//         await addOverLayer(layerId);
-//     }
-// }
-
 /**
  * OverLayer(Tile/GeoJson)を追加する関数
  * @param {string} layerId - OverLayerID
@@ -388,7 +352,6 @@ export async function addOverLayer(layerId) {
         console.log('[Error] Layer not found : addOverLayer( ' + layerId + ' )');
         return;
     }
-    
 
     // 追加後の後処理
     map.once('idle', () => {
@@ -398,7 +361,6 @@ export async function addOverLayer(layerId) {
         // Cookieに保存
         setCookie("currentLayer", currentLayer, 30);
     });
-    
 }
 
 /**
@@ -414,7 +376,7 @@ export async function removeOverLayer(layerId, sourceId = layerId) {
     } else {
         removeLayerSource(layerId, sourceId);
     }
-    
+
     // Cookieに保存
     setCookie("currentLayer", currentLayer, 30);
 }
@@ -429,7 +391,121 @@ function isIdInLayer(Layer, id) {
     return Layer && Layer.includes(id);
 }
 
-// コンテキストメニューを表示する関数
+/**
+ * 検索バーを追加する関数
+ * MapLibreGeocoderを使用して、地名検索を行う
+ */
+function addGeocoderControl() {
+    const geocoderApi = {
+        forwardGeocode: async (config) => {
+            const features = [];
+            try {
+                const request = `https://nominatim.openstreetmap.org/search?q=${config.query}&format=geojson&polygon_geojson=1&addressdetails=1`;
+                const response = await fetch(request);
+                const geojson = await response.json();
+                for (const feature of geojson.features) {
+                    const center = [
+                        feature.bbox[0] + (feature.bbox[2] - feature.bbox[0]) / 2,
+                        feature.bbox[1] + (feature.bbox[3] - feature.bbox[1]) / 2
+                    ];
+                    const point = {
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: center
+                        },
+                        place_name: feature.properties.display_name,
+                        properties: feature.properties,
+                        text: feature.properties.display_name,
+                        place_type: ['place'],
+                        center
+                    };
+                    features.push(point);
+                }
+            } catch (e) {
+                console.log(`[Error] Failed to forwardGeocode with error: ${e}`);
+            }
+
+            return {
+                features
+            };
+        }
+    };
+
+    const geocoder = new MaplibreGeocoder(geocoderApi, {
+        maplibregl: maplibregl,
+        marker: {
+            color: 'red'
+        },
+        placeholder: 'Search',
+        collapsed: true,
+        limit: 10,
+        showResultsWhileTyping: true,
+        OptionalminLength: 3,
+        zoom: 12
+    });
+
+    // geocoderにクラスを追加
+    geocoder.onAdd = function(map) {
+        const container = MaplibreGeocoder.prototype.onAdd.call(this, map);
+        container.classList.add('maplibregl-ctrl-group');
+        return container;
+    };
+
+    return geocoder;
+}
+
+/**
+ * MoveEndイベントを追加する関数
+ * マップの移動が終了したときに、マップの中心座標とズームレベルをCookieに保存する
+ */
+function addMoveEndEvent(){
+    map.on("moveend", () => {
+        const center = map.getCenter();
+        const zoom = map.getZoom();
+
+        // Cookieに保存
+        setCookie("mapCenter", JSON.stringify([center.lng, center.lat]), 30);
+        setCookie("mapZoom", zoom, 30);
+    });
+}
+
+/**
+ * コンテキストメニューイベントを追加する関数
+ * 右クリックまたは長押しでコンテキストメニューを表示する
+ */
+function addContextEvent() {
+    // コンテキストメニューイベントの追加（右クリック）
+    map.on('contextmenu', (event) => {
+        event.preventDefault();
+        showContextMenu(event, 'right');
+    });
+
+    // コンテキストメニューイベントの追加（長押し）
+    map.on('touchstart', (event) => {
+        isDragging = false;
+        touchTimeout = setTimeout(() => {
+            if (!isDragging) {
+                showContextMenu(event, 'left');
+            }
+        }, 1000); // 1秒以上の長押しでコンテキストメニューを表示
+    });
+
+    map.on('touchmove', () => {
+        isDragging = true;
+        clearTimeout(touchTimeout);
+    });
+
+    map.on('touchend', () => {
+        clearTimeout(touchTimeout);
+    });
+}
+
+/**
+ * コンテキストメニューを表示する関数
+ * @param {*} event イベントオブジェクト
+ * @param {*} position 表示位置（'left'または'right'）
+ */
 function showContextMenu(event, position = 'right') {
     // 既存のコンテキストメニューを削除
     const existingMenu = document.getElementById('context-menu');
@@ -505,71 +581,9 @@ function showContextMenu(event, position = 'right') {
     document.addEventListener('click', () => {
         contextMenu.remove();
     }, { once: true });
-    
+
     // マップを動かしたらコンテキストメニューを削除
     map.on('move', () => {
         contextMenu.remove();
     });
-
-}
-
-// 検索バーを追加する関数
-function addSearchBar() {
-    const geocoderApi = {
-        forwardGeocode: async (config) => {
-            const features = [];
-            try {
-                const request = `https://nominatim.openstreetmap.org/search?q=${config.query}&format=geojson&polygon_geojson=1&addressdetails=1`;
-                const response = await fetch(request);
-                const geojson = await response.json();
-                for (const feature of geojson.features) {
-                    const center = [
-                        feature.bbox[0] + (feature.bbox[2] - feature.bbox[0]) / 2,
-                        feature.bbox[1] + (feature.bbox[3] - feature.bbox[1]) / 2
-                    ];
-                    const point = {
-                        type: 'Feature',
-                        geometry: {
-                            type: 'Point',
-                            coordinates: center
-                        },
-                        place_name: feature.properties.display_name,
-                        properties: feature.properties,
-                        text: feature.properties.display_name,
-                        place_type: ['place'],
-                        center
-                    };
-                    features.push(point);
-                }
-            } catch (e) {
-                console.log(`[Error] Failed to forwardGeocode with error: ${e}`);
-            }
-
-            return {
-                features
-            };
-        }
-    };
-
-    const geocoder = new MaplibreGeocoder(geocoderApi, {
-        maplibregl: maplibregl,
-        marker: {
-            color: 'red'
-        },
-        placeholder: 'Search',
-        collapsed: true,
-        limit: 10,
-        showResultsWhileTyping: true,
-        OptionalminLength: 2,
-        zoom: 12
-    });
-
-    // geocoderにクラスを追加
-    geocoder.onAdd = function(map) {
-        const container = MaplibreGeocoder.prototype.onAdd.call(this, map);
-        container.classList.add('maplibregl-ctrl-group');
-        return container;
-    };
-
-    map.addControl(geocoder, 'top-left');
 }
