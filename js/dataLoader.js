@@ -31,9 +31,10 @@ export async function loadData(geojsonPath) {
  * @param {string} geojsonPath - GeoJSONファイルのパス
  * @param {string} detailsPath - 詳細情報ファイルのパス
  * @param {string} matchProperty - 結合に使用するプロパティ名
+ * @param {boolean} [detailsPriority=false] - 同一プロパティのとき詳細情報ファイルを優先するかどうか
  * @returns {Promise<Object>} - マージ済みのGeoJSONデータ
  */
-export async function loadAndMergeData(geojsonPath, detailsPath, matchProperty) {
+export async function loadAndMergeData(geojsonPath, detailsPath, matchProperty, detailsPriority = false) {
     try {
         // ローディングアニメーションを表示
         await showLoadingAnimation();
@@ -54,18 +55,17 @@ export async function loadAndMergeData(geojsonPath, detailsPath, matchProperty) 
 
             return {
                 ...feature,
-                properties: {
-                    ...feature.properties,
-                    ...matchedDetail // 詳細情報をプロパティに結合
-                }
+                properties: detailsPriority
+                    ? { ...feature.properties, ...matchedDetail } // detailsを優先
+                    : { ...matchedDetail, ...feature.properties } // geojsonを優先
             };
         });
-        
+
         // ローディングアニメーションを非表示
         await hideLoadingAnimation();
 
         return geojson;
-    
+
     } catch (error) {
         console.error("データの読み込みまたは結合に失敗しました:", error);
         throw error;
