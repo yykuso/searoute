@@ -549,6 +549,36 @@
   "shipName": null,
   "color": "#00984a"
 },
+"130901": {
+  "businessName": "観光汽船興業",
+  "routeName": "舟旅通勤（日本橋～豊洲）",
+  "url": "https://www.suitown.jp/cruise/234/",
+  "information": "火・水・木・金曜日",
+  "note": null,
+  "frequency": 2,
+  "shipName": null,
+  "color": "#e4080b"
+},
+"131001": {
+  "businessName": "東京湾クルージング",
+  "routeName": "舟旅通勤 BLUE FERRY（晴海五丁目～日の出）",
+  "url": "https://blue-ferry.mob/",
+  "information": "火・木曜日",
+  "note": null,
+  "frequency": 2,
+  "shipName": "エスエス 3世, エスエス NANO2",
+  "color": "#e4080b"
+},
+"131101": {
+  "businessName": "ジール",
+  "routeName": "舟旅通勤（五反田～天王洲アイル）",
+  "url": "https://www.suitown.jp/cruise/262/",
+  "information": "月～金曜日",
+  "note": null,
+  "frequency": 2,
+  "shipName": "カノン, ルーク, 月乃舟",
+  "color": "#e4080b"
+},
 "140101": {
   "businessName": "東京湾フェリー",
   "routeName": "金谷～久里浜",
