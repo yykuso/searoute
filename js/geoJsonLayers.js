@@ -97,7 +97,15 @@ async function addGeoJsonSeaRouteLayer() {
         },
         paint: {
             'line-color': '#FFFFFF',
-            'line-width': 8,
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'frequency'], 3], 0.5],
+                6,    // ズームレベル = 6
+                ['+', ['*', ['coalesce', ['get', 'frequency'], 3], 1.0], 4]
+            ],
             'line-opacity': 0.5
         }
     });
@@ -113,7 +121,15 @@ async function addGeoJsonSeaRouteLayer() {
         filter: ['==', ['get', 'note'], null],
         paint: {
             'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 3],
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'frequency'], 3], 0.5],
+                6,    // ズームレベル = 6
+                ['*', ['coalesce', ['get', 'frequency'], 3], 1.0]
+            ],
             'line-dasharray': [1, 0],
         }
     });
@@ -129,7 +145,15 @@ async function addGeoJsonSeaRouteLayer() {
         filter: ['==', ['get', 'note'], 'season'],
         paint: {
             'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 3],
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'frequency'], 3], 0.5],
+                6,    // ズームレベル = 6
+                ['*', ['coalesce', ['get', 'frequency'], 3], 1.0]
+            ],
             'line-dasharray': [1, 2],
         }
     });
@@ -145,7 +169,15 @@ async function addGeoJsonSeaRouteLayer() {
         filter: ['==', ['get', 'note'], 'suspend'],
         paint: {
             'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 1],
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'frequency'], 1], 0.75],
+                6,    // ズームレベル = 6
+                ['*', ['coalesce', ['get', 'frequency'], 1], 1.0]
+            ],
             'line-dasharray': [1, 4],
         }
     });
@@ -160,10 +192,10 @@ async function addGeoJsonSeaRouteLayer() {
             'text-field': [
                 'step',
                 ['zoom'],
-                '',    // ズームレベル < 8
-                4,    // ズームレベル >= 8
+                '',    // ズームレベル < 4
+                4,    // ズームレベル >= 4
                 ['get', 'businessName'],
-                6,   // ズームレベル >= 10
+                6,   // ズームレベル >= 6
                 [
                     'format',
                     ['get', 'businessName'],{},
@@ -206,7 +238,15 @@ async function addGeoJsonInternationalSeaRouteLayer() {
         },
         paint: {
             'line-color': '#FFFFFF',
-            'line-width': 8,
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'frequency'], 3], 0.5],
+                6,    // ズームレベル = 6
+                ['+', ['*', ['coalesce', ['get', 'frequency'], 3], 1.0], 4]
+            ],
             'line-opacity': 0.5
         }
     });
@@ -222,7 +262,15 @@ async function addGeoJsonInternationalSeaRouteLayer() {
         filter: ['==', ['get', 'note'], null],
         paint: {
             'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 3],
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'frequency'], 1], 0.75],
+                6,    // ズームレベル = 6
+                ['*', ['coalesce', ['get', 'frequency'], 1], 1.0]
+            ],
             'line-dasharray': [1, 0],
         }
     });
@@ -238,7 +286,15 @@ async function addGeoJsonInternationalSeaRouteLayer() {
         filter: ['==', ['get', 'note'], 'season'],
         paint: {
             'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 3],
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'frequency'], 1], 0.75],
+                6,    // ズームレベル = 6
+                ['*', ['coalesce', ['get', 'frequency'], 1], 1.0]
+            ],
             'line-dasharray': [1, 2],
         }
     });
@@ -254,7 +310,15 @@ async function addGeoJsonInternationalSeaRouteLayer() {
         filter: ['==', ['get', 'note'], 'suspend'],
         paint: {
             'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 1],
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'frequency'], 1], 0.75],
+                6,    // ズームレベル = 6
+                ['*', ['coalesce', ['get', 'frequency'], 1], 1.0]
+            ],
             'line-dasharray': [1, 4],
         }
     });
@@ -314,9 +378,17 @@ async function addGeoJsonLimitedSeaRouteLayer() {
             'line-cap': 'round'
         },
         paint: {
-            'line-color': '#FF5555',
-            'line-width': 8,
-            'line-opacity': 0.2
+            'line-color': '#000000',
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'frequency'], 3], 0.5],
+                6,    // ズームレベル = 6
+                ['+', ['*', ['coalesce', ['get', 'frequency'], 3], 1.0], 4]
+            ],
+            'line-opacity': 0.5
         }
     });
     map.addLayer({
@@ -331,7 +403,15 @@ async function addGeoJsonLimitedSeaRouteLayer() {
         filter: ['==', ['get', 'note'], null],
         paint: {
             'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 3],
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'frequency'], 1], 0.75],
+                6,    // ズームレベル = 6
+                ['*', ['coalesce', ['get', 'frequency'], 1], 1.0]
+            ],
             'line-dasharray': [1, 0],
         }
     });
@@ -347,7 +427,15 @@ async function addGeoJsonLimitedSeaRouteLayer() {
         filter: ['==', ['get', 'note'], 'season'],
         paint: {
             'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 3],
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'frequency'], 1], 0.75],
+                6,    // ズームレベル = 6
+                ['*', ['coalesce', ['get', 'frequency'], 1], 1.0]
+            ],
             'line-dasharray': [1, 2],
         }
     });
@@ -363,7 +451,15 @@ async function addGeoJsonLimitedSeaRouteLayer() {
         filter: ['==', ['get', 'note'], 'suspend'],
         paint: {
             'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': ['coalesce', ['get', 'frequency'], 1],
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'frequency'], 1], 0.75],
+                6,    // ズームレベル = 6
+                ['*', ['coalesce', ['get', 'frequency'], 1], 1.0]
+            ],
             'line-dasharray': [1, 4],
         }
     });
@@ -376,11 +472,19 @@ async function addGeoJsonLimitedSeaRouteLayer() {
             'symbol-placement': 'line',
             "text-offset": [0, 1],
             'text-field': [
-                'format',
-                ['get', 'businessName'],{},
-                ' (',{},
-                ['get', 'routeName'],{},
-                ') ',{}
+                'step',
+                ['zoom'],
+                '',    // ズームレベル < 8
+                4,    // ズームレベル >= 8
+                ['get', 'businessName'],
+                6,   // ズームレベル >= 10
+                [
+                    'format',
+                    ['get', 'businessName'],{},
+                    ' (',{},
+                    ['get', 'routeName'],{},
+                    ') ',{}
+                ]
             ],
             'text-font': ["NotoSansCJKjp-Regular"],
             'text-size': 9
