@@ -424,7 +424,11 @@ function addSeaRouteClickEvent(id, handleId = id) {
                 ` : ''}
                 ${properties.shipName ? `
                     <div class="searoute-title highlight-yellow">船舶</div>
-                    <div class="searoute-detail">${properties.shipName}</div>
+                    <div class="searoute-detail">
+                        <ul style="list-style-type: disc; margin: 0; padding-left: 5px;">
+                            ${properties.shipName.split(', ').map(ship => `<li>${ship}</li>`).join('')}
+                        </ul>
+                    </div>
                 ` : ''}
                 ${properties.url ? `
                     <div class="searoute-title highlight-yellow">リンク</div>

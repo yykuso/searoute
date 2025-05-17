@@ -4,7 +4,6 @@
   "routeName": "淡路島～夢洲",
   "url": "https://awajishima-resort.com/access/",
   "information": "1日1往復",
-  "note": null,
   "frequency": 2,
   "shipName": "awalineきらら",
   "color": "#cd955e"
@@ -24,7 +23,6 @@
   "routeName": "ユニバーサルシティポート～夢洲",
   "url": "https://mahoroba2025.book.ntmg.com/",
   "information": "火・金・土曜日運航",
-  "note": null,
   "frequency": 2,
   "shipName": "まほろば",
   "color": "#ff0a14"
@@ -34,7 +32,6 @@
   "routeName": "中之島～夢洲",
   "url": "https://watercityportal.jp/expo-shuttle",
   "information": "1日2往路（夢洲方面のみ）",
-  "note": null,
   "frequency": 3,
   "shipName": "UC70",
   "color": "#0088e3"
@@ -44,7 +41,6 @@
   "routeName": "ユニバーサルシティポート～夢洲",
   "url": "https://watercityportal.jp/expo-shuttle",
   "information": "1日4往路2復路",
-  "note": null,
   "frequency": 3,
   "shipName": "UC80",
   "color": "#0088e3"
@@ -54,7 +50,6 @@
   "routeName": "堺旧港～夢洲",
   "url": "https://watercityportal.jp/expo-shuttle",
   "information": "1日3往路2復路",
-  "note": null,
   "frequency": 3,
   "shipName": "UC200",
   "color": "#0088e3"
@@ -64,9 +59,7 @@
   "routeName": "小豆島（土庄）～直島（宮浦）",
   "url": "https://www.shikokuferry.com/18602",
   "information": "金土日祝 運航",
-  "note": null,
   "frequency": 3,
-  "shipName": null,
   "color": "#ff8111"
 },
 "EX020102": {
@@ -74,9 +67,7 @@
   "routeName": "小豆島（土庄）～犬島",
   "url": "https://www.shikokuferry.com/18602",
   "information": "金土日祝 運航",
-  "note": null,
   "frequency": 3,
-  "shipName": null,
   "color": "#ff8111"
 },
 "EX020201": {
@@ -84,9 +75,7 @@
   "routeName": "高松～豊島（唐櫃）",
   "url": "https://t-ferry.com/schedule/",
   "information": "火曜日運休",
-  "note": null,
   "frequency": 3,
-  "shipName": null,
   "color": "#ff0a14"
 },
 "EX020301": {
@@ -94,29 +83,14 @@
   "routeName": "京橋～犬島～豊島（唐櫃）",
   "url": "https://okcruise.co.jp/",
   "information": "土日祝 運航",
-  "note": null,
   "frequency": 2,
-  "shipName": null,
   "color": "#4e607b"
 },
 "EX020401": {
   "businessName": "にじ観光\t",
   "routeName": "本島～高見島～粟島",
   "url": "https://setouchi-artfest.jp/access/island/",
-  "information": null,
-  "note": null,
   "frequency": 3,
-  "shipName": null,
   "color": "#ff0a14"
-},
-"": {
-  "businessName": null,
-  "routeName": null,
-  "url": null,
-  "information": null,
-  "note": null,
-  "frequency": null,
-  "shipName": null,
-  "color": null
 }
 }
