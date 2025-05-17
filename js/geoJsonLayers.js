@@ -158,11 +158,19 @@ async function addGeoJsonSeaRouteLayer() {
             'symbol-placement': 'line',
             "text-offset": [0, 1],
             'text-field': [
-                'format', 
-                ['get', 'businessName'],{},
-                ' (',{},
-                ['get', 'routeName'],{},
-                ') ',{}
+                'step',
+                ['zoom'],
+                '',    // ズームレベル < 8
+                4,    // ズームレベル >= 8
+                ['get', 'businessName'],
+                6,   // ズームレベル >= 10
+                [
+                    'format',
+                    ['get', 'businessName'],{},
+                    ' (',{},
+                    ['get', 'routeName'],{},
+                    ') ',{}
+                ]
             ],
             'text-font': ["NotoSansCJKjp-Regular"],
             'text-size': 9
@@ -259,11 +267,19 @@ async function addGeoJsonInternationalSeaRouteLayer() {
             'symbol-placement': 'line',
             "text-offset": [0, 1],
             'text-field': [
-                'format', 
-                ['get', 'businessName'],{},
-                ' (',{},
-                ['get', 'routeName'],{},
-                ') ',{}
+                'step',
+                ['zoom'],
+                '',    // ズームレベル < 8
+                4,    // ズームレベル >= 8
+                ['get', 'businessName'],
+                6,   // ズームレベル >= 10
+                [
+                    'format',
+                    ['get', 'businessName'],{},
+                    ' (',{},
+                    ['get', 'routeName'],{},
+                    ') ',{}
+                ]
             ],
             'text-font': ["NotoSansCJKjp-Regular"],
             'text-size': 9
