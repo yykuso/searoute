@@ -4,25 +4,33 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<link rel="icon" type="image/x-icon" href="./img/favicon.ico" />
-  <link rel="apple-touch-icon" href="./img/apple-touch-icon.png" sizes="180x180" />
-  <link rel="icon" type="image/png" href="./img/android-chrome-192x192.png" />
+  <link rel="icon" type="image/svg+xml" href="./img/icon.svg" />
+  <link rel="icon" type="image/png" sizes="16x16" href="./img/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-icon.png" />
+
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#3c92cf">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="航路マップ">
 
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="format-detection" content="email=no,telephone=no,address=no">
-  
+
   <title>おでかけ航路マップ</title>
-  <meta name="description" content="日本の航路情報をマップ上で確認できるサイト" />
+  <meta name="description" content="船の航路情報をマップ上で確認できるサイト" />
 
   <meta property="og:url" content="https://yykuso.github.io/searoute/" />
   <meta property="og:title" content="おでかけ航路マップ" />
   <meta property="og:type" content="website" />
-  <meta property="og:description" content="日本の航路情報をマップ上で確認できるサイト" />
+  <meta property="og:description" content="船の航路情報をマップ上で確認できるサイト" />
   <meta property="og:image" content="https://yykuso.github.io/searoute/img/banner.png" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@yy_kuso" />
   <meta name="twitter:creator" content="@yy_kuso" />
   <meta name="twitter:title" content="おでかけ航路マップ" />
-  <meta name="twitter:description" content="日本の航路情報をマップ上で確認できるサイト" />
+  <meta name="twitter:description" content="船の航路情報をマップ上で確認できるサイト" />
   <meta name="twitter:image" content="https://yykuso.github.io/searoute/img/twbanner.png" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -52,4 +60,19 @@
   <div id="map"></div>
   <script type="module" src="./js/common.js"></script>
 </body>
+
+  <!-- Service Workerの登録スクリプトを追加 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then((registration) => {
+            console.log('ServiceWorker registration successful');
+          })
+          .catch((err) => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+      });
+    }
+  </script>
 </html>
