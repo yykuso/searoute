@@ -402,13 +402,19 @@ function addSeaRouteClickEvent(id, handleId = id) {
                 <div class="searoute-detail">${properties.routeName}</div>
                 <div class="searoute-title highlight-yellow">選択部分</div>
                 <div class="searoute-detail">${properties.portName1}～${properties.portName2}</div>
-                <div class="searoute-title highlight-yellow">情報</div>
-                <div class="searoute-detail">${properties.information || "なし"}</div>
-                <div class="searoute-title highlight-yellow">船舶</div>
-                <div class="searoute-detail">${properties.shipName || "-"}</div>
-                <div class="searoute-title highlight-yellow">リンク</div>
-                <div class="searoute-detail"><a href="${properties.url}" class="expanded button" target="_blank">運航スケジュール</a></div>
-            </div> 
+                ${properties.information ? `
+                    <div class="searoute-title highlight-yellow">情報</div>
+                    <div class="searoute-detail">${properties.information}</div>
+                ` : ''}
+                ${properties.shipName ? `
+                    <div class="searoute-title highlight-yellow">船舶</div>
+                    <div class="searoute-detail">${properties.shipName}</div>
+                ` : ''}
+                ${properties.url ? `
+                    <div class="searoute-title highlight-yellow">リンク</div>
+                    <div class="searoute-detail"><a href="${properties.url}" class="expanded button" target="_blank">運航スケジュール</a></div>
+                ` : ''}
+            </div>
         `;
 
         popup
@@ -423,7 +429,7 @@ function addSeaRouteClickEvent(id, handleId = id) {
             'value': 1
         });
     });
-    
+
     map.on('mousemove', handleId, () => {
         map.getCanvas().style.cursor = 'pointer';
     });
