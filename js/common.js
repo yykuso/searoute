@@ -277,7 +277,28 @@ function reAddMaker() {
 }
 
 // レイヤーの表示順を更新
-function updateLayerOrder() {
+function updateLayerOrder(retryCount = 0, maxRetries = 30, waitUntil = 1000) {
+    // 最大リトライ回数を超えた場合は終了
+    if (retryCount >= maxRetries) {
+        return;
+    }
+
+    // 各レイヤーの読み込み状態を確認
+    for (const layerId of layerPriorities) {
+        if (currentLayer.includes(layerId)) {
+            // ソースが存在し、読み込まれているか確認
+            const sourceId = layerId;
+            if (!map.getSource(sourceId) || !map.isSourceLoaded(sourceId)) {
+                // 再試行
+                setTimeout(() => {
+                    updateLayerOrder(retryCount + 1, maxRetries);
+                }, waitUntil);
+                return;
+            }
+        }
+    }
+
+    // すべてのレイヤーが読み込まれていれば順序を更新
     layerPriorities.forEach((layerId) => {
         if (currentLayer.includes(layerId)) {
             map.getStyle().layers.forEach((layer) => {
