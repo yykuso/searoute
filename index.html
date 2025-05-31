@@ -33,6 +33,7 @@
   <meta name="twitter:description" content="船の航路情報をマップ上で確認できるサイト" />
   <meta name="twitter:image" content="https://yykuso.github.io/searoute/img/twbanner.png" />
 
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
   integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
   crossorigin="anonymous"
@@ -40,11 +41,11 @@
   <link href="https://unpkg.com/maplibre-gl@^4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
   <link href="./css/common.css" rel="stylesheet" />
 
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/maplibre-gl@^4.7.1/dist/maplibre-gl.js"></script>
   <script src="https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.5.0/dist/maplibre-gl-geocoder.min.js"></script>
   <link href="./css/maplibre-gl-geocoder.css" rel="stylesheet" />
 
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-03DRMSWKPW"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -61,7 +62,6 @@
   <script type="module" src="./js/common.js"></script>
 </body>
 
-  <!-- Service Workerの登録スクリプトを追加 -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

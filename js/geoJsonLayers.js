@@ -508,43 +508,79 @@ function addSeaRouteClickEvent(id, handleId = id) {
         const coordinates = event.lngLat;
         const properties = event.features[0].properties;
 
-        // businessNameに「（」が含まれる場合に改行を追加
+        // businessNameに「（」が含まれる場合に分割
         let businessName = properties.businessName;
+        let businessNameSub = '';
         if (businessName.includes('（')) {
-            businessName = businessName.replace('（', '<br>（');
+            const parts = businessName.split('（');
+            businessName = parts[0];
+            businessNameSub = parts[1].replace('）', ''); // 閉じ括弧を除去
         }
 
+        // 船舶名をリスト形式に変換
+        const shipListHtml = properties.shipName
+            ? properties.shipName.split(', ')
+                .map(ship => `<li>${ship.trim()}</li>`)
+                .join('')
+            : '';
+
         const popupContent = `
-            <div class="searoute-popup-box">
-                <div class="searoute-businessname">${businessName}</div>
-                <hr size="5" color="${properties.color}">
-                <div class="searoute-title highlight-yellow">航路</div>
-                <div class="searoute-detail">${properties.routeName}</div>
-                <div class="searoute-title highlight-yellow">選択部分</div>
-                <div class="searoute-detail">${properties.portName1}～${properties.portName2}</div>
-                ${properties.information ? `
-                    <div class="searoute-title highlight-yellow">情報</div>
-                    <div class="searoute-detail">${properties.information}</div>
-                ` : ''}
-                ${properties.shipName ? `
-                    <div class="searoute-title highlight-yellow">船舶</div>
-                    <div class="searoute-detail">
-                        <ul style="list-style-type: disc; margin: 0; padding-left: 5px;">
-                            ${properties.shipName.split(', ').map(ship => `<li>${ship}</li>`).join('')}
-                        </ul>
+        <div class="searoute-popup-box">
+            <div class="flex items-center justify-center mb-2 pb-1" style="border-bottom-color: ${properties.color || '#e5e7eb'}; border-bottom-width: 5px; border-bottom-style: solid;">
+                <div>
+                    <h2 class="flex justify-center text-base font-semibold text-gray-800">${businessName}</h2>
+                    ${businessNameSub ? `<p class="flex justify-center text-xs text-gray-600">${businessNameSub}</p>` : ''}
                     </div>
-                ` : ''}
-                ${properties.url ? `
-                    <div class="searoute-title highlight-yellow">リンク</div>
-                    <div class="searoute-detail"><a href="${properties.url}" class="expanded button" target="_blank">運航スケジュール</a></div>
-                ` : ''}
             </div>
+
+            <div class="mb-4">
+                <h3 class="text-xs font-semibold text-blue-600 mb-1 flex items-center">
+                    <i class="fas fa-route fa-fw mr-2 text-blue-500"></i>航路
+                </h3>
+                <p class="text-gray-800 text-xs pl-2 leading-relaxed">${properties.routeName || 'N/A'}</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="text-xs font-semibold text-green-600 mb-1 flex items-center">
+                    <i class="fas fa-map-pin fa-fw mr-2 text-green-500"></i>選択部分
+                </h3>
+                <p class="text-gray-800 text-xs pl-2 rounded-md">${properties.portName1 || 'N/A'}～${properties.portName2 || 'N/A'}</p>
+            </div>
+
+            ${properties.information ? `
+            <div class="mb-4">
+                <h3 class="text-xs font-semibold text-yellow-600 mb-1 flex items-center">
+                    <i class="fas fa-info-circle fa-fw mr-2 text-yellow-500"></i>情報
+                </h3>
+                <p class="text-gray-800 text-xs pl-2 leading-relaxed">${properties.information}</p>
+            </div>
+            ` : ''}
+
+            ${properties.shipName ? `
+            <div class="mb-4">
+                <h3 class="text-xs font-semibold text-purple-600 mb-1 flex items-center">
+                    <i class="fas fa-ship fa-fw mr-2 text-purple-500"></i>船舶
+                </h3>
+                <ul class="list-disc list-inside text-gray-800 text-xs pl-2">
+                    ${shipListHtml}
+                </ul>
+            </div>
+            ` : ''}
+
+            ${properties.url ? `
+            <div class="mx-4">
+                <a href="${properties.url}" target="_blank" rel="noopener noreferrer" class="block w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs py-2 px-3 rounded-lg text-center transition duration-150 ease-in-out shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 flex items-center justify-center">
+                    <i class="fas fa-calendar-alt fa-fw mr-1.5"></i>運航スケジュール
+                </a>
+            </div>
+            ` : ''}
+        </div>
         `;
 
         popup
             .setLngLat(coordinates)
             .setHTML(popupContent)
-            .setMaxWidth("240px")
+            .setMaxWidth(null)
             .addTo(map);
 
         gtag('event', 'marker_click', {

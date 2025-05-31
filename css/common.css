@@ -1,4 +1,5 @@
 body {
+    font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
 }
@@ -12,41 +13,17 @@ body {
 }
 
 .maplibregl-popup {
-    width: 200px;
+    width: 240px;
 }
 
 .maplibregl-popup-content {
     border-radius: 12px;
-    width: 200px;
+    /* width: 220px; */
 }
 
 .searoute-popup-box {
-    max-width: 240px;
+    width: 220px;
     word-wrap: break-word;
-}
-
-.searoute-popup-box .searoute-businessname {
-    font-size: 1.2em;
-    text-align: center;
-    font-weight: bold;
-}
-
-.searoute-popup-box .searoute-title {
-    font-weight: bold;
-}
-
-.searoute-popup-box .searoute-detail {
-    width: 90%;
-    margin-left: auto;
-}
-
-.searoute-businessname {
-    font-size: 14px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    max-width: 100%;
 }
 
 .port-popup-box .port-name {
@@ -88,6 +65,17 @@ body {
     color: #323232;
 }
 
+.maplibregl-ctrl-layers-list input[type="radio"],
+.maplibregl-ctrl-layers-list input[type="checkbox"] {
+    margin: 4px;
+    cursor: pointer;
+}
+
+.maplibregl-ctrl-layers-list hr {
+    margin: 4px 0;
+    border: 0;
+    border-top: 1px solid #e5e7eb;
+}
 
 .highlight-yellow {
     text-decoration: underline;
@@ -155,6 +143,6 @@ body {
     transform: rotate(0deg);
     }
 100% {
-    transform: rotate(360deg);	
+    transform: rotate(360deg);
     }
 }
