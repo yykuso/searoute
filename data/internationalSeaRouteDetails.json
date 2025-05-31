@@ -3,7 +3,7 @@
   "businessName": "関釜フェリー（釜関フェリー）",
   "routeName": "下関〜釜山",
   "url": "https://www.kampuferry.co.jp/passenger_info/schedule/index.html",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "はまゆう, 星希",
   "color": "#dc0000"
 },
@@ -11,7 +11,7 @@
   "businessName": "カメリアライン",
   "routeName": "博多〜釜山",
   "url": "https://www.camellia-line.co.jp/dia/",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "ニューかめりあ",
   "color": "#007f3e"
 },
@@ -19,7 +19,7 @@
   "businessName": "パンスター（サンスターライン）",
   "routeName": "釜山〜比田勝〜厳原",
   "url": "https://www.panstar.jp/tsushimalink/",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "PANSTAR TSUSHIMA LINK",
   "color": "#f08100"
 },
@@ -27,7 +27,7 @@
   "businessName": "パンスター（サンスターライン）",
   "routeName": "釜山〜大阪南港",
   "url": "https://www.panstar.jp/plyschedule/",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "PANSTAR DREAM",
   "color": "#f08100"
 },
@@ -35,7 +35,7 @@
   "businessName": "Starline",
   "routeName": "釜山〜比田勝",
   "url": "https://www.thenina.co.kr/html/?pcode=27",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "NINA",
   "color": "#57bec8"
 },
@@ -43,9 +43,9 @@
   "businessName": "大亜高速海運",
   "routeName": "釜山〜対馬",
   "url": "http://www.daea.com/",
-  "information": "休止中",
+  "info": "休止中",
   "note": "suspend",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "OCEAN FLOWER",
   "color": "#6372d9"
 },
@@ -53,7 +53,7 @@
   "businessName": "DUWON商船",
   "routeName": "境港〜東海〜ウラジオストク",
   "url": "http://duwonship.iceserver.co.kr/en/reservation/schedule.asp",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "EASTERN DREAM",
   "color": "#1765c5"
 },
@@ -61,8 +61,8 @@
   "businessName": "Dain Ferry",
   "routeName": "仁川～大連",
   "url": "https://www.dainferry.co.kr/shipinfo/schedule.php",
-  "information": "VPN必須",
-  "frequency": 1,
+  "info": "VPN必須",
+  "freq": 1,
   "shipName": "BIRYONG",
   "color": "#03348c"
 },
@@ -70,7 +70,7 @@
   "businessName": "Pan Korea Yingkou Ferry",
   "routeName": "仁川～営口",
   "url": "http://www.yingkouferry.co.kr/passenger/shipSchedule.php",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "ARAFURA LILY",
   "color": "#2f5e70"
 },
@@ -78,9 +78,9 @@
   "businessName": "Jinchon Ferry",
   "routeName": "仁川～天津",
   "url": "http://www.jinchon.co.kr/",
-  "information": "休止中",
+  "info": "休止中",
   "note": "suspend",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "TIAN REN",
   "color": "#031b9f"
 },
@@ -88,8 +88,8 @@
   "businessName": "Weidong Ferry（威東フェリー）",
   "routeName": "仁川～威海",
   "url": "https://www.weidong.com/eng/schedule/list.do?menuKey=458",
-  "information": "VPN必須",
-  "frequency": 1,
+  "info": "VPN必須",
+  "freq": 1,
   "shipName": "NEW GOLDEN BRIDGE VII",
   "color": "#1e6fc2"
 },
@@ -97,8 +97,8 @@
   "businessName": "Weidong Ferry（威東フェリー）",
   "routeName": "仁川～青島",
   "url": "https://www.weidong.com/eng/schedule/list.do?menuKey=458",
-  "information": "VPN必須",
-  "frequency": 1,
+  "info": "VPN必須",
+  "freq": 1,
   "shipName": "NEW GOLDEN BRIDGE V",
   "color": "#1e6fc2"
 },
@@ -106,7 +106,7 @@
   "businessName": "Dalong Ferry（大龍海運）",
   "routeName": "平沢～永城",
   "url": "https://dalongferry.co.kr/shipInfo/flightSchedule",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "ORIENTAL PEARL VIII",
   "color": "#ffc600"
 },
@@ -114,7 +114,7 @@
   "businessName": "Shidao International Ferry（石島国際フェリー）",
   "routeName": "群山～石道",
   "url": "https://www.shidaoferry.com/bbs/content.php?co_id=sub02_02",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "GUNSAN PEARL",
   "color": "#e41615"
 },
@@ -122,9 +122,9 @@
   "businessName": "日中国際フェリー",
   "routeName": "上海〜神戸",
   "url": "https://www.shinganjin.com/schedule/",
-  "information": "旅客取扱休止中",
+  "info": "旅客取扱休止中",
   "note": "suspend",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "JIAN ZHEN HAO",
   "color": "#d32f2f"
 },
@@ -132,9 +132,9 @@
   "businessName": "日中国際フェリー",
   "routeName": "上海〜大阪",
   "url": "https://www.shinganjin.com/schedule/",
-  "information": "旅客取扱休止中",
+  "info": "旅客取扱休止中",
   "note": "suspend",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "JIAN ZHEN HAO",
   "color": "#d32f2f"
 },
@@ -142,9 +142,9 @@
   "businessName": "Dandong International Ferry",
   "routeName": "丹東～仁川",
   "url": "https://www.dandongferry.co.kr/",
-  "information": "休止中",
+  "info": "休止中",
   "note": "suspend",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "ORIENTAL PEARL Ⅵ",
   "color": "#e02600"
 },
@@ -152,7 +152,7 @@
   "businessName": "Qin-in Shipping",
   "routeName": "秦皇島～仁川",
   "url": "https://www.qininferry.com/pages/Vessel_vesselCalendar.php",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "XIN YU JIN XIANG",
   "color": "#d93b29"
 },
@@ -160,7 +160,7 @@
   "businessName": "Hanjoong Ferry Lines",
   "routeName": "煙台～仁川",
   "url": "https://www.hanjoongferry.co.kr/",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "XIN XIANG XUE LAN",
   "color": "#004098"
 },
@@ -168,7 +168,7 @@
   "businessName": "Yantai Ferry（烟台フェリー）",
   "routeName": "煙台～平沢",
   "url": "http://www.yantaiferry.com/kor/passenger/passenger_sch.asp",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "OCEAN BLUE WHALE",
   "color": "#21b942"
 },
@@ -176,7 +176,7 @@
   "businessName": "Jiaodong Shipping（膠東海運）",
   "routeName": "威海～平沢",
   "url": "https://www.google.com/search?q=%22%E8%86%A0%E6%9D%B1%E6%B5%B7%E9%81%8B%22",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "NEW GRAND PEACE（新永安号）",
   "color": "#872a2d"
 },
@@ -184,7 +184,7 @@
   "businessName": "Huadong Shipping（華東海運）",
   "routeName": "石道～仁川",
   "url": "https://www.huadong.co.kr/info/passenger.html",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "HUADONG PEARL VIII",
   "color": "#8f4522"
 },
@@ -192,7 +192,7 @@
   "businessName": "Rizhao Haitong Ferry（日照海通班轮）",
   "routeName": "日照～平沢",
   "url": "http://rizhaoferry.co.kr/ch/sailing/sail02.php",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "RIZHAO ORIENT",
   "color": "#df2f28"
 },
@@ -200,7 +200,7 @@
   "businessName": "LYG C-K Ferry（連雲港フェリー）",
   "routeName": "連雲～仁川",
   "url": "https://www.lygferry.com/index.html",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "HARMONY YUN GANG",
   "color": "#d0a307"
 },
@@ -208,7 +208,7 @@
   "businessName": "LYG C-K Ferry（連雲港フェリー）",
   "routeName": "連雲～平沢",
   "url": "https://www.lygferry.com/index.html",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "ZIYULAN",
   "color": "#0d0b90"
 },
@@ -216,7 +216,7 @@
   "businessName": "Xiamen COSCO Shipping（廈門中遠海運）",
   "routeName": "台中～廈門～大麥嶼",
   "url": "http://www.coscotw.com.tw/cht/asp/star-sch.asp",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "COSCO STAR（中远之星）",
   "color": "#06508b"
 },
@@ -224,7 +224,7 @@
   "businessName": "Xiamen COSCO Shipping（廈門中遠海運）",
   "routeName": "廈門（五通）～金門（水頭）",
   "url": "https://ticket.wujiangferry.com.tw/TKQuery/TimeSchedule",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "XIN WU YUAN（新五緣）",
   "color": "#06508b"
 },
@@ -232,9 +232,9 @@
   "businessName": "Fujian Cross Strait Ferry（福建海峡高速客滚航运）",
   "routeName": "平潭～台北",
   "url": "https://www.taiwancsf.com/",
-  "information": "休止中",
+  "info": "休止中",
   "note": "suspend",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "HAI XIA HAO（海峽號）",
   "color": "#21b942"
 },
@@ -242,9 +242,9 @@
   "businessName": "Fujian Cross Strait Ferry（福建海峡高速客滚航运）",
   "routeName": "平潭～台中",
   "url": "https://www.taiwancsf.com/",
-  "information": "休止中",
+  "info": "休止中",
   "note": "suspend",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "HAI XIA HAO（海峽號）",
   "color": "#21b942"
 },
@@ -252,7 +252,7 @@
   "businessName": "Fuzhou Shipping（福州程泰船务）",
   "routeName": "琅岐～南竿（福澳）",
   "url": "https://www.matsu.idv.tw/topicdetail.php?f=222&t=143131",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "AN QI 6 HAO（安麒6號）",
   "color": "#ee1111"
 },
@@ -260,8 +260,8 @@
   "businessName": "Fuzhou Shipping（福州程泰船务）",
   "routeName": "黄岐～北竿（白沙）",
   "url": "https://www.matsu.idv.tw/topicdetail.php?f=222&t=143131",
-  "information": "外国人乗船不可",
-  "frequency": 2,
+  "info": "外国人乗船不可",
+  "freq": 2,
   "shipName": "AN QI 2 HAO（安麒2號）",
   "color": "#ee1111"
 },
@@ -269,7 +269,7 @@
   "businessName": "Xiamen Bay Sea Passenger（廈門灣海上旅遊客運）",
   "routeName": "廈門（五通）～金門（水頭）",
   "url": "https://ticket.wujiangferry.com.tw/TKQuery/TimeSchedule",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "Heping Xinxing（和平新星）",
   "color": "#ee1111"
 },
@@ -277,7 +277,7 @@
   "businessName": "Xiamen Marine Passenger（廈門輪總海上客運旅遊）",
   "routeName": "廈門（五通）～金門（水頭）",
   "url": "https://ticket.wujiangferry.com.tw/TKQuery/TimeSchedule",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "XUN AN（迅安輪）、XIN JIE AN（新捷安）",
   "color": "#075ef4"
 },
@@ -285,7 +285,7 @@
   "businessName": "Xiamen Marine Passenger（廈門輪總海上客運旅遊）",
   "routeName": "泉州（石井）～金門（水頭）",
   "url": "https://ticket.wujiangferry.com.tw/TKQuery/TimeSchedule",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "BA FANG（八方輪）",
   "color": "#075ef4"
 },
@@ -293,7 +293,7 @@
   "businessName": "Xiamen Sanlian Shipping（廈門三聯船務企業）",
   "routeName": "廈門（五通）～金門（水頭）",
   "url": "https://ticket.wujiangferry.com.tw/TKQuery/TimeSchedule",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "XIN WU YI（新武夷）",
   "color": "#c23a2e"
 },
@@ -301,7 +301,7 @@
   "businessName": "North-South Shipping（南北海運股份）",
   "routeName": "南竿（福澳）～琅岐",
   "url": "https://www.matsu.idv.tw/topicdetail.php?f=222&t=143131",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "JI SHUN NO10（吉順10號）",
   "color": "#db760a"
 },
@@ -309,8 +309,8 @@
   "businessName": "North-South Shipping（南北海運股份）",
   "routeName": "南竿（福澳）～北竿（白沙）～黄岐",
   "url": "https://www.matsu.idv.tw/topicdetail.php?f=222&t=143131",
-  "information": "外国人乗船不可",
-  "frequency": 2,
+  "info": "外国人乗船不可",
+  "freq": 2,
   "shipName": "JI SHUN NO9（吉順9號）",
   "color": "#db760a"
 },
@@ -318,7 +318,7 @@
   "businessName": "Darong Shipping（大榮海運股份）",
   "routeName": "金門（水頭）～廈門（五通）",
   "url": "https://www.darong.com.tw/calendar.aspx",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "MARCOPOLO 1（馬可波羅1號）",
   "color": "#f0853e"
 },
@@ -326,7 +326,7 @@
   "businessName": "King Xia Marine（金廈海運股份）",
   "routeName": "金門（水頭）～廈門（五通）",
   "url": "http://www.kingxia.com.tw/?menuid=11140&lgid=1&siteid=100527",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "XIN KING XIANG LOONG（新金祥龍）、KING RUEI LOONG（金瑞龍）",
   "color": "#131d3f"
 },
@@ -334,7 +334,7 @@
   "businessName": "Kun Long Shipping（坤龍航運股份）",
   "routeName": "金門（水頭）～廈門（五通）",
   "url": "https://kmos.com.tw/msg.php?id=28",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "NEW ORIENTAL（新東方）",
   "color": "#a40081"
 },
@@ -342,7 +342,7 @@
   "businessName": "Jinan Shipping（金安航運股份）",
   "routeName": "金門（水頭）～廈門（五通）",
   "url": "http://jinan.com.tw/#",
-  "frequency": 2,
+  "freq": 2,
   "shipName": "JIN XING NO6（金星6號）",
   "color": "#af6971"
 },
@@ -350,9 +350,9 @@
   "businessName": "サハリン海洋汽船（北海道サハリン航路）",
   "routeName": "コルサコフ～稚内",
   "url": "http://www.hokkaido-nomad.co.jp/HSL/schedule.html",
-  "information": "季節限定・休止中",
+  "info": "季節限定・休止中",
   "note": "suspend",
-  "frequency": 1,
+  "freq": 1,
   "shipName": "PENGUIN32",
   "color": "#0a74ca"
 }
