@@ -497,7 +497,7 @@
 "140201": {
   "businessName": "トライアングル",
   "routeName": "横須賀～猿島",
-  "url": "https://sarushima.jp/info/#timetable",
+  "url": "https://sarushima.jp/information/#timetable",
   "freq": 3,
   "shipName": "NEW KUROFUNE, Sea Friend 8, Sea Friend ZERO",
   "color": "#3ea4b2"
@@ -783,7 +783,7 @@
 "220801": {
   "businessName": "淡島マリンパーク",
   "routeName": "重寺岸壁～離宮桟橋",
-  "url": "https://www.marinepark.jp/enjoy/info/",
+  "url": "https://www.marinepark.jp/enjoy/information/",
   "freq": 3,
   "shipName": "アワシマ13号, アワシマ15号, アワシマ16号",
   "color": "#073190"
@@ -1060,6 +1060,33 @@
   "note": "season",
   "freq": 1,
   "color": "#f2939b"
+},
+"250401": {
+  "businessName": "杢兵衛造船所",
+  "routeName": "LAGOクルーズ（大津港～におの浜観光桟橋）",
+  "url": "https://lakewest.jp/lago-cruise/",
+  "freq": 2,
+  "freqInfo": "土休日運航、1日7往復",
+  "shipName": "一番丸",
+  "color": "#000002"
+},
+"250402": {
+  "businessName": "杢兵衛造船所",
+  "routeName": "LAGOクルーズ（草津烏丸半島港～におの浜観光桟橋）",
+  "url": "https://lakewest.jp/lago-cruise/",
+  "freq": 2,
+  "freqInfo": "土休日運航、1日3往復",
+  "shipName": "ゆりきゃも",
+  "color": "#00387b"
+},
+"250403": {
+  "businessName": "杢兵衛造船所",
+  "routeName": "琵琶湖博物館クルーズ（おごと温泉港～草津烏丸半島港）",
+  "url": "https://lakewest.jp/biwahaku-cruise/",
+  "freq": 2,
+  "freqInfo": "土休日運航、1日2往復",
+  "shipName": "四季",
+  "color": "#c19f2c"
 },
 "270101": {
   "businessName": "名門大洋フェリー",
@@ -3078,7 +3105,7 @@
 "460701": {
   "businessName": "鹿商海運",
   "routeName": "鹿児島～種子島（西之表）～屋久島（宮之浦）",
-  "url": "https://www.yakushimaferry.com/hibisukasu-basic-info/",
+  "url": "https://www.yakushimaferry.com/hibisukasu-basic-information/",
   "freq": 2,
   "color": "#eaa8bf"
 },
