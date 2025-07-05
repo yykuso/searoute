@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages (minify JSON)
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -19,10 +19,12 @@ jobs:
           # Copy all files from the root to deploy (excluding workflows, etc.)
           rsync -av --exclude='deploy/' --exclude='.github/' --exclude='.git/' --exclude='.gitignore' --exclude='README.md' --exclude='_config.yml' ./ ./deploy/
 
-      - name: Minify all .json files in deploy/
+      - name: Minify all .json and .geojson files in deploy/
         run: |
-          find deploy -name '*.json' | while read file; do
-            jq -c . "$file" > tmp.json && mv tmp.json "$file"
+          for ext in json geojson; do
+            find deploy -name "*.${ext}" | while read file; do
+              jq -c . "$file" > tmp.json && mv tmp.json "$file"
+            done
           done
 
       - name: Deploy to gh-pages branch
@@ -32,3 +34,4 @@ jobs:
           publish_dir: ./deploy
           publish_branch: gh-pages
           force_orphan: true
+          skip_publish: true
