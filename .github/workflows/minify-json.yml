@@ -55,6 +55,20 @@ jobs:
             fi
           done
 
+      - name: Minify all .css files in deploy/
+        run: |
+          npm install -g clean-css-cli
+          find deploy -name '*.css' | while read file; do
+            cleancss --skip-rebase --level 2 "$file" -o "$file.min"
+            if ! cmp -s "$file" "$file.min"; then
+              mv "$file.min" "$file"
+              echo "Minified and updated: $file"
+            else
+              rm "$file.min"
+              echo "No change: $file"
+            fi
+          done
+
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3
         with:
