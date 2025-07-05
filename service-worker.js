@@ -1,9 +1,8 @@
-const CACHE_NAME = 'searoute-v1';
+const CACHE_NAME = 'searoute-v1.1';
 const urlsToCache = [
   './',
   './index.html',
   './css/common.css',
-  './css/maplibre-gl-geocoder.css',
   './js/common.js',
   './js/geoJsonLayers.js',
   './js/dataLoader.js',

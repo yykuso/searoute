@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-icon.png" />
 
-  <link rel="manifest" href="./manifest.json">
+  <link rel="manifest" href="./assets/manifest.json">
   <meta name="theme-color" content="#3c92cf">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -33,30 +33,41 @@
   <meta name="twitter:description" content="日本全国の旅客船の航路情報をマップ上で確認できるサイト" />
   <meta name="twitter:image" content="https://searoute.info/img/twbanner.png" />
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
-  <link href="https://unpkg.com/maplibre-gl@^4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
-  <link href="./css/common.css" rel="stylesheet" />
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/maplibre-gl@^4.7.1/dist/maplibre-gl.js"></script>
-  <script src="https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.5.0/dist/maplibre-gl-geocoder.min.js"></script>
-  <link href="./css/maplibre-gl-geocoder.css" rel="stylesheet" />
-
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-03DRMSWKPW"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-03DRMSWKPW');
   </script>
-</head>
 
+  <script src="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+
+  <script src="https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.9.0/dist/maplibre-gl-geocoder.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.9.0/dist/maplibre-gl-geocoder.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+
+<link href="./css/common.css" rel="stylesheet" />
+
+</head>
 <body>
+  <noscript>
+    <div style="background: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 1em; margin: 1em 0; text-align: center; font-size: 1.2em;">
+      このサイトはJavaScriptが有効でないと正しく動作しません。<br>
+      ブラウザの設定でJavaScriptを有効にしてください。
+    </div>
+  </noscript>
   <div id="loading"></div>
   <div id="map"></div>
   <script type="module" src="./js/common.js"></script>
