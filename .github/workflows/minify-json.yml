@@ -89,6 +89,14 @@ jobs:
           done
           echo '</urlset>' >> deploy/sitemap.xml
 
+      - name: Generate robots.txt in deploy/
+        run: |
+          BASE_URL="https://searoute.info"
+          echo "User-agent: *" > deploy/robots.txt
+          echo "Allow: /" >> deploy/robots.txt
+          echo "" >> deploy/robots.txt
+          echo "Sitemap: ${BASE_URL}/sitemap.xml" >> deploy/robots.txt
+
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3
         with:
