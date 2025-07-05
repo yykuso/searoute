@@ -19,13 +19,7 @@ jobs:
           # Copy all files from the root to deploy (excluding workflows, etc.)
           rsync -av --exclude='deploy/' --exclude='.github/' --exclude='.git/' --exclude='.gitignore' --exclude='README.md' --exclude='_config.yml' ./ ./deploy/
 
-      - name: Minify all .json files in deploy/
-        run: |
-          find deploy -name '*.json' | while read file; do
-            jq -c . "$file" > tmp.json && mv tmp.json "$file"
-          done
-
-      - name: Minify and round coordinates in .geojson files in deploy/
+      - name: Round coordinates and minify .geojson files in deploy/
         run: |
           find deploy -name '*.geojson' | while read file; do
             jq 'def r: if type=="array" then map(r) elif type=="object" then with_entries(.value |= r) elif type=="number" then (.*100000|round)/100000 else . end;
@@ -38,7 +32,13 @@ jobs:
                     )
                   elif has("geometry") and .geometry.coordinates then
                     .geometry.coordinates |= (r)
-                  else . end' "$file" > tmp.geojson && mv tmp.geojson "$file"
+                  else . end' "$file" | jq -c . > tmp.geojson && mv tmp.geojson "$file"
+          done
+
+      - name: Minify all .json files in deploy/
+        run: |
+          find deploy -name '*.json' ! -name '*.geojson' | while read file; do
+            jq -c . "$file" > tmp.json && mv tmp.json "$file"
           done
 
       - name: Deploy to gh-pages branch
