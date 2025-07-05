@@ -164,6 +164,7 @@ body {
   max-width: 600px;
   max-height: 70hw;
   overflow-y: auto;
+  pointer-events: auto;
 }
 
 #info-window .heading-tag {
