@@ -1,148 +1,193 @@
+/* 全体
+================================================================ */
 body {
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 0;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 #map {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
 }
 
+/* iPhone PWA向けの設定
+================================================================ */
+.maplibregl-ctrl-top-left,
+.maplibregl-ctrl-top-right {
+  top: env(safe-area-inset-top);
+}
+
+.maplibregl-ctrl-bottom-left,
+.maplibregl-ctrl-bottom-right {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-bottom-blocker {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: env(safe-area-inset-bottom);
+  pointer-events: auto;
+  background: transparent;
+  z-index: 9999;
+}
+
+/* ポップアップ
+================================================================ */
 .maplibregl-popup {
-    width: 240px;
+  width: 240px;
 }
 
 .maplibregl-popup-content {
-    border-radius: 12px;
-    /* width: 220px; */
+  border-radius: 12px;
 }
 
 .searoute-popup-box {
-    width: 220px;
-    word-wrap: break-word;
+  width: 220px;
+  word-wrap: break-word;
 }
 
 .port-popup-box .port-name {
-    text-align: center;
+  text-align: center;
+}
+
+/* コントロール
+================================================================ */
+#hamburger-control {
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #ccc;
+  color: #323232;
+}
+
+.maplibregl-ctrl-hamburger-list {
+  line-height: 2.0;
 }
 
 #layers-control {
-    padding: 10px;
-    background-color: white;
-    border: 1px solid #ccc;
-    color: #323232;
-}
-
-#hamburger-control {
-    padding: 10px;
-    background-color: white;
-    border: 1px solid #ccc;
-    color: #323232;
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #ccc;
+  color: #323232;
 }
 
 .maplibregl-ctrl-layers-toggle {
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .maplibregl-ctrl-hamburger-toggle {
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .maplibregl-ctrl-hamburger-list a {
-    text-decoration: none;
-    color: #323232;
+  text-decoration: none;
+  color: #323232;
 }
 
 .maplibregl-ctrl-layers-list input[type="radio"],
 .maplibregl-ctrl-layers-list input[type="checkbox"] {
-    margin: 4px;
-    cursor: pointer;
+  margin: 4px;
+  cursor: pointer;
 }
 
 .maplibregl-ctrl-layers-list hr {
-    margin: 4px 0;
-    border: 0;
-    border-top: 1px solid #e5e7eb;
+  margin: 4px 0;
+  border: 0;
+  border-top: 1px solid #e5e7eb;
 }
 
-.highlight-yellow {
-    text-decoration: underline;
-    text-decoration-thickness: 0.5em;
-    text-decoration-color: rgba(255, 228, 0, 0.4);
-    text-underline-offset: -0.2em;
-    text-decoration-skip-ink: none;
-}
-
-#context-menu {
-    position: absolute;
-    background-color: #fff;
-    border: none;
-    padding: 5px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-    z-index: 1000;
-}
-
-#context-menu div {
-    padding: 0 12px;
-    border: none;
-    margin: 0;
-    min-height: 25px;
-    cursor: pointer;
-    position: relative;
-    white-space: nowrap;
-    align-items: center;
-    display: flex;
-}
-
-#context-menu div:hover {
-    background-color: #ddd;
-}
-
+/* ローディングアイコン
+================================================================ */
 #loading {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    margin: auto;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    z-index: 9999;
-    box-shadow:
-        0 -30px 0 0 #bbb,
-        15px -26px 0 0 #aaa,
-        26px -15px 0 0 #999,
-        30px 0 0 0 #888,
-        26px 15px 0 0 #777,
-        15px 26px 0 0 #666,
-        0 30px 0 0 #555,
-        -15px 26px 0 0 #444,
-        -26px 15px 0 0 #333,
-        -30px 0 0 0 #222,
-        -26px -15px 0 0 #111,
-        -15px -26px 0 0 #000;
-    animation: loading 1s infinite steps(12, start);
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  z-index: 9999;
+  box-shadow:
+      0 -30px 0 0 #bbb,
+      15px -26px 0 0 #aaa,
+      26px -15px 0 0 #999,
+      30px 0 0 0 #888,
+      26px 15px 0 0 #777,
+      15px 26px 0 0 #666,
+      0 30px 0 0 #555,
+      -15px 26px 0 0 #444,
+      -26px 15px 0 0 #333,
+      -30px 0 0 0 #222,
+      -26px -15px 0 0 #111,
+      -15px -26px 0 0 #000;
+  animation: loading 1s infinite steps(12, start);
 }
 
 @keyframes loading {
 0% {
-    transform: rotate(0deg);
-    }
+  transform: rotate(0deg);
+  }
 100% {
-    transform: rotate(360deg);
-    }
+  transform: rotate(360deg);
+  }
+}
+
+/* 情報ウィンドウ
+================================================================ */
+#info-window {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 9999;
+  padding: 1.5em;
+  width: 90vw;
+  max-width: 600px;
+  max-height: 70hw;
+  overflow-y: auto;
+}
+
+#info-window .heading-tag {
+  display: flex;
+  align-items: center;
+  border-left: 5px solid #38bdf8;
+  background-color: #f8fafc;
+  padding: 0.5rem;
+  font-size: 1.0rem;
+  font-weight: 700;
+  color: #334155;
+  border-radius: 0 0.25rem 0.25rem 0;
+  margin-bottom: calc(var(--spacing) * 2);
+
+}
+
+/* JSが無効な場合の警告
+================================================================ */
+.noscript-warning {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  padding: 1em;
+  margin: 1em 0;
+  text-align: center;
+  font-size: 1.2em;
 }

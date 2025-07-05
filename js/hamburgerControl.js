@@ -10,7 +10,7 @@ export default class hamburgerControl {
         this.container.parentNode.removeChild(this.container);
         this.map = undefined;
     }
-    
+
     // Make Humburger Control
     addHamburgerControl() {
         // Control Container
@@ -34,16 +34,50 @@ export default class hamburgerControl {
         this.container.appendChild(contentContainer);
         contentContainer.style.display = 'none';    // 初期非表示
 
-        const menu = document.createElement('div');
+        const routeMenu = document.createElement('div');
         const link = document.createElement('a');
         link.href = './routeList.html';
         link.innerHTML = '<i class="fa-solid fa-ship"></i> 航路一覧';
-        menu.appendChild(link);
-        contentContainer.appendChild(menu);
+        routeMenu.appendChild(link);
+        contentContainer.appendChild(routeMenu);
 
+        const infoMenu = document.createElement('div');
+        const infoLink = document.createElement('a');
+        infoLink.href = 'javascript:void(0)';
+        infoLink.innerHTML = '<i class="fa-solid fa-circle-info"></i> サイト情報';
+        infoLink.onclick = this.showInfoWindow.bind(this);
+        infoMenu.appendChild(infoLink);
+        contentContainer.appendChild(infoMenu);
+
+        this.infoWindow = document.getElementById('info-window');
+        if (this.infoWindow) {
+            this.infoWindow.querySelector('#info-close-btn').onclick = () => {
+                this.infoWindow.style.display = 'none';
+            };
+        }
     }
 
-    
+    showInfoWindow() {
+        if (this.infoWindow) {
+            this.infoWindow.style.display = 'block';
+
+            // 既存のイベントを一度解除
+            document.removeEventListener('mousedown', this._infoWindowOutsideHandler);
+
+            // 外側クリックで閉じるイベントを追加
+            this._infoWindowOutsideHandler = (e) => {
+                // info-window自身またはその子要素をクリックした場合は何もしない
+                if (!this.infoWindow.contains(e.target)) {
+                    this.infoWindow.style.display = 'none';
+                    document.removeEventListener('mousedown', this._infoWindowOutsideHandler);
+                }
+            };
+            setTimeout(() => { // setTimeoutでイベント登録を遅らせることで、ボタン自体のクリックで即閉じを防ぐ
+                document.addEventListener('mousedown', this._infoWindowOutsideHandler);
+            }, 0);
+        }
+    }
+
     // Control Event Mouseover
     handleOver() {
         this.container.childNodes[0].style.display = 'none';

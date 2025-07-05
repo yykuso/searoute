@@ -2,14 +2,14 @@
 <html lang="ja">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 	<link rel="icon" type="image/x-icon" href="./img/favicon.ico" />
   <link rel="icon" type="image/svg+xml" href="./img/icon.svg" />
   <link rel="icon" type="image/png" sizes="16x16" href="./img/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-icon.png" />
 
-  <link rel="manifest" href="./assets/manifest.json">
+  <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#3c92cf">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -63,27 +63,70 @@
 </head>
 <body>
   <noscript>
-    <div style="background: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 1em; margin: 1em 0; text-align: center; font-size: 1.2em;">
+    <div class="noscript-warning">
       このサイトはJavaScriptが有効でないと正しく動作しません。<br>
       ブラウザの設定でJavaScriptを有効にしてください。
     </div>
   </noscript>
   <div id="loading"></div>
   <div id="map"></div>
+  <div class="safe-bottom-blocker"></div>
   <script type="module" src="./js/common.js"></script>
-</body>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js')
-          .then((registration) => {
-            console.log('ServiceWorker registration successful');
-          })
-          .catch((err) => {
-            console.log('ServiceWorker registration failed: ', err);
-          });
-      });
-    }
-  </script>
+  <div id="info-window" class="text-xs">
+  <h2 class="heading-tag">
+    サイト情報
+  </h2>
+  <div class="mb-4 space-y-4 text-slate-600 p-2">
+    <p>
+      このサイトは、公共交通による旅を愛する一人の開発者が、「もっと気軽に、直感的に航路情報を探せたら」という想いから生まれました。<br />
+      日本各地の航路を地図上に集約し、視覚的にわかりやすく表示することで、「地図から航路を探す」「航路から旅のヒントを得る」体験を提供します。
+    <p>
+    </p>
+      海に囲まれたこの国の旅を、もっと自由に、もっと身近に。次の旅のお供になれば幸いです。
+    </p>
+    <p>
+      ご意見・ご不明な点などありましたら、
+      <a href="https://x.com/yy_kuso" id="twitter-link" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline">
+        <i class="fa-brands fa-twitter"></i> Twitter
+      </a>
+      までご連絡ください。
+    </p>
+  </div>
+
+  <h2 class="heading-tag">
+    免責事項
+  </h2>
+  <div class="mb-4 space-y-4 text-slate-600 p-2">
+    <p>
+      情報の正確性には努めていますが、内容の保証はできません。
+      詳細や最新情報は必ず公式サイト等でご確認ください。<br />
+      なお、本サイトの情報利用による損害等について、運営者は一切責任を負いません。
+    </p>
+  </div>
+
+  <div class="mt-4 space-y-3">
+    <a href="https://www.amazon.co.jp/hz/wishlist/ls/KF9GONGN9M1K" id="wishlist-link" target="_blank" rel="noopener noreferrer" class="group w-full flex items-center justify-center rounded-lg bg-amber-100 py-3 px-4 font-bold text-amber-800 shadow-sm transition-all hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 active:scale-95">
+      <i class="fa-solid fa-gift mr-3 text-amber-500 group-hover:scale-110 transition-transform"></i>
+      運営の励みになります（ほしいものリスト）
+    </a>
+    <button id="info-close-btn" class="w-full rounded-lg bg-sky-600 py-3 px-4 font-bold text-white shadow-md transition-all hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 active:scale-95">
+      閉じる
+    </button>
+  </div>
+</div>
+</body>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then((registration) => {
+          console.log('ServiceWorker registration successful');
+        })
+        .catch((err) => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+    });
+  }
+</script>
 </html>
