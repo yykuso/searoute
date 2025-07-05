@@ -19,6 +19,13 @@ jobs:
           # Copy all files from the root to deploy (excluding workflows, etc.)
           rsync -av --exclude='deploy/' --exclude='.github/' --exclude='.git/' --exclude='.gitignore' --exclude='README.md' --exclude='_config.yml' ./ ./deploy/
 
+      - name: Generate sitemap
+        uses: cicirello/generate-sitemap@v1
+        with:
+          base_url_path: https://searoute.info/
+          source_dir: ./deploy
+          destination_file: ./deploy/sitemap.xml
+
       - name: Round coordinates and minify .geojson files in deploy/
         run: |
           find deploy -name '*.geojson' | while read file; do
