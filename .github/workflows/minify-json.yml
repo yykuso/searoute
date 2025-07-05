@@ -59,7 +59,7 @@ jobs:
         run: |
           npm install -g clean-css-cli
           find deploy -name '*.css' | while read file; do
-            cleancss --skip-rebase --level 2 "$file" -o "$file.min"
+            cleancss --level 2 "$file" -o "$file.min"
             if ! cmp -s "$file" "$file.min"; then
               mv "$file.min" "$file"
               echo "Minified and updated: $file"
