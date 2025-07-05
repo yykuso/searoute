@@ -74,7 +74,6 @@ jobs:
           BASE_URL="https://searoute.info"
           echo '<?xml version="1.0" encoding="UTF-8"?>' > deploy/sitemap.xml
           echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> deploy/sitemap.xml
-
           find deploy -name "*.html" | while read filepath; do
             relative_path="${filepath#deploy/}"
             if [[ "$relative_path" == */index.html ]]; then
@@ -84,6 +83,7 @@ jobs:
             fi
             echo "  <url><loc>${BASE_URL}/${url_path}</loc></url>" >> deploy/sitemap.xml
           done
+          echo '</urlset>' >> deploy/sitemap.xml
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3
