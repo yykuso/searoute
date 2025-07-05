@@ -1,0 +1,34 @@
+name: Deploy to GitHub Pages (minify JSON)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+
+      - name: Copy all necessary files into deploy/
+        run: |
+          mkdir -p deploy
+          # Copy all files from the root to deploy (excluding workflows, etc.)
+          rsync -av --exclude='deploy/' --exclude='.github/' --exclude='.git/' ./ ./deploy/
+
+      - name: Minify all .json files in deploy/
+        run: |
+          find deploy -name '*.json' | while read file; do
+            jq -c . "$file" > tmp.json && mv tmp.json "$file"
+          done
+
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./deploy
+          publish_branch: gh-pages
+          force_orphan: true
