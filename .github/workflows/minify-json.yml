@@ -19,13 +19,6 @@ jobs:
           # Copy all files from the root to deploy (excluding workflows, etc.)
           rsync -av --exclude='deploy/' --exclude='.github/' --exclude='.git/' --exclude='.gitignore' --exclude='README.md' --exclude='_config.yml' ./ ./deploy/
 
-      - name: Generate sitemap
-        uses: cicirello/generate-sitemap@v1
-        with:
-          base_url_path: https://searoute.info/
-          source_dir: ./deploy
-          destination_file: ./deploy/sitemap.xml
-
       - name: Round coordinates and minify .geojson files in deploy/
         run: |
           find deploy -name '*.geojson' | while read file; do
@@ -74,6 +67,22 @@ jobs:
               rm "$file.min"
               echo "No change: $file"
             fi
+          done
+
+      - name: Generate sitemap.xml in deploy/
+        run: |
+          BASE_URL="https://searoute.info"
+          echo '<?xml version="1.0" encoding="UTF-8"?>' > deploy/sitemap.xml
+          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> deploy/sitemap.xml
+
+          find deploy -name "*.html" | while read filepath; do
+            relative_path="${filepath#deploy/}"
+            if [[ "$relative_path" == */index.html ]]; then
+              url_path="${relative_path%index.html}"
+            else
+              url_path="$relative_path"
+            fi
+            echo "  <url><loc>${BASE_URL}/${url_path}</loc></url>" >> deploy/sitemap.xml
           done
 
       - name: Deploy to gh-pages branch
