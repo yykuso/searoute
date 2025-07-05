@@ -17,7 +17,7 @@ jobs:
         run: |
           mkdir -p deploy
           # Copy all files from the root to deploy (excluding workflows, etc.)
-          rsync -av --exclude='deploy/' --exclude='.github/' --exclude='.git/' ./ ./deploy/
+          rsync -av --exclude='deploy/' --exclude='.github/' --exclude='.git/' --exclude='.gitignore' --exclude='README.md' --exclude='_config.yml' ./ ./deploy/
 
       - name: Minify all .json files in deploy/
         run: |
