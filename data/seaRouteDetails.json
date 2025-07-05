@@ -1651,15 +1651,6 @@
   "freq": 2,
   "color": "#ea5322"
 },
-"342502": {
-  "businessName": "バンカー・サプライ",
-  "routeName": "呉～江田島（秋月）",
-  "url": "https://bunker-supply.com/akizuki/",
-  "info": "運休中",
-  "note": "suspend",
-  "freq": 2,
-  "color": "#03b4e8"
-},
 "342601": {
   "businessName": "さくら海運",
   "routeName": "天応～江田島（切串）",
@@ -2145,15 +2136,6 @@
   "freq": 3,
   "shipName": "おれんじ四国, おれんじ九州",
   "color": "#fc7a1D"
-},
-"380301": {
-  "businessName": "松山・小倉フェリー",
-  "routeName": "小倉～松山",
-  "url": "http://www.matsuyama-kokuraferry.co.jp/contents/timetable.html",
-  "info": "隔日運航、2025年6月30日運航をもって廃止",
-  "freq": 1,
-  "shipName": "フェリーくるしま",
-  "color": "#7db373"
 },
 "380401": {
   "businessName": "宇和島運輸",
@@ -2866,8 +2848,9 @@
   "businessName": "やまさ海運",
   "routeName": "大牟田～島原",
   "url": "https://www.miike-shimabara-line.net/",
-  "info": "三池島原ライン",
-  "freq": 3,
+  "info": "三池島原ライン、休止中",
+  "note": "suspend",
+  "freq": 1,
   "color": "#d95326"
 },
 "422801": {
@@ -3148,6 +3131,8 @@
   "businessName": "なんきゅうドック",
   "routeName": "鹿児島（マリンポート）～鹿屋",
   "url": "http://nankyu-ferry.com/liner/",
+  "info": "運休中",
+  "note": "suspend",
   "freq": 1,
   "color": "#d40115"
 },
