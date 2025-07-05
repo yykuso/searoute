@@ -81,7 +81,11 @@ jobs:
             else
               url_path="$relative_path"
             fi
-            echo "  <url><loc>${BASE_URL}/${url_path}</loc></url>" >> deploy/sitemap.xml
+            mod_time=$(date -u -r "$filepath" +"%Y-%m-%dT%H:%M:%SZ")
+            echo "  <url>" >> deploy/sitemap.xml
+            echo "    <loc>${BASE_URL}/${url_path}</loc>" >> deploy/sitemap.xml
+            echo "    <lastmod>${mod_time}</lastmod>" >> deploy/sitemap.xml
+            echo "  </url>" >> deploy/sitemap.xml
           done
           echo '</urlset>' >> deploy/sitemap.xml
 
