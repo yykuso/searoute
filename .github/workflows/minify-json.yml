@@ -41,6 +41,20 @@ jobs:
             jq -c . "$file" > tmp.json && mv tmp.json "$file"
           done
 
+      - name: Minify all .js files in deploy/
+        run: |
+          npm install -g terser
+          find deploy -name '*.js' | while read file; do
+            terser "$file" -c -m -o "$file.min"
+            if ! cmp -s "$file" "$file.min"; then
+              mv "$file.min" "$file"
+              echo "Minified and updated: $file"
+            else
+              rm "$file.min"
+              echo "No change: $file"
+            fi
+          done
+
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3
         with:
