@@ -362,7 +362,7 @@ async function addGeoJsonLimitedSeaRouteLayer() {
     // 航路情報(国際)
     var seaRouteGeojson = await loadAndMergeData(
         './data/limitedSeaRoute.geojson',
-        './data/limitedSeaRouteDetails.geojson',
+        './data/limitedSeaRouteDetails.json',
         'routeId'
     );
     map.addSource('geojson_limited_sea_route', {
