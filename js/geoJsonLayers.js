@@ -1,5 +1,6 @@
 import { loadData, loadAndMergeData } from './dataLoader.js';
 import { map } from './common.js';
+import { showDetailDrawer, hideDetailDrawer } from './detailDrawer.js';
 
 // EventHandle情報の保存
 var eventHandle = {};
@@ -361,7 +362,7 @@ async function addGeoJsonLimitedSeaRouteLayer() {
     // 航路情報(国際)
     var seaRouteGeojson = await loadAndMergeData(
         './data/limitedSeaRoute.geojson',
-        './data/limitedSeaRouteDetails.json',
+        './data/limitedSeaRouteDetails.geojson',
         'routeId'
     );
     map.addSource('geojson_limited_sea_route', {
@@ -505,7 +506,6 @@ async function addGeoJsonLimitedSeaRouteLayer() {
  */
 function addSeaRouteClickEvent(id, handleId = id) {
     map.on('click', handleId, (event) => {
-        const coordinates = event.lngLat;
         const properties = event.features[0].properties;
 
         // businessNameに「（」が含まれる場合に分割
@@ -514,99 +514,85 @@ function addSeaRouteClickEvent(id, handleId = id) {
         if (businessName.includes('（')) {
             const parts = businessName.split('（');
             businessName = parts[0];
-            businessNameSub = parts[1].replace('）', ''); // 閉じ括弧を除去
+            businessNameSub = parts[1].replace('）', '');
         }
-
-        // 船舶名をリスト形式に変換
         const shipListHtml = properties.shipName
             ? properties.shipName.split(', ')
                 .map(ship => `<li>${ship.trim()}</li>`)
                 .join('')
             : '';
-
-        const popupContent = `
-        <div class="searoute-popup-box">
-            <div class="flex items-center justify-center mb-2 pb-1" style="border-bottom-color: ${properties.color || '#e5e7eb'}; border-bottom-width: 5px; border-bottom-style: solid;">
-                <div>
-                    <h2 class="flex justify-center text-base font-semibold text-gray-800">${businessName}</h2>
-                    ${businessNameSub ? `<p class="flex justify-center text-xs text-gray-600">${businessNameSub}</p>` : ''}
-                    </div>
-            </div>
-
-            <div class="mb-4">
-                <h3 class="text-xs font-semibold text-blue-600 mb-1 flex items-center">
-                    <i class="fas fa-route fa-fw mr-2 text-blue-500"></i>航路
-                </h3>
-                <p class="text-gray-800 text-xs pl-2 leading-relaxed">${properties.routeName || 'N/A'}</p>
-            </div>
-
-            <div class="mb-4">
-                <h3 class="text-xs font-semibold text-green-600 mb-1 flex items-center">
-                    <i class="fas fa-map-pin fa-fw mr-2 text-green-500"></i>選択部分
-                </h3>
-                <p class="text-gray-800 text-xs pl-2 rounded-md">${properties.portName1 || 'N/A'}～${properties.portName2 || 'N/A'}</p>
-            </div>
-
-            ${properties.freqInfo ? `
-            <div class="mb-4">
-                <h3 class="text-xs font-semibold text-red-600 mb-1 flex items-center">
-                    <i class="fas fa-rotate fa-fw mr-2 text-red-500"></i>運行頻度
-                </h3>
-                <p class="text-gray-800 text-xs pl-2 leading-relaxed">${properties.freqInfo}</p>
-            </div>
-            ` : ''}
-
-            ${properties.info ? `
-            <div class="mb-4">
-                <h3 class="text-xs font-semibold text-yellow-600 mb-1 flex items-center">
-                    <i class="fas fa-info-circle fa-fw mr-2 text-yellow-500"></i>情報
-                </h3>
-                <p class="text-gray-800 text-xs pl-2 leading-relaxed">${properties.info}</p>
-            </div>
-            ` : ''}
-
-            ${properties.shipName ? `
-            <div class="mb-4">
-                <h3 class="text-xs font-semibold text-purple-600 mb-1 flex items-center">
-                    <i class="fas fa-ship fa-fw mr-2 text-purple-500"></i>船舶
-                </h3>
-                <ul class="list-disc list-inside text-gray-800 text-xs pl-2">
-                    ${shipListHtml}
-                </ul>
-            </div>
-            ` : ''}
-
-            ${properties.url ? `
-            <div class="mx-4">
-                <a href="${properties.url}" target="_blank" rel="noopener noreferrer" class="block w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs py-2 px-3 rounded-lg text-center transition duration-150 ease-in-out shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 flex items-center justify-center">
-                    <i class="fas fa-calendar-alt fa-fw mr-1.5"></i>運航スケジュール
-                </a>
-            </div>
-            ` : ''}
-        </div>
-        `;
-
-        popup
-            .setLngLat(coordinates)
-            .setHTML(popupContent)
-            .setMaxWidth(null)
-            .addTo(map);
-
+        const sidebarContent = `
+    <div class="mb-3">
+        <div style="height:4px; width:100%; background:${properties.color || '#e5e7eb'}; border-radius:6px;"></div>
+    </div>
+    <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
+        <h3 class="flex items-center justify-between text-xs font-semibold text-blue-600 w-24 min-w-[96px] text-center mr-2">
+            <i class="fas fa-route fa-fw mr-1 text-blue-500"></i><span class="mx-auto">航路</span>
+        </h3>
+        <div class="text-gray-800 text-sm">${properties.routeName || 'N/A'}</div>
+    </div>
+    <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
+        <h3 class="flex items-center justify-between text-xs font-semibold text-green-600 w-24 min-w-[96px] text-center mr-2">
+            <i class="fas fa-map-pin fa-fw mr-1 text-green-500"></i><span class="mx-auto">選択部分</span>
+        </h3>
+        <div class="text-gray-800 text-sm">${properties.portName1 || 'N/A'} ～ ${properties.portName2 || 'N/A'}</div>
+    </div>
+    ${properties.freqInfo ? `
+    <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
+        <h3 class="flex items-center justify-between text-xs font-semibold text-red-600 w-24 min-w-[96px] text-center mr-2">
+            <i class="fas fa-rotate fa-fw mr-1 text-red-500"></i><span class="mx-auto">運行頻度</span>
+        </h3>
+        <div class="text-gray-800 text-sm">${properties.freqInfo}</div>
+    </div>
+    ` : ''}
+    ${properties.info ? `
+    <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
+        <h3 class="flex items-center justify-between text-xs font-semibold text-yellow-600 w-24 min-w-[96px] text-center mr-2">
+            <i class="fas fa-info-circle fa-fw mr-1 text-yellow-500"></i><span class="mx-auto">情報</span>
+        </h3>
+        <div class="text-gray-800 text-sm">${properties.info}</div>
+    </div>
+    ` : ''}
+    ${properties.shipName ? `
+    <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
+        <h3 class="flex items-center justify-between text-xs font-semibold text-purple-600 w-24 min-w-[96px] text-center mr-2">
+            <i class="fas fa-ship fa-fw mr-1 text-purple-500"></i><span class="mx-auto">船舶</span>
+        </h3>
+        <ul class="list-disc list-inside text-gray-800 text-sm pl-2">${shipListHtml}</ul>
+    </div>
+    ` : ''}
+    ${properties.url ? (() => {
+        let domain = '';
+        try {
+            domain = new URL(properties.url).hostname;
+        } catch (e) {
+            domain = properties.url;
+        }
+        return `
+    <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
+        <h3 class="flex items-center justify-between text-xs font-semibold text-indigo-600 w-24 min-w-[96px] text-center mr-2">
+            <i class="fas fa-link fa-fw mr-1.5 text-indigo-500"></i><span class="mx-auto">リンク</span>
+        </h3>
+        <a href="${properties.url}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-gray-900 transition-all">
+            運行スケジュール - ${domain}
+        </a>
+    </div>
+    `;
+    })() : ''}
+    `;
+        showDetailDrawer(sidebarContent, businessName, businessNameSub);
         gtag('event', 'marker_click', {
             'event_category': 'map',
             'event_label': properties.businessName,
             'value': 1
         });
     });
-
     map.on('mousemove', handleId, () => {
         map.getCanvas().style.cursor = 'pointer';
     });
-
     map.on('mouseleave', handleId, () => {
         map.getCanvas().style.cursor = '';
     });
-
     eventHandle[id] = handleId;
 }
 
@@ -617,30 +603,19 @@ function addSeaRouteClickEvent(id, handleId = id) {
  */
 function addPortClickEvent(id, handleId = id) {
     map.on('click', handleId, (event) => {
-        const coordinates = event.lngLat;
         const properties = event.features[0].properties;
-
-        const popupContent = `
+        const sidebarContent = `
             <div class="port-popup-box">
-                <h2 class="port-name">${properties.Name}</h2>
             </div>
         `;
-
-        popup
-            .setLngLat(coordinates)
-            .setHTML(popupContent)
-            .setMaxWidth("120px")
-            .addTo(map);
+        showDetailDrawer(sidebarContent, properties.Name, "港湾情報");
     });
-    
     map.on('mousemove', handleId, () => {
         map.getCanvas().style.cursor = 'pointer';
     });
-
     map.on('mouseleave', handleId, () => {
         map.getCanvas().style.cursor = '';
     });
-    
     eventHandle[id] = handleId;
 }
 
@@ -660,14 +635,10 @@ export function removeClickEvent(id) {
  */
 export function addResetClickEvent() {
     map.on('click', (event) => {
-        // EvendHandle済みのID
         const validIds = Object.values(eventHandle);
-        // クリックした場所の地物
         const features = map.queryRenderedFeatures(event.point);
-
-        // 地物の中で対象のIDがないときポップアップを削除
         if (!features.find(feature => validIds.includes(feature.layer.id))) {
-            popup.remove();
+            if (window.hideSidebar) window.hideSidebar();
         }
     });
 }

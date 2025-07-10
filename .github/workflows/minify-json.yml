@@ -104,4 +104,3 @@ jobs:
           publish_dir: ./deploy
           publish_branch: gh-pages
           force_orphan: true
-          skip_publish: true
