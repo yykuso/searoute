@@ -580,7 +580,11 @@ function addSeaRouteClickEvent(id, handleId = id) {
     `;
     })() : ''}
     `;
-        showDetailDrawer(sidebarContent, businessName, businessNameSub);
+        window.showDetailDrawerWithPinClear(
+            sidebarContent,
+            businessName,
+            businessNameSub
+        );
         gtag('event', 'marker_click', {
             'event_category': 'map',
             'event_label': properties.businessName,
@@ -608,7 +612,7 @@ function addPortClickEvent(id, handleId = id) {
             <div class="port-popup-box">
             </div>
         `;
-        showDetailDrawer(sidebarContent, properties.Name, "港湾情報");
+        window.showDetailDrawerWithPinClear(sidebarContent, properties.Name, "港湾情報");
     });
     map.on('mousemove', handleId, () => {
         map.getCanvas().style.cursor = 'pointer';

@@ -2,7 +2,9 @@ import layersControl from './layersControl.js';
 import hamburgerControl from './hamburgerControl.js';
 import { addRasterLayer } from './rasterLayers.js';
 import { addGeoJsonLayer, addMarker, addResetClickEvent } from './geoJsonLayers.js';
+import { showDetailDrawer } from './detailDrawer.js';
 import { initCenterZoom, setCookie, getCookie } from './cookieControl.js';
+import { showContextMenu, hideContextMenu } from './contextMenu.js';
 
 /* マップの命名規則
     VectorTile = 背景マップ   = style
@@ -499,23 +501,85 @@ function addContextEvent() {
     const mapDiv = document.getElementById('map');
     let touchTimeout = null;
     let isDragging = false;
+    // --- モバイル長押しピン用グローバル変数と関数 ---
+    let longPressMarker = null;
+    function removeLongPressMarker() {
+        if (longPressMarker) {
+            longPressMarker.remove();
+            longPressMarker = null;
+        }
+    }
+    function showDetailDrawerWithPinClear(content, title, subtitle) {
+        removeLongPressMarker();
+        showDetailDrawer(content, title, subtitle);
+    }
+    window.showDetailDrawerWithPinClear = showDetailDrawerWithPinClear;
+    window.removeLongPressMarker = removeLongPressMarker;
 
     // PC: 右クリックでカスタムメニュー
     mapDiv.addEventListener('contextmenu', (e) => {
+        if (window.matchMedia('(pointer: coarse)').matches) return; // モバイルは無視
         e.preventDefault();
-        showContextMenu(e.clientX, e.clientY);
+        showContextMenu(e.clientX, e.clientY, map);
     });
 
-    // モバイル: 長押しでカスタムメニュー
+    // モバイル: 長押しでDrawer
     mapDiv.addEventListener('touchstart', (e) => {
+        if (!window.matchMedia('(pointer: coarse)').matches) return; // モバイルのみ
         if (e.touches.length !== 1) return;
         isDragging = false;
         touchTimeout = setTimeout(() => {
             if (!isDragging) {
                 const touch = e.touches[0];
-                showContextMenu(touch.clientX, touch.clientY);
+                if (window.map && typeof map.unproject === 'function') {
+                    const point = map.unproject([touch.clientX, touch.clientY]);
+                    const lat = point.lat.toFixed(5);
+                    const lng = point.lng.toFixed(5);
+                    removeLongPressMarker(); // 直前のピンを消す
+                    longPressMarker = new maplibregl.Marker({ color: 'red' })
+                        .setLngLat([parseFloat(lng), parseFloat(lat)])
+                        .addTo(map);
+                    const sidebarContent = `
+                        <div class="mb-3">
+                            <div style="height:4px; width:100%; background:#60a5fa; border-radius:6px;"></div>
+                        </div>
+                        <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
+                            <h3 class="flex items-center justify-between text-xs font-semibold text-blue-600 w-24 min-w-[96px] text-center mr-2">
+                                <i class="fas fa-location-dot fa-fw mr-1 text-blue-500"></i><span class="mx-auto">住所</span>
+                            </h3>
+                            <span id="reverse-geocode-address" class="block text-xs text-gray-800 mt-1">取得中...</span></div>
+                        </div>
+                        <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
+                            <h3 class="flex items-center justify-between text-xs font-semibold text-green-600 w-24 min-w-[96px] text-center mr-2">
+                                <i class="fas fa-map-location-dot fa-fw mr-1 text-green-500"></i><span class="mx-auto">リンク</span>
+                            </h3>
+                            <a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-gray-900 transition-all">ここをGoogleマップで開く</a>
+                        </div>
+                    `;
+                    showDetailDrawer(
+                        sidebarContent,
+                        `${lat}, ${lng}`,
+                        '座標情報'
+                    );
+                // 逆ジオコーディングで住所取得
+                fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=ja`)
+                    .then(res => res.json())
+                    .then(data => {
+                        let addr = data.display_name || '住所情報なし';
+                        // カンマ区切りを逆順にして日本式に
+                        if (addr && addr !== '住所情報なし') {
+                            addr = addr.split(',').map(s => s.trim()).reverse().join(' ');
+                        }
+                        const addrElem = document.getElementById('reverse-geocode-address');
+                        if (addrElem) addrElem.textContent = addr;
+                    })
+                    .catch(() => {
+                        const addrElem = document.getElementById('reverse-geocode-address');
+                        if (addrElem) addrElem.textContent = '住所取得失敗';
+                    });
+                }
             }
-        }, 700); // 700ms長押しで表示
+        }, 700);
     });
     mapDiv.addEventListener('touchmove', () => {
         isDragging = true;
@@ -524,72 +588,6 @@ function addContextEvent() {
     mapDiv.addEventListener('touchend', () => {
         clearTimeout(touchTimeout);
     });
-}
-
-/**
- * コンテキストメニューを表示する関数
- * @param {number} x - 表示位置X座標
- * @param {number} y - 表示位置Y座標
- */
-function showContextMenu(x, y) {
-    // 既存のメニューを削除
-    document.getElementById('custom-context-menu')?.remove();
-    const menu = document.createElement('div');
-    menu.id = 'custom-context-menu';
-    menu.style.position = 'fixed';
-    menu.style.left = x + 'px';
-    menu.style.top = y + 'px';
-    menu.style.zIndex = 9999;
-    menu.className = 'bg-white border border-slate-300 rounded shadow-lg py-2 text-sm';
-
-    // 座標取得
-    let lat = null, lng = null;
-    if (window.map && typeof map.unproject === 'function') {
-        const point = map.unproject([x, y]);
-        lat = point.lat;
-        lng = point.lng;
-    }
-
-    // 座標コピー
-    const copyBtn = document.createElement('button');
-    copyBtn.className = 'block w-full text-left px-2 py-1 hover:bg-slate-100';
-    copyBtn.textContent = lat && lng ? `${lat.toFixed(5)},${lng.toFixed(5)}` : '座標をコピー';
-    copyBtn.addEventListener('click', () => {
-        if (lat && lng) {
-            navigator.clipboard.writeText(`${lat.toFixed(5)},${lng.toFixed(5)}`)
-                .then(() => alert('座標がコピーされました'))
-                .catch((err) => console.error('座標のコピーに失敗しました', err));
-        }
-        hideContextMenu();
-    });
-    menu.appendChild(copyBtn);
-
-    // Googleマップで開く
-    const gmapBtn = document.createElement('button');
-    gmapBtn.className = 'block w-full text-left px-2 py-1 hover:bg-slate-100';
-    gmapBtn.textContent = 'Googleマップで開く';
-    gmapBtn.type = 'button'; // 明示的にbutton属性
-    gmapBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (lat != null && lng != null) {
-            const url = `https://www.google.com/maps?q=${lat},${lng}`;
-            window.open(url, '_blank', 'noopener');
-        }
-        hideContextMenu();
-    });
-    menu.appendChild(gmapBtn);
-
-    document.body.appendChild(menu);
-    // 画面外に出ないように調整
-    const rect = menu.getBoundingClientRect();
-    if (rect.right > window.innerWidth) menu.style.left = (window.innerWidth - rect.width - 8) + 'px';
-    if (rect.bottom > window.innerHeight) menu.style.top = (window.innerHeight - rect.height - 8) + 'px';
-    // 外側クリック・タップで閉じる
-    setTimeout(() => {
-        document.addEventListener('mousedown', hideContextMenu, { once: true });
-        document.addEventListener('touchstart', hideContextMenu, { once: true });
-    }, 0);
-}
-function hideContextMenu() {
-    document.getElementById('custom-context-menu')?.remove();
+    // Drawerを閉じたらピンを消す
+    document.getElementById('detail-drawer-close-btn').addEventListener('click', removeLongPressMarker);
 }

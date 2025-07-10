@@ -77,6 +77,8 @@ export function hideDetailDrawer() {
             detailDrawer.style.padding = '1rem';
         }, 300);
     }
+    // --- Drawerを閉じたらピンも消す ---
+    if (window.removeLongPressMarker) window.removeLongPressMarker();
 }
 
 // --- ドロワー最小化（タイトルのみ） ---
