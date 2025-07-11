@@ -7,15 +7,6 @@ const urlsToCache = [
   './img/apple-touch-icon.png',
   './img/icon-192.png',
   './img/icon-512.png',
-  './js/common.js',
-  './js/geoJsonLayers.js',
-  './js/hamburgerControl.js',
-  './js/dataLoader.js',
-  './js/detailDrawer.js',
-  './js/rasterLayers.js',
-  './js/layersControl.js',
-  './js/cookieControl.js',
-  './js/contextMenu.js',
   './style/empty.json'
 ];
 
