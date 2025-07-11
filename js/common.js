@@ -167,10 +167,8 @@ function initMap() {
 
     // マップの初期化完了時にUI要素を表示
     map.on('load', () => {
-        const infoWindow = document.getElementById('info-window');
-        if (infoWindow) infoWindow.classList.remove('hidden');
         const detailDrawer = document.getElementById('detail-drawer');
-        if (detailDrawer) detailDrawer.classList.remove('hidden');
+        if (detailDrawer) detailDrawer.style.display = '';
     });
 }
 
