@@ -1,4 +1,4 @@
-const CACHE_NAME = 'searoute-v1.1';
+const CACHE_NAME = 'searoute-v1.2';
 const urlsToCache = [
   './',
   './index.html',
@@ -7,9 +7,18 @@ const urlsToCache = [
   './js/geoJsonLayers.js',
   './js/dataLoader.js',
   './img/favicon.ico',
-  './img/android-chrome-192x192.png',
-  './img/android-chrome-512x512.png',
-  './img/apple-touch-icon.png'
+  './img/apple-touch-icon.png',
+  './img/icon-192.png',
+  './img/icon-512.png',
+  './data/seaRoute.geojson',
+  './data/seaRouteDetails.json',
+  './data/internationalSeaRoute.geojson',
+  './data/internationalSeaRouteDetails.json',
+  './data/limitedSeaRoute.geojson',
+  './data/limitedSeaRouteDetails.json',
+  './data/portData.geojson',
+  './style/osm-bright-style.json',
+  './style/empty.json',
 ];
 
 self.addEventListener('install', (event) => {

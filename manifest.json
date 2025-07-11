@@ -1,7 +1,7 @@
 {
   "name": "おでかけ航路マップ",
   "short_name": "航路マップ",
-  "description": "船の航路情報をマップ上で確認できるサイト",
+  "description": "日本全国の旅客船・フェリー航路情報を地図で探せるサイト",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
