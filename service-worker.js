@@ -12,21 +12,11 @@ const urlsToCache = [
   './js/hamburgerControl.js',
   './js/dataLoader.js',
   './js/detailDrawer.js',
-  './js/routeList.js',
-  './js/routeDetail.js',
-  './js/portDetail.js',
+  './js/rasterLayers.js',
   './js/layersControl.js',
   './js/cookieControl.js',
   './js/contextMenu.js',
-  './style/osm-bright-style.json',
-  './style/empty.json',
-  './data/seaRoute.geojson',
-  './data/seaRouteDetails.json',
-  './data/internationalSeaRoute.geojson',
-  './data/internationalSeaRouteDetails.json',
-  './data/limitedSeaRoute.geojson',
-  './data/limitedSeaRouteDetails.json',
-  './data/portData.geojson',
+  './style/empty.json'
 ];
 
 self.addEventListener('install', (event) => {
