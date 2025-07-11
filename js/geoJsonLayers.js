@@ -518,7 +518,7 @@ function addSeaRouteClickEvent(id, handleId = id) {
         }
         const shipListHtml = properties.shipName
             ? properties.shipName.split(', ')
-                .map(ship => `<li>${ship.trim()}</li>`)
+                .map(ship => `<span class="block">・${ship.trim()}</span>`)
                 .join('')
             : '';
         const sidebarContent = `
@@ -529,20 +529,20 @@ function addSeaRouteClickEvent(id, handleId = id) {
         <h3 class="flex items-center justify-between text-xs font-semibold text-blue-600 w-24 min-w-[96px] text-center mr-2">
             <i class="fas fa-route fa-fw mr-1 text-blue-500"></i><span class="mx-auto">航路</span>
         </h3>
-        <div class="text-gray-800 text-sm">${properties.routeName || 'N/A'}</div>
+        <div class="text-gray-800 text-xs cursor-pointer hover:text-blue-600 underline hover:underline transition-colors" onclick="window.zoomToRoute({routeId: '${properties.routeId || ''}', sourceId: '${id}'})">${properties.routeName || 'N/A'}</div>
     </div>
     <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
         <h3 class="flex items-center justify-between text-xs font-semibold text-green-600 w-24 min-w-[96px] text-center mr-2">
             <i class="fas fa-map-pin fa-fw mr-1 text-green-500"></i><span class="mx-auto">選択部分</span>
         </h3>
-        <div class="text-gray-800 text-sm">${properties.portName1 || 'N/A'} ～ ${properties.portName2 || 'N/A'}</div>
+        <div class="text-gray-800 text-xs cursor-pointer hover:text-blue-600 underline hover:underline transition-colors" onclick="window.zoomToRouteSection('${properties.routeId || ''}', '${properties.lineId || ''}', '${id}')">${(properties.portName1 || 'N/A').replace(/'/g, '&#39;').replace(/"/g, '&quot;')}～${(properties.portName2 || 'N/A').replace(/'/g, '&#39;').replace(/"/g, '&quot;')}</div>
     </div>
     ${properties.freqInfo ? `
     <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
         <h3 class="flex items-center justify-between text-xs font-semibold text-red-600 w-24 min-w-[96px] text-center mr-2">
             <i class="fas fa-rotate fa-fw mr-1 text-red-500"></i><span class="mx-auto">運行頻度</span>
         </h3>
-        <div class="text-gray-800 text-sm">${properties.freqInfo}</div>
+        <div class="text-gray-800 text-xs">${properties.freqInfo}</div>
     </div>
     ` : ''}
     ${properties.info ? `
@@ -550,7 +550,7 @@ function addSeaRouteClickEvent(id, handleId = id) {
         <h3 class="flex items-center justify-between text-xs font-semibold text-yellow-600 w-24 min-w-[96px] text-center mr-2">
             <i class="fas fa-info-circle fa-fw mr-1 text-yellow-500"></i><span class="mx-auto">情報</span>
         </h3>
-        <div class="text-gray-800 text-sm">${properties.info}</div>
+        <div class="text-gray-800 text-xs">${properties.info}</div>
     </div>
     ` : ''}
     ${properties.shipName ? `
@@ -558,7 +558,7 @@ function addSeaRouteClickEvent(id, handleId = id) {
         <h3 class="flex items-center justify-between text-xs font-semibold text-purple-600 w-24 min-w-[96px] text-center mr-2">
             <i class="fas fa-ship fa-fw mr-1 text-purple-500"></i><span class="mx-auto">船舶</span>
         </h3>
-        <ul class="list-disc list-inside text-gray-800 text-sm pl-2">${shipListHtml}</ul>
+        <ul class="text-gray-800 text-xs">${shipListHtml}</ul>
     </div>
     ` : ''}
     ${properties.url ? (() => {
@@ -573,9 +573,7 @@ function addSeaRouteClickEvent(id, handleId = id) {
         <h3 class="flex items-center justify-between text-xs font-semibold text-indigo-600 w-24 min-w-[96px] text-center mr-2">
             <i class="fas fa-link fa-fw mr-1.5 text-indigo-500"></i><span class="mx-auto">リンク</span>
         </h3>
-        <a href="${properties.url}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-gray-900 transition-all">
-            運行スケジュール - ${domain}
-        </a>
+        <a href="${properties.url}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-blue-600 transition-all duration-200 rounded">運行スケジュール - ${domain}</a>
     </div>
     `;
     })() : ''}
@@ -643,6 +641,209 @@ export function addResetClickEvent() {
         const features = map.queryRenderedFeatures(event.point);
         if (!features.find(feature => validIds.includes(feature.layer.id))) {
             if (window.hideSidebar) window.hideSidebar();
+            // ハイライトも削除
+            removeRouteHighlight();
         }
     });
 }
+
+/**
+ * 航路や航路区間に移動する統一関数をグローバルに公開
+ */
+window.zoomToRoute = function(params) {
+    try {
+        // パラメータの解析
+        const { routeName, routeId, lineId, sourceId } = params;
+
+        // 現在表示されているソースからフィーチャーを取得
+        const source = map.getSource(sourceId);
+        if (!source) {
+            console.error('Source not found:', sourceId);
+            return;
+        }
+
+        // sourceのデータを取得
+        const data = source._data;
+        if (!data || !data.features) {
+            console.error('No features found in source:', sourceId);
+            return;
+        }
+
+        let matchingFeatures = [];
+        let searchType = '';
+
+        if (routeName) {
+            // routeNameで検索
+            matchingFeatures = data.features.filter(feature =>
+                feature.properties && feature.properties.routeName === routeName
+            );
+            searchType = 'routeName';
+        } else if (routeId && lineId) {
+            // routeIdとlineIdで検索（文字列として比較）
+            matchingFeatures = data.features.filter(feature =>
+                feature.properties &&
+                String(feature.properties.routeId) === String(routeId) &&
+                String(feature.properties.lineId) === String(lineId)
+            );
+            searchType = 'routeSection';
+
+            // 見つからない場合は、routeIdのみで検索してフォールバック
+            if (matchingFeatures.length === 0) {
+                matchingFeatures = data.features.filter(feature =>
+                    feature.properties &&
+                    String(feature.properties.routeId) === String(routeId)
+                );
+                searchType = 'routeOnly';
+            }
+        } else if (routeId) {
+            // routeIdのみで検索
+            matchingFeatures = data.features.filter(feature =>
+                feature.properties &&
+                String(feature.properties.routeId) === String(routeId)
+            );
+            searchType = 'routeOnly';
+        }
+
+        if (matchingFeatures.length === 0) {
+            console.error('No matching features found for:', params);
+            return;
+        }
+
+        // 全ての一致するフィーチャーの境界ボックスを計算
+        let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
+
+        matchingFeatures.forEach(feature => {
+            if (feature.geometry.type === 'LineString') {
+                feature.geometry.coordinates.forEach(coord => {
+                    const [lng, lat] = coord;
+                    minLng = Math.min(minLng, lng);
+                    maxLng = Math.max(maxLng, lng);
+                    minLat = Math.min(minLat, lat);
+                    maxLat = Math.max(maxLat, lat);
+                });
+            } else if (feature.geometry.type === 'MultiLineString') {
+                feature.geometry.coordinates.forEach(lineString => {
+                    lineString.forEach(coord => {
+                        const [lng, lat] = coord;
+                        minLng = Math.min(minLng, lng);
+                        maxLng = Math.max(maxLng, lng);
+                        minLat = Math.min(minLat, lat);
+                        maxLat = Math.max(maxLat, lat);
+                    });
+                });
+            }
+        });
+
+        // 境界ボックスが有効かチェック
+        if (minLng === Infinity || minLat === Infinity || maxLng === -Infinity || maxLat === -Infinity) {
+            console.error('Invalid bounds calculated for:', params);
+            return;
+        }
+
+        // ドロワーの高さ・幅を考慮したパディングを計算
+        let padding = {
+            top: 50,
+            left: 50,
+            right: 50,
+            bottom: 50
+        };
+
+        // ドロワーが表示されている場合はパディングを調整
+        const detailDrawer = document.getElementById('detail-drawer');
+        if (detailDrawer && !detailDrawer.classList.contains('hidden')) {
+            if (window.innerWidth >= 768) {
+                // PC表示: 左側のパディングを調整（サイドバーの幅を考慮）
+                const drawerWidth = detailDrawer.offsetWidth;
+                padding.left = drawerWidth + 30;
+            } else {
+                // モバイル表示: 下側のパディングを調整（ドロワーの高さを考慮）
+                const drawerHeight = detailDrawer.offsetHeight;
+                padding.bottom = drawerHeight + 30;
+            }
+        }
+
+        // マップを航路に移動
+        map.fitBounds([
+            [minLng, minLat],
+            [maxLng, maxLat]
+        ], {
+            padding: padding,
+            duration: 1000 // アニメーション時間（ミリ秒）
+        });
+
+        // ハイライト表示を追加
+        addRouteHighlight(matchingFeatures, sourceId);
+
+        // Google Analytics イベント送信
+        if (typeof gtag !== 'undefined') {
+            const eventLabel = routeName || `${routeId}-${lineId}`;
+            const eventType = searchType === 'routeName' ? 'route_zoom' : 'route_section_zoom';
+            gtag('event', eventType, {
+                'event_category': 'map',
+                'event_label': eventLabel,
+                'value': 1
+            });
+        }
+
+    } catch (error) {
+        console.error('Error in zoomToRoute:', error);
+    }
+};
+
+/**
+ * 航路のハイライト表示を追加
+ */
+function addRouteHighlight(features, sourceId) {
+    // 既存のハイライトを削除
+    removeRouteHighlight();
+
+    // ハイライト用のGeoJSONデータを作成
+    const highlightData = {
+        type: 'FeatureCollection',
+        features: features
+    };
+
+    // ハイライト用ソースを追加
+    map.addSource('route-highlight', {
+        type: 'geojson',
+        data: highlightData
+    });
+
+    // ハイライト用レイヤーを追加（航路の色で太い線）
+    map.addLayer({
+        id: 'route-highlight-line',
+        type: 'line',
+        source: 'route-highlight',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#FF6B35'],
+            'line-width': 8,
+            'line-opacity': 0.6
+        }
+    });
+
+    // 別の航路をクリックするまでハイライトを維持
+}
+
+/**
+ * 航路のハイライト表示を削除
+ */
+function removeRouteHighlight() {
+    if (map.getLayer('route-highlight-line')) {
+        map.removeLayer('route-highlight-line');
+    }
+    if (map.getSource('route-highlight')) {
+        map.removeSource('route-highlight');
+    }
+}
+
+// ハイライト削除機能をグローバルに公開
+window.removeRouteHighlight = removeRouteHighlight;
+
+// 既存の関数呼び出しとの互換性を保持するためのラッパー関数
+window.zoomToRouteSection = function(routeId, lineId, sourceId) {
+    window.zoomToRoute({ routeId, lineId, sourceId });
+};

@@ -79,6 +79,8 @@ export function hideDetailDrawer() {
     }
     // --- Drawerを閉じたらピンも消す ---
     if (window.removeLongPressMarker) window.removeLongPressMarker();
+    // --- Drawerを閉じたらハイライトも消す ---
+    if (window.removeRouteHighlight) window.removeRouteHighlight();
 }
 
 // --- ドロワー最小化（タイトルのみ） ---
