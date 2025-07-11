@@ -1,4 +1,3 @@
-
 export default class hamburgerControl {
     onAdd(map) {
         this.map = map;
@@ -43,7 +42,7 @@ export default class hamburgerControl {
 
         const infoMenu = document.createElement('div');
         const infoLink = document.createElement('a');
-        infoLink.href = 'javascript:void(0)';
+        infoLink.href = '#info-window';
         infoLink.innerHTML = '<i class="fa-solid fa-circle-info"></i> サイト情報';
         infoLink.onclick = this.showInfoWindow.bind(this);
         infoMenu.appendChild(infoLink);
