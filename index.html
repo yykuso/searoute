@@ -49,13 +49,13 @@
   }
   </script>
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-03DRMSWKPW"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-03DRMSWKPW" defer></script>
 
-  <script src="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.js"></script>
+  <script src="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.js" defer></script>
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.css"
     crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
 
-  <script src="https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.9.0/dist/maplibre-gl-geocoder.js"></script>
+  <script src="https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.9.0/dist/maplibre-gl-geocoder.js" defer></script>
   <link rel="stylesheet" href="https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.9.0/dist/maplibre-gl-geocoder.css"
     crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
 
@@ -65,10 +65,19 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
     crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+  <style>
+    @font-face {
+      font-family: 'Font Awesome 6 Free';
+      font-style: normal;
+      font-weight: 900;
+      font-display: swap;
+      src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2') format('woff2');
+    }
+  </style>
 
-  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <script src="https://unpkg.com/@tailwindcss/browser@4" defer></script>
 
-  <link href="./css/common.css" rel="stylesheet" />
+  <link href="./css/common.css" rel="stylesheet" media="print" onload="this.media='all'" />
 
 </head>
 <body>
@@ -79,7 +88,7 @@
     </div>
   </noscript>
   <div id="loading"></div>
-  <h1 class="sr-only">おでかけ航路マップ</h1>
+  <h1>おでかけ航路マップ</h1>
   <div id="map"></div>
   <div class="safe-bottom-blocker"></div>
 
@@ -122,18 +131,7 @@
     </div>
   </div>
 
-  <div id="detail-drawer" class="fixed z-50 bg-white shadow-xl border-slate-200 border transition-transform duration-300 ease-in-out w-full max-h-[30vh] left-0 bottom-0 rounded-t-2xl p-4 md:top-0 md:left-0 md:bottom-0 md:w-96 md:max-h-full md:rounded-none md:rounded-r-2xl md:p-6 translate-y-full md:translate-y-0 md:-translate-x-full overflow-y-auto hidden touch-pan-y">
-    <div id="sidebar-grip" class="mx-auto mt-2 mb-1 h-1 w-12 rounded-full bg-slate-300 md:hidden cursor-ns-resize"></div>
-    <div class="flex items-center justify-between mx-4 mb-2">
-      <h2 id="detail-drawer-title" class="text-lg font-bold text-sky-700 break-words max-w-[calc(100%-3rem)] leading-tight">詳細情報</h2>
-      <button id="detail-drawer-close-btn" class="self-start text-slate-400 hover:text-slate-700 text-2xl font-bold focus:outline-none">
-        <span class="bg-slate-200 hover:bg-slate-300 w-8 h-8 flex items-center justify-center rounded-full p-0 transition-colors">
-          <i class="fa-solid fa-xmark cursor-pointer"></i>
-        </span>
-      </button>
-    </div>
-    <div id="detail-drawer-content" class="text-sm text-slate-700 space-y-2" style="overscroll-behavior:none"></div>
-  </div>
+  <div id="detail-drawer" class="fixed z-50 bg-white shadow-xl border-slate-200 border transition-transform duration-300 ease-in-out w-full max-h-[30vh] left-0 bottom-0 rounded-t-2xl p-4 md:top-0 md:left-0 md:bottom-0 md:w-96 md:max-h-full md:rounded-none md:rounded-r-2xl md:p-6 translate-y-full md:translate-y-0 md:-translate-x-full overflow-y-auto hidden touch-pan-y"></div>
 
   <div id="context-menu" class="bg-white border border-slate-300 rounded shadow-lg py-2 text-sm" style="display:none; position:fixed; z-index:9999; pointer-events:auto;">
     <button id="context-copy-btn" class="block w-full text-left px-2 py-1 hover:bg-slate-100" style="pointer-events:auto;">座標</button>

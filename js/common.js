@@ -589,5 +589,8 @@ function addContextEvent() {
         clearTimeout(touchTimeout);
     });
     // Drawerを閉じたらピンを消す
-    document.getElementById('detail-drawer-close-btn').addEventListener('click', removeLongPressMarker);
+    const closeBtn = document.getElementById('detail-drawer-close-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', removeLongPressMarker);
+    }
 }
