@@ -1,0 +1,1 @@
+{"name":"おでかけ航路マップ","short_name":"航路マップ","description":"日本全国の旅客船・フェリー航路情報を地図で探せるサイト","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#bfd9f2","icons":[{"src":"./img/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"./img/icon-512.png","sizes":"512x512","type":"image/png"}]}
