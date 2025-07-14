@@ -516,6 +516,16 @@ function addSeaRouteClickEvent(id, handleId = id) {
             businessName = parts[0];
             businessNameSub = parts[1].replace('）', '');
         }
+        const freqInfoHtml = properties.freqInfo
+            ? properties.freqInfo.split(', ')
+                .map(freqInfo => `<span class="block">${freqInfo.trim()}</span>`)
+                .join('')
+            : '';
+        const infoHtml = properties.info
+            ? properties.info.split(', ')
+                .map(info => `<span class="block">${info.trim()}</span>`)
+                .join('')
+            : '';
         const shipListHtml = properties.shipName
             ? properties.shipName.split(', ')
                 .map(ship => `<span class="block">・${ship.trim()}</span>`)
@@ -542,7 +552,7 @@ function addSeaRouteClickEvent(id, handleId = id) {
         <h3 class="flex items-center justify-between text-xs font-semibold text-red-600 w-24 min-w-[96px] text-center mr-2">
             <i class="fas fa-rotate fa-fw mr-1 text-red-500"></i><span class="mx-auto">運行頻度</span>
         </h3>
-        <div class="text-gray-800 text-xs">${properties.freqInfo}</div>
+        <div class="text-gray-800 text-xs">${freqInfoHtml}</div>
     </div>
     ` : ''}
     ${properties.info ? `
@@ -550,7 +560,7 @@ function addSeaRouteClickEvent(id, handleId = id) {
         <h3 class="flex items-center justify-between text-xs font-semibold text-yellow-600 w-24 min-w-[96px] text-center mr-2">
             <i class="fas fa-info-circle fa-fw mr-1 text-yellow-500"></i><span class="mx-auto">情報</span>
         </h3>
-        <div class="text-gray-800 text-xs">${properties.info}</div>
+        <div class="text-gray-800 text-xs">${infoHtml}</div>
     </div>
     ` : ''}
     ${properties.shipName ? `

@@ -4,6 +4,7 @@
   "routeName": "稚内～利礼島（鴛泊）～礼文（香深）",
   "url": "https://heartlandferry.jp/timetable/",
   "freq": 3,
+  "freqInfo": "1日2～3往復",
   "shipName": "アマポーラ宗谷, サイプリア宗谷, ボレアース宗谷",
   "color": "#e4007f"
 },
@@ -11,9 +12,9 @@
   "businessName": "ハートランドフェリー",
   "routeName": "利礼島（沓形）～礼文（香深）",
   "url": "https://heartlandferry.jp/timetable/",
-  "info": "6月～9月",
   "note": "season",
   "freq": 1,
+  "freqInfo": "6月～9月運航, 1日1往復",
   "shipName": "アマポーラ宗谷, サイプリア宗谷, ボレアース宗谷",
   "color": "#e4007f"
 },
@@ -22,6 +23,7 @@
   "routeName": "江差～奥尻島",
   "url": "https://heartlandferry.jp/timetable/",
   "freq": 2,
+  "freqInfo": "1日1～2往復",
   "shipName": "カランセ奥尻",
   "color": "#e4007f"
 },
@@ -39,6 +41,7 @@
   "routeName": "羽幌～焼尻島～天売島",
   "url": "https://haboro-enkai.com/timetable/",
   "freq": 3,
+  "freqInfo": "1日1～6往復",
   "shipName": "おろろん2, さんらいなぁ2",
   "color": "#3c92cf"
 },
@@ -47,6 +50,7 @@
   "routeName": "函館～大間",
   "url": "https://www.tsugarukaikyo.co.jp/timetable/",
   "freq": 2,
+  "freqInfo": "1日2～3往復",
   "shipName": "大函丸",
   "color": "#49b2e0"
 },
@@ -55,7 +59,7 @@
   "routeName": "函館～青森",
   "url": "https://www.tsugarukaikyo.co.jp/timetable/",
   "freq": 3,
-  "freqInfo": "1日6往復",
+  "freqInfo": "1日6～7往復",
   "shipName": "ブルールミナス, ブルーハピネス, ブルードルフィン",
   "color": "#49b2e0"
 },
@@ -64,6 +68,7 @@
   "routeName": "室蘭～青森",
   "url": "https://www.tsugarukaikyo.co.jp/timetable/",
   "freq": 2,
+  "freqInfo": "1日1往復",
   "shipName": "ブルーマーメイド",
   "color": "#49b2e0"
 },
@@ -72,6 +77,7 @@
   "routeName": "函館～青森",
   "url": "https://www.seikan-ferry.co.jp/schedule/",
   "freq": 3,
+  "freqInfo": "1日8往復",
   "shipName": "はやぶさⅢ, はやぶさⅡ, はやぶさ, あさかぜ21",
   "color": "#00449b"
 },
@@ -80,6 +86,7 @@
   "routeName": "舞鶴～小樽",
   "url": "https://www.snf.jp/guide/time_schedule/",
   "freq": 2,
+  "freqInfo": "毎日運航",
   "shipName": "はまなす, あかしあ",
   "color": "#fa0000"
 },
@@ -88,6 +95,7 @@
   "routeName": "敦賀～苫小牧",
   "url": "https://www.snf.jp/guide/time_schedule/",
   "freq": 2,
+  "freqInfo": "毎日運航",
   "shipName": "すずらん, すいせん, はまなす, あかしあ",
   "color": "#fa0000"
 },
@@ -95,7 +103,8 @@
   "businessName": "新日本海フェリー",
   "routeName": "敦賀～新潟～秋田～苫小牧",
   "url": "https://www.snf.jp/guide/time_schedule/",
-  "freq": 1,
+  "freq": 2,
+  "freqInfo": "敦賀～新潟：週1運航, 新潟～秋田～苫小牧：週6運航",
   "shipName": "らいらっく, ゆうかり",
   "color": "#3f62a6"
 },
@@ -103,7 +112,8 @@
   "businessName": "新日本海フェリー",
   "routeName": "新潟～小樽",
   "url": "https://www.snf.jp/guide/time_schedule/",
-  "freq": 1,
+  "freq": 2,
+  "freqInfo": "週6運航",
   "shipName": "らべんだあ, あざれあ",
   "color": "#59b6c5"
 },
@@ -111,7 +121,9 @@
   "businessName": "洞爺湖汽船",
   "routeName": "洞爺湖 遊覧船",
   "url": "https://www.toyakokisen.com/price/",
+  "info": "冬季は中島下船不可",
   "freq": 3,
+  "freqInfo": "毎日30～60分毎",
   "shipName": "エスポアール, 羊蹄",
   "color": "#328046"
 },
@@ -361,6 +373,7 @@
   "routeName": "竹芝～父島",
   "url": "https://www.ogasawarakaiun.co.jp/service/",
   "freq": 1,
+  "freqInfo": "週1便程度",
   "shipName": "おがさわら丸",
   "color": "#373583"
 },
@@ -369,6 +382,7 @@
   "routeName": "八丈島～青ヶ島",
   "url": "https://izu-syotou.jp/route01/index.html",
   "freq": 2,
+  "freqInfo": "1日1往復未満",
   "shipName": "くろしお丸",
   "color": "#e60012"
 },
@@ -377,6 +391,7 @@
   "routeName": "父島～母島",
   "url": "https://izu-syotou.jp/route02/index.html",
   "freq": 2,
+  "freqInfo": "1日1往復程度",
   "shipName": "ははじま丸",
   "color": "#e60012"
 },
@@ -385,7 +400,8 @@
   "routeName": "大洗～苫小牧",
   "url": "https://www.sunflower.co.jp/route/facilities/timetable/",
   "freq": 3,
-  "shipName": "さんふらわあ さっぽろ, さんふらわあ ふらの, さんふらわあ しれとこ, さんふらわあ かむい",
+  "freqInfo": "1日2便、週5～6運航",
+  "shipName": "さんふらわあ さっぽろ, さんふらわあ ふらの, さんふらわあ かむい, さんふらわあ ぴりか",
   "color": "#ff5500"
 },
 "130502": {
@@ -393,6 +409,7 @@
   "routeName": "大阪～別府",
   "url": "https://www.ferry-sunflower.co.jp/route/osaka-beppu/time/",
   "freq": 2,
+  "freqInfo": "毎日運航",
   "shipName": "さんふらわあ くれない, さんふらわあ むらさき",
   "color": "#ff5500"
 },
@@ -401,6 +418,7 @@
   "routeName": "神戸六甲アイランド～大分",
   "url": "https://www.ferry-sunflower.co.jp/route/kobe-oita/time/",
   "freq": 2,
+  "freqInfo": "毎日運航",
   "shipName": "さんふらわあ ごーるど, さんふらわあ ぱーる",
   "color": "#ff5500"
 },
@@ -409,6 +427,7 @@
   "routeName": "大阪～志布志",
   "url": "https://www.ferry-sunflower.co.jp/route/osaka-shibushi/time/",
   "freq": 2,
+  "freqInfo": "毎日運航",
   "shipName": "さんふらわあ さつま, さんふらわあ きりしま",
   "color": "#ff5500"
 },
