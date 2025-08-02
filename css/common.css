@@ -168,9 +168,10 @@ body {
   }
 }
 
-/* 情報ウィンドウ
+/* 情報ウィンドウ・設定ウィンドウ
 ================================================================ */
-#info-window {
+#info-window,
+#settings-window {
   display: none;
   position: fixed;
   top: 50%;
@@ -188,7 +189,8 @@ body {
   pointer-events: auto;
 }
 
-#info-window .heading-tag {
+#info-window .heading-tag,
+#settings-window .heading-tag {
   display: flex;
   align-items: center;
   border-left: 5px solid #38bdf8;

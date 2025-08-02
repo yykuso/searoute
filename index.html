@@ -131,6 +131,28 @@
     </div>
   </div>
 
+  <div id="settings-window" class="text-xs" style="display:none;">
+    <h2 class="heading-tag">設定</h2>
+    <div class="mb-4 space-y-4 text-slate-600 p-2">
+      <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+        <div>
+          <p class="font-medium text-slate-700">休止中航路の表示</p>
+          <p class="text-xs text-slate-500">運休・休止中の航路を地図に表示するかを設定できます</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="suspend-route-toggle" class="sr-only peer" checked>
+          <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-sky-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-600"></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="mt-4 space-y-3">
+      <button id="settings-close-btn" class="w-full rounded-lg bg-sky-600 py-3 px-4 font-bold text-white shadow-md transition-all hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 active:scale-95">
+        閉じる
+      </button>
+    </div>
+  </div>
+
   <div id="detail-drawer" class="fixed z-50 bg-white shadow-xl border-slate-200 border transition-transform duration-300 ease-in-out w-full max-h-[30vh] left-0 bottom-0 rounded-t-2xl p-4 md:top-0 md:left-0 md:bottom-0 md:w-96 md:max-h-full md:rounded-none md:rounded-r-2xl md:p-6 translate-y-full md:translate-y-0 md:-translate-x-full overflow-y-auto touch-pan-y" style="display:none;">
     <div id="sidebar-grip" class="mx-auto mt-2 mb-1 h-1 w-12 rounded-full bg-slate-300 md:hidden cursor-ns-resize"></div>
     <div class="flex items-center justify-between mx-4 mb-2">

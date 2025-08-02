@@ -48,10 +48,25 @@ export default class hamburgerControl {
         infoMenu.appendChild(infoLink);
         contentContainer.appendChild(infoMenu);
 
+        const settingsMenu = document.createElement('div');
+        const settingsLink = document.createElement('a');
+        settingsLink.href = '#settings-window';
+        settingsLink.innerHTML = '<i class="fa-solid fa-gear"></i> 設定';
+        settingsLink.onclick = this.showSettingsWindow.bind(this);
+        settingsMenu.appendChild(settingsLink);
+        contentContainer.appendChild(settingsMenu);
+
         this.infoWindow = document.getElementById('info-window');
         if (this.infoWindow) {
             this.infoWindow.querySelector('#info-close-btn').onclick = () => {
                 this.infoWindow.style.display = 'none';
+            };
+        }
+
+        this.settingsWindow = document.getElementById('settings-window');
+        if (this.settingsWindow) {
+            this.settingsWindow.querySelector('#settings-close-btn').onclick = () => {
+                this.settingsWindow.style.display = 'none';
             };
         }
     }
@@ -73,6 +88,27 @@ export default class hamburgerControl {
             };
             setTimeout(() => { // setTimeoutでイベント登録を遅らせることで、ボタン自体のクリックで即閉じを防ぐ
                 document.addEventListener('mousedown', this._infoWindowOutsideHandler);
+            }, 0);
+        }
+    }
+
+    showSettingsWindow() {
+        if (this.settingsWindow) {
+            this.settingsWindow.style.display = 'block';
+
+            // 既存のイベントを一度解除
+            document.removeEventListener('mousedown', this._settingsWindowOutsideHandler);
+
+            // 外側クリックで閉じるイベントを追加
+            this._settingsWindowOutsideHandler = (e) => {
+                // settings-window自身またはその子要素をクリックした場合は何もしない
+                if (!this.settingsWindow.contains(e.target)) {
+                    this.settingsWindow.style.display = 'none';
+                    document.removeEventListener('mousedown', this._settingsWindowOutsideHandler);
+                }
+            };
+            setTimeout(() => { // setTimeoutでイベント登録を遅らせることで、ボタン自体のクリックで即閉じを防ぐ
+                document.addEventListener('mousedown', this._settingsWindowOutsideHandler);
             }, 0);
         }
     }

@@ -5,6 +5,9 @@ import { showDetailDrawer, hideDetailDrawer } from './detailDrawer.js';
 // EventHandle情報の保存
 var eventHandle = {};
 
+// 設定値の管理
+let showSuspendedRoutes = true;
+
 // ポップアップ閉じるボタン表示、自動閉じ無効化
 const popup = new maplibregl.Popup({
     closeButton: false,
@@ -888,3 +891,51 @@ window.removeRouteHighlight = removeRouteHighlight;
 window.zoomToRouteSection = function(routeId, lineId, sourceId) {
     window.zoomToRoute({ routeId, lineId, sourceId });
 };
+
+/**
+ * 休止中航路の表示・非表示を切り替える
+ * @param {boolean} showSuspended - 休止中航路を表示するかどうか
+ */
+export function toggleSuspendedRoutes(showSuspended) {
+    showSuspendedRoutes = showSuspended;
+
+    // 各航路レイヤーのフィルターを更新
+    const routeTypes = ['geojson_sea_route', 'geojson_international_sea_route', 'geojson_limited_sea_route'];
+
+    routeTypes.forEach(routeType => {
+        const layerSuffixes = ['_outline', '_solidline', '_dashline', '_thinline', '_name'];
+
+        layerSuffixes.forEach(suffix => {
+            const layerId = routeType + suffix;
+
+            if (map.getLayer(layerId)) {
+                if (showSuspended) {
+                    // 既存のフィルターを復元
+                    if (suffix === '_solidline') {
+                        map.setFilter(layerId, ['==', ['get', 'note'], null]);
+                    } else if (suffix === '_dashline') {
+                        map.setFilter(layerId, ['==', ['get', 'note'], 'season']);
+                    } else if (suffix === '_thinline') {
+                        map.setFilter(layerId, ['==', ['get', 'note'], 'suspend']);
+                    } else {
+                        // outline と name レイヤーはフィルターなし
+                        map.setFilter(layerId, null);
+                    }
+                } else {
+                    // 休止中航路を非表示にする
+                    if (suffix === '_solidline') {
+                        map.setFilter(layerId, ['==', ['get', 'note'], null]);
+                    } else if (suffix === '_dashline') {
+                        map.setFilter(layerId, ['==', ['get', 'note'], 'season']);
+                    } else if (suffix === '_thinline') {
+                        // 休止中航路（suspend）を非表示
+                        map.setFilter(layerId, ['==', ['get', 'note'], 'never_match']);
+                    } else {
+                        // outline と name レイヤーは休止中以外を表示
+                        map.setFilter(layerId, ['!=', ['get', 'note'], 'suspend']);
+                    }
+                }
+            }
+        });
+    });
+}

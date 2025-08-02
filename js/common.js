@@ -1,7 +1,7 @@
 import layersControl from './layersControl.js';
 import hamburgerControl from './hamburgerControl.js';
 import { addRasterLayer } from './rasterLayers.js';
-import { addGeoJsonLayer, addMarker, addResetClickEvent } from './geoJsonLayers.js';
+import { addGeoJsonLayer, addMarker, addResetClickEvent, toggleSuspendedRoutes } from './geoJsonLayers.js';
 import { showDetailDrawer } from './detailDrawer.js';
 import { initCenterZoom, setCookie, getCookie } from './cookieControl.js';
 import { showContextMenu, hideContextMenu } from './contextMenu.js';
@@ -597,3 +597,44 @@ function addContextEvent() {
     // Drawerを閉じたらピンを消す
     document.getElementById('detail-drawer-close-btn').addEventListener('click', removeLongPressMarker);
 }
+
+// 設定機能の初期化
+function initSettings() {
+    const suspendToggle = document.getElementById('suspend-route-toggle');
+
+    if (!suspendToggle) {
+        console.warn('suspend-route-toggle element not found');
+        return;
+    }
+
+    // 初期状態をCookieから取得
+    const showSuspended = getCookie('showSuspendedRoutes') !== 'false';
+    suspendToggle.checked = showSuspended;
+
+    // 初期状態を適用
+    toggleSuspendedRoutes(showSuspended);
+
+    // トグルボタンのイベントリスナー
+    suspendToggle.addEventListener('change', (e) => {
+        const showSuspended = e.target.checked;
+        toggleSuspendedRoutes(showSuspended);
+        setCookie('showSuspendedRoutes', showSuspended.toString(), 365);
+    });
+}
+
+// ページ読み込み時に設定を初期化
+document.addEventListener('DOMContentLoaded', () => {
+    // マップが読み込まれてから設定を適用
+    if (map && map.loaded()) {
+        initSettings();
+    } else {
+        const checkMapLoaded = () => {
+            if (map && map.loaded()) {
+                initSettings();
+            } else {
+                setTimeout(checkMapLoaded, 100);
+            }
+        };
+        checkMapLoaded();
+    }
+});
