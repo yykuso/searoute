@@ -3030,6 +3030,14 @@
   "freq": 3,
   "color": "#1c9322"
 },
+"440701": {
+  "businessName": "大分第一ホーバードライブ",
+  "routeName": "大分～大分空港",
+  "url": "https://hoverdrive.jp/ja/",
+  "freq": 3,
+  "freqInfo": "1日4往復",
+  "color": "#45b43b"
+},
 "450101": {
   "businessName": "宮崎カーフェリー",
   "routeName": "神戸～宮崎",
