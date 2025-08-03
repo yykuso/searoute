@@ -162,7 +162,17 @@
   "routeName": "八戸～苫小牧",
   "url": "https://www.silverferry.jp/route_guide/index.html",
   "freq": 3,
+  "freqInfo": "毎日4往復",
   "shipName": "シルバープリンセス, シルバーティアラ, シルバーブリーズ, シルバーエイト",
+  "color": "#de64a1"
+},
+"20102": {
+  "businessName": "川崎近海汽船",
+  "routeName": "室蘭～八戸～宮古",
+  "url": "https://www.kawakin.co.jp/news/detail/61c45143-956c-456d-9f80-05220a013c8a",
+  "info": "運航休止",
+  "note": "suspend",
+  "freq": 1,
   "color": "#de64a1"
 },
 "20201": {
@@ -172,8 +182,62 @@
   "info": "4月～11月",
   "note": "season",
   "freq": 2,
+  "freqInfo": "毎日2往復",
   "shipName": "かもしか",
   "color": "#00a82c"
+},
+"20301": {
+  "businessName": "仏ヶ浦海上観光",
+  "routeName": "佐井～仏ヶ浦",
+  "url": "https://hotokegaura.jp/index.php?%E6%99%82%E5%88%BB%E8%A1%A8%E3%83%BB%E6%96%99%E9%87%91",
+  "info": "5月～10月",
+  "note": "season",
+  "freq": 2,
+  "freqInfo": "毎日1～6便",
+  "shipName": "ニューしもきた, ニューしもきたⅡ, ニューしもきたⅢ, ニューしもきたⅤ",
+  "color": "#e73a40"
+},
+"20401": {
+  "businessName": "むつ市",
+  "routeName": "下北半島西岸航路（脇野沢～仏ヶ浦）",
+  "url": "https://www.city.mutsu.lg.jp/bunka/information/kankou-heiseigouguide.html",
+  "info": "4月～10月",
+  "note": "season",
+  "freq": 2,
+  "freqInfo": "毎日1～2便",
+  "shipName": "夢の平成号",
+  "color": "#70446e"
+},
+"20402": {
+  "businessName": "むつ市",
+  "routeName": "下北半島回遊航路（脇野沢～鯛島）",
+  "url": "https://www.city.mutsu.lg.jp/bunka/information/kankou-heiseigouguide.html",
+  "info": "7月～10月",
+  "note": "season",
+  "freq": 2,
+  "freqInfo": "毎日1便",
+  "shipName": "夢の平成号",
+  "color": "#70446e"
+},
+"20501": {
+  "businessName": "坂井幸人",
+  "routeName": "牛滝～仏ヶ浦",
+  "url": "https://www.google.com/search?q=%E5%A4%A2%E3%81%AE%E6%B5%B7%E4%B8%AD%E5%8F%B7",
+  "info": "運航休止",
+  "note": "suspend",
+  "freq": 1,
+  "shipName": "夢の海中号",
+  "color": "#d6bb1c"
+},
+"20601": {
+  "businessName": "十和田観光電鉄",
+  "routeName": "十和田湖遊覧船（休屋～子ノ口）",
+  "url": "https://www.google.com/search?q=%E5%A4%A2%E3%81%AE%E6%B5%B7%E4%B8%AD%E5%8F%B7",
+  "info": "4月～11月",
+  "freq": 2,
+  "freqInfo": "毎日1～2便",
+  "shipName": "第一八甲田, 第二八甲田, 第三八甲田, 第一観光丸",
+  "color": "#df513f"
 },
 "30101": {
   "businessName": "岩手県北自動車",
