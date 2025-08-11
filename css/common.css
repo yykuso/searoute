@@ -1,4 +1,47 @@
-/* 全体
+/* CSS変数定義
+================================================================ */
+:root {
+  /* カラーパレット */
+  --color-white: #ffffff;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-blue-400: #60a5fa;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-sky-400: #38bdf8;
+  --color-yellow-100: #fef3c7;
+  --color-yellow-200: #fde68a;
+  --color-yellow-800: #92400e;
+
+  /* コンポーネント固有の変数 */
+  --layers-control-bg: var(--color-white);
+  --layers-control-text: var(--color-gray-800);
+  --layers-control-text-secondary: var(--color-gray-700);
+  --layers-control-border: var(--color-gray-200);
+  --layers-control-hover: var(--color-gray-100);
+  --layers-control-icon: var(--color-gray-600);
+
+  /* サイズ */
+  --control-size: 40px;
+  --control-padding: 10px;
+  --border-radius-sm: 4px;
+  --border-radius-md: 6px;
+  --border-radius-lg: 12px;
+
+  /* アニメーション */
+  --transition-default: 0.2s ease;
+  --transition-slow: 0.3s ease;
+}
+
+/* 基本レイアウト
 ================================================================ */
 body {
   font-family: 'Inter', sans-serif;
@@ -15,7 +58,7 @@ body {
   left: 0;
 }
 
-/* iPhone PWA向けの設定
+/* PWA（Progressive Web App）対応
 ================================================================ */
 .maplibregl-ctrl-top-left,
 .maplibregl-ctrl-top-right {
@@ -55,7 +98,7 @@ body {
 }
 
 .maplibregl-popup-content {
-  border-radius: 12px;
+  border-radius: var(--border-radius-lg);
 }
 
 .searoute-popup-box {
@@ -65,69 +108,6 @@ body {
 
 .port-popup-box .port-name {
   text-align: center;
-}
-
-/* コントロール
-================================================================ */
-.maplibregl-ctrl-top-right  {
-  z-index: 3;
-}
-
-#hamburger-control {
-  padding: 10px;
-  background-color: white;
-  border: 1px solid #ccc;
-  color: #323232;
-}
-
-.maplibregl-ctrl-hamburger-toggle {
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.maplibregl-ctrl-hamburger-list {
-  line-height: 2.0;
-}
-
-.maplibregl-ctrl-hamburger-list a {
-  text-decoration: none;
-  color: #323232;
-}
-
-
-#layers-control {
-  padding: 10px;
-  background-color: white;
-  border: 1px solid #ccc;
-  color: #323232;
-}
-
-.maplibregl-ctrl-layers-toggle {
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.maplibregl-ctrl-layers-list {
-  max-height: 65vh;
-  overflow-y: auto;
-}
-
-.maplibregl-ctrl-layers-list input[type="radio"],
-.maplibregl-ctrl-layers-list input[type="checkbox"] {
-  margin: 4px;
-  cursor: pointer;
-}
-
-.maplibregl-ctrl-layers-list hr {
-  margin: 4px 0;
-  border: 0;
-  border-top: 1px solid #e5e7eb;
 }
 
 /* ローディングアイコン
@@ -160,15 +140,265 @@ body {
 }
 
 @keyframes loading {
-0% {
-  transform: rotate(0deg);
+  0% {
+    transform: rotate(0deg);
   }
-100% {
-  transform: rotate(360deg);
+  100% {
+    transform: rotate(360deg);
   }
 }
 
-/* 情報ウィンドウ・設定ウィンドウ
+/* コントロール - 基本設定
+================================================================ */
+.maplibregl-ctrl-top-right {
+  z-index: 10;
+}
+
+/* ハンバーガーメニューコントロール */
+#hamburger-control {
+  padding: var(--control-padding);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  color: var(--color-gray-700);
+  position: relative;
+  z-index: 11;
+}
+
+.maplibregl-ctrl-hamburger-toggle {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.maplibregl-ctrl-hamburger-list {
+  line-height: 2.0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  min-width: 150px;
+  width: auto;
+  white-space: nowrap;
+  padding: 8px 0;
+}
+
+.maplibregl-ctrl-hamburger-list a {
+  text-decoration: none;
+  color: var(--color-gray-700);
+  display: block;
+  padding: 4px 8px;
+  border-radius: var(--border-radius-md);
+  margin: 2px 8px;
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+.maplibregl-ctrl-hamburger-list a:hover {
+  background-color: var(--layers-control-hover);
+  color: var(--color-gray-900);
+  font-weight: 600;
+}
+
+/* レイヤーコントロール
+================================================================ */
+#layers-control {
+  padding: var(--control-padding);
+  background-color: var(--layers-control-bg);
+  border: 1px solid var(--color-gray-300);
+  color: var(--layers-control-text);
+  position: relative;
+  z-index: 10;
+}
+
+.maplibregl-ctrl-layers-toggle {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-default);
+}
+
+.maplibregl-ctrl-layers-toggle:hover {
+  background-color: var(--layers-control-hover);
+}
+
+.maplibregl-ctrl-layers-toggle i {
+  color: var(--layers-control-icon);
+  font-size: 18px;
+  font-weight: 600;
+  transition: var(--transition-default);
+  line-height: 1;
+}
+
+.maplibregl-ctrl-layers-toggle:hover i {
+  color: var(--layers-control-text);
+}
+
+.maplibregl-ctrl-layers-list {
+  max-height: 60vh;
+  min-width: 140px;
+  overflow-y: auto;
+}
+
+/* レイヤーアイテム */
+.layer-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: var(--border-radius-md);
+  margin: 2px 8px;
+  position: relative;
+  transition: var(--transition-default);
+}
+
+.layer-item:hover {
+  background-color: var(--layers-control-hover);
+}
+
+.layer-item:hover label {
+  color: var(--color-gray-900);
+  font-weight: 600;
+}
+
+.layer-item input[type="radio"],
+.layer-item input[type="checkbox"] {
+  margin: 0 4px 0 0;
+  cursor: pointer;
+  accent-color: var(--color-blue-500);
+}
+
+.layer-item label {
+  cursor: pointer;
+  flex: 1;
+  font-weight: 500;
+  user-select: none;
+  line-height: 1.4;
+  transition: var(--transition-default);
+}
+
+.layer-item.checked label,
+.layer-item input[type="radio"]:checked + label,
+.layer-item input[type="checkbox"]:checked + label {
+  color: var(--color-gray-900);
+  font-weight: 600;
+}
+
+/* レイヤーグループ
+================================================================ */
+.maplibregl-ctrl-layers-list hr {
+  margin: 8px 4px;
+  border: 0;
+  border-top: 1px solid var(--layers-control-border);
+}
+
+.layer-group-header {
+  padding: 4px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  cursor: pointer;
+  border-radius: var(--border-radius-sm);
+  position: relative;
+  user-select: none;
+  transition: var(--transition-default);
+}
+
+.layer-group-header:hover {
+  background-color: var(--layers-control-hover);
+}
+
+.layer-group-header::before {
+  content: '▼';
+  display: inline-block;
+  margin-right: 8px;
+  transition: var(--transition-default);
+  font-size: 12px;
+}
+
+.layer-group-header.collapsed::before {
+  transform: rotate(-90deg);
+}
+
+.layer-group-header:first-child {
+  margin-top: 0;
+}
+
+.layer-group-content {
+  overflow: hidden;
+  transition: var(--transition-slow);
+  max-height: 1000px;
+}
+
+.layer-group-content.collapsed {
+  max-height: 0;
+}
+
+/* ツールチップ
+================================================================ */
+.layer-tooltip {
+  position: absolute;
+  bottom: 100%;
+  right: 8px;
+  background-color: var(--color-gray-800);
+  color: var(--color-white);
+  padding: 8px 12px;
+  border-radius: var(--border-radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: normal;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition-default);
+  pointer-events: none;
+  margin-bottom: 6px;
+  max-width: 200px;
+  text-align: center;
+  line-height: 1.3;
+  z-index: 1001;
+}
+
+.layer-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 20px;
+  border: 4px solid transparent;
+  border-top-color: var(--color-gray-800);
+}
+
+.layer-item:hover .layer-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* スクロールバーカスタマイズ
+================================================================ */
+.maplibregl-ctrl-layers-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.maplibregl-ctrl-layers-list::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+  border-radius: 3px;
+}
+
+.maplibregl-ctrl-layers-list::-webkit-scrollbar-thumb {
+  background: var(--color-gray-300);
+  border-radius: 3px;
+  transition: var(--transition-default);
+}
+
+.maplibregl-ctrl-layers-list::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-400);
+}
+
+/* モーダルウィンドウ
 ================================================================ */
 #info-window,
 #settings-window {
@@ -177,11 +407,12 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #fff;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border-radius: var(--border-radius-lg);
   z-index: 9999;
-  padding: 1.5em;
+  padding: 1.5rem;
   width: 90vw;
   max-width: 600px;
   max-height: 70vh;
@@ -193,24 +424,57 @@ body {
 #settings-window .heading-tag {
   display: flex;
   align-items: center;
-  border-left: 5px solid #38bdf8;
-  background-color: #f8fafc;
-  padding: 0.5rem;
-  font-size: 1.0rem;
+  border-left: 5px solid var(--color-sky-400);
+  background-color: var(--color-gray-50);
+  padding: 0.75rem;
+  font-size: 1.1rem;
   font-weight: 700;
-  color: #334155;
-  border-radius: 0 0.25rem 0.25rem 0;
-  margin-bottom: calc(var(--spacing) * 2);
+  color: var(--color-gray-700);
+  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+  margin-bottom: 1rem;
 }
 
-/* JSが無効な場合の警告
+/* ジオコーダーコントロール
+================================================================ */
+.maplibregl-ctrl-geocoder.maplibregl-ctrl-geocoder--collapsed {
+  width: var(--control-size) !important;
+  min-width: var(--control-size) !important;
+  height: var(--control-size) !important;
+  min-height: var(--control-size) !important;
+}
+
+.maplibregl-ctrl-geocoder--icon-search {
+  top: 10px !important;
+  left: 10px !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.maplibregl-ctrl-geocoder--input {
+  height: var(--control-size) !important;
+  padding: 6px 45px !important;
+}
+
+.maplibregl-ctrl-geocoder .maplibregl-ctrl-geocoder--pin-right > * {
+  top: 5.5px !important;
+  right: 5.5px !important;
+}
+
+.maplibregl-ctrl-geocoder--icon-close,
+.maplibregl-ctrl-geocoder--icon-loading {
+  margin-top: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* 警告メッセージ
 ================================================================ */
 .noscript-warning {
-  background: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeeba;
-  padding: 1em;
-  margin: 1em 0;
+  background: var(--color-yellow-100);
+  color: var(--color-yellow-800);
+  border: 1px solid var(--color-yellow-200);
+  padding: 1rem;
+  margin: 1rem 0;
   text-align: center;
-  font-size: 1.2em;
+  font-size: 1.2rem;
+  border-radius: var(--border-radius-md);
 }

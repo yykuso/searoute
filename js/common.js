@@ -5,6 +5,7 @@ import { addGeoJsonLayer, addMarker, addResetClickEvent, toggleSuspendedRoutes }
 import { showDetailDrawer } from './detailDrawer.js';
 import { initCenterZoom, setCookie, getCookie } from './cookieControl.js';
 import { showContextMenu, hideContextMenu } from './contextMenu.js';
+import { createLayersConfig } from './layerConfig.js';
 
 /* マップの命名規則
     VectorTile = 背景マップ   = style
@@ -69,67 +70,13 @@ initMap();
 
 // styleファイルの読み込み後に発火
 map.once('styledata', () => {
-    // BaseLayer
-    const mapBaseLayer = {
-        'OSM Custom': mapStyle["OSM_CUSTOM_MAP"],
-        'OSM Bright': mapStyle["OSM_BRIGHT_MAP"],
-        'OSM Planet': mapStyle["OSM_PLANET_MAP"],
-        '地理院 標準': mapStyle["GSI_STD_MAP"],
-        '地理院 淡色': mapStyle["GSI_PALE_MAP"],
-        '地理院 白地図': mapStyle["GSI_BLANK_MAP"],
-        'OpenTopoMap': mapStyle["OTM_MAP"],
-        'TransportMap': mapStyle["TRANSPORT_MAP"],
-    };
-    // default BaseLayer
-    // const defaultBaseLayer = mapStyle["OSM_BRIGHT_MAP"];
-    // OverLayer
-    const mapOverLayer = {
-        tile_gsi_photo: {
-            name: '地理院 写真',
-            visible: isIdInLayer(defaultLayer, 'tile_gsi_photo'),
-        },
-        tile_gsi_relief: {
-            name: '地理院 標高図',
-            visible: isIdInLayer(defaultLayer, 'tile_gsi_relief'),
-        },
-        tile_esriimagery: {
-            name: 'EsriWorldImagery',
-            visible: isIdInLayer(defaultLayer, 'tile_esriimagery'),
-        },
-        tile_railwaymap: {
-            name: 'OpenRailwayMap',
-            visible: isIdInLayer(defaultLayer, 'tile_railwaymap'),
-        },
-        tile_openseamap: {
-            name: 'OpenSeaMap',
-            visible: isIdInLayer(defaultLayer, 'tile_openseamap'),
-        },
-    };
-    // geojsonLayer
-    const geojsonLayer = {
-        geojson_port: {
-            name: '港湾情報',
-            visible: isIdInLayer(defaultLayer, 'geojson_port'),
-        },
-        geojson_sea_route: {
-            name: '国内航路',
-            visible: isIdInLayer(defaultLayer, 'geojson_sea_route'),
-        },
-        geojson_international_sea_route: {
-            name: '国際航路',
-            visible: isIdInLayer(defaultLayer, 'geojson_international_sea_route'),
-        },
-        geojson_limited_sea_route: {
-            name: '期間限定航路',
-            visible: isIdInLayer(defaultLayer, 'geojson_limited_sea_route'),
-        },
-    };
+    // レイヤー設定を作成
+    const layersConfig = createLayersConfig(mapStyle, defaultLayer, isIdInLayer);
+
     // Layers Control
     let layers = new layersControl({
-        baseLayers: mapBaseLayer,
+        layers: layersConfig,
         defaultBaseLayer: defaultMap,
-        overLayers: mapOverLayer,
-        geojsonLayers: geojsonLayer,
     });
     map.addControl(layers, 'top-right');
 

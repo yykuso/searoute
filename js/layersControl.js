@@ -3,12 +3,17 @@ import { updateBaseMap, addOverLayer, removeOverLayer } from './common.js';
 // レイヤーコントロールボタンの制御
 export default class layersControl {
     constructor(options) {
-        this.baseLayers = options.baseLayers || null;
-        this.overLayers = options.overLayers || null;
-        this.geojsonLayers = options.geojsonLayers || null;
+        this.layers = options.layers || {};
         this.defaultBaseLayer = options.defaultBaseLayer || null;
+
+        // レイヤータイプの定義
+        this.layerTypes = {
+            base: { type: 'radio', handler: this.handleBaseLayerChange.bind(this) },
+            overlay: { type: 'checkbox', handler: this.handleOverlayLayerChange.bind(this) },
+            geojson: { type: 'checkbox', handler: this.handleGeoJsonLayerChange.bind(this) }
+        };
     }
-    
+
     onAdd(map) {
         this.map = map;
         this.addLayersControl();
@@ -38,137 +43,209 @@ export default class layersControl {
         toggleIcon.className = 'fa-solid fa-layer-group fa-lg';
         toggleContainer.appendChild(toggleIcon);
 
-        // Radio button
+        // Control Container
         const controlContainer = document.createElement('div');
         controlContainer.className = 'maplibregl-ctrl-layers-list';
         this.container.appendChild(controlContainer);
         controlContainer.style.display = 'none';    // 初期非表示
 
-        // Base Layers
-        if (this.baseLayers) {
-            Object.keys(this.baseLayers).map((layer) => {
-                const containerDiv = document.createElement('div');
-                this.addRadioButton(containerDiv, layer);
-                controlContainer.appendChild(containerDiv);
-            });
+        // レイヤーグループを順番に処理
+        this.renderLayerGroups(controlContainer);
+    }
+
+    // レイヤーグループをレンダリング
+    renderLayerGroups(container) {
+        const groupOrder = ['base', 'overlay', 'geojson'];
+        const groupTitles = {
+            'base': 'ベースマップ',
+            'overlay': 'オーバーレイ',
+            'geojson': 'データレイヤー'
+        };
+        let addedGroups = 0;
+
+        groupOrder.forEach((groupType, index) => {
+            if (this.layers[groupType] && Object.keys(this.layers[groupType]).length > 0) {
+                // グループ間に区切り線を追加（最初のグループ以外）
+                if (addedGroups > 0) {
+                    const hr = document.createElement('hr');
+                    container.appendChild(hr);
+                }
+
+                // グループヘッダーを追加
+                const groupHeader = document.createElement('div');
+                groupHeader.className = 'layer-group-header';
+                groupHeader.textContent = groupTitles[groupType];
+                groupHeader.style.cursor = 'pointer';
+                groupHeader.setAttribute('data-group', groupType);
+                container.appendChild(groupHeader);
+
+                // グループコンテンツコンテナを作成
+                const groupContent = document.createElement('div');
+                groupContent.className = 'layer-group-content';
+                groupContent.setAttribute('data-group', groupType);
+                container.appendChild(groupContent);
+
+                // グループヘッダーにクリックイベントを追加
+                groupHeader.addEventListener('click', () => {
+                    this.toggleGroupVisibility(groupType);
+                });
+
+                this.renderLayerGroup(groupContent, groupType, this.layers[groupType]);
+                addedGroups++;
+            }
+        });
+    }
+
+    // レイヤーグループをレンダリング
+    renderLayerGroup(container, groupType, layersData) {
+        Object.entries(layersData).forEach(([layerId, layerConfig]) => {
+            const containerDiv = document.createElement('div');
+            containerDiv.className = 'layer-item-container';
+            this.createLayerControl(containerDiv, layerId, layerConfig, groupType);
+            container.appendChild(containerDiv);
+        });
+    }
+
+    // レイヤーコントロールを作成
+    createLayerControl(container, layerId, layerConfig, groupType) {
+        const layerType = this.layerTypes[groupType];
+        if (!layerType) return;
+
+        // レイヤーアイテムのコンテナ
+        const layerItem = document.createElement('div');
+        layerItem.className = 'layer-item';
+
+        const input = document.createElement('input');
+        input.setAttribute('type', layerType.type);
+        input.id = layerId;
+        input.name = groupType === 'base' ? 'mapStyle' : groupType;
+
+        // 初期状態の設定
+        this.setInitialState(input, layerId, layerConfig, groupType);
+
+        layerItem.appendChild(input);
+
+        // ラベルを追加
+        const label = document.createElement('label');
+        label.htmlFor = layerId;
+        label.textContent = layerConfig.name || layerId;
+        layerItem.appendChild(label);
+
+        // ツールチップを追加（アイコンなしで直接レイヤーアイテムに）
+        if (layerConfig.description) {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'layer-tooltip';
+            tooltip.textContent = layerConfig.description;
+            layerItem.appendChild(tooltip);
         }
 
-        // border line
-        if (this.baseLayers && this.overLayers) {
-            const hr = document.createElement('hr');
-            controlContainer.appendChild(hr);
-        }
-        
-        // Over Layers
-        if (this.overLayers) {
-            Object.keys(this.overLayers).map((layer) => {
-                const containerDiv = document.createElement('div');
-                const isVisible = this.overLayers[layer].visible || false;
-                this.addCheckBoxControl(containerDiv, layer, isVisible, this.overLayers[layer].name, 'overLayer');
-                controlContainer.appendChild(containerDiv);
-            });
-        }
-        
-        // border line
-        if (this.overLayers && this.geojsonLayers) {
-            const hr = document.createElement('hr');
-            controlContainer.appendChild(hr);
-        }
-        
-        // Over Layers
-        if (this.geojsonLayers) {
-            Object.keys(this.geojsonLayers).map((layer) => {
-                const containerDiv = document.createElement('div');
-                const isVisible = this.geojsonLayers[layer].visible || false;
-                this.addCheckBoxControl(containerDiv, layer, isVisible, this.geojsonLayers[layer].name, 'geojsonLayer');
-                controlContainer.appendChild(containerDiv);
-            });
+        // クリックイベントをレイヤーアイテム全体に設定
+        const handleActivation = (event) => {
+            if (event.target !== input) {
+                if (layerType.type === 'checkbox') {
+                    input.checked = !input.checked;
+                } else {
+                    input.checked = true;
+                }
+                input.dispatchEvent(new Event('change'));
+                event.preventDefault();
+            }
+        };
+
+        layerItem.addEventListener('click', handleActivation);
+
+        // チェック状態の表示を更新
+        const updateCheckedState = () => {
+            if (input.checked) {
+                layerItem.classList.add('checked');
+            } else {
+                layerItem.classList.remove('checked');
+            }
+        };
+
+        // 初期状態を設定
+        updateCheckedState();
+
+        // イベントリスナーを追加
+        input.addEventListener('change', (event) => {
+            updateCheckedState();
+            layerType.handler(layerId, layerConfig, event.target.checked);
+        });
+
+        container.appendChild(layerItem);
+    }
+
+    // 初期状態を設定
+    setInitialState(input, layerId, layerConfig, groupType) {
+        if (groupType === 'base') {
+            const numericId = Number(layerConfig.id || layerConfig);
+            if (this.defaultBaseLayer === null) {
+                input.checked = true;
+                this.defaultBaseLayer = numericId;
+                updateBaseMap(numericId);
+            } else if (numericId === this.defaultBaseLayer) {
+                input.checked = true;
+                updateBaseMap(numericId);
+            }
+        } else {
+            const isVisible = layerConfig.visible || false;
+            if (isVisible) {
+                input.checked = true;
+                addOverLayer(layerId);
+            }
         }
     }
 
-    // Make Radio Button (Base Layers)
-    addRadioButton(container, layerId) {
-        const displayName = layerId;
-        layerId = Number(this.baseLayers[layerId]);
-
-        const radioButton = document.createElement('input');
-        radioButton.setAttribute('type', 'radio');
-        radioButton.id = layerId;
-        radioButton.name = 'mapStyle';
-        
-        // Initialize (Default Base Layers)
-        const initLayer = this.defaultBaseLayer;
-        if (initLayer == null) {
-            // If DefaultBaseLayer is not set, set the first layer as the default
-            radioButton.checked = true;
-            this.defaultBaseLayer = radioButton.id;
-            updateBaseMap(layerId);
-        } else if (layerId === initLayer) {
-            // If DefaultBaseLayer is set, set the specified layer as the default
-            radioButton.checked = true;
-            updateBaseMap(layerId);
-        }
-        container.appendChild(radioButton);
-        
-        // Add Layers Name
-        const layerName = document.createElement('label');
-        layerName.htmlFor = radioButton.id;
-        layerName.appendChild(document.createTextNode(displayName));
-        container.appendChild(layerName);
-        
-        // Event
-        radioButton.addEventListener('change', (event) => {
-            updateBaseMap(layerId);
+    // ベースレイヤー変更ハンドラー
+    handleBaseLayerChange(layerId, layerConfig, checked) {
+        if (checked) {
+            const numericId = Number(layerConfig.id || layerConfig);
+            updateBaseMap(numericId);
 
             gtag('event', 'map_basemap_change', {
                 'event_category': 'map',
-                'event_label': displayName,
+                'event_label': layerConfig.name || layerId,
                 'value': 1
             });
-        });
+        }
     }
 
-    // Make CheckBox Button (Overlay Layers)
-    addCheckBoxControl(container, layerId, isVisible, displayName, name) {
-        const checkBox = document.createElement('input');
-        checkBox.setAttribute('type', 'checkbox');
-        checkBox.id = layerId;
-        checkBox.name = name;
-
-        // Initialize (Default Overlay Layers)
-        if (isVisible) {
-            checkBox.checked = true;
+    // オーバーレイレイヤー変更ハンドラー
+    handleOverlayLayerChange(layerId, layerConfig, checked) {
+        if (checked) {
             addOverLayer(layerId);
+            gtag('event', 'map_overlayer_change', {
+                'event_category': 'map',
+                'event_label': layerConfig.name || layerId,
+                'value': 1
+            });
+        } else {
+            removeOverLayer(layerId);
+            gtag('event', 'map_overlayer_change', {
+                'event_category': 'map',
+                'event_label': layerConfig.name || layerId,
+                'value': 0
+            });
         }
-        container.appendChild(checkBox);
-        
-        // Add Layers Name
-        const layerName = document.createElement('label');
-        layerName.htmlFor = layerId;
-        layerName.appendChild(document.createTextNode(displayName));
-        container.appendChild(layerName);
+    }
 
-        // Event
-        checkBox.addEventListener('change', (event) => {
-            if (checkBox.checked) {
-                addOverLayer(layerId);
-
-                gtag('event', 'map_overlayer_change', {
-                    'event_category': 'map',
-                    'event_label': displayName,
-                    'value': 1
-                });
-                
-            } else {
-                removeOverLayer(layerId);
-
-                gtag('event', 'map_overlayer_change', {
-                    'event_category': 'map',
-                    'event_label': displayName,
-                    'value': 0
-                });
-            }
-        });
+    // GeoJSONレイヤー変更ハンドラー
+    handleGeoJsonLayerChange(layerId, layerConfig, checked) {
+        if (checked) {
+            addOverLayer(layerId);
+            gtag('event', 'map_overlayer_change', {
+                'event_category': 'map',
+                'event_label': layerConfig.name || layerId,
+                'value': 1
+            });
+        } else {
+            removeOverLayer(layerId);
+            gtag('event', 'map_overlayer_change', {
+                'event_category': 'map',
+                'event_label': layerConfig.name || layerId,
+                'value': 0
+            });
+        }
     }
 
     // Set Layer Visibility
@@ -186,15 +263,35 @@ export default class layersControl {
         }
     }
 
+    // グループの表示/非表示を切り替え
+    toggleGroupVisibility(groupType) {
+        const groupContent = this.container.querySelector(`.layer-group-content[data-group="${groupType}"]`);
+        const groupHeader = this.container.querySelector(`.layer-group-header[data-group="${groupType}"]`);
+
+        if (groupContent) {
+            const isCollapsed = groupContent.classList.contains('collapsed');
+
+            if (isCollapsed) {
+                groupContent.classList.remove('collapsed');
+                groupHeader.classList.remove('collapsed');
+            } else {
+                groupContent.classList.add('collapsed');
+                groupHeader.classList.add('collapsed');
+            }
+        }
+    }
+
     // Control Event Mouseover
     handleOver() {
         this.container.childNodes[0].style.display = 'none';
-        this.container.childNodes[1].style.display = '';
+        const layersList = this.container.childNodes[1];
+        layersList.style.display = 'block';
     }
 
     // Control Event Mouseout
     handleOut() {
-        this.container.childNodes[0].style.display = '';
-        this.container.childNodes[1].style.display = 'none';
+        const layersList = this.container.childNodes[1];
+        layersList.style.display = 'none';
+        this.container.childNodes[0].style.display = 'flex';
     }
 }

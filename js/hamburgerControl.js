@@ -115,13 +115,11 @@ export default class hamburgerControl {
 
     // Control Event Mouseover
     handleOver() {
-        this.container.childNodes[0].style.display = 'none';
-        this.container.childNodes[1].style.display = '';
+        this.container.childNodes[1].style.display = 'block';
     }
 
     // Control Event Mouseout
     handleOut() {
-        this.container.childNodes[0].style.display = '';
         this.container.childNodes[1].style.display = 'none';
     }
 
