@@ -90,12 +90,16 @@ export function createLayersConfig(mapStyle, defaultLayer, isIdInLayer) {
                 visible: isIdInLayer(defaultLayer, 'geojson_port')
             },
             geojson_sea_route: {
-                name: '国内航路',
+                name: '日本 国内航路',
                 visible: isIdInLayer(defaultLayer, 'geojson_sea_route')
             },
             geojson_international_sea_route: {
                 name: '国際航路',
                 visible: isIdInLayer(defaultLayer, 'geojson_international_sea_route')
+            },
+            geojson_KR_sea_route: {
+                name: '韓国 国内航路',
+                visible: isIdInLayer(defaultLayer, 'geojson_KR_sea_route')
             },
             geojson_limited_sea_route: {
                 name: '期間限定航路',

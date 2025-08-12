@@ -1,0 +1,90 @@
+{
+"KR010101": {
+  "businessName": "씨스포빌（Seaspovill）",
+  "routeName": "江陵～鬱陵（苧洞）",
+  "url": "https://www.rome2rio.com/map/Gangneung-Ferry-Terminal/Ulleungdo",
+  "freq": 2,
+  "freqInfo": "1日1往復",
+  "shipName": "씨스타5호",
+  "color": "#e2b125"
+},
+"KR010102": {
+  "businessName": "씨스포빌（Seaspovill）",
+  "routeName": "墨湖～鬱陵（道洞）",
+  "url": "https://www.rome2rio.com/map/Mukho-dong/Ulleungdo",
+  "freq": 2,
+  "freqInfo": "1日1往復",
+  "shipName": "씨스타1호",
+  "color": "#e2b125"
+},
+"KR010103": {
+  "businessName": "씨스포빌（Seaspovill）",
+  "routeName": "鬱陵（道洞）～独島",
+  "url": "https://www.rome2rio.com/map/Ulleungdo/Dokdo-Station",
+  "info": "不定期運航",
+  "note": "season",
+  "freq": 2,
+  "shipName": "씨스타11호",
+  "color": "#c414de"
+},
+"KR010201": {
+  "businessName": "에이치해운（HFerry）",
+  "routeName": "厚浦～鬱陵（沙洞）",
+  "url": "https://www.jhferry.com/guide/?guide=01",
+  "freq": 2,
+  "freqInfo": "1日1往復",
+  "shipName": "ULLEUNG SUNFLOWER CRUISE\t",
+  "color": "#3692d0"
+},
+"KR010301": {
+  "businessName": "울릉크루즈（鬱陵クルーズ）",
+  "routeName": "浦項～鬱陵（沙洞）",
+  "url": "https://www.ulcruise.co.kr/www/flight/timetable?category_1=start&Array",
+  "freq": 2,
+  "freqInfo": "1日1往復",
+  "shipName": "뉴씨다오펄호",
+  "color": "#8bc220"
+},
+"KR010401": {
+  "businessName": "독도크루즈（独島クルーズ）",
+  "routeName": "鬱陵（沙洞）～独島",
+  "url": "https://www.ulcruise.co.kr/www/flight/timetable?category_1=dokdo&Array",
+  "info": "運航日注意",
+  "note": "season",
+  "freq": 2,
+  "freqInfo": "1日1～2往復",
+  "shipName": "퀸스타2호",
+  "color": "#8bc220"
+},
+"KR010501": {
+  "businessName": "대저페리（Daezer Ferry）",
+  "routeName": "浦項～鬱陵（沙洞）",
+  "url": "https://www.daezer.com/departure/departure-schedule.html",
+  "freq": 2,
+  "freqInfo": "1日1往復",
+  "shipName": "엘도라도 익스프레스호",
+  "color": "#cc6666"
+},
+"KR010502": {
+  "businessName": "대저페리（Daezer Ferry）",
+  "routeName": "鬱陵（沙洞）～独島",
+  "url": "https://www.daezer.com/departure/departure-schedule.html",
+  "info": "不定期運航",
+  "note": "season",
+  "freq": 2,
+  "shipName": "썬라이즈호",
+  "color": "#cc6666"
+},
+"KR010601": {
+  "businessName": "울릉군（鬱陵郡）",
+  "routeName": "竹島地質ツアー",
+  "url": "https://www.ulleung.go.kr/geo/en/page.do?mnu_uid=1077",
+  "info": "不定期運航、VPN必須",
+  "note": "season",
+  "freq": 1,
+  "color": "#cc6666"
+},
+"": {
+  "color": "#27197f"
+}
+}

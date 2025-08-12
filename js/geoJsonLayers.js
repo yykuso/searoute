@@ -32,6 +32,10 @@ export async function addGeoJsonLayer(id) {
             addGeoJsonInternationalSeaRouteLayer();
             addSeaRouteClickEvent("geojson_international_sea_route", "geojson_international_sea_route_outline");
             break;
+        case "geojson_KR_sea_route":
+            addGeoJsonSeaRouteKRLayer();
+            addSeaRouteClickEvent("geojson_KR_sea_route", "geojson_KR_sea_route_outline");
+            break;
         case "geojson_limited_sea_route":
             addGeoJsonLimitedSeaRouteLayer();
             addSeaRouteClickEvent("geojson_limited_sea_route", "geojson_limited_sea_route_outline");
@@ -331,6 +335,147 @@ async function addGeoJsonInternationalSeaRouteLayer() {
         id: 'geojson_international_sea_route_name',
         type: 'symbol',
         source: 'geojson_international_sea_route',
+        layout: {
+            'symbol-placement': 'line',
+            "text-offset": [0, 1],
+            'text-field': [
+                'step',
+                ['zoom'],
+                '',    // ズームレベル < 8
+                4,    // ズームレベル >= 8
+                ['get', 'businessName'],
+                6,   // ズームレベル >= 10
+                [
+                    'format',
+                    ['get', 'businessName'],{},
+                    ' (',{},
+                    ['get', 'routeName'],{},
+                    ') ',{}
+                ]
+            ],
+            'text-font': ["NotoSansCJKjp-Regular"],
+            'text-size': 9
+        },
+        paint: {
+            'text-color': ['coalesce', ['get', 'color'], '#000000'],
+            'text-halo-color': '#FFFFFF',
+            'text-halo-width': 2,
+            'text-halo-blur': 2
+        }
+    });
+}
+
+async function addGeoJsonSeaRouteKRLayer() {
+    // 航路情報(国際)
+    var seaRouteGeojson = await loadAndMergeData(
+        './data/SeaRouteKR.geojson',
+        './data/SeaRouteKRDetails.json',
+        'routeId'
+    );
+    map.addSource('geojson_KR_sea_route', {
+        type: 'geojson',
+        data: seaRouteGeojson,
+    });
+    map.addLayer({
+        // 線のアウトライン
+        id: 'geojson_KR_sea_route_outline',
+        type: 'line',
+        source: 'geojson_KR_sea_route',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        paint: {
+            'line-color': '#FFFFFF',
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'freq'], 3], 0.5],
+                6,    // ズームレベル = 6
+                ['+', ['*', ['coalesce', ['get', 'freq'], 3], 1.0], 4]
+            ],
+            'line-opacity': 0.5
+        }
+    });
+    map.addLayer({
+        // 実線
+        id: 'geojson_KR_sea_route_solidline',
+        type: 'line',
+        source: 'geojson_KR_sea_route',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        filter: ['==', ['get', 'note'], null],
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#000000'],
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'freq'], 1], 0.75],
+                6,    // ズームレベル = 6
+                ['*', ['coalesce', ['get', 'freq'], 1], 1.0]
+            ],
+            'line-dasharray': [1, 0],
+        }
+    });
+    map.addLayer({
+        // 破線
+        id: 'geojson_KR_sea_route_dashline',
+        type: 'line',
+        source: 'geojson_KR_sea_route',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        filter: ['==', ['get', 'note'], 'season'],
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#000000'],
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'freq'], 1], 0.75],
+                6,    // ズームレベル = 6
+                ['*', ['coalesce', ['get', 'freq'], 1], 1.0]
+            ],
+            'line-dasharray': [1, 2],
+        }
+    });
+    map.addLayer({
+        // 点線
+        id: 'geojson_KR_sea_route_thinline',
+        type: 'line',
+        source: 'geojson_KR_sea_route',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        filter: ['==', ['get', 'note'], 'suspend'],
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#000000'],
+            'line-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                3,    // ズームレベル = 3
+                ['*', ['coalesce', ['get', 'freq'], 1], 0.75],
+                6,    // ズームレベル = 6
+                ['*', ['coalesce', ['get', 'freq'], 1], 1.0]
+            ],
+            'line-dasharray': [1, 4],
+        }
+    });
+    map.addLayer({
+        // キャプション
+        id: 'geojson_KR_sea_route_name',
+        type: 'symbol',
+        source: 'geojson_KR_sea_route',
         layout: {
             'symbol-placement': 'line',
             "text-offset": [0, 1],
@@ -900,7 +1045,7 @@ export function toggleSuspendedRoutes(showSuspended) {
     showSuspendedRoutes = showSuspended;
 
     // 各航路レイヤーのフィルターを更新
-    const routeTypes = ['geojson_sea_route', 'geojson_international_sea_route', 'geojson_limited_sea_route'];
+    const routeTypes = ['geojson_sea_route', 'geojson_international_sea_route', 'geojson_KR_sea_route', 'geojson_limited_sea_route'];
 
     routeTypes.forEach(routeType => {
         const layerSuffixes = ['_outline', '_solidline', '_dashline', '_thinline', '_name'];
