@@ -368,8 +368,8 @@ async function addGeoJsonInternationalSeaRouteLayer() {
 async function addGeoJsonSeaRouteKRLayer() {
     // 航路情報(国際)
     var seaRouteGeojson = await loadAndMergeData(
-        './data/SeaRouteKR.geojson',
-        './data/SeaRouteKRDetails.json',
+        './data/seaRouteKR.geojson',
+        './data/seaRouteKRDetails.json',
         'routeId'
     );
     map.addSource('geojson_KR_sea_route', {
