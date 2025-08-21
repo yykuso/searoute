@@ -1,8 +1,6 @@
 const CACHE_NAME = 'searoute-v1.2';
 const urlsToCache = [
   './',
-  './index.html',
-  './css/common.css',
   './img/favicon.ico',
   './img/apple-touch-icon.png',
   './img/icon-192.png',

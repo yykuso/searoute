@@ -84,7 +84,59 @@
   "freq": 1,
   "color": "#cc6666"
 },
-"": {
-  "color": "#27197f"
+"KR010701": {
+  "businessName": "현성MCT（ヒョンソンMCT）",
+  "routeName": "三千浦～済州",
+  "url": "https://www.oceanvista.co.kr/theme/main/html/schedules.php",
+  "info": "VPN必須",
+  "freq": 2,
+  "freqInfo": "週6往復",
+  "shipName": "OCEAN VISTA JEJU",
+  "color": "#cc9646"
+},
+"KR010801": {
+  "businessName": "남해고속（南海高速）",
+  "routeName": "高興（鹿洞）～済州",
+  "url": "http://www.namhaegosok.co.kr/s2/s2_1.php",
+  "freq": 2,
+  "freqInfo": "1日1往復",
+  "shipName": "아리온제주（Arion Jeju）",
+  "color": "#253c68"
+},
+"KR010901": {
+  "businessName": "한일고속（Hanilexpress）",
+  "routeName": "莞島～済州",
+  "url": "https://www.hanilexpress.co.kr/main/main.do",
+  "freq": 2,
+  "freqInfo": "1日1.5往復",
+  "shipName": "골드스텔라（Gold Stella）、실버클라우드（Silver Vloud）",
+  "color": "#ffd84f"
+},
+"KR011001": {
+  "businessName": "송림해운（Song Lim Shipping）",
+  "routeName": "済州～楸子～莞島",
+  "url": "http://www.slferry.co.kr/ko/10",
+  "freq": 2,
+  "freqInfo": "1日1往復",
+  "shipName": "송림블루오션（SONGLIM BLUE OCEAN）",
+  "color": "#84bf24"
+},
+"KR012001": {
+  "businessName": "씨월드고속훼리（Seaworld Express Ferry）",
+  "routeName": "木浦～済州",
+  "url": "http://www.seaferry.co.kr/",
+  "freq": 2,
+  "freqInfo": "1日2往復",
+  "shipName": "퀸제누비아（Queen Jenuvia）、퀸제누비아Ⅱ（Queen Jenuvia 2）",
+  "color": "#2a74eb"
+},
+"KR012002": {
+  "businessName": "씨월드고속훼리（Seaworld Express Ferry）",
+  "routeName": "珍島～楸子～済州",
+  "url": "http://www.seaferry.co.kr/",
+  "freq": 2,
+  "freqInfo": "1日2往復",
+  "shipName": "산타모니카호（Santa Monica）",
+  "color": "#d430a7"
 }
 }
