@@ -121,7 +121,7 @@
   "shipName": "송림블루오션（SONGLIM BLUE OCEAN）",
   "color": "#84bf24"
 },
-"KR012001": {
+"KR011101": {
   "businessName": "씨월드고속훼리（Seaworld Express Ferry）",
   "routeName": "木浦～済州",
   "url": "http://www.seaferry.co.kr/",
@@ -130,7 +130,7 @@
   "shipName": "퀸제누비아（Queen Jenuvia）、퀸제누비아Ⅱ（Queen Jenuvia 2）",
   "color": "#2a74eb"
 },
-"KR012002": {
+"KR011102": {
   "businessName": "씨월드고속훼리（Seaworld Express Ferry）",
   "routeName": "珍島～楸子～済州",
   "url": "http://www.seaferry.co.kr/",
@@ -138,5 +138,88 @@
   "freqInfo": "1日2往復",
   "shipName": "산타모니카호（Santa Monica）",
   "color": "#d430a7"
+},
+"KR011201": {
+  "businessName": "우도해운（牛島海運）",
+  "routeName": "牛島（天津）～済州（城山）",
+  "url": "http://udoboat.smart9.net/m/pages.php?p=3_1_1_1",
+  "freq": 3,
+  "freqInfo": "1日20～23往復",
+  "shipName": "우도사랑 1호、우도사랑 2호、우도훼리 1호、우도훼리 2호、우도훼리 3호、우일훼리호、우도랜드 1호、우도랜드 2호",
+  "color": "#36a7df"
+},
+"KR011202": {
+  "businessName": "우도해운（牛島海運）",
+  "routeName": "牛島（下牛木洞）～済州（城山）",
+  "url": "http://udoboat.smart9.net/m/pages.php?p=3_1_1_1",
+  "freq": 3,
+  "freqInfo": "1日20～23往復",
+  "shipName": "우도사랑 1호、우도사랑 2호、우도훼리 1호、우도훼리 2호、우도훼리 3호、우일훼리호、우도랜드 1호、우도랜드 2호",
+  "color": "#36a7df"
+},
+"KR011203": {
+  "businessName": "우도해운（牛島海運）",
+  "routeName": "済州（終達）～牛島（下牛木洞）",
+  "url": "http://udoboat.smart9.net/m/pages.php?p=3_1_1_1",
+  "freq": 3,
+  "freqInfo": "1日4～6往復",
+  "shipName": "우도사랑 1호、우도사랑 2호、우도훼리 1호、우도훼리 2호、우도훼리 3호、우일훼리호、우도랜드 1호、우도랜드 2호",
+  "color": "#e3485c"
+},
+"KR011301": {
+  "businessName": "아름다운섬나라（Wonder Fulis）",
+  "routeName": "済州（ウルジン）～馬羅",
+  "url": "https://www.wonderfulis.co.kr/boarding_guide/time/",
+  "freq": 3,
+  "freqInfo": "1日4往復",
+  "shipName": "블루레이 1호、블루레이 2호、블루레이 3호",
+  "color": "#c80d0d"
+},
+"KR011302": {
+  "businessName": "아름다운섬나라（Wonder Fulis）",
+  "routeName": "済州（ウルジン）～加波",
+  "url": "https://www.wonderfulis.co.kr/boarding_guide/time/",
+  "freq": 3,
+  "freqInfo": "1日7往復",
+  "shipName": "블루레이 1호、블루레이 2호、블루레이 3호",
+  "color": "#c80d0d"
+},
+"KR011401": {
+  "businessName": "마라도가는여객선（Marado Ferry）",
+  "routeName": "済州（松岳山）～馬羅",
+  "url": "http://www.maradoferry.co.kr/htm/intr01.htm",
+  "freq": 3,
+  "freqInfo": "1日3往復",
+  "shipName": "마라도 1호、송악산 102호",
+  "color": "#193e75"
+},
+"KR011501": {
+  "businessName": "차귀도유람선（Chagwido Cruise Ship）",
+  "routeName": "済州（高山）～遮帰",
+  "url": "http://www.chagwidocruise.co.kr/htm/intr01.htm",
+  "info": "8～9月",
+  "note": "season",
+  "freq": 2,
+  "freqInfo": "1日7往復",
+  "shipName": "베누스타 3호",
+  "color": "#db3d44"
+},
+"KR011601": {
+  "businessName": "비양도천년랜드（Biyangdo Millennium Land）",
+  "routeName": "済州（翰林）～飛揚",
+  "url": "https://jhj0812.tistory.com/entry/%EB%B9%84%EC%96%91%EB%8F%84-%EB%B0%B0%EC%8B%9C%EA%B0%84-%EC%A0%9C%EC%A3%BC%EB%8F%84-%ED%95%9C%EB%A6%BC%ED%95%AD-%EC%8B%9C%EA%B0%84%ED%91%9C-%EC%A3%BC%EC%B0%A8%EC%A0%95%EB%B3%B4",
+  "freq": 3,
+  "freqInfo": "1日4往復",
+  "shipName": "2천년호",
+  "color": "#193e75"
+},
+"KR011701": {
+  "businessName": "비양도해운（Biyangdo Shipping）",
+  "routeName": "済州（翰林）～飛揚",
+  "url": "https://jhj0812.tistory.com/entry/%EB%B9%84%EC%96%91%EB%8F%84-%EB%B0%B0%EC%8B%9C%EA%B0%84-%EC%A0%9C%EC%A3%BC%EB%8F%84-%ED%95%9C%EB%A6%BC%ED%95%AD-%EC%8B%9C%EA%B0%84%ED%91%9C-%EC%A3%BC%EC%B0%A8%EC%A0%95%EB%B3%B4",
+  "freq": 3,
+  "freqInfo": "1日4往復",
+  "shipName": "비양도호",
+  "color": "#db3d44"
 }
 }
