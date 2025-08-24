@@ -109,7 +109,7 @@
   "url": "https://www.hanilexpress.co.kr/main/main.do",
   "freq": 2,
   "freqInfo": "1日1.5往復",
-  "shipName": "골드스텔라（Gold Stella）、실버클라우드（Silver Vloud）",
+  "shipName": "골드스텔라（Gold Stella）, 실버클라우드（Silver Vloud）",
   "color": "#ffd84f"
 },
 "KR011001": {
@@ -127,7 +127,7 @@
   "url": "http://www.seaferry.co.kr/",
   "freq": 2,
   "freqInfo": "1日2往復",
-  "shipName": "퀸제누비아（Queen Jenuvia）、퀸제누비아Ⅱ（Queen Jenuvia 2）",
+  "shipName": "퀸제누비아（Queen Jenuvia）, 퀸제누비아Ⅱ（Queen Jenuvia 2）",
   "color": "#2a74eb"
 },
 "KR011102": {
@@ -145,7 +145,7 @@
   "url": "http://udoboat.smart9.net/m/pages.php?p=3_1_1_1",
   "freq": 3,
   "freqInfo": "1日20～23往復",
-  "shipName": "우도사랑 1호、우도사랑 2호、우도훼리 1호、우도훼리 2호、우도훼리 3호、우일훼리호、우도랜드 1호、우도랜드 2호",
+  "shipName": "우도사랑 1호, 우도사랑 2호, 우도훼리 1호, 우도훼리 2호, 우도훼리 3호, 우일훼리호, 우도랜드 1호, 우도랜드 2호",
   "color": "#36a7df"
 },
 "KR011202": {
@@ -154,7 +154,7 @@
   "url": "http://udoboat.smart9.net/m/pages.php?p=3_1_1_1",
   "freq": 3,
   "freqInfo": "1日20～23往復",
-  "shipName": "우도사랑 1호、우도사랑 2호、우도훼리 1호、우도훼리 2호、우도훼리 3호、우일훼리호、우도랜드 1호、우도랜드 2호",
+  "shipName": "우도사랑 1호, 우도사랑 2호, 우도훼리 1호, 우도훼리 2호, 우도훼리 3호, 우일훼리호, 우도랜드 1호, 우도랜드 2호",
   "color": "#36a7df"
 },
 "KR011203": {
@@ -163,7 +163,7 @@
   "url": "http://udoboat.smart9.net/m/pages.php?p=3_1_1_1",
   "freq": 3,
   "freqInfo": "1日4～6往復",
-  "shipName": "우도사랑 1호、우도사랑 2호、우도훼리 1호、우도훼리 2호、우도훼리 3호、우일훼리호、우도랜드 1호、우도랜드 2호",
+  "shipName": "우도사랑 1호, 우도사랑 2호, 우도훼리 1호, 우도훼리 2호, 우도훼리 3호, 우일훼리호, 우도랜드 1호, 우도랜드 2호",
   "color": "#e3485c"
 },
 "KR011301": {
@@ -172,7 +172,7 @@
   "url": "https://www.wonderfulis.co.kr/boarding_guide/time/",
   "freq": 3,
   "freqInfo": "1日4往復",
-  "shipName": "블루레이 1호、블루레이 2호、블루레이 3호",
+  "shipName": "블루레이 1호, 블루레이 2호, 블루레이 3호",
   "color": "#c80d0d"
 },
 "KR011302": {
@@ -181,7 +181,7 @@
   "url": "https://www.wonderfulis.co.kr/boarding_guide/time/",
   "freq": 3,
   "freqInfo": "1日7往復",
-  "shipName": "블루레이 1호、블루레이 2호、블루레이 3호",
+  "shipName": "블루레이 1호, 블루레이 2호, 블루레이 3호",
   "color": "#c80d0d"
 },
 "KR011401": {
@@ -190,7 +190,7 @@
   "url": "http://www.maradoferry.co.kr/htm/intr01.htm",
   "freq": 3,
   "freqInfo": "1日3往復",
-  "shipName": "마라도 1호、송악산 102호",
+  "shipName": "마라도 1호, 송악산 102호",
   "color": "#193e75"
 },
 "KR011501": {
@@ -221,5 +221,50 @@
   "freqInfo": "1日4往復",
   "shipName": "비양도호",
   "color": "#db3d44"
+},
+"KR011801": {
+  "businessName": "사천시（泗川市）",
+  "routeName": "馬島～猪島～新島～三千浦",
+  "url": "https://www.sacheon.go.kr/life/00326/03333.web",
+  "freq": 3,
+  "freqInfo": "1日2～4往復",
+  "shipName": "새마도호",
+  "color": "#e13496"
+},
+"KR011802": {
+  "businessName": "사천시（泗川市）",
+  "routeName": "新樹島～三千浦",
+  "url": "https://www.sacheon.go.kr/life/00326/03333.web",
+  "freq": 3,
+  "freqInfo": "1日6往復",
+  "shipName": "새신수도호",
+  "color": "#e13496"
+},
+"KR011901": {
+  "businessName": "미치우라 해운을（Michiura Shipping）",
+  "routeName": "三千浦～樹牛島～蛇梁島（上島・下島）",
+  "url": "http://www.xn--oy2b52kuuk7yb91kmoa.com/sailing/course.php",
+  "freq": 2,
+  "freqInfo": "1日2周",
+  "shipName": "일신1호",
+  "color": "#2981be"
+},
+"KR012001": {
+  "businessName": "함께하는 사량수산업협동조합（蛇梁水産業協同組合）",
+  "routeName": "カオチ～金坪（蛇梁島）",
+  "url": "http://www.saryang-suhyup.co.kr/ferry/timetable.php",
+  "freq": 3,
+  "freqInfo": "1日6～11往復",
+  "shipName": "사량호, 그랜드페리호",
+  "color": "#c61738"
+},
+"KR012101": {
+  "businessName": "풍양카페리（Pungyang Car Ferry）",
+  "routeName": "龍岩浦～ネジ（蛇梁島）",
+  "url": "https://pyferry.com/theme/f044/index/online_03.php",
+  "freq": 3,
+  "freqInfo": "1日9～11往復",
+  "shipName": "풍양호",
+  "color": "#3a8e4d"
 }
 }
