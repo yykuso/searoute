@@ -1,0 +1,1 @@
+const CACHE_NAME="searoute-v1.2",urlsToCache=["./","./img/favicon.ico","./img/apple-touch-icon.png","./img/icon-192.png","./img/icon-512.png","./style/empty.json"];self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE_NAME).then(e=>e.addAll(urlsToCache)))}),self.addEventListener("fetch",e=>{e.respondWith(caches.match(e.request).then(t=>t||fetch(e.request)))});
