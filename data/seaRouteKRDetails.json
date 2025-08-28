@@ -266,5 +266,24 @@
   "freqInfo": "1日9～11往復",
   "shipName": "풍양호",
   "color": "#3a8e4d"
+},
+"KR012201": {
+  "businessName": "한솔해운（Hansol Shipping）",
+  "routeName": "統営～欲知島～上老大島～下老大島～頭尾島～統営・三千浦",
+  "url": "https://hshaewoon.kr/?page_id=570",
+  "info": "三千浦寄港は毎月6便程度、欲知寄港は月木曜日",
+  "freq": 3,
+  "freqInfo": "1日2周",
+  "shipName": "바다누리",
+  "color": "#13a234"
+},
+"KR012202": {
+  "businessName": "한솔해운（Hansol Shipping）",
+  "routeName": "統営～楸島",
+  "url": "https://hshaewoon.kr/?page_id=570",
+  "freq": 3,
+  "freqInfo": "1日2周",
+  "shipName": "한려카페리",
+  "color": "#c61738"
 }
 }
