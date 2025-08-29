@@ -268,7 +268,7 @@
   "color": "#3a8e4d"
 },
 "KR012201": {
-  "businessName": "한솔해운（Hansol Shipping）",
+  "businessName": "한솔해운（Hansol Express）",
   "routeName": "統営～欲知島～上老大島～下老大島～頭尾島～統営・三千浦",
   "url": "https://hshaewoon.kr/?page_id=570",
   "info": "三千浦寄港は毎月6便程度、欲知寄港は月木曜日",
@@ -278,12 +278,50 @@
   "color": "#13a234"
 },
 "KR012202": {
-  "businessName": "한솔해운（Hansol Shipping）",
+  "businessName": "한솔해운（Hansol Express）",
   "routeName": "統営～楸島",
   "url": "https://hshaewoon.kr/?page_id=570",
   "freq": 3,
   "freqInfo": "1日2周",
   "shipName": "한려카페리",
   "color": "#c61738"
+},
+"KR012301": {
+  "businessName": "영동해운（Yeongdong Ferry）",
+  "routeName": "三徳～欲知島",
+  "url": "http://yokjido.or.kr/sub3_1.html",
+  "freq": 3,
+  "freqInfo": "1日7往復",
+  "shipName": "욕지영동고속호, 욕지영동골드고속호",
+  "color": "#fc151d"
+},
+"KR012401": {
+  "businessName": "대일해운（Daeil Ferry）",
+  "routeName": "統営～欲知島～牛島～蓮花島",
+  "url": "http://www.xn--vk1br78aera606b.com/sailing/fare.php",
+  "freq": 3,
+  "freqInfo": "1日3周",
+  "shipName": "욕지호, 아일랜드호, 가자바다로호",
+  "color": "#659cbb"
+},
+"KR012501": {
+  "businessName": "욕지해운（Yokji Ferry）",
+  "routeName": "中和～蓮花島～欲知島",
+  "url": "https://www.yokjidoferry.com/cruiseinfo/course/",
+  "info": "蓮花寄港は1日1往復",
+  "freq": 3,
+  "freqInfo": "1日8往復",
+  "shipName": "욕지카훼리, 대성골드",
+  "color": "#b1a002"
+},
+"KR012601": {
+  "businessName": "원（Won）",
+  "routeName": "三徳～国島",
+  "url": "https://masan.mof.go.kr/ko/page.do?menuIdx=3251",
+  "info": "不定期便",
+  "note": "season",
+  "freq": 1,
+  "shipName": "아평호",
+  "color": "#1f1b2d"
 }
 }
