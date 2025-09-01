@@ -286,6 +286,16 @@
   "shipName": "한려카페리",
   "color": "#c61738"
 },
+"KR012203": {
+  "businessName": "한솔해운（Hansol Express）",
+  "routeName": "統営～閑山島～比珍島～小毎勿島～毎勿島",
+  "url": "https://hshaewoon.kr/?page_id=17",
+  "info": "ムノオポ寄港は1日1往復",
+  "freq": 3,
+  "freqInfo": "1日3～5往復",
+  "shipName": "한솔1호, 한솔2호, 한솔3호",
+  "color": "#c61738"
+},
 "KR012301": {
   "businessName": "영동해운（Yeongdong Ferry）",
   "routeName": "三徳～欲知島",
