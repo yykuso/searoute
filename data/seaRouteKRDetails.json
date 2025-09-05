@@ -353,5 +353,14 @@
   "freqInfo": "1日11往復",
   "shipName": "한산농협카페리, 한산농협카페리3,",
   "color": "#e2b125"
+},
+"KR012801": {
+  "businessName": "매물도해운（Maemuldo Ferry）",
+  "routeName": "猪仇～毎勿島～小毎勿島",
+  "url": "http://www.maemuldotour.com/body/sub2/sub2.php",
+  "freq": 3,
+  "freqInfo": "1日3～4周",
+  "shipName": "매물도구경1, 매물도구경2",
+  "color": "#ce8700"
 }
 }
