@@ -362,5 +362,24 @@
   "freqInfo": "1日3～4周",
   "shipName": "매물도구경1, 매물도구경2",
   "color": "#ce8700"
+},
+"KR012901": {
+  "businessName": "장사도근포유람선（Jangsado Geunpo Cruise Ship）",
+  "routeName": "近浦～長蛇島",
+  "url": "http://jangsadoship.com/course/01_course.html",
+  "freq": 3,
+  "freqInfo": "1日2～3往復",
+  "shipName": "까멜리아",
+  "color": "#08164e"
+},
+"KR013001": {
+  "businessName": "통영유람선（Tongyeong Cruise）",
+  "routeName": "統営～長蛇島",
+  "url": "http://www.uram.or.kr/page/course.php",
+  "info": "遊覧船",
+  "freq": 2,
+  "freqInfo": "1日2往復",
+  "shipName": "충무공 거북선",
+  "color": "#7e3b44"
 }
 }
