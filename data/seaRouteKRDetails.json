@@ -251,7 +251,7 @@
 },
 "KR012001": {
   "businessName": "사량수산업협동조합（蛇梁水産業協同組合）",
-  "routeName": "カオチ～金坪（蛇梁島）",
+  "routeName": "カオチ～蛇梁島",
   "url": "http://www.saryang-suhyup.co.kr/ferry/timetable.php",
   "freq": 3,
   "freqInfo": "1日6～11往復",
@@ -260,7 +260,7 @@
 },
 "KR012101": {
   "businessName": "풍양카페리（Pungyang Car Ferry）",
-  "routeName": "龍岩浦～ネジ（蛇梁島）",
+  "routeName": "龍岩浦～蛇梁島",
   "url": "https://pyferry.com/theme/f044/index/online_03.php",
   "freq": 3,
   "freqInfo": "1日9～11往復",
@@ -429,11 +429,29 @@
 },
 "KR013501": {
   "businessName": "화도페리（Hwado Ferry）",
-  "routeName": "オ～ヨンマッポ",
+  "routeName": "屯徳～花島",
   "url": "http://xn--v69a02lnos9mn.kr/_sub01/sub01_04.html",
   "freq": 3,
   "freqInfo": "1日5往復",
   "shipName": "화도페리",
+  "color": "#13a234"
+},
+"KR013601": {
+  "businessName": "지도마을회（紙島村自治会）",
+  "routeName": "紙島～龍南",
+  "url": "https://www.tongyeong.go.kr/00973/04601/04651.web",
+  "freq": 3,
+  "freqInfo": "1日5往復",
+  "shipName": "지도",
+  "color": "#fc151d"
+},
+"KR013701": {
+  "businessName": "어의마을회（於義村自治会）",
+  "routeName": "城浦～於義島～水島",
+  "url": "https://www.tongyeong.go.kr/00973/04601/04651.web",
+  "freq": 3,
+  "freqInfo": "1日3往復",
+  "shipName": "어의호",
   "color": "#13a234"
 }
 }
