@@ -426,5 +426,14 @@
   "freqInfo": "1日6～13往復",
   "shipName": "만지2호",
   "color": "#08164e"
+},
+"KR013501": {
+  "businessName": "화도페리（Hwado Ferry）",
+  "routeName": "オ～ヨンマッポ",
+  "url": "http://xn--v69a02lnos9mn.kr/_sub01/sub01_04.html",
+  "freq": 3,
+  "freqInfo": "1日5往復",
+  "shipName": "화도페리",
+  "color": "#13a234"
 }
 }
