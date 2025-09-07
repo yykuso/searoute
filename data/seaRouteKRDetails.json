@@ -337,7 +337,7 @@
 "KR012701": {
   "businessName": "한산농업협동조합（閑山農業協同組合）",
   "routeName": "統営～龍草島～竹島～閑山島～西佐島～飛山島",
-  "url": "https://masan.mof.go.kr/ko/page.do?menuIdx=3251",
+  "url": "https://www.badaland.com/01483/01485/05494.web",
   "info": "龍草島・竹島寄港のみ1日3回",
   "freq": 3,
   "freqInfo": "1日2周",
@@ -347,7 +347,7 @@
 "KR012702": {
   "businessName": "한산농업협동조합（閑山農業協同組合）",
   "routeName": "統営～閑山島",
-  "url": "https://masan.mof.go.kr/ko/page.do?menuIdx=3251",
+  "url": "https://www.badaland.com/01483/01485/05491.web",
   "info": "クァナム寄港は1日2往復",
   "freq": 3,
   "freqInfo": "1日11往復",
@@ -381,5 +381,50 @@
   "freqInfo": "1日2往復",
   "shipName": "충무공 거북선",
   "color": "#7e3b44"
+},
+"KR013101": {
+  "businessName": "오비도선운영회（鳥飛渡船運営会）",
+  "routeName": "豊知～鳥飛島",
+  "url": "https://www.tongyeong.go.kr/00973/04601/04651.web",
+  "freq": 3,
+  "freqInfo": "1日3往復",
+  "shipName": "오비호",
+  "color": "#e99c45"
+},
+"KR013201": {
+  "businessName": "협동어촌（協同漁村）",
+  "routeName": "三徳～昆里島",
+  "url": "https://www.tongyeong.go.kr/00973/04601/04651.web",
+  "freq": 3,
+  "freqInfo": "1日8往復",
+  "shipName": "협동어촌호",
+  "color": "#08164e"
+},
+"KR013301": {
+  "businessName": "저림연곡도선운영회（チョリムヨンゴク渡船運営会）",
+  "routeName": "達牙～鶴林島～松島～楮島～烟台島～晩地島",
+  "url": "https://www.yeondaedo.co.kr/cruiseinfo/course/",
+  "freq": 3,
+  "freqInfo": "1日4周",
+  "shipName": "섬나들이호",
+  "color": "#36a7df"
+},
+"KR013302": {
+  "businessName": "저림연곡도선운영회（チョリムヨンゴク渡船運営会）",
+  "routeName": "達牙～烟台島",
+  "url": "https://www.yeondaedo.co.kr/cruiseinfo/course/",
+  "freq": 3,
+  "freqInfo": "1日4～9周",
+  "shipName": "16진영호",
+  "color": "#fc151d"
+},
+"KR013401": {
+  "businessName": "만지도해피투어（Manjido Happy Tour）",
+  "routeName": "ミョンヨン～晩地島",
+  "url": "http://manjidopang.com/",
+  "freq": 3,
+  "freqInfo": "1日6～13往復",
+  "shipName": "만지2호",
+  "color": "#08164e"
 }
 }
