@@ -453,5 +453,55 @@
   "freqInfo": "1日3往復",
   "shipName": "어의호",
   "color": "#13a234"
+},
+"KR013801": {
+  "businessName": "지세포관광유람선（Jisepo Tourist Cruise）",
+  "routeName": "巨済～外島",
+  "url": "https://www.geojecruise.com/",
+  "freq": 3,
+  "freqInfo": "1日3～4便",
+  "color": "#172a66"
+},
+"KR013901": {
+  "businessName": "장승포외도유람선（Jangseungpo Oedo Cruise）",
+  "routeName": "巨済～外島",
+  "url": "https://www.bluecitygeoje.com/",
+  "freq": 3,
+  "freqInfo": "1日5～7便",
+  "color": "#13a234"
+},
+"KR014001": {
+  "businessName": "외도와현유람선（Wahyeon Cruise）",
+  "routeName": "巨済～外島",
+  "url": "http://www.wahyeon.com/",
+  "freq": 3,
+  "freqInfo": "1日2～5便",
+  "color": "#fc151d"
+},
+"KR014101": {
+  "businessName": "구조라유람선（Gujora Cruise）",
+  "routeName": "巨済～外島",
+  "url": "http://www.gujora.com/course.html",
+  "freq": 3,
+  "freqInfo": "1日3便",
+  "color": "#e2b125"
+},
+"KR014201": {
+  "businessName": "도장포외도해금강유람선（Dojangpo Oedo Haegeumgang Cruise）",
+  "routeName": "巨済～外島",
+  "url": "https://www.dojangpo.kr/",
+  "freq": 3,
+  "freqInfo": "1日3～7便",
+  "shipName": "신선대1",
+  "color": "#d430a7"
+},
+"KR014301": {
+  "businessName": "해금강외도유람선（Haegeumgang Cruise）",
+  "routeName": "巨済～外島",
+  "url": "https://www.hggtour.net/cruiseinfo/course/",
+  "freq": 3,
+  "freqInfo": "1日2～5便",
+  "shipName": "아리랑 2호, 아리랑 3호, 해금강 2호, 해금강 3호",
+  "color": "#36a7df"
 }
 }
