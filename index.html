@@ -26,7 +26,10 @@
   <meta property="og:type" content="website" />
   <meta property="og:description" content="日本全国の旅客船・フェリー航路情報を地図で探せるサイト。時刻表や公式サイトへのリンクも充実、旅行計画に便利。" />
   <meta property="og:image" content="https://searoute.info/img/banner.png" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@yy_kuso" />
   <meta name="twitter:creator" content="@yy_kuso" />
   <meta name="twitter:title" content="おでかけ航路マップ | 日本全国の旅客船・フェリー航路情報と時刻表リンク" />
@@ -45,6 +48,12 @@
       "@type": "Person",
       "name": "yy_kuso",
       "url": "https://x.com/yy_kuso"
+    },
+    "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://searoute.info/img/banner.png",
+      "width": 1200,
+      "height": 630
     }
   }
   </script>
@@ -169,6 +178,10 @@
   <div id="context-menu" class="bg-white border border-slate-300 rounded shadow-lg py-2 text-sm" style="display:none; position:fixed; z-index:9999; pointer-events:auto;">
     <button id="context-copy-btn" class="block w-full text-left px-2 py-1 hover:bg-slate-100" style="pointer-events:auto;">座標</button>
     <button id="context-gmap-btn" class="block w-full text-left px-2 py-1 hover:bg-slate-100" type="button">Googleマップで開く</button>
+  </div>
+
+  <div style="position: absolute; left: -9999px; top: -9999px;">
+    <img src="https://searoute.info/img/banner.png" alt="おでかけ航路マップのサムネイル">
   </div>
 </body>
 
