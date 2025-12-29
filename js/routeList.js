@@ -10,7 +10,7 @@ async function populateTable(detailsPath, tableSelector) {
 
         // 各データをテーブルに追加
         Object.keys(details).forEach((routeId) => {
-            const { businessName, routeName, information, note, url } = details[routeId];
+            const { businessName, routeName, info, shipName, note, url } = details[routeId];
 
             const row = document.createElement('tr');
 
@@ -22,7 +22,7 @@ async function populateTable(detailsPath, tableSelector) {
             }
 
             // 各プロパティをテーブルのセルに追加
-            [routeId, businessName, routeName, information].forEach((value) => {
+            [routeId, businessName, routeName, info, shipName].forEach((value) => {
                 const cell = document.createElement('td');
                 cell.textContent = value || '-';
                 row.appendChild(cell);
@@ -53,6 +53,7 @@ async function populateTable(detailsPath, tableSelector) {
 document.addEventListener('DOMContentLoaded', () => {
     populateTable('./data/seaRouteDetails.json', '.sea-route-table tbody');
     populateTable('./data/internationalSeaRouteDetails.json', '.international-sea-route-table tbody');
+    populateTable('./data/seaRouteKRDetails.json', '.sea-route-KR-table tbody');
 });
 
 // 検索機能の実装
@@ -81,7 +82,7 @@ document.getElementById('searchbutton').addEventListener('click', function () {
 
         cells.forEach(cell => {
             const text = cell.textContent.toLowerCase();
-            
+
             // ハイライトをリセット
             const originalText = cell.getAttribute('data-original-text');
             if (originalText) {
@@ -92,11 +93,11 @@ document.getElementById('searchbutton').addEventListener('click', function () {
             // セルのテキストが入力値を含む場合
             if (text.includes(input)) {
                 rowMatches = true;
-                
+
                 if (!cell.getAttribute('data-original-text')) {
                     cell.setAttribute('data-original-text', cell.innerHTML);
                 }
-                
+
                 // ハイライトを適用
                 const regex = new RegExp(`(${input})`, 'gi');
                 cell.innerHTML = cell.innerHTML.replace(regex, '<span style="background-color: #ffe46f;">$1</span>');

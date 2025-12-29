@@ -32,8 +32,8 @@ body {
     margin: 10px;
     font-size: 1.4rem;
     font-weight: 700;
-  }
-  
+}
+
 .header ul {
     float: right;
     margin: 10px;
@@ -93,7 +93,7 @@ table thead th {
     position: sticky;
     top: calc(52px + 28px);
     z-index: 1;
-  }
+}
 
 table th {
     background-color: #bfd9f2;
@@ -120,6 +120,10 @@ table td {
     width: 200px;
 }
 
+.ship-name {
+    width: 100px;
+}
+
 .url {
     width: 40px;
 }
@@ -144,6 +148,9 @@ table td {
         width: auto;
     }
     .information {
+        width: auto;
+    }
+    .ship-name {
         width: auto;
     }
 }
