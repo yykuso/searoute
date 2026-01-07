@@ -8,6 +8,9 @@ var eventHandle = {};
 // 設定値の管理
 let showSuspendedRoutes = true;
 
+// GeoJSONデータのキャッシュ
+const geoJsonDataCache = {};
+
 // ポップアップ閉じるボタン表示、自動閉じ無効化
 const popup = new maplibregl.Popup({
     closeButton: false,
@@ -63,6 +66,9 @@ async function addGeoJsonPortLayer() {
     addMarker('anchor_marker', './img/anchor.png');
     var portGeojson = await loadData('./data/portData.geojson');
 
+    // キャッシュに保存
+    geoJsonDataCache['geojson_port'] = portGeojson;
+
     map.addSource('geojson_port', {
         type: 'geojson',
         data: portGeojson,
@@ -90,6 +96,10 @@ async function addGeoJsonSeaRouteLayer() {
         './data/seaRouteDetails.json',
         'routeId'
     );
+
+    // キャッシュに保存
+    geoJsonDataCache['geojson_sea_route'] = seaRouteGeojson;
+
     map.addSource('geojson_sea_route', {
         type: 'geojson',
         data: seaRouteGeojson,
@@ -231,6 +241,10 @@ async function addGeoJsonInternationalSeaRouteLayer() {
         './data/internationalSeaRouteDetails.json',
         'routeId'
     );
+
+    // キャッシュに保存
+    geoJsonDataCache['geojson_international_sea_route'] = seaRouteGeojson;
+
     map.addSource('geojson_international_sea_route', {
         type: 'geojson',
         data: seaRouteGeojson,
@@ -372,6 +386,10 @@ async function addGeoJsonSeaRouteKRLayer() {
         './data/seaRouteKRDetails.json',
         'routeId'
     );
+
+    // キャッシュに保存
+    geoJsonDataCache['geojson_KR_sea_route'] = seaRouteGeojson;
+
     map.addSource('geojson_KR_sea_route', {
         type: 'geojson',
         data: seaRouteGeojson,
@@ -513,6 +531,10 @@ async function addGeoJsonLimitedSeaRouteLayer() {
         './data/limitedSeaRouteDetails.json',
         'routeId'
     );
+
+    // キャッシュに保存
+    geoJsonDataCache['geojson_limited_sea_route'] = seaRouteGeojson;
+
     map.addSource('geojson_limited_sea_route', {
         type: 'geojson',
         data: seaRouteGeojson,
@@ -844,17 +866,38 @@ window.zoomToRoute = function(params) {
         // パラメータの解析
         const { routeName, routeId, lineId, sourceId } = params;
 
-        // 現在表示されているソースからフィーチャーを取得
-        const source = map.getSource(sourceId);
-        if (!source) {
-            console.error('Source not found:', sourceId);
-            return;
+        // キャッシュからデータを取得
+        let data = geoJsonDataCache[sourceId];
+
+        if (!data) {
+            // フォールバック: mapからソースを取得
+            const source = map.getSource(sourceId);
+            if (!source) {
+                console.error('Source not found:', sourceId);
+                return;
+            }
+
+            // source._dataを試す
+            data = source._data;
+
+            if (!data || !data.features) {
+                // querySourceFeaturesを使用してフィーチャーを取得
+                const features = map.querySourceFeatures(sourceId);
+                if (!features || features.length === 0) {
+                    console.error('No features found for source:', sourceId);
+                    return;
+                }
+
+                // フィーチャーからGeoJSON形式のデータを構築
+                data = {
+                    type: 'FeatureCollection',
+                    features: features
+                };
+            }
         }
 
-        // sourceのデータを取得
-        const data = source._data;
-        if (!data || !data.features) {
-            console.error('No features found in source:', sourceId);
+        if (!data.features) {
+            console.error('No features found in data:', sourceId);
             return;
         }
 
