@@ -60,7 +60,7 @@
   "url": "https://www.tsugarukaikyo.co.jp/timetable/",
   "freq": 3,
   "freqInfo": "1日6～7往復",
-  "shipName": "ブルールミナス, ブルーハピネス, ブルードルフィン",
+  "shipName": "ブルードルフィン, ブルーマーメイド, ブルーハピネス",
   "color": "#49b2e0"
 },
 "10303": {
@@ -69,7 +69,7 @@
   "url": "https://www.tsugarukaikyo.co.jp/timetable/",
   "freq": 2,
   "freqInfo": "1日1往復",
-  "shipName": "ブルーマーメイド",
+  "shipName": "ブルーグレイス",
   "color": "#49b2e0"
 },
 "10401": {
@@ -87,7 +87,7 @@
   "url": "https://www.snf.jp/guide/time_schedule/",
   "freq": 2,
   "freqInfo": "毎日運航",
-  "shipName": "はまなす, あかしあ",
+  "shipName": "けやき, あかしあ",
   "color": "#fa0000"
 },
 "10502": {
@@ -2829,17 +2829,21 @@
 "421301": {
   "businessName": "西海沿岸商船",
   "routeName": "佐世保～大島～松島～池島",
-  "url": "https://www.city.saikai.nagasaki.jp/soshiki/seisaku/1/1_1/2/3742.html",
-  "info": "高速船　火・金曜日以外は佐世保～大島のみ",
+  "url": "https://www.saryokyo.com/member/member-01.html",
+  "info": "高速船、火・金曜日以外は佐世保～大島のみ",
   "freq": 3,
+  "freqInfo": "1日9～10往復",
+  "shipName": "れぴーど, Rapid Lily",
   "color": "#3cc45f"
 },
 "421302": {
   "businessName": "西海沿岸商船",
   "routeName": "松島～瀬戸～池島～神浦",
-  "url": "https://www.city.saikai.nagasaki.jp/soshiki/seisaku/1/1_1/2/3742.html",
+  "url": "https://www.saryokyo.com/member/member-01.html",
   "info": "フェリー",
   "freq": 3,
+  "freqInfo": "1日5往復",
+  "shipName": "フェリー かしま",
   "color": "#ff8900"
 },
 "421401": {
