@@ -2774,36 +2774,62 @@
   "businessName": "九州商船",
   "routeName": "長崎～中通島（奈良尾）～奈留島～福江島",
   "url": "https://kyusho.co.jp/publics/index/111/",
+  "info": "フェリー",
   "freq": 3,
-  "color": "#d7003f"
+  "freqInfo": "1日2～4周",
+  "shipName": "椿, 万葉",
+  "color": "#52ab44"
 },
 "420902": {
   "businessName": "九州商船",
-  "routeName": "長崎～中通島（有川）",
+  "routeName": "長崎～中通島（奈良尾）～福江島",
   "url": "https://kyusho.co.jp/publics/index/111/",
+  "info": "ジェット船",
   "freq": 3,
-  "color": "#52ab44"
+  "freqInfo": "1日3～6往復",
+  "shipName": "ぺがさす, ぺがさす2",
+  "color": "#d7003f"
 },
 "420903": {
   "businessName": "九州商船",
-  "routeName": "佐世保～中通島（有川）",
+  "routeName": "長崎～中通島（有川）",
   "url": "https://kyusho.co.jp/publics/index/111/",
-  "freq": 3,
+  "info": "高速船、運休中",
+  "note": "suspend",
+  "freq": 2,
+  "freqInfo": "1日2～3往復",
+  "shipName": "シープリンセス, シーエンジェル",
   "color": "#d7003f"
 },
 "420904": {
   "businessName": "九州商船",
-  "routeName": "佐世保～宇久島～小値賀島",
+  "routeName": "佐世保～中通島（有川）～小値賀島～宇久島",
   "url": "https://kyusho.co.jp/publics/index/111/",
+  "info": "高速船",
   "freq": 3,
+  "freqInfo": "1日2～3周",
+  "shipName": "シーエンジェル, シークイーン",
   "color": "#d7003f"
 },
 "420905": {
   "businessName": "九州商船",
-  "routeName": "佐世保～中通島（有川）～小値賀島～宇久島",
+  "routeName": "佐世保～宇久島～小値賀島",
   "url": "https://kyusho.co.jp/publics/index/111/",
+  "info": "フェリー",
   "freq": 3,
-  "color": "#d7003f"
+  "freqInfo": "1日1～2往復",
+  "shipName": "いのり",
+  "color": "#0033ff"
+},
+"420906": {
+  "businessName": "九州商船",
+  "routeName": "佐世保～中通島（有川）",
+  "url": "https://kyusho.co.jp/publics/index/111/",
+  "info": "フェリー",
+  "freq": 3,
+  "freqInfo": "1日1～2往復",
+  "shipName": "フェリーなみじ, フェリーニューこしき",
+  "color": "#52ab44"
 },
 "421001": {
   "businessName": "崎戸商船",
@@ -2983,6 +3009,16 @@
   "url": "https://www.shimatetsu.co.jp/ferry/guide/",
   "freq": 3,
   "color": "#1777a9"
+},
+"423001": {
+  "businessName": "対州海運",
+  "routeName": "対馬島（厳原）～博多",
+  "url": "http://www.taishu-kk.co.jp/ferry/",
+  "info": "RORO船",
+  "freq": 2,
+  "freqInfo": "1日1往復",
+  "shipName": "フェリーたいしゅう",
+  "color": "#32369a"
 },
 "430101": {
   "businessName": "熊本フェリー",
