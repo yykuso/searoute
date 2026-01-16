@@ -1222,6 +1222,15 @@
   "shipName": "四季",
   "color": "#c19f2c"
 },
+"260101": {
+  "businessName": "丹後海陸交通",
+  "routeName": "天橋立観光船",
+  "url": "https://www.amano-hashidate.com/sightseeingboat/",
+  "freq": 3,
+  "freqInfo": "1日14～21往復",
+  "shipName": "KAMOME 7, かもめ12号, かもめ11号, かもめ3号",
+  "color": "#ff0000"
+},
 "270101": {
   "businessName": "名門大洋フェリー",
   "routeName": "大阪～新門司",
