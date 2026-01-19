@@ -157,12 +157,23 @@
   "shipName": "レインボー号",
   "color": "#d1723a"
 },
+"10901": {
+  "businessName": "小樽観光振興公社",
+  "routeName": "小樽～祝津",
+  "url": "https://otaru-kankousen.jp/aobato/",
+  "info": "4月～10月",
+  "note": "season",
+  "freq": 2,
+  "freqInfo": "1日4～5便",
+  "shipName": "あおばと",
+  "color": "#00a82c"
+},
 "20101": {
   "businessName": "川崎近海汽船",
   "routeName": "八戸～苫小牧",
   "url": "https://www.silverferry.jp/route_guide/index.html",
   "freq": 3,
-  "freqInfo": "毎日4往復",
+  "freqInfo": "1日4往復",
   "shipName": "シルバープリンセス, シルバーティアラ, シルバーブリーズ, シルバーエイト",
   "color": "#de64a1"
 },
@@ -182,7 +193,7 @@
   "info": "4月～11月",
   "note": "season",
   "freq": 2,
-  "freqInfo": "毎日2往復",
+  "freqInfo": "1日2往復",
   "shipName": "かもしか",
   "color": "#00a82c"
 },
@@ -193,7 +204,7 @@
   "info": "5月～10月",
   "note": "season",
   "freq": 2,
-  "freqInfo": "毎日1～6便",
+  "freqInfo": "1日1～6便",
   "shipName": "ニューしもきた, ニューしもきたⅡ, ニューしもきたⅢ, ニューしもきたⅤ",
   "color": "#e73a40"
 },
@@ -204,7 +215,7 @@
   "info": "4月～10月",
   "note": "season",
   "freq": 2,
-  "freqInfo": "毎日1～2便",
+  "freqInfo": "1日1～2便",
   "shipName": "夢の平成号",
   "color": "#70446e"
 },
@@ -215,7 +226,7 @@
   "info": "7月～10月",
   "note": "season",
   "freq": 2,
-  "freqInfo": "毎日1便",
+  "freqInfo": "1日1便",
   "shipName": "夢の平成号",
   "color": "#70446e"
 },
@@ -234,16 +245,18 @@
   "routeName": "十和田湖遊覧船（休屋～子ノ口）",
   "url": "https://www.google.com/search?q=%E5%A4%A2%E3%81%AE%E6%B5%B7%E4%B8%AD%E5%8F%B7",
   "info": "4月～11月",
+  "note": "season",
   "freq": 2,
-  "freqInfo": "毎日1～2便",
+  "freqInfo": "1日1～2便",
   "shipName": "第一八甲田, 第二八甲田, 第三八甲田, 第一観光丸",
   "color": "#df513f"
 },
 "30101": {
   "businessName": "岩手県北自動車",
-  "routeName": "出崎ふ頭~浄土ヶ浜",
+  "routeName": "出崎ふ頭～浄土ヶ浜",
   "url": "https://www.jodo-yuransen.jp/timetable/",
   "freq": 3,
+  "freqInfo": "1日5～7周、1～3月は特別ダイヤ、4月～6月・9月～12月は火曜日運休",
   "shipName": "宮古うみねこ丸",
   "color": "#00a692"
 },
@@ -349,11 +362,23 @@
   "shipName": "第二嵯峨, 第五嵯峨, 嵯峨みらい",
   "color": "#0e0e0e"
 },
+"50101": {
+  "businessName": "羽後交通興業",
+  "routeName": "田沢湖遊覧船",
+  "url": "https://tazawako-resthouse.jp/yuransen-2",
+  "info": "4月～11月",
+  "note": "season",
+  "freq": 2,
+  "freqInfo": "1日4便",
+  "shipName": "高速艇たざわ",
+  "color": "#ff0000"
+},
 "60101": {
   "businessName": "酒田市",
   "routeName": "酒田～飛島",
   "url": "https://www.city.sakata.lg.jp/sangyo/kotsu/teikisen/index.html",
   "freq": 2,
+  "freqInfo": "1日1～2往復",
   "shipName": "とびしま",
   "color": "#0045b3"
 },
@@ -373,7 +398,7 @@
   "info": "4月中旬～11月",
   "note": "season",
   "freq": 2,
-  "freqInfo": "毎日5～7周",
+  "freqInfo": "1日5～7周",
   "shipName": "男体, けごん",
   "color": "#080063"
 },
