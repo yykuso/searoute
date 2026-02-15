@@ -3618,5 +3618,13 @@
   "url": "https://funaukikaiun.wixsite.com/top-jp",
   "freq": 3,
   "color": "#34d726"
+},
+"471901": {
+  "businessName": "とかしき",
+  "routeName": "三重城～ナガンヌ島",
+  "url": "https://www.nagannu.com/?men=6",
+  "freq": 2,
+  "freqInfo": "1日1～3往復",
+  "color": "#34d726"
 }
 }
