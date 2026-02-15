@@ -122,6 +122,8 @@
   "businessName": "日中国際フェリー",
   "routeName": "上海〜神戸",
   "url": "https://www.shinganjin.com/schedule/",
+  "info": "旅客休止中",
+  "note": "suspend",
   "freq": 1,
   "shipName": "JIAN ZHEN HAO",
   "color": "#d32f2f"
@@ -130,6 +132,8 @@
   "businessName": "日中国際フェリー",
   "routeName": "上海〜大阪",
   "url": "https://www.shinganjin.com/schedule/",
+  "info": "旅客休止中",
+  "note": "suspend",
   "freq": 1,
   "shipName": "JIAN ZHEN HAO",
   "color": "#d32f2f"
