@@ -1446,9 +1446,9 @@
   "businessName": "成ヶ島渡船事務所",
   "routeName": "由良～成ヶ島",
   "url": "https://www.city.sumoto.lg.jp/soshiki/19/10513.html",
-  "info": "成ヶ島渡船",
+  "info": "成ヶ島渡船、金土日月・祝日運航",
   "freq": 1,
-  "freqInfo": "金土日月・祝日運航、1日7～8往復",
+  "freqInfo": "1日7～8往復",
   "color": "#ff0000"
 },
 "300101": {
@@ -1474,6 +1474,24 @@
   "info": "土曜・日曜・祝日運航",
   "freq": 3,
   "color": "#0762b0"
+},
+"300401": {
+  "businessName": "初島渡船企業組合",
+  "routeName": "初島～地ノ島",
+  "url": "https://jinoshima.jp/price/",
+  "info": "南村渡船、3～11月毎日運航、12〜2月平日運航、ツアー予約制",
+  "freq": 2,
+  "freqInfo": "随時",
+  "color": "#ff0000"
+},
+"300501": {
+  "businessName": "ホテル浦島",
+  "routeName": "ホテル浦島専用送迎船",
+  "url": "https://urashimaresortsandspa.jp/wakayama-hotelurashima/access/",
+  "freq": 3,
+  "freqInfo": "15分間隔随時",
+  "shipName": "浦島丸",
+  "color": "#209a92"
 },
 "320101": {
   "businessName": "隠岐汽船",
