@@ -3466,6 +3466,25 @@
   "freq": 2,
   "color": "#d9bb12"
 },
+"470802": {
+  "businessName": "座間味村",
+  "routeName": "座間味島～阿嘉島",
+  "url": "https://www.vill.zamami.okinawa.jp/info/m/2013/03/trans.php",
+  "freq": 3,
+  "freqInfo": "1日4往復",
+  "shipName": "みつしま",
+  "color": "#1c197c"
+},
+"470803": {
+  "businessName": "座間味村",
+  "routeName": "座間味島～渡嘉敷島",
+  "url": "https://www.vill.zamami.okinawa.jp/info/m/2013/03/trans.php",
+  "info": "オンデマンド運航（前日まで予約）",
+  "freq": 2,
+  "freqInfo": "1日2往復",
+  "shipName": "みつしま",
+  "color": "#1c197c"
+},
 "470901": {
   "businessName": "渡嘉敷村",
   "routeName": "泊～渡嘉敷島",
