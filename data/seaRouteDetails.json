@@ -1442,6 +1442,15 @@
   "freq": 3,
   "color": "#f0316e"
 },
+"281201": {
+  "businessName": "成ヶ島渡船事務所",
+  "routeName": "由良～成ヶ島",
+  "url": "https://www.city.sumoto.lg.jp/soshiki/19/10513.html",
+  "info": "成ヶ島渡船",
+  "freq": 1,
+  "freqInfo": "金土日月・祝日運航、1日7～8往復",
+  "color": "#ff0000"
+},
 "300101": {
   "businessName": "南海フェリー",
   "routeName": "和歌山～徳島",
@@ -3227,6 +3236,16 @@
   "freqInfo": "1日4往復",
   "color": "#45b43b"
 },
+"440801": {
+  "businessName": "黒島荘",
+  "routeName": "佐志生～黒島",
+  "url": "https://www.usuki-kanko.com/sightseeing/%e9%bb%92%e5%b3%b6",
+  "info": "渡し船",
+  "note": "season",
+  "freq": 1,
+  "freqInfo": "随時",
+  "color": "#fd0000"
+},
 "450101": {
   "businessName": "宮崎カーフェリー",
   "routeName": "神戸～宮崎",
@@ -3255,6 +3274,15 @@
   "url": "https://www.city.nichinan.lg.jp/soshikikarasagasu/nangochochiikishinkocenter/2/1312.html",
   "freq": 3,
   "color": "#ed1b24"
+},
+"450401": {
+  "businessName": "串間市観光物産協会",
+  "routeName": "串間～幸島",
+  "url": "https://kushima-city.jp/koujima/",
+  "info": "幸島渡船、予約制",
+  "freq": 1,
+  "freqInfo": "随時",
+  "color": "#ff0000"
 },
 "460101": {
   "businessName": "マルエーフェリー",
@@ -3479,7 +3507,7 @@
   "businessName": "座間味村",
   "routeName": "座間味島～渡嘉敷島",
   "url": "https://www.vill.zamami.okinawa.jp/info/m/2013/03/trans.php",
-  "info": "オンデマンド運航（前日まで予約）",
+  "info": "予約制",
   "freq": 2,
   "freqInfo": "1日2往復",
   "shipName": "みつしま",
@@ -3623,6 +3651,7 @@
   "businessName": "とかしき",
   "routeName": "三重城～ナガンヌ島",
   "url": "https://www.nagannu.com/?men=6",
+  "info": "予約制",
   "freq": 2,
   "freqInfo": "1日1～3往復",
   "color": "#34d726"
