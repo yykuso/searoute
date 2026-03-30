@@ -1036,15 +1036,6 @@
   "shipName": "ちぎり丸",
   "color": "#2cbdae"
 },
-"230901": {
-  "businessName": "愛知県",
-  "routeName": "一宮市西中野～羽島市下中町",
-  "url": "https://www.pref.aichi.jp/soshiki/ichinomiya-kensetsu/nisinakanotosen.html",
-  "info": "中野の渡し（西中野渡船）",
-  "freq": 3,
-  "shipName": "第五中野丸",
-  "color": "#4068b1"
-},
 "240101": {
   "businessName": "伊勢湾フェリー",
   "routeName": "鳥羽～伊良湖",
