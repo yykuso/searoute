@@ -3326,7 +3326,7 @@
 },
 "460501": {
   "businessName": "種子屋久高速船",
-  "routeName": "鹿児島～指宿～種子島～屋久島",
+  "routeName": "鹿児島～種子島～屋久島",
   "url": "https://www.tykousoku.jp/fare_time/",
   "freq": 3,
   "color": "#ff0000"
@@ -3438,14 +3438,6 @@
   "freq": 2,
   "color": "#ff0000"
 },
-"461801": {
-  "businessName": "鹿児島市",
-  "routeName": "桜島（浦之前）～新島",
-  "url": "https://www.city.kagoshima.lg.jp/shimin/sakurajima/soumu/machizukuri/igai/kokyo/koku/fune.html",
-  "info": "水金日曜日運航",
-  "freq": 1,
-  "color": "#d41740"
-},
 "470101": {
   "businessName": "大東海運",
   "routeName": "泊～南大東～北大東",
@@ -3533,7 +3525,9 @@
   "businessName": "第一マリンサービス",
   "routeName": "泊～漁～本部",
   "url": "https://daiichi-marine.com/",
-  "freq": 3,
+  "info": "休止中",
+  "note": "suspend",
+  "freq": 1,
   "color": "#2f2f85"
 },
 "471101": {
