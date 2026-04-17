@@ -1,4 +1,5 @@
 import { loadData, loadAndMergeData } from './dataLoader.js';
+import { loadShipImageIntoDrawer } from './utils/wikipediaImage.js';
 import { map } from './common.js';
 import {
     escapeHtml,
@@ -220,6 +221,7 @@ function addSeaRouteClickEvent(id, handleId = id) {
             businessNameParts.primary,
             businessNameParts.secondary
         );
+        loadShipImageIntoDrawer(properties.shipName || null, properties.businessName || '');
         gtag('event', 'marker_click', {
             'event_category': 'map',
             'event_label': properties.businessName,

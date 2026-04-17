@@ -177,6 +177,7 @@ export function buildSeaRouteSidebarContent(properties, sourceId) {
             iconColorClass: 'text-indigo-500',
             body: urlBody,
         })}
+        <div id="drawer-ship-image" class="mt-2"></div>
     `;
 }
 
