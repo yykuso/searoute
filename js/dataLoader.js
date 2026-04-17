@@ -2,24 +2,31 @@
 var loading = 0;
 
 /**
+ * ローディング状態を管理するラッパー関数
+ * callback 内のエラーが発生しても確実にローディングを非表示にする
+ * @param {Function} callback - 実行する非同期関数
+ * @returns {Promise<any>} - callback の戻り値
+ */
+async function withLoading(callback) {
+    try {
+        await showLoadingAnimation();
+        return await callback();
+    } finally {
+        await hideLoadingAnimation();
+    }
+}
+
+/**
  * GeoJSONをロードする関数
  * @param {string} geojsonPath - GeoJSONファイルのパス
- * @returns {Promise<Object>} - マージ済みのGeoJSONデータ
+ * @returns {Promise<Object>} - GeoJSONデータ
  */
 export async function loadData(geojsonPath) {
     try {
-        // ローディングアニメーションを表示
-        await showLoadingAnimation();
-
-        // GeoJSONを取得
-        const geojsonResponse = await fetchWithRetry(geojsonPath);
-        const geojson = await geojsonResponse.json();
-        
-        // ローディングアニメーションを非表示
-        await hideLoadingAnimation();
-
-        return geojson;
-    
+        return await withLoading(async () => {
+            const geojsonResponse = await fetchWithRetry(geojsonPath);
+            return await geojsonResponse.json();
+        });
     } catch (error) {
         console.error("データの読み込みに失敗しました:", error);
         throw error;
@@ -36,36 +43,31 @@ export async function loadData(geojsonPath) {
  */
 export async function loadAndMergeData(geojsonPath, detailsPath, matchProperty, detailsPriority = false) {
     try {
-        // ローディングアニメーションを表示
-        await showLoadingAnimation();
+        return await withLoading(async () => {
+            // GeoJSONと詳細情報を並列取得
+            const [geojsonResponse, detailsResponse] = await Promise.all([
+                fetchWithRetry(geojsonPath),
+                fetchWithRetry(detailsPath)
+            ]);
 
-        // GeoJSONと詳細情報を取得
-        const [geojsonResponse, detailsResponse] = await Promise.all([
-            fetchWithRetry(geojsonPath),
-            fetchWithRetry(detailsPath)
-        ]);
+            const geojson = await geojsonResponse.json();
+            const details = await detailsResponse.json();
 
-        const geojson = await geojsonResponse.json();
-        const details = await detailsResponse.json();
+            // GeoJSONに詳細情報を追加
+            geojson.features = geojson.features.map((feature) => {
+                const featureValue = feature.properties[matchProperty];
+                const matchedDetail = details[featureValue] || {};
 
-        // GeoJSONに詳細情報を追加
-        geojson.features = geojson.features.map((feature) => {
-            const featureValue = feature.properties[matchProperty]; // GeoJSONのプロパティ値
-            const matchedDetail = details[featureValue] || {}; // JSONで一致する詳細情報を取得
+                return {
+                    ...feature,
+                    properties: detailsPriority
+                        ? { ...feature.properties, ...matchedDetail }
+                        : { ...matchedDetail, ...feature.properties }
+                };
+            });
 
-            return {
-                ...feature,
-                properties: detailsPriority
-                    ? { ...feature.properties, ...matchedDetail } // detailsを優先
-                    : { ...matchedDetail, ...feature.properties } // geojsonを優先
-            };
+            return geojson;
         });
-
-        // ローディングアニメーションを非表示
-        await hideLoadingAnimation();
-
-        return geojson;
-
     } catch (error) {
         console.error("データの読み込みまたは結合に失敗しました:", error);
         throw error;

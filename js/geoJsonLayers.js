@@ -1,5 +1,15 @@
 import { loadData, loadAndMergeData } from './dataLoader.js';
 import { map } from './common.js';
+import {
+    escapeHtml,
+    splitBusinessName,
+    toBlockLines,
+    createDrawerAccentBar,
+    createDrawerSection,
+    getLinkHostname,
+    buildSeaRouteSidebarContent,
+    buildPortSidebarContent,
+} from './utils/drawerHelpers.js';
 
 // EventHandle情報の保存
 var eventHandle = {};
@@ -192,157 +202,6 @@ async function addGeoJsonPortLayer() {
             'text-anchor': 'top'
         },
     });
-}
-
-function escapeHtml(value) {
-    return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-
-function splitBusinessName(value) {
-    const businessName = value || 'N/A';
-    if (!businessName.includes('（')) {
-        return {
-            primary: businessName,
-            secondary: '',
-        };
-    }
-
-    const parts = businessName.split('（');
-    return {
-        primary: parts[0],
-        secondary: (parts[1] || '').replace('）', ''),
-    };
-}
-
-function toBlockLines(value, prefix = '') {
-    if (!value) {
-        return '';
-    }
-
-    return value.split(', ')
-        .map((item) => `<span class="block">${prefix}${escapeHtml(item.trim())}</span>`)
-        .join('');
-}
-
-function createDrawerAccentBar(color) {
-    return `
-        <div class="mb-3">
-            <div style="height:4px; width:100%; background:${color}; border-radius:6px;"></div>
-        </div>
-    `;
-}
-
-function createDrawerSection(options) {
-    const {
-        iconClass,
-        title,
-        titleColorClass,
-        iconColorClass,
-        body,
-    } = options;
-
-    if (!body) {
-        return '';
-    }
-
-    return `
-        <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
-            <h3 class="flex items-center justify-between text-xs font-semibold ${titleColorClass} w-24 min-w-[96px] text-center mr-2">
-                <i class="${iconClass} fa-fw mr-1 ${iconColorClass}"></i><span class="mx-auto">${title}</span>
-            </h3>
-            ${body}
-        </div>
-    `;
-}
-
-function getLinkHostname(url) {
-    try {
-        return new URL(url).hostname;
-    } catch (error) {
-        return url;
-    }
-}
-
-function buildSeaRouteSidebarContent(properties, sourceId) {
-    const routeId = escapeHtml(properties.routeId || '');
-    const lineId = escapeHtml(properties.lineId || '');
-    const routeName = escapeHtml(properties.routeName || 'N/A');
-    const sectionName = `${escapeHtml(properties.portName1 || 'N/A')}～${escapeHtml(properties.portName2 || 'N/A')}`;
-    const url = properties.url || '';
-    const linkDomain = escapeHtml(getLinkHostname(url));
-
-    return `
-        ${createDrawerAccentBar(properties.color || '#e5e7eb')}
-        ${createDrawerSection({
-            iconClass: 'fas fa-route',
-            title: '航路',
-            titleColorClass: 'text-blue-600',
-            iconColorClass: 'text-blue-500',
-            body: `<div class="text-gray-800 text-xs cursor-pointer hover:text-blue-600 underline hover:underline transition-colors" onclick="window.zoomToRoute({routeId: '${routeId}', sourceId: '${sourceId}'})">${routeName}</div>`,
-        })}
-        ${createDrawerSection({
-            iconClass: 'fas fa-map-pin',
-            title: '選択部分',
-            titleColorClass: 'text-green-600',
-            iconColorClass: 'text-green-500',
-            body: `<div class="text-gray-800 text-xs cursor-pointer hover:text-blue-600 underline hover:underline transition-colors" onclick="window.zoomToRouteSection('${routeId}', '${lineId}', '${sourceId}')">${sectionName}</div>`,
-        })}
-        ${createDrawerSection({
-            iconClass: 'fas fa-rotate',
-            title: '運行頻度',
-            titleColorClass: 'text-red-600',
-            iconColorClass: 'text-red-500',
-            body: `<div class="text-gray-800 text-xs">${toBlockLines(properties.freqInfo)}</div>`,
-        })}
-        ${createDrawerSection({
-            iconClass: 'fas fa-info-circle',
-            title: '情報',
-            titleColorClass: 'text-yellow-600',
-            iconColorClass: 'text-yellow-500',
-            body: `<div class="text-gray-800 text-xs">${toBlockLines(properties.info)}</div>`,
-        })}
-        ${createDrawerSection({
-            iconClass: 'fas fa-ship',
-            title: '船舶',
-            titleColorClass: 'text-purple-600',
-            iconColorClass: 'text-purple-500',
-            body: `<ul class="text-gray-800 text-xs">${toBlockLines(properties.shipName, '・')}</ul>`,
-        })}
-        ${createDrawerSection({
-            iconClass: 'fas fa-link',
-            title: 'リンク',
-            titleColorClass: 'text-indigo-600',
-            iconColorClass: 'text-indigo-500',
-            body: url
-                ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-blue-600 transition-all duration-200 rounded">運行スケジュール - ${linkDomain}</a>`
-                : '',
-        })}
-    `;
-}
-
-function buildPortSidebarContent(properties, googleMapsUrl) {
-    return `
-        ${createDrawerAccentBar('#505050')}
-        ${createDrawerSection({
-            iconClass: 'fas fa-map-marked-alt',
-            title: '地図',
-            titleColorClass: 'text-green-600',
-            iconColorClass: 'text-green-500',
-            body: `<a href="${escapeHtml(googleMapsUrl)}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-blue-600 transition-all duration-200 rounded">Googleマップで開く</a>`,
-        })}
-        ${createDrawerSection({
-            iconClass: 'fas fa-info-circle',
-            title: '情報',
-            titleColorClass: 'text-yellow-600',
-            iconColorClass: 'text-yellow-500',
-            body: `<div class="text-gray-800 text-xs">${toBlockLines(properties.info)}</div>`,
-        })}
-    `;
 }
 
 /**

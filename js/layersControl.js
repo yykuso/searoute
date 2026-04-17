@@ -26,7 +26,9 @@ export default class layersControl {
         return;
     }
 
-    // Make Layers Control
+    /**
+     * Make Layers Control
+     */
     addLayersControl() {
         // Control Container
         this.container = document.createElement('div');
@@ -34,26 +36,39 @@ export default class layersControl {
         this.container.id = 'layers-control';
 
         // Toggle Button
-        const toggleContainer = document.createElement('div');
-        toggleContainer.className = 'maplibregl-ctrl-layers-toggle';
-        this.container.appendChild(toggleContainer);
+        this.container.appendChild(this.createToggleButton());
+
+        // Control Container (レイヤーリスト)
+        const controlContainer = document.createElement('div');
+        controlContainer.className = 'maplibregl-ctrl-layers-list';
+        controlContainer.style.display = 'none';
+        this.container.appendChild(controlContainer);
+
+        // レイヤーグループを順番に処理
+        this.renderLayerGroups(controlContainer);
+
+        // マウスオーバーイベント
         this.container.addEventListener('mouseover', this.handleOver.bind(this));
         this.container.addEventListener('mouseout', this.handleOut.bind(this));
+    }
+
+    /**
+     * トグルボタンを作成
+     */
+    createToggleButton() {
+        const toggleContainer = document.createElement('div');
+        toggleContainer.className = 'maplibregl-ctrl-layers-toggle';
+
         const toggleIcon = document.createElement('i');
         toggleIcon.className = 'fa-solid fa-layer-group fa-lg';
         toggleContainer.appendChild(toggleIcon);
 
-        // Control Container
-        const controlContainer = document.createElement('div');
-        controlContainer.className = 'maplibregl-ctrl-layers-list';
-        this.container.appendChild(controlContainer);
-        controlContainer.style.display = 'none';    // 初期非表示
-
-        // レイヤーグループを順番に処理
-        this.renderLayerGroups(controlContainer);
+        return toggleContainer;
     }
 
-    // レイヤーグループをレンダリング
+    /**
+     * レイヤーグループをレンダリング
+     */
     renderLayerGroups(container) {
         const groupOrder = ['base', 'overlay', 'geojson'];
         const groupTitles = {
@@ -63,26 +78,19 @@ export default class layersControl {
         };
         let addedGroups = 0;
 
-        groupOrder.forEach((groupType, index) => {
+        groupOrder.forEach((groupType) => {
             if (this.layers[groupType] && Object.keys(this.layers[groupType]).length > 0) {
                 // グループ間に区切り線を追加（最初のグループ以外）
                 if (addedGroups > 0) {
-                    const hr = document.createElement('hr');
-                    container.appendChild(hr);
+                    container.appendChild(document.createElement('hr'));
                 }
 
-                // グループヘッダーを追加
-                const groupHeader = document.createElement('div');
-                groupHeader.className = 'layer-group-header';
-                groupHeader.textContent = groupTitles[groupType];
-                groupHeader.style.cursor = 'pointer';
-                groupHeader.setAttribute('data-group', groupType);
+                // グループヘッダーを作成
+                const groupHeader = this.createGroupHeader(groupType, groupTitles[groupType]);
                 container.appendChild(groupHeader);
 
-                // グループコンテンツコンテナを作成
-                const groupContent = document.createElement('div');
-                groupContent.className = 'layer-group-content';
-                groupContent.setAttribute('data-group', groupType);
+                // グループコンテンツを作成
+                const groupContent = this.createGroupContent(groupType);
                 container.appendChild(groupContent);
 
                 // グループヘッダーにクリックイベントを追加
@@ -90,48 +98,70 @@ export default class layersControl {
                     this.toggleGroupVisibility(groupType);
                 });
 
+                // グループ内のレイヤーをレンダリング
                 this.renderLayerGroup(groupContent, groupType, this.layers[groupType]);
                 addedGroups++;
             }
         });
     }
 
-    // レイヤーグループをレンダリング
+    /**
+     * グループヘッダーを作成
+     */
+    createGroupHeader(groupType, title) {
+        const groupHeader = document.createElement('div');
+        groupHeader.className = 'layer-group-header';
+        groupHeader.textContent = title;
+        groupHeader.style.cursor = 'pointer';
+        groupHeader.setAttribute('data-group', groupType);
+        return groupHeader;
+    }
+
+    /**
+     * グループコンテンツコンテナを作成
+     */
+    createGroupContent(groupType) {
+        const groupContent = document.createElement('div');
+        groupContent.className = 'layer-group-content';
+        groupContent.setAttribute('data-group', groupType);
+        return groupContent;
+    }
+
+    /**
+     * レイヤーグループをレンダリング
+     */
     renderLayerGroup(container, groupType, layersData) {
         Object.entries(layersData).forEach(([layerId, layerConfig]) => {
             const containerDiv = document.createElement('div');
             containerDiv.className = 'layer-item-container';
-            this.createLayerControl(containerDiv, layerId, layerConfig, groupType);
+
+            const layerItem = this.createLayerItem(layerId, layerConfig, groupType);
+            containerDiv.appendChild(layerItem);
             container.appendChild(containerDiv);
         });
     }
 
-    // レイヤーコントロールを作成
-    createLayerControl(container, layerId, layerConfig, groupType) {
+    /**
+     * レイヤーアイテムを作成（入力・ラベル・イベント配線含む）
+     */
+    createLayerItem(layerId, layerConfig, groupType) {
         const layerType = this.layerTypes[groupType];
-        if (!layerType) return;
+        if (!layerType) return null;
 
-        // レイヤーアイテムのコンテナ
         const layerItem = document.createElement('div');
         layerItem.className = 'layer-item';
 
-        const input = document.createElement('input');
-        input.setAttribute('type', layerType.type);
-        input.id = layerId;
-        input.name = groupType === 'base' ? 'mapStyle' : groupType;
-
-        // 初期状態の設定
-        this.setInitialState(input, layerId, layerConfig, groupType);
-
+        // 入力要素を作成
+        const input = this.createLayerInput(layerId, groupType, layerType.type);
         layerItem.appendChild(input);
 
-        // ラベルを追加
+        // ラベルを作成
         const label = document.createElement('label');
         label.htmlFor = layerId;
         label.textContent = layerConfig.name || layerId;
         layerItem.appendChild(label);
 
-        // ツールチップを追加（アイコンなしで直接レイヤーアイテムに）
+        // ツールチップを追加
         if (layerConfig.description) {
             const tooltip = document.createElement('div');
             tooltip.className = 'layer-tooltip';
@@ -139,8 +169,32 @@ export default class layersControl {
             layerItem.appendChild(tooltip);
         }
 
-        // クリックイベントをレイヤーアイテム全体に設定
-        const handleActivation = (event) => {
+        // 初期状態を設定
+        this.setInitialState(input, layerId, layerConfig, groupType);
+
+        // イベント配線
+        this.attachLayerItemEvents(layerItem, input, layerId, layerConfig, groupType, layerType);
+
+        return layerItem;
+    }
+
+    /**
+     * 入力要素を作成
+     */
+    createLayerInput(layerId, groupType, inputType) {
+        const input = document.createElement('input');
+        input.setAttribute('type', inputType);
+        input.id = layerId;
+        input.name = groupType === 'base' ? 'mapStyle' : groupType;
+        return input;
+    }
+
+    /**
+     * レイヤーアイテムのイベント配線
+     */
+    attachLayerItemEvents(layerItem, input, layerId, layerConfig, groupType, layerType) {
+        // アイテム全体のクリックイベント
+        layerItem.addEventListener('click', (event) => {
             if (event.target !== input) {
                 if (layerType.type === 'checkbox') {
                     input.checked = !input.checked;
@@ -150,32 +204,30 @@ export default class layersControl {
                 input.dispatchEvent(new Event('change'));
                 event.preventDefault();
             }
-        };
+        });
 
-        layerItem.addEventListener('click', handleActivation);
-
-        // チェック状態の表示を更新
-        const updateCheckedState = () => {
-            if (input.checked) {
+        // チェック状態変更イベント
+        input.addEventListener('change', (event) => {
+            // UI 状態更新
+            if (event.target.checked) {
                 layerItem.classList.add('checked');
             } else {
                 layerItem.classList.remove('checked');
             }
-        };
 
-        // 初期状態を設定
-        updateCheckedState();
-
-        // イベントリスナーを追加
-        input.addEventListener('change', (event) => {
-            updateCheckedState();
+            // ハンドラー実行
             layerType.handler(layerId, layerConfig, event.target.checked);
         });
 
-        container.appendChild(layerItem);
+        // 初期チェック状態を反映
+        if (input.checked) {
+            layerItem.classList.add('checked');
+        }
     }
 
-    // 初期状態を設定
+    /**
+     * 初期状態を設定
+     */
     setInitialState(input, layerId, layerConfig, groupType) {
         if (groupType === 'base') {
             const numericId = Number(layerConfig.id || layerConfig);
@@ -196,7 +248,9 @@ export default class layersControl {
         }
     }
 
-    // ベースレイヤー変更ハンドラー
+    /**
+     * ベースレイヤー変更ハンドラー
+     */
     handleBaseLayerChange(layerId, layerConfig, checked) {
         if (checked) {
             const numericId = Number(layerConfig.id || layerConfig);
@@ -210,7 +264,9 @@ export default class layersControl {
         }
     }
 
-    // オーバーレイレイヤー変更ハンドラー
+    /**
+     * オーバーレイレイヤー変更ハンドラー
+     */
     handleOverlayLayerChange(layerId, layerConfig, checked) {
         if (checked) {
             addOverLayer(layerId);
@@ -229,7 +285,9 @@ export default class layersControl {
         }
     }
 
-    // GeoJSONレイヤー変更ハンドラー
+    /**
+     * GeoJSONレイヤー変更ハンドラー
+     */
     handleGeoJsonLayerChange(layerId, layerConfig, checked) {
         if (checked) {
             addOverLayer(layerId);
@@ -248,7 +306,9 @@ export default class layersControl {
         }
     }
 
-    // Set Layer Visibility
+    /**
+     * Set Layer Visibility
+     */
     setLayerVisibility(layerId, visibility, subLayers = []) {
         if (subLayers.length > 0) {
             subLayers.forEach(layer => {
@@ -263,7 +323,9 @@ export default class layersControl {
         }
     }
 
-    // グループの表示/非表示を切り替え
+    /**
+     * グループの表示/非表示を切り替え
+     */
     toggleGroupVisibility(groupType) {
         const groupContent = this.container.querySelector(`.layer-group-content[data-group="${groupType}"]`);
         const groupHeader = this.container.querySelector(`.layer-group-header[data-group="${groupType}"]`);
@@ -281,14 +343,18 @@ export default class layersControl {
         }
     }
 
-    // Control Event Mouseover
+    /**
+     * Control Event Mouseover
+     */
     handleOver() {
         this.container.childNodes[0].style.display = 'none';
         const layersList = this.container.childNodes[1];
         layersList.style.display = 'block';
     }
 
-    // Control Event Mouseout
+    /**
+     * Control Event Mouseout
+     */
     handleOut() {
         const layersList = this.container.childNodes[1];
         layersList.style.display = 'none';
