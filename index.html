@@ -58,7 +58,7 @@
   }
   </script>
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-03DRMSWKPW" defer></script>
+  <!-- Google Analytics は Cookie 同意後に動的読み込み -->
 
   <script src="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.js" defer></script>
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.css"
@@ -190,6 +190,61 @@
   <div style="position: absolute; left: -9999px; top: -9999px;">
     <img src="https://searoute.info/img/banner.png" alt="おでかけ航路マップのサムネイル">
   </div>
+
+  <!-- Cookie通知バナー -->
+  <div id="cookie-banner" class="cookie-banner" style="display:none;" role="note" aria-label="Cookieの利用について">
+    <div class="cookie-banner__body">
+      <p class="cookie-banner__text">
+        当サイトはCookieを使用しております。Cookieの設定はいつでもご利用のブラウザの設定によりご変更いただけます。このサイトを利用することにより、Cookieの利用について同意いただいたものとみなします。
+        当サイトの使用するCookieについては、<button type="button" id="privacy-policy-open-btn" class="cookie-banner__link-btn">プライバシーポリシー</button>をご確認ください。
+      </p>
+      <button id="cookie-close-btn" class="cookie-banner__close" aria-label="閉じる">&times;</button>
+    </div>
+  </div>
+
+  <!-- プライバシーポリシーモーダル -->
+  <div id="privacy-policy-window" class="text-xs" style="display:none;">
+    <h2 class="heading-tag">プライバシーポリシー</h2>
+    <div class="mb-4 space-y-4 text-slate-600 p-2">
+      <section>
+        <h3 class="font-semibold text-slate-700 mb-1">Cookieの利用について</h3>
+        <p>当サイトでは、以下の目的でCookieを使用しています。</p>
+        <ul class="list-disc list-inside mt-1 space-y-1">
+          <li>地図の表示位置・ズームレベルの記憶</li>
+          <li>各種表示設定の保存</li>
+          <li>Googleアナリティクスによるアクセス解析</li>
+        </ul>
+        <p class="mt-2">Cookieの利用を希望されない場合は、ブラウザの設定によりCookieを無効にすることができます。ただし、一部機能が正常に動作しない場合があります。</p>
+      </section>
+      <section>
+        <h3 class="font-semibold text-slate-700 mb-1">Googleアナリティクス</h3>
+        <p>
+          当サイトはGoogleが提供するアクセス解析ツール「Googleアナリティクス」を利用しています。Googleアナリティクスはトラフィックデータの収集のためにCookieを使用しています。このデータは匿名で収集されており、個人を特定するものではありません。
+        </p>
+        <p class="mt-1">
+          Googleアナリティクスの利用規約・プライバシーポリシーについては、
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline">Googleのプライバシーポリシー</a>をご確認ください。
+        </p>
+      </section>
+      <section>
+        <h3 class="font-semibold text-slate-700 mb-1">地図・外部サービス</h3>
+        <p>地図表示にMapLibre GLおよびOpenStreetMapのタイルを使用しています。これらサービスのプライバシーポリシーについては各サービスのサイトをご確認ください。</p>
+      </section>
+      <section>
+        <h3 class="font-semibold text-slate-700 mb-1">お問い合わせ</h3>
+        <p>
+          ご不明な点は
+          <a href="https://x.com/yy_kuso" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline"><i class="fa-brands fa-twitter"></i> Twitter</a>
+          までご連絡ください。
+        </p>
+      </section>
+    </div>
+    <div class="mt-4">
+      <button id="privacy-policy-close-btn" class="w-full rounded-lg bg-sky-600 py-3 px-4 font-bold text-white shadow-md transition-all hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 active:scale-95">
+        閉じる
+      </button>
+    </div>
+  </div>
 </body>
 
 <script type="module" src="./js/common.js"></script>
@@ -210,10 +265,76 @@
 </script>
 
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-03DRMSWKPW');
+  (function() {
+    var GA_ID = 'G-03DRMSWKPW';
+    var CONSENT_KEY = 'cookieConsent';
+    var CONSENT_DAYS = 365;
+
+    function getCookie(name) {
+      var cookies = document.cookie.split('; ');
+      for (var i = 0; i < cookies.length; i++) {
+        var parts = cookies[i].split('=');
+        if (parts[0] === name) return decodeURIComponent(parts[1]);
+      }
+      return null;
+    }
+
+    function setCookie(name, value, days) {
+      var date = new Date();
+      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+      document.cookie = name + '=' + value + ';expires=' + date.toUTCString() + ';path=/;SameSite=Lax';
+    }
+
+    function loadGA() {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', GA_ID);
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(s);
+    }
+
+    // GAは常時読み込む
+    loadGA();
+
+    // バナーは一度閉じたら再表示しない
+    if (getCookie(CONSENT_KEY) === null) {
+      window.addEventListener('DOMContentLoaded', function() {
+        var banner = document.getElementById('cookie-banner');
+        if (banner) banner.style.display = 'block';
+
+        document.getElementById('cookie-close-btn').addEventListener('click', function() {
+          setCookie(CONSENT_KEY, 'closed', CONSENT_DAYS);
+          banner.style.display = 'none';
+        });
+
+        // プライバシーポリシーモーダルの開閉
+        var ppWindow = document.getElementById('privacy-policy-window');
+        document.getElementById('privacy-policy-open-btn').addEventListener('click', function() {
+          if (ppWindow) ppWindow.style.display = 'block';
+        });
+        document.getElementById('privacy-policy-close-btn').addEventListener('click', function() {
+          if (ppWindow) ppWindow.style.display = 'none';
+        });
+      });
+    } else {
+      // バナー非表示時もプライバシーポリシーボタンは機能するようにする
+      window.addEventListener('DOMContentLoaded', function() {
+        var ppWindow = document.getElementById('privacy-policy-window');
+        var openBtn = document.getElementById('privacy-policy-open-btn');
+        var closeBtn = document.getElementById('privacy-policy-close-btn');
+        if (openBtn) openBtn.addEventListener('click', function() {
+          if (ppWindow) ppWindow.style.display = 'block';
+        });
+        if (closeBtn) closeBtn.addEventListener('click', function() {
+          if (ppWindow) ppWindow.style.display = 'none';
+        });
+      });
+    }
+  })();
 </script>
 
 </html>

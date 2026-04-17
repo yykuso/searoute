@@ -401,7 +401,8 @@ body {
 /* モーダルウィンドウ
 ================================================================ */
 #info-window,
-#settings-window {
+#settings-window,
+#privacy-policy-window {
   display: none;
   position: fixed;
   top: 50%;
@@ -421,7 +422,8 @@ body {
 }
 
 #info-window .heading-tag,
-#settings-window .heading-tag {
+#settings-window .heading-tag,
+#privacy-policy-window .heading-tag {
   display: flex;
   align-items: center;
   border-left: 5px solid var(--color-sky-400);
@@ -477,4 +479,70 @@ body {
   text-align: center;
   font-size: 1.2rem;
   border-radius: var(--border-radius-md);
+}
+
+/* Cookie同意バナー
+================================================================ */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  background: #1e293b;
+  color: #f1f5f9;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.3);
+}
+
+.cookie-banner__body {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.cookie-banner__text {
+  flex: 1 1 0;
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: #cbd5e1;
+}
+
+.cookie-banner__link {
+  color: #7dd3fc;
+  text-decoration: underline;
+}
+
+.cookie-banner__link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #7dd3fc;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+.cookie-banner__link-btn:hover {
+  color: #bae6fd;
+}
+
+.cookie-banner__close {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.2rem;
+  transition: color 0.15s ease;
+}
+
+.cookie-banner__close:hover {
+  color: #f1f5f9;
 }
