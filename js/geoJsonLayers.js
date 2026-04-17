@@ -433,154 +433,189 @@ export function addResetClickEvent() {
 }
 
 /**
- * 航路や航路区間に移動する統一関数をグローバルに公開
+ * GeoJSON データを取得する
+ * @param {string} sourceId - ソース ID
+ * @returns {Object|null} GeoJSON オブジェクト または null
  */
-window.zoomToRoute = function(params) {
-    try {
-        // パラメータの解析
-        const { routeName, routeId, lineId, sourceId } = params;
+function getGeoJsonData(sourceId) {
+    let data = geoJsonDataCache[sourceId];
 
-        // キャッシュからデータを取得
-        let data = geoJsonDataCache[sourceId];
-
-        if (!data) {
-            // フォールバック: mapからソースを取得
-            const source = map.getSource(sourceId);
-            if (!source) {
-                console.error('Source not found:', sourceId);
-                return;
-            }
-
-            // source._dataを試す
-            data = source._data;
-
-            if (!data || !data.features) {
-                // querySourceFeaturesを使用してフィーチャーを取得
-                const features = map.querySourceFeatures(sourceId);
-                if (!features || features.length === 0) {
-                    console.error('No features found for source:', sourceId);
-                    return;
-                }
-
-                // フィーチャーからGeoJSON形式のデータを構築
-                data = {
-                    type: 'FeatureCollection',
-                    features: features
-                };
-            }
+    if (!data) {
+        const source = map.getSource(sourceId);
+        if (!source) {
+            console.error('Source not found:', sourceId);
+            return null;
         }
 
-        if (!data.features) {
-            console.error('No features found in data:', sourceId);
-            return;
-        }
+        data = source._data;
 
-        let matchingFeatures = [];
-        let searchType = '';
-
-        if (routeName) {
-            // routeNameで検索
-            matchingFeatures = data.features.filter(feature =>
-                feature.properties && feature.properties.routeName === routeName
-            );
-            searchType = 'routeName';
-        } else if (routeId && lineId) {
-            // routeIdとlineIdで検索（文字列として比較）
-            matchingFeatures = data.features.filter(feature =>
-                feature.properties &&
-                String(feature.properties.routeId) === String(routeId) &&
-                String(feature.properties.lineId) === String(lineId)
-            );
-            searchType = 'routeSection';
-
-            // 見つからない場合は、routeIdのみで検索してフォールバック
-            if (matchingFeatures.length === 0) {
-                matchingFeatures = data.features.filter(feature =>
-                    feature.properties &&
-                    String(feature.properties.routeId) === String(routeId)
-                );
-                searchType = 'routeOnly';
+        if (!data || !data.features) {
+            const features = map.querySourceFeatures(sourceId);
+            if (!features || features.length === 0) {
+                console.error('No features found for source:', sourceId);
+                return null;
             }
-        } else if (routeId) {
-            // routeIdのみで検索
-            matchingFeatures = data.features.filter(feature =>
+
+            data = {
+                type: 'FeatureCollection',
+                features: features
+            };
+        }
+    }
+
+    if (!data.features) {
+        console.error('No features found in data:', sourceId);
+        return null;
+    }
+
+    return data;
+}
+
+/**
+ * パラメータから一致する feature を検索する
+ * @param {Array} features - 検索対象の feature 配列
+ * @param {string} routeName - 航路名
+ * @param {string} routeId - 航路 ID
+ * @param {string} lineId - 区間 ID
+ * @returns {Object} { features, searchType } 一致 feature 群と検索タイプ
+ */
+function findMatchingFeatures(features, routeName, routeId, lineId) {
+    let matchingFeatures = [];
+    let searchType = '';
+
+    if (routeName) {
+        matchingFeatures = features.filter(feature =>
+            feature.properties && feature.properties.routeName === routeName
+        );
+        searchType = 'routeName';
+    } else if (routeId && lineId) {
+        matchingFeatures = features.filter(feature =>
+            feature.properties &&
+            String(feature.properties.routeId) === String(routeId) &&
+            String(feature.properties.lineId) === String(lineId)
+        );
+        searchType = 'routeSection';
+
+        if (matchingFeatures.length === 0) {
+            matchingFeatures = features.filter(feature =>
                 feature.properties &&
                 String(feature.properties.routeId) === String(routeId)
             );
             searchType = 'routeOnly';
         }
+    } else if (routeId) {
+        matchingFeatures = features.filter(feature =>
+            feature.properties &&
+            String(feature.properties.routeId) === String(routeId)
+        );
+        searchType = 'routeOnly';
+    }
 
-        if (matchingFeatures.length === 0) {
-            console.error('No matching features found for:', params);
-            return;
-        }
+    return { features: matchingFeatures, searchType };
+}
 
-        // 全ての一致するフィーチャーの境界ボックスを計算
-        let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
+/**
+ * feature 群から境界ボックスを計算する
+ * @param {Array} features - feature 群
+ * @returns {Object|null} { minLng, maxLng, minLat, maxLat } または null
+ */
+function calculateBounds(features) {
+    let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
 
-        matchingFeatures.forEach(feature => {
-            if (feature.geometry.type === 'LineString') {
-                feature.geometry.coordinates.forEach(coord => {
+    features.forEach(feature => {
+        if (feature.geometry.type === 'LineString') {
+            feature.geometry.coordinates.forEach(coord => {
+                const [lng, lat] = coord;
+                minLng = Math.min(minLng, lng);
+                maxLng = Math.max(maxLng, lng);
+                minLat = Math.min(minLat, lat);
+                maxLat = Math.max(maxLat, lat);
+            });
+        } else if (feature.geometry.type === 'MultiLineString') {
+            feature.geometry.coordinates.forEach(lineString => {
+                lineString.forEach(coord => {
                     const [lng, lat] = coord;
                     minLng = Math.min(minLng, lng);
                     maxLng = Math.max(maxLng, lng);
                     minLat = Math.min(minLat, lat);
                     maxLat = Math.max(maxLat, lat);
                 });
-            } else if (feature.geometry.type === 'MultiLineString') {
-                feature.geometry.coordinates.forEach(lineString => {
-                    lineString.forEach(coord => {
-                        const [lng, lat] = coord;
-                        minLng = Math.min(minLng, lng);
-                        maxLng = Math.max(maxLng, lng);
-                        minLat = Math.min(minLat, lat);
-                        maxLat = Math.max(maxLat, lat);
-                    });
-                });
-            }
-        });
+            });
+        }
+    });
 
-        // 境界ボックスが有効かチェック
-        if (minLng === Infinity || minLat === Infinity || maxLng === -Infinity || maxLat === -Infinity) {
-            console.error('Invalid bounds calculated for:', params);
+    const isValid = minLng !== Infinity && minLat !== Infinity && maxLng !== -Infinity && maxLat !== -Infinity;
+    if (!isValid) {
+        console.error('Invalid bounds calculated');
+        return null;
+    }
+
+    return { minLng, maxLng, minLat, maxLat };
+}
+
+/**
+ * ドロワー表示状態に応じてパディングを計算する
+ * @returns {Object} パディングオブジェクト
+ */
+function calculateFitBoundsPadding() {
+    const padding = {
+        top: 50,
+        left: 50,
+        right: 50,
+        bottom: 50
+    };
+
+    const detailDrawer = document.getElementById('detail-drawer');
+    if (detailDrawer && !detailDrawer.classList.contains('hidden')) {
+        if (window.innerWidth >= 768) {
+            const drawerWidth = detailDrawer.offsetWidth;
+            padding.left = drawerWidth + 30;
+        } else {
+            const drawerHeight = detailDrawer.offsetHeight;
+            padding.bottom = drawerHeight + 30;
+        }
+    }
+
+    return padding;
+}
+
+/**
+ * 航路や航路区間に移動する統一関数をグローバルに公開
+ */
+window.zoomToRoute = function(params) {
+    try {
+        const { routeName, routeId, lineId, sourceId } = params;
+
+        const data = getGeoJsonData(sourceId);
+        if (!data) return;
+
+        const { features: matchingFeatures, searchType } = findMatchingFeatures(
+            data.features,
+            routeName,
+            routeId,
+            lineId
+        );
+
+        if (matchingFeatures.length === 0) {
+            console.error('No matching features found for:', params);
             return;
         }
 
-        // ドロワーの高さ・幅を考慮したパディングを計算
-        let padding = {
-            top: 50,
-            left: 50,
-            right: 50,
-            bottom: 50
-        };
+        const bounds = calculateBounds(matchingFeatures);
+        if (!bounds) return;
 
-        // ドロワーが表示されている場合はパディングを調整
-        const detailDrawer = document.getElementById('detail-drawer');
-        if (detailDrawer && !detailDrawer.classList.contains('hidden')) {
-            if (window.innerWidth >= 768) {
-                // PC表示: 左側のパディングを調整（サイドバーの幅を考慮）
-                const drawerWidth = detailDrawer.offsetWidth;
-                padding.left = drawerWidth + 30;
-            } else {
-                // モバイル表示: 下側のパディングを調整（ドロワーの高さを考慮）
-                const drawerHeight = detailDrawer.offsetHeight;
-                padding.bottom = drawerHeight + 30;
-            }
-        }
+        const padding = calculateFitBoundsPadding();
 
-        // マップを航路に移動
         map.fitBounds([
-            [minLng, minLat],
-            [maxLng, maxLat]
+            [bounds.minLng, bounds.minLat],
+            [bounds.maxLng, bounds.maxLat]
         ], {
             padding: padding,
-            duration: 1000 // アニメーション時間（ミリ秒）
+            duration: 1000
         });
 
-        // ハイライト表示を追加
         addRouteHighlight(matchingFeatures, sourceId);
 
-        // Google Analytics イベント送信
         if (typeof gtag !== 'undefined') {
             const eventLabel = routeName || `${routeId}-${lineId}`;
             const eventType = searchType === 'routeName' ? 'route_zoom' : 'route_section_zoom';
@@ -658,45 +693,59 @@ window.zoomToRouteSection = function(routeId, lineId, sourceId) {
  * 休止中航路の表示・非表示を切り替える
  * @param {boolean} showSuspended - 休止中航路を表示するかどうか
  */
+// レイヤー suffix ごとの filter 定義
+// suffix に応じて、showSuspended の真偽で使い分ける filter を定義
+const LAYER_FILTER_MAP = {
+    '_outline': {
+        show: null,
+        hide: ['!=', ['get', 'note'], 'suspend']
+    },
+    '_solidline': {
+        show: ['==', ['get', 'note'], null],
+        hide: ['==', ['get', 'note'], null]
+    },
+    '_dashline': {
+        show: ['==', ['get', 'note'], 'season'],
+        hide: ['==', ['get', 'note'], 'season']
+    },
+    '_thinline': {
+        show: ['==', ['get', 'note'], 'suspend'],
+        hide: ['==', ['get', 'note'], 'never_match']
+    },
+    '_name': {
+        show: null,
+        hide: ['!=', ['get', 'note'], 'suspend']
+    }
+};
+
+/**
+ * suffix と表示フラグから filter を取得する
+ * @param {string} suffix - レイヤー suffix
+ * @param {boolean} showSuspended - 休止中航路を表示するか
+ * @returns {Array|null} MapLibre GL filter または null
+ */
+function getLayerFilter(suffix, showSuspended) {
+    const filterDef = LAYER_FILTER_MAP[suffix];
+    if (!filterDef) return null;
+    return showSuspended ? filterDef.show : filterDef.hide;
+}
+
+/**
+ * 休止中航路の表示・非表示を切り替える
+ * @param {boolean} showSuspended - 休止中航路を表示するかどうか
+ */
 export function toggleSuspendedRoutes(showSuspended) {
     showSuspendedRoutes = showSuspended;
 
-    // 各航路レイヤーのフィルターを更新
     const routeTypes = ['geojson_sea_route', 'geojson_international_sea_route', 'geojson_KR_sea_route', 'geojson_limited_sea_route'];
+    const layerSuffixes = ['_outline', '_solidline', '_dashline', '_thinline', '_name'];
 
     routeTypes.forEach(routeType => {
-        const layerSuffixes = ['_outline', '_solidline', '_dashline', '_thinline', '_name'];
-
         layerSuffixes.forEach(suffix => {
             const layerId = routeType + suffix;
-
             if (map.getLayer(layerId)) {
-                if (showSuspended) {
-                    // 既存のフィルターを復元
-                    if (suffix === '_solidline') {
-                        map.setFilter(layerId, ['==', ['get', 'note'], null]);
-                    } else if (suffix === '_dashline') {
-                        map.setFilter(layerId, ['==', ['get', 'note'], 'season']);
-                    } else if (suffix === '_thinline') {
-                        map.setFilter(layerId, ['==', ['get', 'note'], 'suspend']);
-                    } else {
-                        // outline と name レイヤーはフィルターなし
-                        map.setFilter(layerId, null);
-                    }
-                } else {
-                    // 休止中航路を非表示にする
-                    if (suffix === '_solidline') {
-                        map.setFilter(layerId, ['==', ['get', 'note'], null]);
-                    } else if (suffix === '_dashline') {
-                        map.setFilter(layerId, ['==', ['get', 'note'], 'season']);
-                    } else if (suffix === '_thinline') {
-                        // 休止中航路（suspend）を非表示
-                        map.setFilter(layerId, ['==', ['get', 'note'], 'never_match']);
-                    } else {
-                        // outline と name レイヤーは休止中以外を表示
-                        map.setFilter(layerId, ['!=', ['get', 'note'], 'suspend']);
-                    }
-                }
+                const filter = getLayerFilter(suffix, showSuspended);
+                map.setFilter(layerId, filter);
             }
         });
     });

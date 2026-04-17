@@ -47,6 +47,50 @@ export const layerPriorities = [
     'geojson_port',
 ];
 
+// 背景地図スタイル定義
+const MAP_STYLE_CONFIG = {
+    [mapStyle["OSM_PLANET_MAP"]]: {
+        url: "https://tile.openstreetmap.jp/styles/openmaptiles/style.json",
+        rasterLayerId: null
+    },
+    [mapStyle["OSM_BRIGHT_MAP"]]: {
+        url: "https://tile.openstreetmap.jp/styles/osm-bright-ja/style.json",
+        rasterLayerId: null
+    },
+    [mapStyle["GSI_STD_MAP"]]: {
+        url: "https://gsi-cyberjapan.github.io/gsivectortile-mapbox-gl-js/std.json",
+        rasterLayerId: null
+    },
+    [mapStyle["GSI_PALE_MAP"]]: {
+        url: "https://gsi-cyberjapan.github.io/gsivectortile-mapbox-gl-js/pale.json",
+        rasterLayerId: null
+    },
+    [mapStyle["GSI_BLANK_MAP"]]: {
+        url: "https://gsi-cyberjapan.github.io/gsivectortile-mapbox-gl-js/blank.json",
+        rasterLayerId: null
+    },
+    [mapStyle["OSM_CUSTOM_MAP"]]: {
+        url: "./style/osm-bright-style.json",
+        rasterLayerId: null
+    },
+    [mapStyle["OTM_MAP"]]: {
+        url: "./style/empty.json",
+        rasterLayerId: "tile_otm"
+    },
+    [mapStyle["TRANSPORT_MAP"]]: {
+        url: "./style/empty.json",
+        rasterLayerId: "tile_transportmap"
+    },
+    [mapStyle["ESRI_PHOTO_MAP"]]: {
+        url: "./style/empty.json",
+        rasterLayerId: "tile_esriimagery"
+    },
+    [mapStyle["EMPTY_MAP"]]: {
+        url: "./style/empty.json",
+        rasterLayerId: null
+    }
+};
+
 // 現在の状態
 var currentMap = null;
 var currentLayer = [];
@@ -121,29 +165,12 @@ function initMap() {
 
 /**
  * マップのスタイルファイルを取得する関数
- * RasterLayerの場合はEMPTYを返す
  * @param {number} style - Style ID
  * @returns {string} - Styleファイル
  */
 function getMapStyle(style) {
-	switch (style) {
-		case mapStyle["OSM_PLANET_MAP"]:
-			return "https://tile.openstreetmap.jp/styles/openmaptiles/style.json";
-		case mapStyle["OSM_BRIGHT_MAP"]:
-			return "https://tile.openstreetmap.jp/styles/osm-bright-ja/style.json";
-        case mapStyle["GSI_STD_MAP"]:
-            return "https://gsi-cyberjapan.github.io/gsivectortile-mapbox-gl-js/std.json";
-        case mapStyle["GSI_PALE_MAP"]:
-            return "https://gsi-cyberjapan.github.io/gsivectortile-mapbox-gl-js/pale.json";
-        case mapStyle["GSI_BLANK_MAP"]:
-            return "https://gsi-cyberjapan.github.io/gsivectortile-mapbox-gl-js/blank.json";
-        case mapStyle["OSM_CUSTOM_MAP"]:
-            return "./style/osm-bright-style.json";
-		case mapStyle["EMPTY_MAP"]:
-			return "./style/empty.json";
-        default:
-			return "./style/empty.json";
-	}
+    const config = MAP_STYLE_CONFIG[style] || MAP_STYLE_CONFIG[mapStyle["EMPTY_MAP"]];
+    return config.url;
 }
 
 // 背景マップの更新
@@ -155,39 +182,23 @@ export function updateBaseMap(afterMap) {
     }
 
     // 現在がrasterの場合はレイヤーを削除
-    switch (currentMap) {
-        case mapStyle["OTM_MAP"]:
-            removeLayerSource("tile_otm", "tile_otm");
-            break;
-        case mapStyle["TRANSPORT_MAP"]:
-            removeLayerSource("tile_transportmap", "tile_transportmap");
-            break;
-        case mapStyle["ESRI_PHOTO_MAP"]:
-            removeLayerSource("tile_esriimagery", "tile_esriimagery");
-            break;
+    const currentConfig = MAP_STYLE_CONFIG[currentMap] || {};
+    if (currentConfig.rasterLayerId) {
+        removeLayerSource(currentConfig.rasterLayerId, currentConfig.rasterLayerId);
     }
 
-    // マップスタイルを変更（rasterタイルの場合はEMPLY_MAP）
+    // マップスタイルを変更
     changeStyle(getMapStyle(afterMap));
     currentMap = afterMap;
 
     // rasterの場合はレイヤーを追加
-    map.once('styledata', () => {
-        switch (afterMap) {
-            case mapStyle["OTM_MAP"]:
-                addRasterLayer(mapStyle["OTM_MAP"]);
-                updateLayerOrder();
-                break;
-            case mapStyle["TRANSPORT_MAP"]:
-                addRasterLayer(mapStyle["TRANSPORT_MAP"]);
-                updateLayerOrder();
-                break;
-            case mapStyle["ESRI_PHOTO_MAP"]:
-                addRasterLayer(mapStyle["ESRI_PHOTO_MAP"]);
-                updateLayerOrder();
-                break;
-        }
-    });
+    const afterConfig = MAP_STYLE_CONFIG[afterMap] || {};
+    if (afterConfig.rasterLayerId) {
+        map.once('styledata', () => {
+            addRasterLayer(afterMap);
+            updateLayerOrder();
+        });
+    }
 
     // Cookieに保存
     setCookie("currentMap", currentMap, 30);
@@ -265,6 +276,15 @@ function updateLayerOrder(retryCount = 0, maxRetries = 30, waitUntil = 1000) {
     });
 }
 
+// Tile レイヤーID と mapStyle の対応
+const TILE_LAYER_MAP = {
+    'tile_gsi_photo': mapStyle["GSI_PHOTO_MAP"],
+    'tile_gsi_relief': mapStyle["GSI_RELIEF_MAP"],
+    'tile_esriimagery': mapStyle["ESRI_PHOTO_MAP"],
+    'tile_openseamap': mapStyle["OPEN_SEA_MAP"],
+    'tile_railwaymap': mapStyle["RAILWAY_MAP"],
+};
+
 function removeLayerSource(layerId, sourceId = layerId) {
 	removeLayer(layerId);
 	removeSource(sourceId);
@@ -293,38 +313,20 @@ function removeSource(sourceId) {
  */
 export async function addOverLayer(layerId) {
     if (currentLayer.includes(layerId)) {
-        // Error
         console.log('[Warning] Layer already exists : addOverLayer( ' + layerId + ' )');
         return;
     }
 
     if (layerId.startsWith('tile')) {
-        // Tileレイヤ
-        switch (layerId) {
-            case 'tile_gsi_photo':
-                addRasterLayer(mapStyle["GSI_PHOTO_MAP"]);
-                break;
-            case 'tile_gsi_relief':
-                addRasterLayer(mapStyle["GSI_RELIEF_MAP"]);
-                break;
-            case 'tile_esriimagery':
-                addRasterLayer(mapStyle["ESRI_PHOTO_MAP"]);
-                break;
-            case 'tile_openseamap':
-                addRasterLayer(mapStyle["OPEN_SEA_MAP"]);
-                break;
-            case 'tile_railwaymap':
-                addRasterLayer(mapStyle["RAILWAY_MAP"]);
-                break;
-            default:
-                console.log('[Error] Layer not found : addOverLayer( ' + layerId + ' )');
-                return;
+        const mapStyleId = TILE_LAYER_MAP[layerId];
+        if (mapStyleId === undefined) {
+            console.log('[Error] Layer not found : addOverLayer( ' + layerId + ' )');
+            return;
         }
+        addRasterLayer(mapStyleId);
     } else if (layerId.startsWith('geojson')) {
-        // GeoJsonレイヤ
         addGeoJsonLayer(layerId);
     } else {
-        // Error
         console.log('[Error] Layer not found : addOverLayer( ' + layerId + ' )');
         return;
     }
