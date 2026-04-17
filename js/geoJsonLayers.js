@@ -620,9 +620,8 @@ export function toggleSuspendedRoutes(showSuspended) {
  * URLクエリから航路/港湾のドロワーを復元する
  */
 export async function initShareFromUrl() {
-    await restoreDrawerFromUrl(
-        // route: routeId と sourceId から復元
-        async (routeId, sourceId) => {
+    await restoreDrawerFromUrl({
+        route: async (routeId, sourceId) => {
             // キャッシュがなければデータだけ先にロード（レイヤーは追加しない）
             if (!geoJsonDataCache[sourceId]) {
                 const cfg = ROUTE_LAYER_CONFIGS[sourceId];
@@ -659,8 +658,7 @@ export async function initShareFromUrl() {
                 );
             }
         },
-        // port: lat/lng/name からマップを移動してドロワーを開く
-        async (lat, lng, name) => {
+        port: async (lat, lng, name) => {
             map.flyTo({ center: [lng, lat], zoom: 12, duration: 1000 });
             // キャッシュがなければポートデータをロード
             if (!geoJsonDataCache['geojson_port']) {
@@ -677,11 +675,11 @@ export async function initShareFromUrl() {
             setDrawerContext({ type: 'port', lat, lng, name });
             window.showDetailDrawerWithPinClear(sidebarContent, name, '港湾情報');
         },
-        async (lat, lng) => {
+        coord: async (lat, lng) => {
             map.flyTo({ center: [lng, lat], zoom: 14, duration: 1000 });
             if (window.openCoordinateDrawer) {
                 window.openCoordinateDrawer(lat, lng);
             }
-        }
-    );
+        },
+    });
 }

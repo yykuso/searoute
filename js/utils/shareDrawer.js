@@ -8,6 +8,47 @@
 // 現在のドロワーコンテキスト
 let currentDrawerContext = null;
 
+const SHARE_CONTEXT_CONFIG = {
+    route: {
+        buildParams: (context) => ({
+            routeId: context.routeId,
+            sourceId: context.sourceId,
+        }),
+        parseParams: (params) => {
+            const routeId = params.get('routeId');
+            const sourceId = params.get('sourceId');
+            return routeId && sourceId ? { routeId, sourceId } : null;
+        },
+        getLayerId: (context) => context.sourceId,
+    },
+    port: {
+        buildParams: (context) => ({
+            lat: context.lat,
+            lng: context.lng,
+            name: context.name,
+        }),
+        parseParams: (params) => {
+            const lat = parseFloat(params.get('lat'));
+            const lng = parseFloat(params.get('lng'));
+            const name = params.get('name');
+            return !isNaN(lat) && !isNaN(lng) && name ? { lat, lng, name } : null;
+        },
+        getLayerId: () => 'geojson_port',
+    },
+    coord: {
+        buildParams: (context) => ({
+            lat: context.lat,
+            lng: context.lng,
+        }),
+        parseParams: (params) => {
+            const lat = parseFloat(params.get('lat'));
+            const lng = parseFloat(params.get('lng'));
+            return !isNaN(lat) && !isNaN(lng) ? { lat, lng } : null;
+        },
+        getLayerId: () => 'geojson_port',
+    },
+};
+
 /**
  * ドロワーコンテキストを設定する
  * @param {Object} context
@@ -27,32 +68,50 @@ export function getShareQueryContext() {
     const params = new URLSearchParams(location.search);
     const share = params.get('share');
 
-    if (share === 'route') {
-        const routeId = params.get('routeId');
-        const sourceId = params.get('sourceId');
-        if (routeId && sourceId) {
-            return { type: 'route', routeId, sourceId };
-        }
+    const config = SHARE_CONTEXT_CONFIG[share];
+    if (!config) {
+        return null;
     }
 
-    if (share === 'port') {
-        const lat = parseFloat(params.get('lat'));
-        const lng = parseFloat(params.get('lng'));
-        const name = params.get('name');
-        if (!isNaN(lat) && !isNaN(lng) && name) {
-            return { type: 'port', lat, lng, name };
-        }
+    const parsed = config.parseParams(params);
+    return parsed ? { type: share, ...parsed } : null;
+}
+
+/**
+ * 共有対象コンテキストから URL を構築する
+ * @param {Object} context
+ * @returns {URL}
+ */
+function buildShareUrl(context) {
+    const config = SHARE_CONTEXT_CONFIG[context.type];
+    const url = new URL(location.href);
+    url.search = '';
+
+    if (!config) {
+        return url;
     }
 
-    if (share === 'coord') {
-        const lat = parseFloat(params.get('lat'));
-        const lng = parseFloat(params.get('lng'));
-        if (!isNaN(lat) && !isNaN(lng)) {
-            return { type: 'coord', lat, lng };
-        }
+    url.searchParams.set('share', context.type);
+    const queryParams = config.buildParams(context);
+    Object.entries(queryParams).forEach(([key, value]) => {
+        url.searchParams.set(key, value);
+    });
+
+    return url;
+}
+
+/**
+ * 共有コンテキストが必要とするレイヤー ID を返す
+ * @param {Object|null} context
+ * @returns {string|null}
+ */
+export function getShareTargetLayerId(context) {
+    if (!context) {
+        return null;
     }
 
-    return null;
+    const config = SHARE_CONTEXT_CONFIG[context.type];
+    return config?.getLayerId?.(context) ?? null;
 }
 
 /**
@@ -61,25 +120,7 @@ export function getShareQueryContext() {
 export async function copyShareUrl() {
     if (!currentDrawerContext) return;
 
-    const url = new URL(location.href);
-    // 既存クエリをリセット
-    url.search = '';
-
-    const ctx = currentDrawerContext;
-    if (ctx.type === 'route') {
-        url.searchParams.set('share', 'route');
-        url.searchParams.set('routeId', ctx.routeId);
-        url.searchParams.set('sourceId', ctx.sourceId);
-    } else if (ctx.type === 'port') {
-        url.searchParams.set('share', 'port');
-        url.searchParams.set('lat', ctx.lat);
-        url.searchParams.set('lng', ctx.lng);
-        url.searchParams.set('name', ctx.name);
-    } else if (ctx.type === 'coord') {
-        url.searchParams.set('share', 'coord');
-        url.searchParams.set('lat', ctx.lat);
-        url.searchParams.set('lng', ctx.lng);
-    }
+    const url = buildShareUrl(currentDrawerContext);
 
     try {
         await navigator.clipboard.writeText(url.toString());
@@ -125,26 +166,19 @@ function showCopyFeedback() {
 
 /**
  * URLクエリパラメータを読み取り、対応するドロワーを自動表示する
- * map の 'idle' イベント後に呼ぶこと
- * @param {Function} openRouteFn - (routeId, sourceId) を処理する関数
- * @param {Function} openPortFn  - (lat, lng, name) を処理する関数
- * @param {Function} openCoordFn - (lat, lng) を処理する関数
+ * @param {Object} handlers
+ * @param {Function} handlers.route - (routeId, sourceId) を処理する関数
+ * @param {Function} handlers.port - (lat, lng, name) を処理する関数
+ * @param {Function} handlers.coord - (lat, lng) を処理する関数
  */
-export async function restoreDrawerFromUrl(openRouteFn, openPortFn, openCoordFn) {
+export async function restoreDrawerFromUrl(handlers) {
     const shareContext = getShareQueryContext();
     if (!shareContext) return;
 
-    if (shareContext.type === 'route') {
-        const { routeId, sourceId } = shareContext;
-        await openRouteFn(routeId, sourceId);
-    } else if (shareContext.type === 'port') {
-        const { lat, lng, name } = shareContext;
-        await openPortFn(lat, lng, name);
-    } else if (shareContext.type === 'coord') {
-        const { lat, lng } = shareContext;
-        if (openCoordFn) {
-            await openCoordFn(lat, lng);
-        }
+    const handler = handlers?.[shareContext.type];
+    if (handler) {
+        const { type, ...payload } = shareContext;
+        await handler(...Object.values(payload));
     }
 
     // 復元完了後にURLクエリを削除

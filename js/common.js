@@ -2,7 +2,7 @@ import layersControl from './layersControl.js';
 import hamburgerControl from './hamburgerControl.js';
 import { addRasterLayer } from './rasterLayers.js';
 import { addGeoJsonLayer, addMarker, addResetClickEvent, toggleSuspendedRoutes, initShareFromUrl } from './geoJsonLayers.js';
-import { copyShareUrl, getShareQueryContext, setDrawerContext } from './utils/shareDrawer.js';
+import { copyShareUrl, getShareQueryContext, getShareTargetLayerId, setDrawerContext } from './utils/shareDrawer.js';
 import { showDetailDrawer } from './detailDrawer.js';
 import { initCenterZoom, setCookie, getCookie } from './cookieControl.js';
 import { showContextMenu, hideContextMenu } from './contextMenu.js';
@@ -179,9 +179,7 @@ async function ensureSharedLayerEnabled() {
         return;
     }
 
-    const targetLayerId = shareContext.type === 'route'
-        ? shareContext.sourceId
-        : 'geojson_port';
+    const targetLayerId = getShareTargetLayerId(shareContext);
 
     if (!targetLayerId || currentLayer.includes(targetLayerId)) {
         syncLayerControlState(targetLayerId, true);
