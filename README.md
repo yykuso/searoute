@@ -48,6 +48,10 @@ searoute/
 └── img/                    # 画像・アイコン
 ```
 
+## 仕様書
+
+- [docs/searoute-spec.md](docs/searoute-spec.md): 機能仕様、状態管理、回帰テスト観点をまとめた設計書
+
 ## ライセンス
 
 MIT License

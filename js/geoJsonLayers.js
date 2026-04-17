@@ -1,6 +1,5 @@
 import { loadData, loadAndMergeData } from './dataLoader.js';
 import { map } from './common.js';
-import { showDetailDrawer, hideDetailDrawer } from './detailDrawer.js';
 
 // EventHandle情報の保存
 var eventHandle = {};
@@ -11,41 +10,19 @@ let showSuspendedRoutes = true;
 // GeoJSONデータのキャッシュ
 const geoJsonDataCache = {};
 
-// ポップアップ閉じるボタン表示、自動閉じ無効化
-const popup = new maplibregl.Popup({
-    closeButton: false,
-    closeOnClick: false,
-});
-
 /**
  * GeoJsonLayerを追加する関数
  * @param {string} id - GeoJsonのID
  */
 export async function addGeoJsonLayer(id) {
-    switch (id) {
-        case "geojson_port":
-            addGeoJsonPortLayer();
-            addPortClickEvent("geojson_port");
-            break;
-        case "geojson_sea_route":
-            addGeoJsonSeaRouteLayer();
-            addSeaRouteClickEvent("geojson_sea_route", "geojson_sea_route_outline");
-            break;
-        case "geojson_international_sea_route":
-            addGeoJsonInternationalSeaRouteLayer();
-            addSeaRouteClickEvent("geojson_international_sea_route", "geojson_international_sea_route_outline");
-            break;
-        case "geojson_KR_sea_route":
-            addGeoJsonSeaRouteKRLayer();
-            addSeaRouteClickEvent("geojson_KR_sea_route", "geojson_KR_sea_route_outline");
-            break;
-        case "geojson_limited_sea_route":
-            addGeoJsonLimitedSeaRouteLayer();
-            addSeaRouteClickEvent("geojson_limited_sea_route", "geojson_limited_sea_route_outline");
-            break;
-        default:
-            console.log('[Error] Layer not found : addGeoJsonLayer( ' + id + ' )');
-            return;
+    if (id === 'geojson_port') {
+        addGeoJsonPortLayer();
+        addPortClickEvent('geojson_port');
+    } else if (id in ROUTE_LAYER_CONFIGS) {
+        addGenericSeaRouteLayer(id);
+        addSeaRouteClickEvent(id, `${id}_outline`);
+    } else {
+        console.log('[Error] Layer not found : addGeoJsonLayer( ' + id + ' )');
     }
 }
 
@@ -59,6 +36,133 @@ export async function addMarker(id, url){
         const anchorImage = await map.loadImage(url);
         map.addImage(id, anchorImage.data);
     }
+}
+
+// 航路レイヤーごとの設定
+const ROUTE_LAYER_CONFIGS = {
+    'geojson_sea_route': {
+        geojsonPath:  './data/seaRoute.geojson',
+        detailsPath:  './data/seaRouteDetails.json',
+        outlineColor: '#FFFFFF',
+        freqDefault:  3,
+        freqMultZ3:   0.5,
+    },
+    'geojson_international_sea_route': {
+        geojsonPath:  './data/internationalSeaRoute.geojson',
+        detailsPath:  './data/internationalSeaRouteDetails.json',
+        outlineColor: '#FFFFFF',
+        freqDefault:  1,
+        freqMultZ3:   0.75,
+    },
+    'geojson_KR_sea_route': {
+        geojsonPath:  './data/seaRouteKR.geojson',
+        detailsPath:  './data/seaRouteKRDetails.json',
+        outlineColor: '#FFFFFF',
+        freqDefault:  1,
+        freqMultZ3:   0.75,
+    },
+    'geojson_limited_sea_route': {
+        geojsonPath:  './data/limitedSeaRoute.geojson',
+        detailsPath:  './data/limitedSeaRouteDetails.json',
+        outlineColor: '#000000',
+        freqDefault:  1,
+        freqMultZ3:   0.75,
+    },
+};
+
+/**
+ * 汎用航路レイヤーを追加する関数
+ * @param {string} id - ROUTE_LAYER_CONFIGSのキー
+ */
+async function addGenericSeaRouteLayer(id) {
+    const cfg = ROUTE_LAYER_CONFIGS[id];
+    const seaRouteGeojson = await loadAndMergeData(cfg.geojsonPath, cfg.detailsPath, 'routeId');
+
+    geoJsonDataCache[id] = seaRouteGeojson;
+
+    map.addSource(id, { type: 'geojson', data: seaRouteGeojson });
+
+    const lineWidth = (freqDefault, multZ3) => [
+        'interpolate', ['linear'], ['zoom'],
+        3, ['*', ['coalesce', ['get', 'freq'], freqDefault], multZ3],
+        6, ['*', ['coalesce', ['get', 'freq'], freqDefault], 1.0],
+    ];
+    const outlineWidth = (freqDefault, multZ3) => [
+        'interpolate', ['linear'], ['zoom'],
+        3, ['*', ['coalesce', ['get', 'freq'], freqDefault], multZ3],
+        6, ['+', ['*', ['coalesce', ['get', 'freq'], freqDefault], 1.0], 4],
+    ];
+
+    map.addLayer({
+        id: `${id}_outline`,
+        type: 'line',
+        source: id,
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+        paint: {
+            'line-color': cfg.outlineColor,
+            'line-width': outlineWidth(cfg.freqDefault, cfg.freqMultZ3),
+            'line-opacity': 0.5,
+        },
+    });
+    map.addLayer({
+        id: `${id}_solidline`,
+        type: 'line',
+        source: id,
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+        filter: ['==', ['get', 'note'], null],
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#000000'],
+            'line-width': lineWidth(cfg.freqDefault, cfg.freqMultZ3),
+            'line-dasharray': [1, 0],
+        },
+    });
+    map.addLayer({
+        id: `${id}_dashline`,
+        type: 'line',
+        source: id,
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+        filter: ['==', ['get', 'note'], 'season'],
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#000000'],
+            'line-width': lineWidth(cfg.freqDefault, cfg.freqMultZ3),
+            'line-dasharray': [1, 2],
+        },
+    });
+    map.addLayer({
+        id: `${id}_thinline`,
+        type: 'line',
+        source: id,
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+        filter: ['==', ['get', 'note'], 'suspend'],
+        paint: {
+            'line-color': ['coalesce', ['get', 'color'], '#000000'],
+            'line-width': lineWidth(cfg.freqDefault, cfg.freqMultZ3),
+            'line-dasharray': [1, 4],
+        },
+    });
+    map.addLayer({
+        id: `${id}_name`,
+        type: 'symbol',
+        source: id,
+        layout: {
+            'symbol-placement': 'line',
+            'text-offset': [0, 1],
+            'text-field': [
+                'step', ['zoom'],
+                '',
+                4, ['get', 'businessName'],
+                6, ['format', ['get', 'businessName'], {}, ' (', {}, ['get', 'routeName'], {}, ') ', {}],
+            ],
+            'text-font': ['NotoSansCJKjp-Regular'],
+            'text-size': 9,
+        },
+        paint: {
+            'text-color': ['coalesce', ['get', 'color'], '#000000'],
+            'text-halo-color': '#FFFFFF',
+            'text-halo-width': 2,
+            'text-halo-blur': 2,
+        },
+    });
 }
 
 async function addGeoJsonPortLayer() {
@@ -90,583 +194,155 @@ async function addGeoJsonPortLayer() {
     });
 }
 
-async function addGeoJsonSeaRouteLayer() {
-    var seaRouteGeojson = await loadAndMergeData(
-        './data/seaRoute.geojson',
-        './data/seaRouteDetails.json',
-        'routeId'
-    );
-
-    // キャッシュに保存
-    geoJsonDataCache['geojson_sea_route'] = seaRouteGeojson;
-
-    map.addSource('geojson_sea_route', {
-        type: 'geojson',
-        data: seaRouteGeojson,
-    });
-    map.addLayer({
-        // 線のアウトライン
-        id: 'geojson_sea_route_outline',
-        type: 'line',
-        source: 'geojson_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        paint: {
-            'line-color': '#FFFFFF',
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 3], 0.5],
-                6,    // ズームレベル = 6
-                ['+', ['*', ['coalesce', ['get', 'freq'], 3], 1.0], 4]
-            ],
-            'line-opacity': 0.5
-        }
-    });
-    map.addLayer({
-        // 実線
-        id: 'geojson_sea_route_solidline',
-        type: 'line',
-        source: 'geojson_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], null],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 3], 0.5],
-                6,    // ズームレベル = 6
-                ['*', ['coalesce', ['get', 'freq'], 3], 1.0]
-            ],
-            'line-dasharray': [1, 0],
-        }
-    });
-    map.addLayer({
-        // 破線
-        id: 'geojson_sea_route_dashline',
-        type: 'line',
-        source: 'geojson_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], 'season'],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 3], 0.5],
-                6,    // ズームレベル = 6
-                ['*', ['coalesce', ['get', 'freq'], 3], 1.0]
-            ],
-            'line-dasharray': [1, 2],
-        }
-    });
-    map.addLayer({
-        // 点線
-        id: 'geojson_sea_route_thinline',
-        type: 'line',
-        source: 'geojson_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], 'suspend'],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 1], 0.75],
-                6,    // ズームレベル = 6
-                ['*', ['coalesce', ['get', 'freq'], 1], 1.0]
-            ],
-            'line-dasharray': [1, 4],
-        }
-    });
-    map.addLayer({
-        // キャプション
-        id: 'geojson_sea_route_name',
-        type: 'symbol',
-        source: 'geojson_sea_route',
-        layout: {
-            'symbol-placement': 'line',
-            "text-offset": [0, 1],
-            'text-field': [
-                'step',
-                ['zoom'],
-                '',    // ズームレベル < 4
-                4,    // ズームレベル >= 4
-                ['get', 'businessName'],
-                6,   // ズームレベル >= 6
-                [
-                    'format',
-                    ['get', 'businessName'],{},
-                    ' (',{},
-                    ['get', 'routeName'],{},
-                    ') ',{}
-                ]
-            ],
-            'text-font': ["NotoSansCJKjp-Regular"],
-            'text-size': 9
-        },
-        paint: {
-            'text-color': ['coalesce', ['get', 'color'], '#000000'],
-            'text-halo-color': '#FFFFFF',
-            'text-halo-width': 2,
-            'text-halo-blur': 2
-        }
-    });
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
-async function addGeoJsonInternationalSeaRouteLayer() {
-    // 航路情報(国際)
-    var seaRouteGeojson = await loadAndMergeData(
-        './data/internationalSeaRoute.geojson',
-        './data/internationalSeaRouteDetails.json',
-        'routeId'
-    );
+function splitBusinessName(value) {
+    const businessName = value || 'N/A';
+    if (!businessName.includes('（')) {
+        return {
+            primary: businessName,
+            secondary: '',
+        };
+    }
 
-    // キャッシュに保存
-    geoJsonDataCache['geojson_international_sea_route'] = seaRouteGeojson;
-
-    map.addSource('geojson_international_sea_route', {
-        type: 'geojson',
-        data: seaRouteGeojson,
-    });
-    map.addLayer({
-        // 線のアウトライン
-        id: 'geojson_international_sea_route_outline',
-        type: 'line',
-        source: 'geojson_international_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        paint: {
-            'line-color': '#FFFFFF',
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 3], 0.5],
-                6,    // ズームレベル = 6
-                ['+', ['*', ['coalesce', ['get', 'freq'], 3], 1.0], 4]
-            ],
-            'line-opacity': 0.5
-        }
-    });
-    map.addLayer({
-        // 実線
-        id: 'geojson_international_sea_route_solidline',
-        type: 'line',
-        source: 'geojson_international_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], null],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 1], 0.75],
-                6,    // ズームレベル = 6
-                ['*', ['coalesce', ['get', 'freq'], 1], 1.0]
-            ],
-            'line-dasharray': [1, 0],
-        }
-    });
-    map.addLayer({
-        // 破線
-        id: 'geojson_international_sea_route_dashline',
-        type: 'line',
-        source: 'geojson_international_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], 'season'],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 1], 0.75],
-                6,    // ズームレベル = 6
-                ['*', ['coalesce', ['get', 'freq'], 1], 1.0]
-            ],
-            'line-dasharray': [1, 2],
-        }
-    });
-    map.addLayer({
-        // 点線
-        id: 'geojson_international_sea_route_thinline',
-        type: 'line',
-        source: 'geojson_international_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], 'suspend'],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 1], 0.75],
-                6,    // ズームレベル = 6
-                ['*', ['coalesce', ['get', 'freq'], 1], 1.0]
-            ],
-            'line-dasharray': [1, 4],
-        }
-    });
-    map.addLayer({
-        // キャプション
-        id: 'geojson_international_sea_route_name',
-        type: 'symbol',
-        source: 'geojson_international_sea_route',
-        layout: {
-            'symbol-placement': 'line',
-            "text-offset": [0, 1],
-            'text-field': [
-                'step',
-                ['zoom'],
-                '',    // ズームレベル < 8
-                4,    // ズームレベル >= 8
-                ['get', 'businessName'],
-                6,   // ズームレベル >= 10
-                [
-                    'format',
-                    ['get', 'businessName'],{},
-                    ' (',{},
-                    ['get', 'routeName'],{},
-                    ') ',{}
-                ]
-            ],
-            'text-font': ["NotoSansCJKjp-Regular"],
-            'text-size': 9
-        },
-        paint: {
-            'text-color': ['coalesce', ['get', 'color'], '#000000'],
-            'text-halo-color': '#FFFFFF',
-            'text-halo-width': 2,
-            'text-halo-blur': 2
-        }
-    });
+    const parts = businessName.split('（');
+    return {
+        primary: parts[0],
+        secondary: (parts[1] || '').replace('）', ''),
+    };
 }
 
-async function addGeoJsonSeaRouteKRLayer() {
-    // 航路情報(国際)
-    var seaRouteGeojson = await loadAndMergeData(
-        './data/seaRouteKR.geojson',
-        './data/seaRouteKRDetails.json',
-        'routeId'
-    );
+function toBlockLines(value, prefix = '') {
+    if (!value) {
+        return '';
+    }
 
-    // キャッシュに保存
-    geoJsonDataCache['geojson_KR_sea_route'] = seaRouteGeojson;
-
-    map.addSource('geojson_KR_sea_route', {
-        type: 'geojson',
-        data: seaRouteGeojson,
-    });
-    map.addLayer({
-        // 線のアウトライン
-        id: 'geojson_KR_sea_route_outline',
-        type: 'line',
-        source: 'geojson_KR_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        paint: {
-            'line-color': '#FFFFFF',
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 3], 0.5],
-                6,    // ズームレベル = 6
-                ['+', ['*', ['coalesce', ['get', 'freq'], 3], 1.0], 4]
-            ],
-            'line-opacity': 0.5
-        }
-    });
-    map.addLayer({
-        // 実線
-        id: 'geojson_KR_sea_route_solidline',
-        type: 'line',
-        source: 'geojson_KR_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], null],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 1], 0.75],
-                6,    // ズームレベル = 6
-                ['*', ['coalesce', ['get', 'freq'], 1], 1.0]
-            ],
-            'line-dasharray': [1, 0],
-        }
-    });
-    map.addLayer({
-        // 破線
-        id: 'geojson_KR_sea_route_dashline',
-        type: 'line',
-        source: 'geojson_KR_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], 'season'],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 1], 0.75],
-                6,    // ズームレベル = 6
-                ['*', ['coalesce', ['get', 'freq'], 1], 1.0]
-            ],
-            'line-dasharray': [1, 2],
-        }
-    });
-    map.addLayer({
-        // 点線
-        id: 'geojson_KR_sea_route_thinline',
-        type: 'line',
-        source: 'geojson_KR_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], 'suspend'],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 1], 0.75],
-                6,    // ズームレベル = 6
-                ['*', ['coalesce', ['get', 'freq'], 1], 1.0]
-            ],
-            'line-dasharray': [1, 4],
-        }
-    });
-    map.addLayer({
-        // キャプション
-        id: 'geojson_KR_sea_route_name',
-        type: 'symbol',
-        source: 'geojson_KR_sea_route',
-        layout: {
-            'symbol-placement': 'line',
-            "text-offset": [0, 1],
-            'text-field': [
-                'step',
-                ['zoom'],
-                '',    // ズームレベル < 8
-                4,    // ズームレベル >= 8
-                ['get', 'businessName'],
-                6,   // ズームレベル >= 10
-                [
-                    'format',
-                    ['get', 'businessName'],{},
-                    ' (',{},
-                    ['get', 'routeName'],{},
-                    ') ',{}
-                ]
-            ],
-            'text-font': ["NotoSansCJKjp-Regular"],
-            'text-size': 9
-        },
-        paint: {
-            'text-color': ['coalesce', ['get', 'color'], '#000000'],
-            'text-halo-color': '#FFFFFF',
-            'text-halo-width': 2,
-            'text-halo-blur': 2
-        }
-    });
+    return value.split(', ')
+        .map((item) => `<span class="block">${prefix}${escapeHtml(item.trim())}</span>`)
+        .join('');
 }
 
-async function addGeoJsonLimitedSeaRouteLayer() {
-    // 航路情報(国際)
-    var seaRouteGeojson = await loadAndMergeData(
-        './data/limitedSeaRoute.geojson',
-        './data/limitedSeaRouteDetails.json',
-        'routeId'
-    );
+function createDrawerAccentBar(color) {
+    return `
+        <div class="mb-3">
+            <div style="height:4px; width:100%; background:${color}; border-radius:6px;"></div>
+        </div>
+    `;
+}
 
-    // キャッシュに保存
-    geoJsonDataCache['geojson_limited_sea_route'] = seaRouteGeojson;
+function createDrawerSection(options) {
+    const {
+        iconClass,
+        title,
+        titleColorClass,
+        iconColorClass,
+        body,
+    } = options;
 
-    map.addSource('geojson_limited_sea_route', {
-        type: 'geojson',
-        data: seaRouteGeojson,
-    });
-    map.addLayer({
-        // 線のアウトライン
-        id: 'geojson_limited_sea_route_outline',
-        type: 'line',
-        source: 'geojson_limited_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        paint: {
-            'line-color': '#000000',
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 3], 0.5],
-                6,    // ズームレベル = 6
-                ['+', ['*', ['coalesce', ['get', 'freq'], 3], 1.0], 4]
-            ],
-            'line-opacity': 0.5
-        }
-    });
-    map.addLayer({
-        // 実線
-        id: 'geojson_limited_sea_route_solidline',
-        type: 'line',
-        source: 'geojson_limited_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], null],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 1], 0.75],
-                6,    // ズームレベル = 6
-                ['*', ['coalesce', ['get', 'freq'], 1], 1.0]
-            ],
-            'line-dasharray': [1, 0],
-        }
-    });
-    map.addLayer({
-        // 破線
-        id: 'geojson_limited_sea_route_dashline',
-        type: 'line',
-        source: 'geojson_limited_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], 'season'],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 1], 0.75],
-                6,    // ズームレベル = 6
-                ['*', ['coalesce', ['get', 'freq'], 1], 1.0]
-            ],
-            'line-dasharray': [1, 2],
-        }
-    });
-    map.addLayer({
-        // 点線
-        id: 'geojson_limited_sea_route_thinline',
-        type: 'line',
-        source: 'geojson_limited_sea_route',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        filter: ['==', ['get', 'note'], 'suspend'],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                3,    // ズームレベル = 3
-                ['*', ['coalesce', ['get', 'freq'], 1], 0.75],
-                6,    // ズームレベル = 6
-                ['*', ['coalesce', ['get', 'freq'], 1], 1.0]
-            ],
-            'line-dasharray': [1, 4],
-        }
-    });
-    map.addLayer({
-        // キャプション
-        id: 'geojson_limited_sea_route_name',
-        type: 'symbol',
-        source: 'geojson_limited_sea_route',
-        layout: {
-            'symbol-placement': 'line',
-            "text-offset": [0, 1],
-            'text-field': [
-                'step',
-                ['zoom'],
-                '',    // ズームレベル < 8
-                4,    // ズームレベル >= 8
-                ['get', 'businessName'],
-                6,   // ズームレベル >= 10
-                [
-                    'format',
-                    ['get', 'businessName'],{},
-                    ' (',{},
-                    ['get', 'routeName'],{},
-                    ') ',{}
-                ]
-            ],
-            'text-font': ["NotoSansCJKjp-Regular"],
-            'text-size': 9
-        },
-        paint: {
-            'text-color': ['coalesce', ['get', 'color'], '#000000'],
-            'text-halo-color': '#FFFFFF',
-            'text-halo-width': 2,
-            'text-halo-blur': 2
-        }
-    });
+    if (!body) {
+        return '';
+    }
+
+    return `
+        <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
+            <h3 class="flex items-center justify-between text-xs font-semibold ${titleColorClass} w-24 min-w-[96px] text-center mr-2">
+                <i class="${iconClass} fa-fw mr-1 ${iconColorClass}"></i><span class="mx-auto">${title}</span>
+            </h3>
+            ${body}
+        </div>
+    `;
+}
+
+function getLinkHostname(url) {
+    try {
+        return new URL(url).hostname;
+    } catch (error) {
+        return url;
+    }
+}
+
+function buildSeaRouteSidebarContent(properties, sourceId) {
+    const routeId = escapeHtml(properties.routeId || '');
+    const lineId = escapeHtml(properties.lineId || '');
+    const routeName = escapeHtml(properties.routeName || 'N/A');
+    const sectionName = `${escapeHtml(properties.portName1 || 'N/A')}～${escapeHtml(properties.portName2 || 'N/A')}`;
+    const url = properties.url || '';
+    const linkDomain = escapeHtml(getLinkHostname(url));
+
+    return `
+        ${createDrawerAccentBar(properties.color || '#e5e7eb')}
+        ${createDrawerSection({
+            iconClass: 'fas fa-route',
+            title: '航路',
+            titleColorClass: 'text-blue-600',
+            iconColorClass: 'text-blue-500',
+            body: `<div class="text-gray-800 text-xs cursor-pointer hover:text-blue-600 underline hover:underline transition-colors" onclick="window.zoomToRoute({routeId: '${routeId}', sourceId: '${sourceId}'})">${routeName}</div>`,
+        })}
+        ${createDrawerSection({
+            iconClass: 'fas fa-map-pin',
+            title: '選択部分',
+            titleColorClass: 'text-green-600',
+            iconColorClass: 'text-green-500',
+            body: `<div class="text-gray-800 text-xs cursor-pointer hover:text-blue-600 underline hover:underline transition-colors" onclick="window.zoomToRouteSection('${routeId}', '${lineId}', '${sourceId}')">${sectionName}</div>`,
+        })}
+        ${createDrawerSection({
+            iconClass: 'fas fa-rotate',
+            title: '運行頻度',
+            titleColorClass: 'text-red-600',
+            iconColorClass: 'text-red-500',
+            body: `<div class="text-gray-800 text-xs">${toBlockLines(properties.freqInfo)}</div>`,
+        })}
+        ${createDrawerSection({
+            iconClass: 'fas fa-info-circle',
+            title: '情報',
+            titleColorClass: 'text-yellow-600',
+            iconColorClass: 'text-yellow-500',
+            body: `<div class="text-gray-800 text-xs">${toBlockLines(properties.info)}</div>`,
+        })}
+        ${createDrawerSection({
+            iconClass: 'fas fa-ship',
+            title: '船舶',
+            titleColorClass: 'text-purple-600',
+            iconColorClass: 'text-purple-500',
+            body: `<ul class="text-gray-800 text-xs">${toBlockLines(properties.shipName, '・')}</ul>`,
+        })}
+        ${createDrawerSection({
+            iconClass: 'fas fa-link',
+            title: 'リンク',
+            titleColorClass: 'text-indigo-600',
+            iconColorClass: 'text-indigo-500',
+            body: url
+                ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-blue-600 transition-all duration-200 rounded">運行スケジュール - ${linkDomain}</a>`
+                : '',
+        })}
+    `;
+}
+
+function buildPortSidebarContent(properties, googleMapsUrl) {
+    return `
+        ${createDrawerAccentBar('#505050')}
+        ${createDrawerSection({
+            iconClass: 'fas fa-map-marked-alt',
+            title: '地図',
+            titleColorClass: 'text-green-600',
+            iconColorClass: 'text-green-500',
+            body: `<a href="${escapeHtml(googleMapsUrl)}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-blue-600 transition-all duration-200 rounded">Googleマップで開く</a>`,
+        })}
+        ${createDrawerSection({
+            iconClass: 'fas fa-info-circle',
+            title: '情報',
+            titleColorClass: 'text-yellow-600',
+            iconColorClass: 'text-yellow-500',
+            body: `<div class="text-gray-800 text-xs">${toBlockLines(properties.info)}</div>`,
+        })}
+    `;
 }
 
 /**
@@ -677,92 +353,13 @@ async function addGeoJsonLimitedSeaRouteLayer() {
 function addSeaRouteClickEvent(id, handleId = id) {
     map.on('click', handleId, (event) => {
         const properties = event.features[0].properties;
-
-        // businessNameに「（」が含まれる場合に分割
-        let businessName = properties.businessName;
-        let businessNameSub = '';
-        if (businessName.includes('（')) {
-            const parts = businessName.split('（');
-            businessName = parts[0];
-            businessNameSub = parts[1].replace('）', '');
-        }
-        const freqInfoHtml = properties.freqInfo
-            ? properties.freqInfo.split(', ')
-                .map(freqInfo => `<span class="block">${freqInfo.trim()}</span>`)
-                .join('')
-            : '';
-        const infoHtml = properties.info
-            ? properties.info.split(', ')
-                .map(info => `<span class="block">${info.trim()}</span>`)
-                .join('')
-            : '';
-        const shipListHtml = properties.shipName
-            ? properties.shipName.split(', ')
-                .map(ship => `<span class="block">・${ship.trim()}</span>`)
-                .join('')
-            : '';
-        const sidebarContent = `
-            <div class="mb-3">
-                <div style="height:4px; width:100%; background:${properties.color || '#e5e7eb'}; border-radius:6px;"></div>
-            </div>
-            <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
-                <h3 class="flex items-center justify-between text-xs font-semibold text-blue-600 w-24 min-w-[96px] text-center mr-2">
-                    <i class="fas fa-route fa-fw mr-1 text-blue-500"></i><span class="mx-auto">航路</span>
-                </h3>
-                <div class="text-gray-800 text-xs cursor-pointer hover:text-blue-600 underline hover:underline transition-colors" onclick="window.zoomToRoute({routeId: '${properties.routeId || ''}', sourceId: '${id}'})">${properties.routeName || 'N/A'}</div>
-            </div>
-            <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
-                <h3 class="flex items-center justify-between text-xs font-semibold text-green-600 w-24 min-w-[96px] text-center mr-2">
-                    <i class="fas fa-map-pin fa-fw mr-1 text-green-500"></i><span class="mx-auto">選択部分</span>
-                </h3>
-                <div class="text-gray-800 text-xs cursor-pointer hover:text-blue-600 underline hover:underline transition-colors" onclick="window.zoomToRouteSection('${properties.routeId || ''}', '${properties.lineId || ''}', '${id}')">${(properties.portName1 || 'N/A').replace(/'/g, '&#39;').replace(/"/g, '&quot;')}～${(properties.portName2 || 'N/A').replace(/'/g, '&#39;').replace(/"/g, '&quot;')}</div>
-            </div>
-            ${properties.freqInfo ? `
-                <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
-                    <h3 class="flex items-center justify-between text-xs font-semibold text-red-600 w-24 min-w-[96px] text-center mr-2">
-                        <i class="fas fa-rotate fa-fw mr-1 text-red-500"></i><span class="mx-auto">運行頻度</span>
-                    </h3>
-                    <div class="text-gray-800 text-xs">${freqInfoHtml}</div>
-                </div>
-            ` : ''}
-            ${properties.info ? `
-                <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
-                    <h3 class="flex items-center justify-between text-xs font-semibold text-yellow-600 w-24 min-w-[96px] text-center mr-2">
-                        <i class="fas fa-info-circle fa-fw mr-1 text-yellow-500"></i><span class="mx-auto">情報</span>
-                    </h3>
-                    <div class="text-gray-800 text-xs">${infoHtml}</div>
-                </div>
-            ` : ''}
-            ${properties.shipName ? `
-                <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
-                    <h3 class="flex items-center justify-between text-xs font-semibold text-purple-600 w-24 min-w-[96px] text-center mr-2">
-                        <i class="fas fa-ship fa-fw mr-1 text-purple-500"></i><span class="mx-auto">船舶</span>
-                    </h3>
-                    <ul class="text-gray-800 text-xs">${shipListHtml}</ul>
-                </div>
-            ` : ''}
-            ${properties.url ? (() => {
-                let domain = '';
-                try {
-                    domain = new URL(properties.url).hostname;
-                } catch (e) {
-                    domain = properties.url;
-                }
-                return `
-                    <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
-                        <h3 class="flex items-center justify-between text-xs font-semibold text-indigo-600 w-24 min-w-[96px] text-center mr-2">
-                            <i class="fas fa-link fa-fw mr-1.5 text-indigo-500"></i><span class="mx-auto">リンク</span>
-                        </h3>
-                        <a href="${properties.url}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-blue-600 transition-all duration-200 rounded">運行スケジュール - ${domain}</a>
-                    </div>
-                `;
-            })() : ''}
-            `;
+        const businessNameParts = splitBusinessName(properties.businessName);
+        const sidebarContent = buildSeaRouteSidebarContent(properties, id);
 
         window.showDetailDrawerWithPinClear(
             sidebarContent,
-            businessName,
-            businessNameSub
+            businessNameParts.primary,
+            businessNameParts.secondary
         );
         gtag('event', 'marker_click', {
             'event_category': 'map',
@@ -792,31 +389,8 @@ function addPortClickEvent(id, handleId = id) {
         // portNameに「港」や「桟橋」が含まれていない場合は「港」を追加
         const searchPortName = (portName.includes('港') || portName.includes('桟橋')) ? portName : `${portName}港`;
         const googleMapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(searchPortName)}`;
+        const sidebarContent = buildPortSidebarContent(properties, googleMapsUrl);
 
-        const infoHtml = properties.info
-            ? properties.info.split(', ')
-                .map(info => `<span class="block">${info.trim()}</span>`)
-                .join('')
-            : '';
-        const sidebarContent = `
-            <div class="mb-3">
-                <div style="height:4px; width:100%; background:#505050; border-radius:6px;"></div>
-            </div>
-            <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
-                <h3 class="flex items-center justify-between text-xs font-semibold text-green-600 w-24 min-w-[96px] text-center mr-2">
-                    <i class="fas fa-map-marked-alt fa-fw mr-1 text-green-500"></i><span class="mx-auto">地図</span>
-                </h3>
-                <a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-blue-600 transition-all duration-200 rounded">Googleマップで開く</a>
-            </div>
-            ${properties.info ? `
-                <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
-                    <h3 class="flex items-center justify-between text-xs font-semibold text-yellow-600 w-24 min-w-[96px] text-center mr-2">
-                        <i class="fas fa-info-circle fa-fw mr-1 text-yellow-500"></i><span class="mx-auto">情報</span>
-                    </h3>
-                    <div class="text-gray-800 text-xs">${infoHtml}</div>
-                </div>
-            ` : ''}
-        `;
         window.showDetailDrawerWithPinClear(
             sidebarContent,
             portName,
