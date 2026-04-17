@@ -1,5 +1,6 @@
 import { loadData, loadAndMergeData } from './dataLoader.js';
 import { loadShipImageIntoDrawer } from './utils/wikipediaImage.js';
+import { setDrawerContext, restoreDrawerFromUrl } from './utils/shareDrawer.js';
 import { map } from './common.js';
 import {
     escapeHtml,
@@ -216,6 +217,7 @@ function addSeaRouteClickEvent(id, handleId = id) {
         const businessNameParts = splitBusinessName(properties.businessName);
         const sidebarContent = buildSeaRouteSidebarContent(properties, id);
 
+        setDrawerContext({ type: 'route', routeId: properties.routeId, sourceId: id });
         window.showDetailDrawerWithPinClear(
             sidebarContent,
             businessNameParts.primary,
@@ -246,12 +248,14 @@ function addPortClickEvent(id, handleId = id) {
     map.on('click', handleId, (event) => {
         const properties = event.features[0].properties;
         const portName = properties.Name || properties.portName || 'N/A';
+        const coords = event.features[0].geometry.coordinates;
 
         // portNameに「港」や「桟橋」が含まれていない場合は「港」を追加
         const searchPortName = (portName.includes('港') || portName.includes('桟橋')) ? portName : `${portName}港`;
         const googleMapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(searchPortName)}`;
         const sidebarContent = buildPortSidebarContent(properties, googleMapsUrl);
 
+        setDrawerContext({ type: 'port', lat: coords[1], lng: coords[0], name: portName });
         window.showDetailDrawerWithPinClear(
             sidebarContent,
             portName,
@@ -610,4 +614,74 @@ export function toggleSuspendedRoutes(showSuspended) {
             }
         });
     });
+}
+
+/**
+ * URLクエリから航路/港湾のドロワーを復元する
+ */
+export async function initShareFromUrl() {
+    await restoreDrawerFromUrl(
+        // route: routeId と sourceId から復元
+        async (routeId, sourceId) => {
+            // キャッシュがなければデータだけ先にロード（レイヤーは追加しない）
+            if (!geoJsonDataCache[sourceId]) {
+                const cfg = ROUTE_LAYER_CONFIGS[sourceId];
+                if (!cfg) return;
+                geoJsonDataCache[sourceId] = await loadAndMergeData(cfg.geojsonPath, cfg.detailsPath, 'routeId');
+            }
+
+            const data = geoJsonDataCache[sourceId];
+            if (!data) return;
+
+            // routeId に一致する最初のフィーチャーからプロパティ取得（数値・文字列どちらにも対応）
+            const normalizedRouteId = isNaN(routeId) ? routeId : Number(routeId);
+            const feature = data.features.find(f => f.properties.routeId == normalizedRouteId);
+            if (!feature) return;
+            const properties = feature.properties;
+            const businessNameParts = splitBusinessName(properties.businessName);
+            const sidebarContent = buildSeaRouteSidebarContent(properties, sourceId);
+            setDrawerContext({ type: 'route', routeId, sourceId });
+            window.showDetailDrawerWithPinClear(
+                sidebarContent,
+                businessNameParts.primary,
+                businessNameParts.secondary
+            );
+            loadShipImageIntoDrawer(properties.shipName || null, properties.businessName || '');
+
+            // routeId に一致する全フィーチャーの座標からバウンドを計算して移動
+            const matchingFeatures = data.features.filter(f => f.properties.routeId == normalizedRouteId);
+            const bounds = calculateBounds(matchingFeatures);
+            if (bounds) {
+                const padding = calculateFitBoundsPadding();
+                map.fitBounds(
+                    [[bounds.minLng, bounds.minLat], [bounds.maxLng, bounds.maxLat]],
+                    { padding, duration: 1000 }
+                );
+            }
+        },
+        // port: lat/lng/name からマップを移動してドロワーを開く
+        async (lat, lng, name) => {
+            map.flyTo({ center: [lng, lat], zoom: 12, duration: 1000 });
+            // キャッシュがなければポートデータをロード
+            if (!geoJsonDataCache['geojson_port']) {
+                geoJsonDataCache['geojson_port'] = await loadData('./data/portData.geojson');
+            }
+            const portData = geoJsonDataCache['geojson_port'];
+            const feature = portData?.features.find(f =>
+                (f.properties.Name || f.properties.portName) === name
+            );
+            const properties = feature?.properties ?? { Name: name };
+            const searchPortName = (name.includes('港') || name.includes('桟橋')) ? name : `${name}港`;
+            const googleMapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(searchPortName)}`;
+            const sidebarContent = buildPortSidebarContent(properties, googleMapsUrl);
+            setDrawerContext({ type: 'port', lat, lng, name });
+            window.showDetailDrawerWithPinClear(sidebarContent, name, '港湾情報');
+        },
+        async (lat, lng) => {
+            map.flyTo({ center: [lng, lat], zoom: 14, duration: 1000 });
+            if (window.openCoordinateDrawer) {
+                window.openCoordinateDrawer(lat, lng);
+            }
+        }
+    );
 }

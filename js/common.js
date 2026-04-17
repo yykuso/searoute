@@ -1,7 +1,8 @@
 import layersControl from './layersControl.js';
 import hamburgerControl from './hamburgerControl.js';
 import { addRasterLayer } from './rasterLayers.js';
-import { addGeoJsonLayer, addMarker, addResetClickEvent, toggleSuspendedRoutes } from './geoJsonLayers.js';
+import { addGeoJsonLayer, addMarker, addResetClickEvent, toggleSuspendedRoutes, initShareFromUrl } from './geoJsonLayers.js';
+import { copyShareUrl, getShareQueryContext, setDrawerContext } from './utils/shareDrawer.js';
 import { showDetailDrawer } from './detailDrawer.js';
 import { initCenterZoom, setCookie, getCookie } from './cookieControl.js';
 import { showContextMenu, hideContextMenu } from './contextMenu.js';
@@ -156,11 +157,61 @@ function initMap() {
     // 既存のポップアップを削除するイベント
     addResetClickEvent();
 
-    // マップの初期化完了時にUI要素を表示
-    map.on('load', () => {
+    // マップの初期化完了時にUI要素を表示 & URLクエリからドロワーを復元
+    map.on('load', async () => {
         const detailDrawer = document.getElementById('detail-drawer');
         if (detailDrawer) detailDrawer.style.display = '';
+
+        await ensureSharedLayerEnabled();
+        await initShareFromUrl();
     });
+
+    // シェアボタンをグローバルに公開
+    window.copyDrawerShareUrl = copyShareUrl;
+}
+
+/**
+ * 共有 URL の対象レイヤーを事前に有効化する
+ */
+async function ensureSharedLayerEnabled() {
+    const shareContext = getShareQueryContext();
+    if (!shareContext) {
+        return;
+    }
+
+    const targetLayerId = shareContext.type === 'route'
+        ? shareContext.sourceId
+        : 'geojson_port';
+
+    if (!targetLayerId || currentLayer.includes(targetLayerId)) {
+        syncLayerControlState(targetLayerId, true);
+        return;
+    }
+
+    await addOverLayer(targetLayerId);
+    syncLayerControlState(targetLayerId, true);
+}
+
+/**
+ * レイヤーコントロールのチェック状態を同期する
+ * @param {string} layerId
+ * @param {boolean} checked
+ */
+function syncLayerControlState(layerId, checked) {
+    if (!layerId) {
+        return;
+    }
+
+    const input = document.getElementById(layerId);
+    if (!input) {
+        return;
+    }
+
+    input.checked = checked;
+    const layerItem = input.closest('.layer-item');
+    if (layerItem) {
+        layerItem.classList.toggle('checked', checked);
+    }
 }
 
 /**
@@ -325,19 +376,22 @@ export async function addOverLayer(layerId) {
         }
         addRasterLayer(mapStyleId);
     } else if (layerId.startsWith('geojson')) {
-        addGeoJsonLayer(layerId);
+        await addGeoJsonLayer(layerId);
     } else {
         console.log('[Error] Layer not found : addOverLayer( ' + layerId + ' )');
         return;
     }
 
     // 追加後の後処理
-    map.once('idle', () => {
-        currentLayer.push(layerId);
-        updateLayerOrder();
+    await new Promise((resolve) => {
+        map.once('idle', () => {
+            currentLayer.push(layerId);
+            updateLayerOrder();
 
-        // Cookieに保存
-        setCookie("currentLayer", currentLayer, 30);
+            // Cookieに保存
+            setCookie("currentLayer", currentLayer, 30);
+            resolve();
+        });
     });
 }
 
@@ -468,8 +522,61 @@ function addContextEvent() {
         removeLongPressMarker();
         showDetailDrawer(content, title, subtitle);
     }
+
+    function openCoordinateDrawer(latValue, lngValue) {
+        const lat = Number(latValue).toFixed(5);
+        const lng = Number(lngValue).toFixed(5);
+
+        removeLongPressMarker();
+        longPressMarker = new maplibregl.Marker({ color: 'red' })
+            .setLngLat([parseFloat(lng), parseFloat(lat)])
+            .addTo(map);
+
+        setDrawerContext({
+            type: 'coord',
+            lat: parseFloat(lat),
+            lng: parseFloat(lng),
+        });
+
+        const sidebarContent = `
+            <div class="mb-3">
+                <div style="height:4px; width:100%; background:#60a5fa; border-radius:6px;"></div>
+            </div>
+            <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
+                <h3 class="flex items-center justify-between text-xs font-semibold text-blue-600 w-24 min-w-[96px] text-center mr-2">
+                    <i class="fas fa-location-dot fa-fw mr-1 text-blue-500"></i><span class="mx-auto">住所</span>
+                </h3>
+                <span id="reverse-geocode-address" class="block text-xs text-gray-800 mt-1">取得中...</span></div>
+            </div>
+            <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
+                <h3 class="flex items-center justify-between text-xs font-semibold text-green-600 w-24 min-w-[96px] text-center mr-2">
+                    <i class="fas fa-map-location-dot fa-fw mr-1 text-green-500"></i><span class="mx-auto">リンク</span>
+                </h3>
+                <a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-gray-900 transition-all">ここをGoogleマップで開く</a>
+            </div>
+        `;
+
+        showDetailDrawer(sidebarContent, `${lat}, ${lng}`, '座標情報');
+
+        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=ja`)
+            .then(res => res.json())
+            .then(data => {
+                let addr = data.display_name || '住所情報なし';
+                if (addr && addr !== '住所情報なし') {
+                    addr = addr.split(',').map(s => s.trim()).reverse().join(' ');
+                }
+                const addrElem = document.getElementById('reverse-geocode-address');
+                if (addrElem) addrElem.textContent = addr;
+            })
+            .catch(() => {
+                const addrElem = document.getElementById('reverse-geocode-address');
+                if (addrElem) addrElem.textContent = '住所取得失敗';
+            });
+    }
+
     window.showDetailDrawerWithPinClear = showDetailDrawerWithPinClear;
     window.removeLongPressMarker = removeLongPressMarker;
+    window.openCoordinateDrawer = openCoordinateDrawer;
 
     // PC: 右クリックでカスタムメニュー
     mapDiv.addEventListener('contextmenu', (e) => {
@@ -488,50 +595,7 @@ function addContextEvent() {
                 const touch = e.touches[0];
                 if (window.map && typeof map.unproject === 'function') {
                     const point = map.unproject([touch.clientX, touch.clientY]);
-                    const lat = point.lat.toFixed(5);
-                    const lng = point.lng.toFixed(5);
-                    removeLongPressMarker(); // 直前のピンを消す
-                    longPressMarker = new maplibregl.Marker({ color: 'red' })
-                        .setLngLat([parseFloat(lng), parseFloat(lat)])
-                        .addTo(map);
-                    const sidebarContent = `
-                        <div class="mb-3">
-                            <div style="height:4px; width:100%; background:#60a5fa; border-radius:6px;"></div>
-                        </div>
-                        <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
-                            <h3 class="flex items-center justify-between text-xs font-semibold text-blue-600 w-24 min-w-[96px] text-center mr-2">
-                                <i class="fas fa-location-dot fa-fw mr-1 text-blue-500"></i><span class="mx-auto">住所</span>
-                            </h3>
-                            <span id="reverse-geocode-address" class="block text-xs text-gray-800 mt-1">取得中...</span></div>
-                        </div>
-                        <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
-                            <h3 class="flex items-center justify-between text-xs font-semibold text-green-600 w-24 min-w-[96px] text-center mr-2">
-                                <i class="fas fa-map-location-dot fa-fw mr-1 text-green-500"></i><span class="mx-auto">リンク</span>
-                            </h3>
-                            <a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-gray-900 transition-all">ここをGoogleマップで開く</a>
-                        </div>
-                    `;
-                    showDetailDrawer(
-                        sidebarContent,
-                        `${lat}, ${lng}`,
-                        '座標情報'
-                    );
-                // 逆ジオコーディングで住所取得
-                fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=ja`)
-                    .then(res => res.json())
-                    .then(data => {
-                        let addr = data.display_name || '住所情報なし';
-                        // カンマ区切りを逆順にして日本式に
-                        if (addr && addr !== '住所情報なし') {
-                            addr = addr.split(',').map(s => s.trim()).reverse().join(' ');
-                        }
-                        const addrElem = document.getElementById('reverse-geocode-address');
-                        if (addrElem) addrElem.textContent = addr;
-                    })
-                    .catch(() => {
-                        const addrElem = document.getElementById('reverse-geocode-address');
-                        if (addrElem) addrElem.textContent = '住所取得失敗';
-                    });
+                    openCoordinateDrawer(point.lat, point.lng);
                 }
             }
         }, 700);

@@ -165,12 +165,19 @@
   <div id="detail-drawer" class="fixed z-50 bg-white shadow-xl border-slate-200 border transition-transform duration-300 ease-in-out w-full max-h-[30vh] left-0 bottom-0 rounded-t-2xl p-4 md:top-0 md:left-0 md:bottom-0 md:w-96 md:max-h-full md:rounded-none md:rounded-r-2xl md:p-6 translate-y-full md:translate-y-0 md:-translate-x-full overflow-y-auto touch-pan-y" style="display:none;">
     <div id="sidebar-grip" class="mx-auto mt-2 mb-1 h-1 w-12 rounded-full bg-slate-300 md:hidden cursor-ns-resize"></div>
     <div class="flex items-center justify-between mx-4 mb-2">
-      <h2 id="detail-drawer-title" class="text-lg font-bold text-sky-700 break-words max-w-[calc(100%-3rem)] leading-tight">詳細情報</h2>
-      <button id="detail-drawer-close-btn" aria-label="詳細情報を閉じる" class="self-start text-slate-400 hover:text-slate-700 text-2xl font-bold focus:outline-none">
+      <h2 id="detail-drawer-title" class="text-lg font-bold text-sky-700 break-words max-w-[calc(100%-5rem)] leading-tight">詳細情報</h2>
+      <div class="flex items-center gap-2">
+        <button id="detail-drawer-share-btn" aria-label="URLをコピーして共有" class="self-start text-slate-400 hover:text-slate-700 text-2xl font-bold focus:outline-none" onclick="window.copyDrawerShareUrl()">
+          <span class="bg-slate-200 hover:bg-slate-300 w-8 h-8 flex items-center justify-center rounded-full p-0 transition-colors">
+            <i class="fa-solid fa-share-nodes text-base cursor-pointer"></i>
+          </span>
+        </button>
+        <button id="detail-drawer-close-btn" aria-label="詳細情報を閉じる" class="self-start text-slate-400 hover:text-slate-700 text-2xl font-bold focus:outline-none">
         <span class="bg-slate-200 hover:bg-slate-300 w-8 h-8 flex items-center justify-center rounded-full p-0 transition-colors">
           <i class="fa-solid fa-xmark cursor-pointer"></i>
         </span>
       </button>
+      </div>
     </div>
     <div id="detail-drawer-content" class="text-sm text-slate-700 space-y-2" style="overscroll-behavior:none"></div>
   </div>
