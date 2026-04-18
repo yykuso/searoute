@@ -2,3 +2,4 @@
 *.qmd
 *.back
 .vscode
+node_modules/

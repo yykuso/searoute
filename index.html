@@ -58,6 +58,9 @@
   }
   </script>
 
+  <link rel="preload" href="./data/seaRoute.geojson" as="fetch" crossorigin="anonymous">
+  <link rel="preload" href="./data/seaRouteDetails.json" as="fetch" crossorigin="anonymous">
+
   <!-- Google Analytics は Cookie 同意後に動的読み込み -->
 
   <script src="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.js" defer></script>
@@ -84,7 +87,7 @@
     }
   </style>
 
-  <script src="https://unpkg.com/@tailwindcss/browser@4" defer></script>
+  <link rel="stylesheet" href="./css/tailwind.css" media="print" onload="this.media='all'" />
 
   <link href="./css/common.css" rel="stylesheet" media="print" onload="this.media='all'" />
 
@@ -188,7 +191,7 @@
   </div>
 
   <div style="position: absolute; left: -9999px; top: -9999px;">
-    <img src="https://searoute.info/img/banner.png" alt="おでかけ航路マップのサムネイル">
+    <img src="https://searoute.info/img/banner.png" alt="おでかけ航路マップのサムネイル" width="1200" height="630">
   </div>
 
   <!-- Cookie通知バナー -->

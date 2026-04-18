@@ -60,7 +60,7 @@ export async function loadShipImageIntoDrawer(shipName, businessName) {
         if (result) {
             const pageUrl = `https://ja.wikipedia.org/wiki/${encodeURIComponent(result.title)}`;
             container.innerHTML = `
-                <img src="${result.src}" alt="${result.title}" class="rounded w-full object-cover max-h-36">
+                <img src="${result.src}" alt="${result.title}" class="rounded w-full object-cover max-h-36" width="400" height="400">
                 <a href="${pageUrl}" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-400 mt-0.5 truncate block text-right underline hover:text-blue-500 transition-colors">${result.title} - Wikipedia</a>
             `;
         }

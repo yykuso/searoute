@@ -15,9 +15,32 @@
 ## 技術スタック
 
 - **地図ライブラリ**: MapLibre GL JS
-- **スタイリング**: Tailwind CSS
+- **スタイリング**: Tailwind CSS（ビルド済み静的CSS）
 - **フレームワーク**: Vanilla JavaScript (フレームワークレス)
 - **ホスティング**: GitHub Pages
+
+## セットアップ & 開発
+
+### インストール
+
+```bash
+# 依存パッケージのインストール
+npm install
+```
+
+### Tailwind CSS のビルド
+
+本プロジェクトは Tailwind CSS を静的ビルド済みで運用しています。HTMLやJSファイルのクラスを変更した場合は、以下を実行してください：
+
+```bash
+# 一回のビルド
+npm run build:css
+
+# 開発中（自動再ビルド）
+npm run watch:css
+```
+
+ビルドされたCSSは `css/tailwind.css` に出力されます。
 
 ## データソース
 
