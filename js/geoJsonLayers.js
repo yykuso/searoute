@@ -1,3 +1,14 @@
+/**
+ * GeoJSONレイヤー管理モジュール
+ *
+ * 責務:
+ * - 航路・港湾データのGeoJSONレイヤーの追加・描画
+ * - マーカー画像の読み込みと管理
+ * - GeoJSONレイヤーのクリックイベント処理
+ * - ズーム・ハイライト機能の実装
+ * - 運休中の航路表示切り替え
+ */
+
 import { loadData, loadAndMergeData } from './dataLoader.js';
 import { loadShipImageIntoDrawer } from './utils/wikipediaImage.js';
 import { setDrawerContext, restoreDrawerFromUrl } from './utils/shareDrawer.js';

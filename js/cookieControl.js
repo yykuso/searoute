@@ -1,4 +1,13 @@
 
+/**
+ * Cookie管理モジュール
+ *
+ * 責務:
+ * - Cookie の読み書き（GET/SET）
+ * - マップの中心座標・ズームレベルの永続化
+ * - ユーザー設定（選択したレイヤーなど）の保存
+ */
+
 export function initCenterZoom() {
     // デフォルト設定
     const defaultCenter = [136.2923, 35.3622];

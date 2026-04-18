@@ -1,3 +1,12 @@
+/**
+ * 右クリックコンテキストメニューモジュール
+ *
+ * 責務:
+ * - 地図上で右クリック時のメニュー表示
+ * - 座標コピー・Google Maps リンク生成
+ * - メニューの表示・非表示制御
+ */
+
 import { setupOutsideClickListener } from './utils/outsideClickHandler.js';
 
 // キャッシュ用の要素参照

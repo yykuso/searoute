@@ -9,6 +9,13 @@
  * @param {Array} defaultLayer - デフォルトで表示するレイヤーのリスト
  * @param {Function} isIdInLayer - レイヤーが含まれているかチェックする関数
  * @returns {Object} レイヤー設定オブジェクト
+ *//**
+ * レイヤー設定管理モジュール
+ *
+ * 責序:
+ * - レイヤーメタデータの定義と取得
+ * - レイヤーのアイコン、名前、可視性設定
+ * - UI上での表示順序とグループ分け
  */
 export function createLayersConfig(mapStyle, defaultLayer, isIdInLayer) {
     return {

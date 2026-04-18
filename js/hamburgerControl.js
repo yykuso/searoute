@@ -1,3 +1,12 @@
+/**
+ * ハンバーガーメニューUIコントロール
+ *
+ * 責務:
+ * - サイト情報・設定パネルの開閉ボタン
+ * - マップコントロール左上に配置
+ * - モバイル向けナビゲーションメニュー
+ */
+
 import { setupOutsideClickListener } from './utils/outsideClickHandler.js';
 
 export default class hamburgerControl {

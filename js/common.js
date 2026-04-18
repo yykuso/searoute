@@ -1,3 +1,14 @@
+/**
+ * メインアプリケーションモジュール
+ *
+ * 責務:
+ * - MapLibre GL の初期化とマップの基本制御
+ * - 背景地図（ベースマップ）の切り替え
+ * - レイヤーの追加・削除・順序管理
+ * - グローバルマップインスタンスの管理
+ * - UI制御システムの初期化
+ */
+
 import layersControl from './layersControl.js';
 import hamburgerControl from './hamburgerControl.js';
 import { addRasterLayer } from './rasterLayers.js';
