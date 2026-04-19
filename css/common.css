@@ -56,6 +56,14 @@ body {
   bottom: 0;
   right: 0;
   left: 0;
+  /*
+   * iOS Safari では長押し時にコールアウト（リンクプレビュー・テキスト選択）が
+   * 表示されようとして touchcancel が発火し、長押し検出がキャンセルされる。
+   * これらを無効化することで 700ms の長押しタイマーを正常に完走させる。
+   */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* PWA（Progressive Web App）対応

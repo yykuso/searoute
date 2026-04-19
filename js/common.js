@@ -164,22 +164,21 @@ function initMap() {
     // 既存のポップアップを削除するイベント
     addResetClickEvent();
 
+    // 長押し・右クリックのイベントをマップ初期化直後に登録する。
+    // map.on('load') や requestIdleCallback で遅延させると iOS Safari では
+    // タッチリスナー登録前にタップされた際に発火しないため、ここで即時登録する。
+    addContextEvent();
+
     // マップの初期化完了時にUI要素を表示 & URLクエリからドロワーを復元
     map.on('load', async () => {
         const detailDrawer = document.getElementById('detail-drawer');
         if (detailDrawer) detailDrawer.style.display = '';
 
-        // ジオコーダーとコンテキストメニューを requestIdleCallback で遅延
-        if (requestIdleCallback) {
-            requestIdleCallback(() => {
-                map.addControl(addGeocoderControl(), 'top-left');
-                addContextEvent();
-            });
+        // ジオコーダーは初期表示に不要なため requestIdleCallback で遅延登録する
+        if (typeof requestIdleCallback === 'function') {
+            requestIdleCallback(() => map.addControl(addGeocoderControl(), 'top-left'));
         } else {
-            setTimeout(() => {
-                map.addControl(addGeocoderControl(), 'top-left');
-                addContextEvent();
-            }, 100);
+            setTimeout(() => map.addControl(addGeocoderControl(), 'top-left'), 100);
         }
 
         await ensureSharedLayerEnabled();
@@ -521,21 +520,27 @@ function addMoveEndEvent(){
 }
 
 /**
- * コンテキストメニューイベントを追加する関数
- * 右クリックまたは長押しでコンテキストメニューを表示する
+ * 長押し・右クリックのインタラクションを登録する
+ *
+ * iOS Safari の制約:
+ * - TouchEvent はイベントプールで再利用されるため、コールバック内で
+ *   e.touches[0] を参照できない → touchstart 時点で座標を退避する
+ * - 長押しすると iOS が touchcancel を発火してコールアウトを表示しようとする
+ *   → CSS で `-webkit-touch-callout: none` を #map に付与して抑制する
+ * - map.on('load') 以降に登録すると読み込み直後のタップに間に合わない
+ *   → initMap() から直接呼び出して即時登録する
  */
 function addContextEvent() {
     const mapDiv = document.getElementById('map');
-    let touchTimeout = null;
-    let isDragging = false;
-    // --- モバイル長押しピン用グローバル変数と関数 ---
+
+    // --- 長押しピンの管理 ---
     let longPressMarker = null;
+
     function removeLongPressMarker() {
-        if (longPressMarker) {
-            longPressMarker.remove();
-            longPressMarker = null;
-        }
+        longPressMarker?.remove();
+        longPressMarker = null;
     }
+
     function showDetailDrawerWithPinClear(content, title, subtitle) {
         removeLongPressMarker();
         showDetailDrawer(content, title, subtitle);
@@ -550,11 +555,7 @@ function addContextEvent() {
             .setLngLat([parseFloat(lng), parseFloat(lat)])
             .addTo(map);
 
-        setDrawerContext({
-            type: 'coord',
-            lat: parseFloat(lat),
-            lng: parseFloat(lng),
-        });
+        setDrawerContext({ type: 'coord', lat: parseFloat(lat), lng: parseFloat(lng) });
 
         const sidebarContent = `
             <div class="mb-3">
@@ -592,40 +593,56 @@ function addContextEvent() {
             });
     }
 
+    // geoJsonLayers.js 内のクリックハンドラーから参照されるためグローバルに公開する
     window.showDetailDrawerWithPinClear = showDetailDrawerWithPinClear;
     window.removeLongPressMarker = removeLongPressMarker;
     window.openCoordinateDrawer = openCoordinateDrawer;
 
-    // PC: 右クリックでカスタムメニュー
+    // PC: 右クリックでコンテキストメニュー
     mapDiv.addEventListener('contextmenu', (e) => {
-        if (window.matchMedia('(pointer: coarse)').matches) return; // モバイルは無視
+        if (window.matchMedia('(pointer: coarse)').matches) return;
         e.preventDefault();
         showContextMenu(e.clientX, e.clientY, map);
     });
 
-    // モバイル: 長押しでDrawer
+    // モバイル: 長押し（700ms）で座標ドロワーを表示
+    const LONG_PRESS_MS = 700;
+    const DRAG_THRESHOLD_PX = 10;
+    let touchTimeout = null;
+    let isDragging = false;
+    let touchStartX = 0;
+    let touchStartY = 0;
+
     mapDiv.addEventListener('touchstart', (e) => {
-        if (!window.matchMedia('(pointer: coarse)').matches) return; // モバイルのみ
+        if (!window.matchMedia('(pointer: coarse)').matches) return;
         if (e.touches.length !== 1) return;
         isDragging = false;
+        // iOS の TouchEvent はプールで再利用されるため、コールバック内では
+        // e.touches[0] が空になっている。座標をここで変数に退避する。
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
         touchTimeout = setTimeout(() => {
             if (!isDragging) {
-                const touch = e.touches[0];
-                if (window.map && typeof map.unproject === 'function') {
-                    const point = map.unproject([touch.clientX, touch.clientY]);
-                    openCoordinateDrawer(point.lat, point.lng);
-                }
+                const point = map.unproject([touchStartX, touchStartY]);
+                openCoordinateDrawer(point.lat, point.lng);
             }
-        }, 700);
-    });
-    mapDiv.addEventListener('touchmove', () => {
-        isDragging = true;
-        clearTimeout(touchTimeout);
-    });
-    mapDiv.addEventListener('touchend', () => {
-        clearTimeout(touchTimeout);
-    });
-    // Drawerを閉じたらピンを消す
+        }, LONG_PRESS_MS);
+    }, { passive: true });
+
+    mapDiv.addEventListener('touchmove', (e) => {
+        if (isDragging) return;
+        const dx = e.touches[0].clientX - touchStartX;
+        const dy = e.touches[0].clientY - touchStartY;
+        if (Math.sqrt(dx * dx + dy * dy) > DRAG_THRESHOLD_PX) {
+            isDragging = true;
+            clearTimeout(touchTimeout);
+        }
+    }, { passive: true });
+
+    mapDiv.addEventListener('touchend',   () => clearTimeout(touchTimeout), { passive: true });
+    mapDiv.addEventListener('touchcancel', () => clearTimeout(touchTimeout), { passive: true });
+
+    // ドロワーを閉じたらピンも削除する
     document.getElementById('detail-drawer-close-btn').addEventListener('click', removeLongPressMarker);
 }
 
