@@ -92,7 +92,7 @@ export function createDrawerSection(options) {
 
     return `
         <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
-            <h3 class="flex items-center justify-between text-xs font-semibold ${titleColorClass} w-24 min-w-[96px] text-center mr-2">
+            <h3 class="flex items-center justify-between text-xs font-semibold ${titleColorClass} w-24 min-w-24 text-center mr-2">
                 <i class="${iconClass} fa-fw mr-1 ${iconColorClass}"></i><span class="mx-auto">${title}</span>
             </h3>
             ${body}

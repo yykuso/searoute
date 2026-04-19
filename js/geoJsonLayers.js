@@ -33,6 +33,20 @@ let showSuspendedRoutes = true;
 // GeoJSONデータのキャッシュ
 const geoJsonDataCache = {};
 
+// detail-drawer のサイズキャッシュ（ResizeObserver で更新）
+const drawerSizeCache = { width: 0, height: 0 };
+{
+    const drawerEl = document.getElementById('detail-drawer');
+    if (drawerEl) {
+        const ro = new ResizeObserver(entries => {
+            const entry = entries[0];
+            drawerSizeCache.width = entry.contentRect.width;
+            drawerSizeCache.height = entry.contentRect.height;
+        });
+        ro.observe(drawerEl);
+    }
+}
+
 /**
  * GeoJsonLayerを追加する関数
  * @param {string} id - GeoJsonのID
@@ -444,11 +458,9 @@ function calculateFitBoundsPadding() {
     const detailDrawer = document.getElementById('detail-drawer');
     if (detailDrawer && !detailDrawer.classList.contains('hidden')) {
         if (window.innerWidth >= 768) {
-            const drawerWidth = detailDrawer.offsetWidth;
-            padding.left = drawerWidth + 30;
+            padding.left = drawerSizeCache.width + 30;
         } else {
-            const drawerHeight = detailDrawer.offsetHeight;
-            padding.bottom = drawerHeight + 30;
+            padding.bottom = drawerSizeCache.height + 30;
         }
     }
 

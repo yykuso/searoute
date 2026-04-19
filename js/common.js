@@ -157,13 +157,9 @@ function initMap() {
     map.addControl(new maplibregl.GeolocateControl(), 'bottom-right');
     map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
     map.addControl(new hamburgerControl(), 'top-right');
-    map.addControl(addGeocoderControl(), 'top-left');
 
     // 画面移動後の処理
     addMoveEndEvent();
-
-    // コンテキストメニューイベントの追加
-    addContextEvent();
 
     // 既存のポップアップを削除するイベント
     addResetClickEvent();
@@ -172,6 +168,19 @@ function initMap() {
     map.on('load', async () => {
         const detailDrawer = document.getElementById('detail-drawer');
         if (detailDrawer) detailDrawer.style.display = '';
+
+        // ジオコーダーとコンテキストメニューを requestIdleCallback で遅延
+        if (requestIdleCallback) {
+            requestIdleCallback(() => {
+                map.addControl(addGeocoderControl(), 'top-left');
+                addContextEvent();
+            });
+        } else {
+            setTimeout(() => {
+                map.addControl(addGeocoderControl(), 'top-left');
+                addContextEvent();
+            }, 100);
+        }
 
         await ensureSharedLayerEnabled();
         await initShareFromUrl();
@@ -552,13 +561,13 @@ function addContextEvent() {
                 <div style="height:4px; width:100%; background:#60a5fa; border-radius:6px;"></div>
             </div>
             <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
-                <h3 class="flex items-center justify-between text-xs font-semibold text-blue-600 w-24 min-w-[96px] text-center mr-2">
+                <h3 class="flex items-center justify-between text-xs font-semibold text-blue-600 w-24 min-w-24 text-center mr-2">
                     <i class="fas fa-location-dot fa-fw mr-1 text-blue-500"></i><span class="mx-auto">住所</span>
                 </h3>
                 <span id="reverse-geocode-address" class="block text-xs text-gray-800 mt-1">取得中...</span></div>
             </div>
             <div class="mb-3 pb-2 border-b border-slate-200 flex items-center">
-                <h3 class="flex items-center justify-between text-xs font-semibold text-green-600 w-24 min-w-[96px] text-center mr-2">
+                <h3 class="flex items-center justify-between text-xs font-semibold text-green-600 w-24 min-w-24 text-center mr-2">
                     <i class="fas fa-map-location-dot fa-fw mr-1 text-green-500"></i><span class="mx-auto">リンク</span>
                 </h3>
                 <a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-gray-900 transition-all">ここをGoogleマップで開く</a>

@@ -61,14 +61,40 @@
   <link rel="preload" href="./data/seaRoute.geojson" as="fetch" crossorigin="anonymous">
   <link rel="preload" href="./data/seaRouteDetails.json" as="fetch" crossorigin="anonymous">
 
-  <!-- Google Analytics は Cookie 同意後に動的読み込み -->
+  <!-- JS モジュール連鎖を並列化 -->
+  <link rel="modulepreload" href="./js/common.js">
+  <link rel="modulepreload" href="./js/detailDrawer.js">
+  <link rel="modulepreload" href="./js/geoJsonLayers.js">
+  <link rel="modulepreload" href="./js/layersControl.js">
+  <link rel="modulepreload" href="./js/hamburgerControl.js">
+  <link rel="modulepreload" href="./js/rasterLayers.js">
+  <link rel="modulepreload" href="./js/cookieControl.js">
+  <link rel="modulepreload" href="./js/contextMenu.js">
+  <link rel="modulepreload" href="./js/layerConfig.js">
+  <link rel="modulepreload" href="./js/dataLoader.js">
+  <link rel="modulepreload" href="./js/utils/drawerHelpers.js">
+  <link rel="modulepreload" href="./js/utils/wikipediaImage.js">
+  <link rel="modulepreload" href="./js/utils/outsideClickHandler.js">
+  <link rel="modulepreload" href="./js/utils/shareDrawer.js">
 
-  <script src="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.js" defer></script>
-  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.css"
+  <!-- フォントを早期に取得 -->
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+  <!-- マップスタイルを早期に取得 -->
+  <link rel="preload" href="./style/osm-bright-style.json" as="fetch" crossorigin="anonymous">
+  <link rel="preload" href="./style/empty.json" as="fetch" crossorigin="anonymous">
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.1/dist/maplibre-gl.js" defer></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.1/dist/maplibre-gl.css"
     crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
 
-  <script src="https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.9.0/dist/maplibre-gl-geocoder.js" defer></script>
-  <link rel="stylesheet" href="https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.9.0/dist/maplibre-gl-geocoder.css"
+  <script src="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-geocoder@1.9.0/dist/maplibre-gl-geocoder.min.js" defer></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-geocoder@1.9.0/dist/maplibre-gl-geocoder.css"
     crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
@@ -84,6 +110,35 @@
       font-weight: 900;
       font-display: swap;
       src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Font Awesome 6 Brands';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2') format('woff2');
+    }
+
+    /* MapLibre コントロールの初期位置を確保して CLS を防止 */
+    .maplibregl-ctrl-top-left,
+    .maplibregl-ctrl-top-right {
+      top: env(safe-area-inset-top);
+    }
+    .maplibregl-ctrl-bottom-left,
+    .maplibregl-ctrl-bottom-right {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .maplibregl-ctrl-top-left,
+    .maplibregl-ctrl-bottom-left {
+      left: env(safe-area-inset-left);
+    }
+    .maplibregl-ctrl-top-right,
+    .maplibregl-ctrl-bottom-right {
+      right: env(safe-area-inset-right);
+    }
+    /* ジオコーダーの幅を事前確保 */
+    .maplibregl-ctrl-geocoder {
+      min-width: 200px;
     }
   </style>
 
@@ -153,7 +208,7 @@
         </div>
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" id="suspend-route-toggle" class="sr-only peer" checked>
-          <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-sky-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-600"></div>
+          <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-sky-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-600"></div>
         </label>
       </div>
     </div>
@@ -168,7 +223,7 @@
   <div id="detail-drawer" class="fixed z-50 bg-white shadow-xl border-slate-200 border transition-transform duration-300 ease-in-out w-full max-h-[30vh] left-0 bottom-0 rounded-t-2xl p-4 md:top-0 md:left-0 md:bottom-0 md:w-96 md:max-h-full md:rounded-none md:rounded-r-2xl md:p-6 translate-y-full md:translate-y-0 md:-translate-x-full overflow-y-auto touch-pan-y" style="display:none;">
     <div id="sidebar-grip" class="mx-auto mt-2 mb-1 h-1 w-12 rounded-full bg-slate-300 md:hidden cursor-ns-resize"></div>
     <div class="flex items-center justify-between mx-4 mb-2">
-      <h2 id="detail-drawer-title" class="text-lg font-bold text-sky-700 break-words max-w-[calc(100%-5rem)] leading-tight">詳細情報</h2>
+      <h2 id="detail-drawer-title" class="text-lg font-bold text-sky-700 wrap-break-word max-w-[calc(100%-5rem)] leading-tight">詳細情報</h2>
       <div class="flex items-center gap-2">
         <button id="detail-drawer-share-btn" aria-label="URLをコピーして共有" class="self-start text-slate-400 hover:text-slate-700 text-2xl font-bold focus:outline-none" onclick="window.copyDrawerShareUrl()">
           <span class="bg-slate-200 hover:bg-slate-300 w-8 h-8 flex items-center justify-center rounded-full p-0 transition-colors">
