@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+	<link rel="icon" type="image/x-icon" href="./img/favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="./img/icon.svg" />
+  <link rel="icon" type="image/png" sizes="16x16" href="./img/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon.png" />
+
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#3c92cf">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="航路マップ">
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="email=no,telephone=no,address=no">
+
+  <title>おでかけ航路マップ | 日本全国の旅客船・フェリー航路情報と時刻表リンク</title>
+  <meta name="description" content="日本全国の旅客船・フェリー航路情報を地図で探せるサイト。時刻表や公式サイトへのリンクも充実、旅行計画に便利。" />
+
+  <meta property="og:url" content="https://searoute.info/" />
+  <meta property="og:title" content="おでかけ航路マップ | 日本全国の旅客船・フェリー航路情報と時刻表リンク" />
+  <meta property="og:type" content="website" />
+  <meta property="og:description" content="日本全国の旅客船・フェリー航路情報を地図で探せるサイト。時刻表や公式サイトへのリンクも充実、旅行計画に便利。" />
+  <meta property="og:image" content="https://searoute.info/img/banner.png" />
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@yy_kuso" />
+  <meta name="twitter:creator" content="@yy_kuso" />
+  <meta name="twitter:title" content="おでかけ航路マップ | 日本全国の旅客船・フェリー航路情報と時刻表リンク" />
+  <meta name="twitter:description" content="日本全国の旅客船・フェリー航路情報を地図で探せるサイト。時刻表や公式サイトへのリンクも充実、旅行計画に便利。" />
+  <meta name="twitter:image" content="https://searoute.info/img/twbanner.png" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "おでかけ航路マップ",
+    "url": "https://searoute.info/",
+    "description": "日本全国の旅客船・フェリー航路情報を地図で探せるサイト。時刻表や公式サイトへのリンクも充実、旅行計画に便利。",
+    "inLanguage": "ja",
+    "publisher": {
+      "@type": "Person",
+      "name": "yy_kuso",
+      "url": "https://x.com/yy_kuso"
+    },
+    "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://searoute.info/img/banner.png",
+      "width": 1200,
+      "height": 630
+    }
+  }
+  </script>
+
+  <!-- JS モジュール連鎖を並列化 -->
+  <link rel="modulepreload" href="./js/common.js">
+  <link rel="modulepreload" href="./js/detailDrawer.js">
+  <link rel="modulepreload" href="./js/geoJsonLayers.js">
+  <link rel="modulepreload" href="./js/layersControl.js">
+  <link rel="modulepreload" href="./js/hamburgerControl.js">
+  <link rel="modulepreload" href="./js/rasterLayers.js">
+  <link rel="modulepreload" href="./js/cookieControl.js">
+  <link rel="modulepreload" href="./js/contextMenu.js">
+  <link rel="modulepreload" href="./js/layerConfig.js">
+  <link rel="modulepreload" href="./js/dataLoader.js">
+  <link rel="modulepreload" href="./js/utils/drawerHelpers.js">
+  <link rel="modulepreload" href="./js/utils/wikipediaImage.js">
+  <link rel="modulepreload" href="./js/utils/outsideClickHandler.js">
+  <link rel="modulepreload" href="./js/utils/shareDrawer.js">
+
+  <!-- フォントを早期に取得 -->
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.1/dist/maplibre-gl.js" defer></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.1/dist/maplibre-gl.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-geocoder@1.9.0/dist/maplibre-gl-geocoder.min.js" defer></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-geocoder@1.9.0/dist/maplibre-gl-geocoder.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+  <style>
+    @font-face {
+      font-family: 'Font Awesome 6 Free';
+      font-style: normal;
+      font-weight: 900;
+      font-display: swap;
+      src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Font Awesome 6 Brands';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2') format('woff2');
+    }
+
+    /* MapLibre コントロールの初期位置を確保して CLS を防止 */
+    .maplibregl-ctrl-top-left,
+    .maplibregl-ctrl-top-right {
+      top: env(safe-area-inset-top);
+    }
+    .maplibregl-ctrl-bottom-left,
+    .maplibregl-ctrl-bottom-right {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .maplibregl-ctrl-top-left,
+    .maplibregl-ctrl-bottom-left {
+      left: env(safe-area-inset-left);
+    }
+    .maplibregl-ctrl-top-right,
+    .maplibregl-ctrl-bottom-right {
+      right: env(safe-area-inset-right);
+    }
+    /* ジオコーダーの幅を事前確保 */
+    .maplibregl-ctrl-geocoder {
+      min-width: 200px;
+    }
+  </style>
+
+  <link rel="stylesheet" href="./css/tailwind.css" media="print" onload="this.media='all'" />
+
+  <link href="./css/common.css" rel="stylesheet" media="print" onload="this.media='all'" />
+
+</head>
+<body>
+  <noscript>
+    <div class="noscript-warning">
+      このサイトはJavaScriptが有効でないと正しく動作しません。<br>
+      ブラウザの設定でJavaScriptを有効にしてください。
+    </div>
+  </noscript>
+  <div id="loading"></div>
+  <h1>おでかけ航路マップ</h1>
+  <div id="map"></div>
+  <div class="safe-bottom-blocker"></div>
+
+  <div id="info-window" class="text-xs" style="display:none;">
+    <h2 class="heading-tag">サイト情報</h2>
+    <div class="mb-4 space-y-4 text-slate-600 p-2">
+      <p>
+        このサイトは、公共交通による旅を愛する一人の開発者が、「もっと気軽に、直感的に航路情報を探せたら」という想いから生まれました。<br />
+        日本各地の航路を地図上に集約し、視覚的にわかりやすく表示することで、「地図から航路を探す」「航路から旅のヒントを得る」体験を提供します。
+      <p>
+      </p>
+        海に囲まれたこの国の旅を、もっと自由に、もっと身近に。次の旅のお供になれば幸いです。
+      </p>
+      <p>
+        ご意見・ご不明な点などありましたら、
+        <a href="https://x.com/yy_kuso" id="twitter-link" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline">
+          <i class="fa-brands fa-twitter"></i> Twitter
+        </a>
+        までご連絡ください。
+      </p>
+    </div>
+
+    <h2 class="heading-tag">免責事項</h2>
+    <div class="mb-4 space-y-4 text-slate-600 p-2">
+      <p>
+        情報の正確性には努めていますが、内容の保証はできません。
+        詳細や最新情報は必ず公式サイト等でご確認ください。<br />
+        なお、本サイトの情報利用による損害等について、運営者は一切責任を負いません。
+      </p>
+    </div>
+
+    <div class="mt-4 space-y-3">
+      <a href="https://www.amazon.co.jp/hz/wishlist/ls/KF9GONGN9M1K" id="wishlist-link" target="_blank" rel="noopener noreferrer" class="group w-full flex items-center justify-center rounded-lg bg-amber-100 py-3 px-4 font-bold text-amber-800 shadow-sm transition-all hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 active:scale-95">
+        <i class="fa-solid fa-gift mr-3 text-amber-500 group-hover:scale-110 transition-transform"></i>
+        運営の励みになります（ほしいものリスト）
+      </a>
+      <button id="info-close-btn" class="w-full rounded-lg bg-sky-600 py-3 px-4 font-bold text-white shadow-md transition-all hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 active:scale-95">
+        閉じる
+      </button>
+    </div>
+  </div>
+
+  <div id="settings-window" class="text-xs" style="display:none;">
+    <h2 class="heading-tag">設定</h2>
+    <div class="mb-4 space-y-4 text-slate-600 p-2">
+      <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+        <div>
+          <p class="font-medium text-slate-700">休止中航路の表示</p>
+          <p class="text-xs text-slate-500">運休・休止中の航路を地図に表示するかを設定できます</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="suspend-route-toggle" class="sr-only peer" checked>
+          <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-sky-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-600"></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="mt-4 space-y-3">
+      <button id="settings-close-btn" class="w-full rounded-lg bg-sky-600 py-3 px-4 font-bold text-white shadow-md transition-all hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 active:scale-95">
+        閉じる
+      </button>
+    </div>
+  </div>
+
+  <div id="detail-drawer" class="fixed z-50 bg-white shadow-xl border-slate-200 border transition-transform duration-300 ease-in-out w-full max-h-[30vh] left-0 bottom-0 rounded-t-2xl p-4 md:top-0 md:left-0 md:bottom-0 md:w-96 md:max-h-full md:rounded-none md:rounded-r-2xl md:p-6 translate-y-full md:translate-y-0 md:-translate-x-full overflow-y-auto touch-pan-y" style="display:none;">
+    <div id="sidebar-grip" class="mx-auto mt-2 mb-1 h-1 w-12 rounded-full bg-slate-300 md:hidden cursor-ns-resize"></div>
+    <div class="flex items-center justify-between mx-4 mb-2">
+      <h2 id="detail-drawer-title" class="text-lg font-bold text-sky-700 wrap-break-word max-w-[calc(100%-5rem)] leading-tight">詳細情報</h2>
+      <div class="flex items-center gap-2">
+        <button id="detail-drawer-share-btn" aria-label="URLをコピーして共有" class="self-start text-slate-400 hover:text-slate-700 text-2xl font-bold focus:outline-none" onclick="window.copyDrawerShareUrl()">
+          <span class="bg-slate-200 hover:bg-slate-300 w-8 h-8 flex items-center justify-center rounded-full p-0 transition-colors">
+            <i class="fa-solid fa-share-nodes text-base cursor-pointer"></i>
+          </span>
+        </button>
+        <button id="detail-drawer-close-btn" aria-label="詳細情報を閉じる" class="self-start text-slate-400 hover:text-slate-700 text-2xl font-bold focus:outline-none">
+        <span class="bg-slate-200 hover:bg-slate-300 w-8 h-8 flex items-center justify-center rounded-full p-0 transition-colors">
+          <i class="fa-solid fa-xmark cursor-pointer"></i>
+        </span>
+      </button>
+      </div>
+    </div>
+    <div id="detail-drawer-content" class="text-sm text-slate-700 space-y-2" style="overscroll-behavior:none"></div>
+  </div>
+
+  <div id="context-menu" class="bg-white border border-slate-300 rounded shadow-lg py-2 text-sm" style="display:none; position:fixed; z-index:9999; pointer-events:auto;">
+    <button id="context-copy-btn" class="block w-full text-left px-2 py-1 hover:bg-slate-100" style="pointer-events:auto;">座標</button>
+    <button id="context-gmap-btn" class="block w-full text-left px-2 py-1 hover:bg-slate-100" type="button">Googleマップで開く</button>
+  </div>
+
+  <div style="position: absolute; left: -9999px; top: -9999px;">
+    <img src="https://searoute.info/img/banner.png" alt="おでかけ航路マップのサムネイル" width="1200" height="630">
+  </div>
+
+  <!-- Cookie通知バナー -->
+  <div id="cookie-banner" class="cookie-banner" style="display:none;" role="note" aria-label="Cookieの利用について">
+    <div class="cookie-banner__body">
+      <p class="cookie-banner__text">
+        当サイトはCookieを使用しております。Cookieの設定はいつでもご利用のブラウザの設定によりご変更いただけます。このサイトを利用することにより、Cookieの利用について同意いただいたものとみなします。
+        当サイトの使用するCookieについては、<button type="button" id="privacy-policy-open-btn" class="cookie-banner__link-btn">プライバシーポリシー</button>をご確認ください。
+      </p>
+      <button id="cookie-close-btn" class="cookie-banner__close" aria-label="閉じる">&times;</button>
+    </div>
+  </div>
+
+  <!-- プライバシーポリシーモーダル -->
+  <div id="privacy-policy-window" class="text-xs" style="display:none;">
+    <h2 class="heading-tag">プライバシーポリシー</h2>
+    <div class="mb-4 space-y-4 text-slate-600 p-2">
+      <section>
+        <h3 class="font-semibold text-slate-700 mb-1">Cookieの利用について</h3>
+        <p>当サイトでは、以下の目的でCookieを使用しています。</p>
+        <ul class="list-disc list-inside mt-1 space-y-1">
+          <li>地図の表示位置・ズームレベルの記憶</li>
+          <li>各種表示設定の保存</li>
+          <li>Googleアナリティクスによるアクセス解析</li>
+        </ul>
+        <p class="mt-2">Cookieの利用を希望されない場合は、ブラウザの設定によりCookieを無効にすることができます。ただし、一部機能が正常に動作しない場合があります。</p>
+      </section>
+      <section>
+        <h3 class="font-semibold text-slate-700 mb-1">Googleアナリティクス</h3>
+        <p>
+          当サイトはGoogleが提供するアクセス解析ツール「Googleアナリティクス」を利用しています。Googleアナリティクスはトラフィックデータの収集のためにCookieを使用しています。このデータは匿名で収集されており、個人を特定するものではありません。
+        </p>
+        <p class="mt-1">
+          Googleアナリティクスの利用規約・プライバシーポリシーについては、
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline">Googleのプライバシーポリシー</a>をご確認ください。
+        </p>
+      </section>
+      <section>
+        <h3 class="font-semibold text-slate-700 mb-1">地図・外部サービス</h3>
+        <p>地図表示にMapLibre GLおよびOpenStreetMapのタイルを使用しています。これらサービスのプライバシーポリシーについては各サービスのサイトをご確認ください。</p>
+      </section>
+      <section>
+        <h3 class="font-semibold text-slate-700 mb-1">お問い合わせ</h3>
+        <p>
+          ご不明な点は
+          <a href="https://x.com/yy_kuso" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline"><i class="fa-brands fa-twitter"></i> Twitter</a>
+          までご連絡ください。
+        </p>
+      </section>
+    </div>
+    <div class="mt-4">
+      <button id="privacy-policy-close-btn" class="w-full rounded-lg bg-sky-600 py-3 px-4 font-bold text-white shadow-md transition-all hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 active:scale-95">
+        閉じる
+      </button>
+    </div>
+  </div>
+</body>
+
+<script type="module" src="./js/common.js"></script>
+<script type="module" src="./js/detailDrawer.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then((registration) => {
+          console.log('ServiceWorker registration successful');
+        })
+        .catch((err) => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+    });
+  }
+</script>
+
+<script>
+  (function() {
+    var GA_ID = 'G-03DRMSWKPW';
+    var CONSENT_KEY = 'cookieConsent';
+    var CONSENT_DAYS = 365;
+
+    function getCookie(name) {
+      var cookies = document.cookie.split('; ');
+      for (var i = 0; i < cookies.length; i++) {
+        var parts = cookies[i].split('=');
+        if (parts[0] === name) return decodeURIComponent(parts[1]);
+      }
+      return null;
+    }
+
+    function setCookie(name, value, days) {
+      var date = new Date();
+      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+      document.cookie = name + '=' + value + ';expires=' + date.toUTCString() + ';path=/;SameSite=Lax';
+    }
+
+    function loadGA() {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', GA_ID);
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(s);
+    }
+
+    // GAは常時読み込む
+    loadGA();
+
+    // バナーは一度閉じたら再表示しない
+    if (getCookie(CONSENT_KEY) === null) {
+      window.addEventListener('DOMContentLoaded', function() {
+        var banner = document.getElementById('cookie-banner');
+        if (banner) banner.style.display = 'block';
+
+        document.getElementById('cookie-close-btn').addEventListener('click', function() {
+          setCookie(CONSENT_KEY, 'closed', CONSENT_DAYS);
+          banner.style.display = 'none';
+        });
+
+        // プライバシーポリシーモーダルの開閉
+        var ppWindow = document.getElementById('privacy-policy-window');
+        document.getElementById('privacy-policy-open-btn').addEventListener('click', function() {
+          if (ppWindow) ppWindow.style.display = 'block';
+        });
+        document.getElementById('privacy-policy-close-btn').addEventListener('click', function() {
+          if (ppWindow) ppWindow.style.display = 'none';
+        });
+      });
+    } else {
+      // バナー非表示時もプライバシーポリシーボタンは機能するようにする
+      window.addEventListener('DOMContentLoaded', function() {
+        var ppWindow = document.getElementById('privacy-policy-window');
+        var openBtn = document.getElementById('privacy-policy-open-btn');
+        var closeBtn = document.getElementById('privacy-policy-close-btn');
+        if (openBtn) openBtn.addEventListener('click', function() {
+          if (ppWindow) ppWindow.style.display = 'block';
+        });
+        if (closeBtn) closeBtn.addEventListener('click', function() {
+          if (ppWindow) ppWindow.style.display = 'none';
+        });
+      });
+    }
+  })();
+</script>
+
+</html>
