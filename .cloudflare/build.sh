@@ -4,19 +4,20 @@ set -e
 # スクリプトの場所に関わらずリポジトリのルートに移動
 cd "$(dirname "$0")/.."
 
-# 1. 成果物用ディレクトリの作成
-# 既存のdeployがあれば一旦消してクリーンにする
+# 1. 一旦クリーンにする
 rm -rf deploy
-mkdir -p deploy
+# 作業用の一時ディレクトリを作るか、コピーしてからリネームするのが安全
+mkdir -p .tmp_deploy
 
-# 2. ファイルのコピー (rsyncの代わりに cp を使用)
-# 必要なものだけをコピーする方式に変更します
-cp -r * deploy/
+# 2. ファイルのコピー
+# deploy自体が含まれないように、一時ディレクトリへコピー
+cp -r ./* .tmp_deploy/ 2>/dev/null || true
 
-# 3. 不要なファイルを deploy/ から削除 (rsyncの--excludeと同じ役割)
-cd deploy
-rm -rf deploy .github .git .cloudflare .gitignore README.md _config.yml
+# 3. 不要なファイルを削除し、正式なdeployディレクトリにリネーム
+cd .tmp_deploy
+rm -rf .github .git .cloudflare .gitignore README.md _config.yml
 cd ..
+mv .tmp_deploy deploy
 
 # 4. GeoJSONの座標丸めと最適化
 find deploy -name '*.geojson' | while read file; do
