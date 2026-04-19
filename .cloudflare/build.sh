@@ -1,37 +1,54 @@
 #!/bin/bash
 set -e
 
-# スクリプトの場所に関わらずリポジトリのルートに移動
+# 1. 実行場所をリポジトリルートに固定
 cd "$(dirname "$0")/.."
 
-# 1. 一旦クリーンにする
+# 2. 成果物用ディレクトリの作成
 rm -rf deploy
-# 作業用の一時ディレクトリを作るか、コピーしてからリネームするのが安全
 mkdir -p .tmp_deploy
 
-# 2. ファイルのコピー
-# deploy自体が含まれないように、一時ディレクトリへコピー
+# 3. ファイルのコピー
 cp -r ./* .tmp_deploy/ 2>/dev/null || true
 
-# 3. 不要なファイルを削除し、正式なdeployディレクトリにリネーム
 cd .tmp_deploy
 rm -rf .github .git .cloudflare .gitignore README.md _config.yml
 cd ..
 mv .tmp_deploy deploy
 
-# 4. GeoJSONの座標丸めと最適化
-find deploy -name '*.geojson' | while read file; do
-  jq 'def r: if type=="array" then map(r) elif type=="object" then with_entries(.value |= r) elif type=="number" then (.*100000|round)/100000 else . end;
-      . as $in | if has("features") then .features |= map(if has("geometry") and .geometry.coordinates then .geometry.coordinates |= (r) else . end)
-      elif has("geometry") and .geometry.coordinates then .geometry.coordinates |= (r) else . end' "$file" | jq -c . > tmp.geojson && mv tmp.geojson "$file"
-done
+# 4. GeoJSONとJSONの最適化 (jqの代わりにNode.jsを使用)
+node -e '
+const fs = require("fs");
+const path = require("path");
 
-# 5. JSONの最適化
-find deploy -name '*.json' ! -name '*.geojson' | while read file; do
-  jq -c . "$file" > tmp.json && mv tmp.json "$file"
-done
+function walk(dir) {
+  fs.readdirSync(dir).forEach(f => {
+    let p = path.join(dir, f);
+    if (fs.statSync(p).isDirectory()) walk(p);
+    else if (p.endsWith(".json") || p.endsWith(".geojson")) {
+      let data = JSON.parse(fs.readFileSync(p, "utf8"));
+      // 座標の丸め処理 (GeoJSON用)
+      const round = (val) => typeof val === "number" ? Math.round(val * 100000) / 100000 : val;
+      const processGeo = (obj) => {
+        if (Array.isArray(obj)) return obj.map(processGeo);
+        if (obj !== null && typeof obj === "object") {
+          for (let key in obj) {
+            if (key === "coordinates") obj[key] = processGeo(obj[key]);
+            else obj[key] = processGeo(obj[key]);
+          }
+        }
+        return round(obj);
+      };
+      // JSONの圧縮保存
+      fs.writeFileSync(p, JSON.stringify(p.endsWith(".geojson") ? processGeo(data) : data));
+      console.log("Optimized:", p);
+    }
+  });
+}
+walk("deploy");
+'
 
-# 6. JS/CSSの最適化 (npxを使用してインストール不要に)
+# 5. JS/CSSの最適化
 find deploy -name '*.js' | while read file; do
   npx terser "$file" -c -m -o "$file.min" && mv "$file.min" "$file"
 done
@@ -40,15 +57,15 @@ find deploy -name '*.css' | while read file; do
   npx -p esbuild esbuild "$file" --minify --outfile="$file.min" && mv "$file.min" "$file"
 done
 
-# 7. サイトマップとrobots.txtの生成
+# 6. サイトマップとrobots.txtの生成
 BASE_URL="https://searoute.info"
-echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' > deploy/sitemap.xml
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" > deploy/sitemap.xml
 find deploy -name "*.html" | while read filepath; do
   relative_path="${filepath#deploy/}"
   url_path="${relative_path%index.html}"
   mod_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
   echo "  <url><loc>${BASE_URL}/${url_path}</loc><lastmod>${mod_time}</lastmod></url>" >> deploy/sitemap.xml
 done
-echo '</urlset>' >> deploy/sitemap.xml
+echo "</urlset>" >> deploy/sitemap.xml
 
 echo -e "User-agent: *\nAllow: /\n\nSitemap: ${BASE_URL}/sitemap.xml" > deploy/robots.txt
