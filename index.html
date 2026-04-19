@@ -58,9 +58,6 @@
   }
   </script>
 
-  <link rel="preload" href="./data/seaRoute.geojson" as="fetch" crossorigin="anonymous">
-  <link rel="preload" href="./data/seaRouteDetails.json" as="fetch" crossorigin="anonymous">
-
   <!-- JS モジュール連鎖を並列化 -->
   <link rel="modulepreload" href="./js/common.js">
   <link rel="modulepreload" href="./js/detailDrawer.js">
@@ -79,10 +76,6 @@
 
   <!-- フォントを早期に取得 -->
   <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-
-  <!-- マップスタイルを早期に取得 -->
-  <link rel="preload" href="./style/osm-bright-style.json" as="fetch" crossorigin="anonymous">
-  <link rel="preload" href="./style/empty.json" as="fetch" crossorigin="anonymous">
 
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
