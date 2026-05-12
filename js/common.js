@@ -655,8 +655,8 @@ function initSettings() {
         return;
     }
 
-    // 初期状態をCookieから取得
-    const showSuspended = getCookie('showSuspendedRoutes') !== 'false';
+    // 初期状態をCookieから取得（デフォルトは suspend 非表示）
+    const showSuspended = getCookie('showSuspendedRoutes') === 'true';
     suspendToggle.checked = showSuspended;
 
     // 初期状態を適用
