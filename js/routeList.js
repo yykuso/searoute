@@ -50,11 +50,19 @@ class RouteTableManager {
                 }
 
                 // セル作成
-                [routeId, businessName, routeName, info, shipName].forEach((value) => {
+                [routeId, businessName, info, shipName].forEach((value) => {
                     const cell = document.createElement('td');
                     cell.textContent = value || '-';
                     row.appendChild(cell);
                 });
+
+                const routeNameCell = document.createElement('td');
+                const routeNameLink = document.createElement('a');
+                routeNameLink.href = this.buildRouteMapUrl(routeId, config.sourceId);
+                routeNameLink.textContent = routeName || '-';
+                routeNameLink.rel = 'noopener noreferrer';
+                routeNameCell.appendChild(routeNameLink);
+                row.insertBefore(routeNameCell, row.children[2]);
 
                 // URL セル
                 const urlCell = document.createElement('td');
@@ -77,6 +85,17 @@ class RouteTableManager {
         } catch (error) {
             console.error(`データ読み込み失敗 (${config.dataPath}):`, error);
         }
+    }
+
+    /**
+     * 航路の共有URLを生成
+     */
+    buildRouteMapUrl(routeId, sourceId) {
+        const url = new URL('./', window.location.href);
+        url.searchParams.set('share', 'route');
+        url.searchParams.set('routeId', routeId);
+        url.searchParams.set('sourceId', sourceId);
+        return url.toString();
     }
 
     /**
@@ -174,9 +193,9 @@ class RouteTableManager {
 
 // テーブル設定
 const TABLE_CONFIGS = [
-    { dataPath: './data/seaRouteDetails.json', selector: '.sea-route-table tbody' },
-    { dataPath: './data/internationalSeaRouteDetails.json', selector: '.international-sea-route-table tbody' },
-    { dataPath: './data/seaRouteKRDetails.json', selector: '.sea-route-KR-table tbody' },
+    { dataPath: './data/seaRouteDetails.json', selector: '.sea-route-table tbody', sourceId: 'geojson_sea_route' },
+    { dataPath: './data/internationalSeaRouteDetails.json', selector: '.international-sea-route-table tbody', sourceId: 'geojson_international_sea_route' },
+    { dataPath: './data/seaRouteKRDetails.json', selector: '.sea-route-KR-table tbody', sourceId: 'geojson_KR_sea_route' },
 ];
 
 // テーブルマネージャーインスタンス

@@ -133,6 +133,26 @@ export function buildSeaRouteSidebarContent(properties, sourceId) {
     const shipNameBody = properties.shipName ? `<ul class="text-gray-800 text-xs">${toBlockLines(properties.shipName, '・')}</ul>` : '';
     const urlBody = url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-blue-600 transition-all duration-200 rounded">運行スケジュール - ${linkDomain}</a>` : '';
 
+    // 航送情報を構築
+    const carrierItems = {
+        '自動車': properties.car,
+        'バイク': properties.bike,
+        '自転車': properties.bicycle
+    };
+    const carriageEntries = Object.entries(carrierItems)
+        .filter(([_, value]) => value !== undefined && value !== null && value !== '')
+        .map(([label, value]) => {
+            const isAvailable = value === "1" || value === 1;
+            return { label, isAvailable };
+        });
+    const availableCarriages = carriageEntries.filter(({ isAvailable }) => isAvailable).map(({ label }) => label);
+    const allUnavailable = carriageEntries.length > 0 && carriageEntries.every(({ isAvailable }) => !isAvailable);
+    const carriageBody = availableCarriages.length > 0
+        ? `<div class="text-gray-800 text-xs">${availableCarriages.map((label) => `<span>${label}</span>`).join('・')}</div>`
+        : allUnavailable
+            ? '<div class="text-gray-800 text-xs">不可</div>'
+            : '';
+
     return `
         ${createDrawerAccentBar(properties.color || '#e5e7eb')}
         ${createDrawerSection({
@@ -155,6 +175,13 @@ export function buildSeaRouteSidebarContent(properties, sourceId) {
             titleColorClass: 'text-red-600',
             iconColorClass: 'text-red-500',
             body: freqInfoBody,
+        })}
+        ${createDrawerSection({
+            iconClass: 'fas fa-car',
+            title: '航送',
+            titleColorClass: 'text-orange-600',
+            iconColorClass: 'text-orange-500',
+            body: carriageBody,
         })}
         ${createDrawerSection({
             iconClass: 'fas fa-info-circle',

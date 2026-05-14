@@ -192,17 +192,44 @@
   </div>
 
   <div id="settings-window" class="text-xs" style="display:none;">
-    <h2 class="heading-tag">設定</h2>
+    <h2 class="heading-tag">フィルタ</h2>
     <div class="mb-4 space-y-4 text-slate-600 p-2">
-      <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-        <div>
-          <p class="font-medium text-slate-700">休止中航路の表示</p>
-          <p class="text-xs text-slate-500">運休・休止中の航路を地図に表示するかを設定できます</p>
+      <div class="p-3 bg-slate-50 rounded-lg space-y-3">
+        <div class="route-filter-section route-filter-modal-section">
+          <div class="route-filter-section-title">
+            <i class="fa-solid fa-circle-info"></i><span>情報</span>
+          </div>
+          <label class="route-filter-item route-filter-modal-item">
+            <input type="checkbox" data-route-filter-group="status" data-route-filter-key="active">
+            <span class="route-filter-item-label"><i class="fa-solid fa-circle-check"></i><span>就航中</span></span>
+          </label>
+          <label class="route-filter-item route-filter-modal-item">
+            <input type="checkbox" data-route-filter-group="status" data-route-filter-key="season">
+            <span class="route-filter-item-label"><i class="fa-solid fa-calendar-days"></i><span>季節運航</span></span>
+          </label>
+          <label class="route-filter-item route-filter-modal-item">
+            <input type="checkbox" data-route-filter-group="status" data-route-filter-key="suspend">
+            <span class="route-filter-item-label"><i class="fa-solid fa-ban"></i><span>休止中</span></span>
+          </label>
         </div>
-        <label class="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox" id="suspend-route-toggle" class="sr-only peer">
-          <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-sky-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-600"></div>
-        </label>
+        <div class="border-t border-slate-200"></div>
+        <div class="route-filter-section route-filter-modal-section">
+          <div class="route-filter-section-title">
+            <i class="fa-solid fa-ship"></i><span>航送</span>
+          </div>
+          <label class="route-filter-item route-filter-modal-item">
+            <input type="checkbox" data-route-filter-group="carriage" data-route-filter-key="car">
+            <span class="route-filter-item-label"><i class="fa-solid fa-car"></i><span>自動車</span></span>
+          </label>
+          <label class="route-filter-item route-filter-modal-item">
+            <input type="checkbox" data-route-filter-group="carriage" data-route-filter-key="bike">
+            <span class="route-filter-item-label"><i class="fa-solid fa-motorcycle"></i><span>バイク</span></span>
+          </label>
+          <label class="route-filter-item route-filter-modal-item">
+            <input type="checkbox" data-route-filter-group="carriage" data-route-filter-key="bicycle">
+            <span class="route-filter-item-label"><i class="fa-solid fa-bicycle"></i><span>自転車</span></span>
+          </label>
+        </div>
       </div>
     </div>
 

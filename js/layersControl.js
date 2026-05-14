@@ -357,7 +357,6 @@ export default class layersControl {
      * Control Event Mouseover
      */
     handleOver() {
-        this.container.childNodes[0].style.display = 'none';
         const layersList = this.container.childNodes[1];
         layersList.style.display = 'block';
     }
@@ -368,6 +367,5 @@ export default class layersControl {
     handleOut() {
         const layersList = this.container.childNodes[1];
         layersList.style.display = 'none';
-        this.container.childNodes[0].style.display = 'flex';
     }
 }

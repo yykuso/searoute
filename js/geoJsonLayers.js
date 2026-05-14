@@ -28,7 +28,18 @@ import {
 var eventHandle = {};
 
 // 設定値の管理
-let showSuspendedRoutes = true;
+let routeFilters = {
+    status: {
+        active: true,
+        season: true,
+        suspend: false,
+    },
+    carriage: {
+        car: false,
+        bike: false,
+        bicycle: false,
+    },
+};
 
 // GeoJSONデータのキャッシュ
 const geoJsonDataCache = {};
@@ -200,6 +211,8 @@ async function addGenericSeaRouteLayer(id) {
             'text-halo-blur': 2,
         },
     });
+
+    applyRouteFilters();
 }
 
 async function addGeoJsonPortLayer() {
@@ -577,65 +590,126 @@ window.zoomToRouteSection = function(routeId, lineId, sourceId) {
     window.zoomToRoute({ routeId, lineId, sourceId });
 };
 
-/**
- * 休止中航路の表示・非表示を切り替える
- * @param {boolean} showSuspended - 休止中航路を表示するかどうか
- */
-// レイヤー suffix ごとの filter 定義
-// suffix に応じて、showSuspended の真偽で使い分ける filter を定義
-const LAYER_FILTER_MAP = {
-    '_outline': {
-        show: null,
-        hide: ['!=', ['get', 'note'], 'suspend']
-    },
-    '_solidline': {
-        show: ['==', ['get', 'note'], null],
-        hide: ['==', ['get', 'note'], null]
-    },
-    '_dashline': {
-        show: ['==', ['get', 'note'], 'season'],
-        hide: ['==', ['get', 'note'], 'season']
-    },
-    '_thinline': {
-        show: ['==', ['get', 'note'], 'suspend'],
-        hide: ['==', ['get', 'note'], 'never_match']
-    },
-    '_name': {
-        show: null,
-        hide: ['!=', ['get', 'note'], 'suspend']
-    }
+const ROUTE_TYPES = ['geojson_sea_route', 'geojson_international_sea_route', 'geojson_KR_sea_route', 'geojson_limited_sea_route'];
+const ROUTE_LAYER_SUFFIXES = ['_outline', '_solidline', '_dashline', '_thinline', '_name'];
+const NEVER_MATCH_FILTER = ['==', ['get', 'routeId'], '__never_match__'];
+
+const STATUS_FILTERS = {
+    active: ['any', ['==', ['get', 'note'], null], ['==', ['get', 'note'], '']],
+    season: ['==', ['get', 'note'], 'season'],
+    suspend: ['==', ['get', 'note'], 'suspend'],
 };
 
-/**
- * suffix と表示フラグから filter を取得する
- * @param {string} suffix - レイヤー suffix
- * @param {boolean} showSuspended - 休止中航路を表示するか
- * @returns {Array|null} MapLibre GL filter または null
- */
-function getLayerFilter(suffix, showSuspended) {
-    const filterDef = LAYER_FILTER_MAP[suffix];
-    if (!filterDef) return null;
-    return showSuspended ? filterDef.show : filterDef.hide;
+function buildAvailabilityFilter(propertyName) {
+    return ['any',
+        ['==', ['get', propertyName], 1],
+        ['==', ['get', propertyName], '1']
+    ];
+}
+
+function buildAnyFilter(filters, fallback = null) {
+    const validFilters = filters.filter(Boolean);
+    if (validFilters.length === 0) {
+        return fallback;
+    }
+    if (validFilters.length === 1) {
+        return validFilters[0];
+    }
+    return ['any', ...validFilters];
+}
+
+function combineFilters(...filters) {
+    const validFilters = filters.filter(Boolean);
+    if (validFilters.length === 0) {
+        return null;
+    }
+    if (validFilters.length === 1) {
+        return validFilters[0];
+    }
+    return ['all', ...validFilters];
+}
+
+function getStatusFilterForSuffix(suffix) {
+    const selectedStatuses = routeFilters.status || {};
+
+    if (suffix === '_solidline') {
+        return selectedStatuses.active ? STATUS_FILTERS.active : NEVER_MATCH_FILTER;
+    }
+    if (suffix === '_dashline') {
+        return selectedStatuses.season ? STATUS_FILTERS.season : NEVER_MATCH_FILTER;
+    }
+    if (suffix === '_thinline') {
+        return selectedStatuses.suspend ? STATUS_FILTERS.suspend : NEVER_MATCH_FILTER;
+    }
+
+    return buildAnyFilter([
+        selectedStatuses.active ? STATUS_FILTERS.active : null,
+        selectedStatuses.season ? STATUS_FILTERS.season : null,
+        selectedStatuses.suspend ? STATUS_FILTERS.suspend : null,
+    ], NEVER_MATCH_FILTER);
+}
+
+function getCarriageFilter() {
+    const selectedCarriages = routeFilters.carriage || {};
+
+    return buildAnyFilter([
+        selectedCarriages.car ? buildAvailabilityFilter('car') : null,
+        selectedCarriages.bike ? buildAvailabilityFilter('bike') : null,
+        selectedCarriages.bicycle ? buildAvailabilityFilter('bicycle') : null,
+    ]);
+}
+
+function getLayerFilter(suffix) {
+    return combineFilters(getStatusFilterForSuffix(suffix), getCarriageFilter());
+}
+
+function applyRouteFilters() {
+    ROUTE_TYPES.forEach((routeType) => {
+        ROUTE_LAYER_SUFFIXES.forEach((suffix) => {
+            const layerId = routeType + suffix;
+            if (map.getLayer(layerId)) {
+                map.setFilter(layerId, getLayerFilter(suffix));
+            }
+        });
+    });
 }
 
 /**
- * 休止中航路の表示・非表示を切り替える
+ * 航路フィルタを更新する
+ * @param {Object} filters - フィルタ設定
+ */
+export function setRouteFilters(filters) {
+    routeFilters = {
+        status: {
+            active: Boolean(filters?.status?.active),
+            season: Boolean(filters?.status?.season),
+            suspend: Boolean(filters?.status?.suspend),
+        },
+        carriage: {
+            car: Boolean(filters?.carriage?.car),
+            bike: Boolean(filters?.carriage?.bike),
+            bicycle: Boolean(filters?.carriage?.bicycle),
+        },
+    };
+    applyRouteFilters();
+}
+
+/**
+ * 休止中航路の表示・非表示を切り替える互換ラッパー
  * @param {boolean} showSuspended - 休止中航路を表示するかどうか
  */
 export function toggleSuspendedRoutes(showSuspended) {
-    showSuspendedRoutes = showSuspended;
-
-    const routeTypes = ['geojson_sea_route', 'geojson_international_sea_route', 'geojson_KR_sea_route', 'geojson_limited_sea_route'];
-    const layerSuffixes = ['_outline', '_solidline', '_dashline', '_thinline', '_name'];
-
-    routeTypes.forEach(routeType => {
-        layerSuffixes.forEach(suffix => {
-            const layerId = routeType + suffix;
-            if (map.getLayer(layerId)) {
-                const filter = getLayerFilter(suffix, showSuspended);
-                map.setFilter(layerId, filter);
-            }
-        });
+    setRouteFilters({
+        status: {
+            active: true,
+            season: true,
+            suspend: showSuspended,
+        },
+        carriage: {
+            car: false,
+            bike: false,
+            bicycle: false,
+        },
     });
 }
 

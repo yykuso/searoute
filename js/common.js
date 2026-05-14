@@ -10,14 +10,16 @@
  */
 
 import layersControl from './layersControl.js';
+import routeFilterControl from './routeFilterControl.js';
 import hamburgerControl from './hamburgerControl.js';
 import { addRasterLayer } from './rasterLayers.js';
-import { addGeoJsonLayer, addMarker, addResetClickEvent, toggleSuspendedRoutes, initShareFromUrl } from './geoJsonLayers.js';
+import { addGeoJsonLayer, addMarker, addResetClickEvent, setRouteFilters, initShareFromUrl } from './geoJsonLayers.js';
 import { copyShareUrl, getShareQueryContext, getShareTargetLayerId, setDrawerContext } from './utils/shareDrawer.js';
 import { showDetailDrawer } from './detailDrawer.js';
 import { initCenterZoom, setCookie, getCookie } from './cookieControl.js';
 import { showContextMenu, hideContextMenu } from './contextMenu.js';
 import { createLayersConfig } from './layerConfig.js';
+import { setupOutsideClickListener } from './utils/outsideClickHandler.js';
 
 /* マップの命名規則
     VectorTile = 背景マップ   = style
@@ -108,6 +110,21 @@ var currentMap = null;
 var currentLayer = [];
 var defaultMap = mapStyle["EMPTY_MAP"];
 var defaultLayer = ["geojson_sea_route"];
+let routeFilterWindowUnsubscriber = null;
+let currentRouteFilters = null;
+
+const DEFAULT_ROUTE_FILTERS = {
+    status: {
+        active: true,
+        season: true,
+        suspend: false,
+    },
+    carriage: {
+        car: false,
+        bike: false,
+        bicycle: false,
+    },
+};
 
 // Cookieから情報を取得
 if (getCookie("currentMap")) {
@@ -135,6 +152,7 @@ map.once('styledata', () => {
         defaultBaseLayer: defaultMap,
     });
     map.addControl(layers, 'top-right');
+    map.addControl(new routeFilterControl(), 'top-right');
 
 });
 
@@ -648,27 +666,166 @@ function addContextEvent() {
 
 // 設定機能の初期化
 function initSettings() {
-    const suspendToggle = document.getElementById('suspend-route-toggle');
+    const filterInputs = document.querySelectorAll('[data-route-filter-group][data-route-filter-key]');
 
-    if (!suspendToggle) {
-        console.warn('suspend-route-toggle element not found');
+    if (filterInputs.length === 0) {
+        console.warn('route filter inputs not found');
         return;
     }
 
-    // 初期状態をCookieから取得（デフォルトは suspend 非表示）
-    const showSuspended = getCookie('showSuspendedRoutes') === 'true';
-    suspendToggle.checked = showSuspended;
+    currentRouteFilters = getInitialRouteFilters();
+    syncRouteFilterInputs(currentRouteFilters);
+    setRouteFilters(currentRouteFilters);
 
-    // 初期状態を適用
-    toggleSuspendedRoutes(showSuspended);
+    filterInputs.forEach((input) => {
+        if (input.dataset.routeFilterBound === 'true') {
+            return;
+        }
 
-    // トグルボタンのイベントリスナー
-    suspendToggle.addEventListener('change', (e) => {
-        const showSuspended = e.target.checked;
-        toggleSuspendedRoutes(showSuspended);
-        setCookie('showSuspendedRoutes', showSuspended.toString(), 365);
+        input.dataset.routeFilterBound = 'true';
+        input.addEventListener('change', (event) => {
+            const { routeFilterGroup, routeFilterKey } = event.target.dataset;
+            if (!routeFilterGroup || !routeFilterKey) {
+                return;
+            }
+
+            currentRouteFilters = {
+                ...currentRouteFilters,
+                [routeFilterGroup]: {
+                    ...currentRouteFilters[routeFilterGroup],
+                    [routeFilterKey]: event.target.checked,
+                },
+            };
+
+            applyRouteFilterState(currentRouteFilters);
+        });
     });
 }
+
+function cloneDefaultRouteFilters() {
+    return JSON.parse(JSON.stringify(DEFAULT_ROUTE_FILTERS));
+}
+
+function normalizeRouteFilters(filters) {
+    const normalized = cloneDefaultRouteFilters();
+
+    Object.keys(normalized).forEach((group) => {
+        Object.keys(normalized[group]).forEach((key) => {
+            normalized[group][key] = Boolean(filters?.[group]?.[key]);
+        });
+    });
+
+    return normalized;
+}
+
+function getLegacyRouteFilters() {
+    const savedMode = getCookie('routeFilterMode');
+    const legacyShowSuspended = getCookie('showSuspendedRoutes') === 'true';
+    const filters = cloneDefaultRouteFilters();
+
+    if (legacyShowSuspended) {
+        filters.status.suspend = true;
+    }
+
+    if (savedMode === 'all') {
+        filters.status.suspend = true;
+    } else if (savedMode === 'suspend') {
+        filters.status.active = false;
+        filters.status.season = false;
+        filters.status.suspend = true;
+    } else if (savedMode === 'car') {
+        filters.carriage.car = true;
+    } else if (savedMode === 'bike') {
+        filters.carriage.bike = true;
+    } else if (savedMode === 'bicycle') {
+        filters.carriage.bicycle = true;
+    }
+
+    return filters;
+}
+
+function getInitialRouteFilters() {
+    const savedFilters = getCookie('routeFilters');
+
+    if (savedFilters) {
+        try {
+            return normalizeRouteFilters(JSON.parse(savedFilters));
+        } catch (error) {
+            console.warn('failed to parse routeFilters cookie:', error);
+        }
+    }
+
+    return normalizeRouteFilters(getLegacyRouteFilters());
+}
+
+function syncRouteFilterInputs(filters) {
+    document.querySelectorAll('[data-route-filter-group][data-route-filter-key]').forEach((input) => {
+        const { routeFilterGroup, routeFilterKey } = input.dataset;
+        input.checked = Boolean(filters?.[routeFilterGroup]?.[routeFilterKey]);
+    });
+}
+
+function applyRouteFilterState(filters) {
+    const normalizedFilters = normalizeRouteFilters(filters);
+    currentRouteFilters = normalizedFilters;
+    syncRouteFilterInputs(normalizedFilters);
+    setRouteFilters(normalizedFilters);
+    setCookie('routeFilters', encodeURIComponent(JSON.stringify(normalizedFilters)), 365);
+    setCookie('showSuspendedRoutes', normalizedFilters.status.suspend.toString(), 365);
+}
+
+function openRouteFilterWindow() {
+    const filterWindow = document.getElementById('settings-window');
+    if (!filterWindow) {
+        return;
+    }
+
+    filterWindow.style.display = 'block';
+
+    if (routeFilterWindowUnsubscriber) {
+        routeFilterWindowUnsubscriber();
+    }
+
+    routeFilterWindowUnsubscriber = setupOutsideClickListener(
+        filterWindow,
+        () => {
+            closeRouteFilterWindow();
+        },
+        { delay: 100 }
+    );
+}
+
+function closeRouteFilterWindow() {
+    const filterWindow = document.getElementById('settings-window');
+    if (!filterWindow) {
+        return;
+    }
+
+    filterWindow.style.display = 'none';
+
+    if (routeFilterWindowUnsubscriber) {
+        routeFilterWindowUnsubscriber();
+        routeFilterWindowUnsubscriber = null;
+    }
+}
+
+function toggleRouteFilterWindow() {
+    const filterWindow = document.getElementById('settings-window');
+    if (!filterWindow) {
+        return;
+    }
+
+    if (filterWindow.style.display === 'block') {
+        closeRouteFilterWindow();
+        return;
+    }
+
+    openRouteFilterWindow();
+}
+
+window.openRouteFilterWindow = openRouteFilterWindow;
+window.closeRouteFilterWindow = closeRouteFilterWindow;
+window.toggleRouteFilterWindow = toggleRouteFilterWindow;
 
 // ページ読み込み時に設定を初期化
 document.addEventListener('DOMContentLoaded', () => {
