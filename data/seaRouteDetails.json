@@ -5,6 +5,9 @@
   "url": "https://heartlandferry.jp/timetable/",
   "freq": 3,
   "freqInfo": "1日2～3往復",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "アマポーラ宗谷, サイプリア宗谷, ボレアース宗谷",
   "color": "#e4007f"
 },
@@ -15,6 +18,9 @@
   "note": "season",
   "freq": 1,
   "freqInfo": "6月～9月運航, 1日1往復",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "アマポーラ宗谷, サイプリア宗谷, ボレアース宗谷",
   "color": "#e4007f"
 },
@@ -24,6 +30,9 @@
   "url": "https://heartlandferry.jp/timetable/",
   "freq": 2,
   "freqInfo": "1日1～2往復",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "カランセ奥尻",
   "color": "#e4007f"
 },
@@ -42,6 +51,9 @@
   "url": "https://haboro-enkai.com/timetable/",
   "freq": 3,
   "freqInfo": "1日1～6往復",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "おろろん2, さんらいなぁ2",
   "color": "#3c92cf"
 },
@@ -51,6 +63,9 @@
   "url": "https://www.tsugarukaikyo.co.jp/timetable/",
   "freq": 2,
   "freqInfo": "1日2～3往復",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "大函丸",
   "color": "#49b2e0"
 },
@@ -60,6 +75,9 @@
   "url": "https://www.tsugarukaikyo.co.jp/timetable/",
   "freq": 3,
   "freqInfo": "1日6～7往復",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "ブルードルフィン, ブルーマーメイド, ブルーハピネス",
   "color": "#49b2e0"
 },
@@ -69,6 +87,9 @@
   "url": "https://www.tsugarukaikyo.co.jp/timetable/",
   "freq": 2,
   "freqInfo": "1日1往復",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "ブルーグレイス",
   "color": "#49b2e0"
 },
@@ -78,6 +99,9 @@
   "url": "https://www.seikan-ferry.co.jp/schedule/",
   "freq": 3,
   "freqInfo": "1日8往復",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "はやぶさⅢ, はやぶさⅡ, はやぶさ, あさかぜ21",
   "color": "#00449b"
 },
@@ -87,6 +111,9 @@
   "url": "https://www.snf.jp/guide/time_schedule/",
   "freq": 2,
   "freqInfo": "毎日運航",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "けやき, あかしあ",
   "color": "#fa0000"
 },
@@ -96,6 +123,9 @@
   "url": "https://www.snf.jp/guide/time_schedule/",
   "freq": 2,
   "freqInfo": "毎日運航",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "すずらん, すいせん, はまなす, あかしあ",
   "color": "#fa0000"
 },
@@ -105,6 +135,9 @@
   "url": "https://www.snf.jp/guide/time_schedule/",
   "freq": 2,
   "freqInfo": "敦賀～新潟：週1運航, 新潟～秋田～苫小牧：週6運航",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "らいらっく, ゆうかり",
   "color": "#3f62a6"
 },
@@ -114,6 +147,9 @@
   "url": "https://www.snf.jp/guide/time_schedule/",
   "freq": 2,
   "freqInfo": "週6運航",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "らべんだあ, あざれあ",
   "color": "#59b6c5"
 },
@@ -174,6 +210,9 @@
   "url": "https://www.silverferry.jp/route_guide/index.html",
   "freq": 3,
   "freqInfo": "1日4往復",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "シルバープリンセス, シルバーティアラ, シルバーブリーズ, シルバーエイト",
   "color": "#de64a1"
 },
@@ -189,11 +228,14 @@
 "20201": {
   "businessName": "むつ湾フェリー",
   "routeName": "蟹田～脇野沢",
-  "url": "https://www.mutsuwan-ferry.jp/jikoku.html",
+  "url": "https://mutsuwan-ferry.jp/",
   "info": "4月～11月",
   "note": "season",
   "freq": 2,
   "freqInfo": "1日2往復",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "かもしか",
   "color": "#00a82c"
 },
@@ -265,6 +307,9 @@
   "routeName": "女川～江島",
   "url": "http://seapal-kisen.co.jp/price/",
   "freq": 3,
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "しまなぎ",
   "color": "#f2163a"
 },
@@ -273,6 +318,9 @@
   "routeName": "石巻～田代島～網地島～鮎川",
   "url": "http://ajishimaline.com/pg117.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "シーキャット, マーメイドⅡ",
   "color": "#f86812"
 },
@@ -281,6 +329,9 @@
   "routeName": "鮎川～金華山",
   "url": "http://seadream-kinkasan.com/#liner-area",
   "freq": 2,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "shipName": "ドリーム",
   "color": "#1f98ff"
 },
@@ -289,6 +340,9 @@
   "routeName": "鮎川～金華山",
   "url": "http://kinkasan.com/",
   "freq": 2,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "shipName": "ホエール",
   "color": "#fd9535"
 },
@@ -297,6 +351,9 @@
   "routeName": "女川～金華山",
   "url": "https://ushio-planning.co.jp/#cal",
   "freq": 2,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "shipName": "アルティア, ベガ",
   "color": "#1f408f"
 },
@@ -306,6 +363,9 @@
   "url": "https://urato-island.jp/kisen/",
   "info": "市営汽船",
   "freq": 3,
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "うらと, しおね, しおじ",
   "color": "#00719b"
 },
@@ -315,6 +375,9 @@
   "url": "https://urato-island.jp/tosen/",
   "info": "島内間渡船",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "shipName": "すずかぜ",
   "color": "#0bb398"
 },
@@ -324,6 +387,9 @@
   "url": "https://urato-island.jp/tosen/",
   "info": "島内間渡船",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "shipName": "第一うしお丸",
   "color": "#0bb398"
 },
@@ -333,6 +399,9 @@
   "url": "https://urato-island.jp/tosen/",
   "info": "島内間渡船",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "shipName": "第一うしお丸",
   "color": "#0bb398"
 },
@@ -379,6 +448,9 @@
   "url": "https://www.city.sakata.lg.jp/sangyo/kotsu/teikisen/index.html",
   "freq": 2,
   "freqInfo": "1日1～2往復",
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "とびしま",
   "color": "#0045b3"
 },
@@ -441,6 +513,9 @@
   "routeName": "東京～大島～利島～新島～式根島～神津島",
   "url": "https://www.tokaikisen.co.jp/boarding/timetable/",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "shipName": "さるびあ丸, セブンアイランド結, セブンアイランド愛, セブンアイランド友, セブンアイランド大漁",
   "color": "#294da5"
 },
@@ -449,6 +524,9 @@
   "routeName": "東京～三宅島～御蔵島～八丈島",
   "url": "https://www.tokaikisen.co.jp/boarding/timetable/",
   "freq": 2,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "shipName": "橘丸",
   "color": "#d6cd22"
 },
@@ -457,6 +535,9 @@
   "routeName": "熱海～大島～神津島",
   "url": "https://www.tokaikisen.co.jp/boarding/timetable/",
   "freq": 2,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "shipName": "セブンアイランド結, セブンアイランド愛, セブンアイランド友, セブンアイランド大漁",
   "color": "#294da5"
 },
@@ -467,6 +548,9 @@
   "info": "季節運航",
   "note": "season",
   "freq": 1,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "shipName": "セブンアイランド結, セブンアイランド愛, セブンアイランド友, セブンアイランド大漁",
   "color": "#294da5"
 },
@@ -477,6 +561,9 @@
   "info": "季節運航",
   "note": "season",
   "freq": 1,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "shipName": "セブンアイランド結, セブンアイランド愛, セブンアイランド友, セブンアイランド大漁",
   "color": "#294da5"
 },
@@ -487,6 +574,9 @@
   "info": "季節運航",
   "note": "season",
   "freq": 1,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "shipName": "セブンアイランド結, セブンアイランド愛, セブンアイランド友, セブンアイランド大漁",
   "color": "#294da5"
 },
@@ -497,6 +587,9 @@
   "info": "季節運航",
   "note": "season",
   "freq": 1,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "shipName": "セブンアイランド結, セブンアイランド愛, セブンアイランド友, セブンアイランド大漁",
   "color": "#294da5"
 },
@@ -505,6 +598,9 @@
   "routeName": "下田～利島～新島～式根島～神津島～下田",
   "url": "https://shinshin-kisen.jp/service/index.html",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "フェリーあぜりあ",
   "color": "#219443"
 },
@@ -514,6 +610,9 @@
   "url": "https://www.ogasawarakaiun.co.jp/service/",
   "freq": 1,
   "freqInfo": "週1便程度",
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "おがさわら丸",
   "color": "#373583"
 },
@@ -523,6 +622,9 @@
   "url": "https://izu-syotou.jp/route01/index.html",
   "freq": 2,
   "freqInfo": "1日1往復未満",
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "くろしお丸",
   "color": "#e60012"
 },
@@ -532,6 +634,9 @@
   "url": "https://izu-syotou.jp/route02/index.html",
   "freq": 2,
   "freqInfo": "1日1往復程度",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "ははじま丸",
   "color": "#e60012"
 },
@@ -541,6 +646,9 @@
   "url": "https://www.sunflower.co.jp/route/facilities/timetable/",
   "freq": 3,
   "freqInfo": "1日2便、週5～6運航",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "さんふらわあ さっぽろ, さんふらわあ ふらの, さんふらわあ かむい, さんふらわあ ぴりか",
   "color": "#ff5500"
 },
@@ -550,6 +658,9 @@
   "url": "https://www.ferry-sunflower.co.jp/route/osaka-beppu/time/",
   "freq": 2,
   "freqInfo": "毎日運航",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "さんふらわあ くれない, さんふらわあ むらさき",
   "color": "#ff5500"
 },
@@ -559,6 +670,9 @@
   "url": "https://www.ferry-sunflower.co.jp/route/kobe-oita/time/",
   "freq": 2,
   "freqInfo": "毎日運航",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "さんふらわあ ごーるど, さんふらわあ ぱーる",
   "color": "#ff5500"
 },
@@ -568,6 +682,9 @@
   "url": "https://www.ferry-sunflower.co.jp/route/osaka-shibushi/time/",
   "freq": 2,
   "freqInfo": "毎日運航",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "さんふらわあ さつま, さんふらわあ きりしま",
   "color": "#ff5500"
 },
@@ -650,6 +767,9 @@
   "routeName": "金谷～久里浜",
   "url": "https://www.tokyowanferry.com/diagram/schedule/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "かなや丸, しらはま丸",
   "color": "#e60012"
 },
@@ -743,6 +863,9 @@
   "routeName": "新潟～佐渡島（両津）",
   "url": "https://www.sadokisen.co.jp/timetables/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "ときわ丸, おけさ丸, ぎんが, つばさ, すいせい",
   "color": "#e6002d"
 },
@@ -753,6 +876,9 @@
   "info": "3月～11月",
   "note": "season",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "こがね丸",
   "color": "#e6002d"
 },
@@ -771,6 +897,9 @@
   "routeName": "岩船～粟島",
   "url": "https://awashimakisen.co.jp/schedule.html",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "フェリーニューあわしま, awaline きらら",
   "color": "#e50012"
 },
@@ -788,6 +917,9 @@
   "url": "https://www.pref.toyama.jp/1545/kendodukuri/koukyou/koukyoukoutsuu/kj00020284.html",
   "info": "越ノ潟フェリー",
   "freq": 3,
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "こしのかた, 海竜",
   "color": "#199331"
 },
@@ -849,6 +981,9 @@
   "routeName": "熱海～初島",
   "url": "https://www.hatsushima.jp/access/",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "shipName": "イルドバカンス3世号, イルドバカンスプレミア",
   "color": "#2baacc"
 },
@@ -858,6 +993,9 @@
   "url": "https://www.223-ferry.or.jp/timetable.html",
   "info": "駿河湾フェリー",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "富士",
   "color": "#1e90ff"
 },
@@ -950,8 +1088,11 @@
 "230101": {
   "businessName": "太平洋フェリー",
   "routeName": "名古屋～仙台～苫小牧",
-  "url": "https://www.taiheiyo-ferry.co.jp/koro/schedule.html",
+  "url": "https://www.taiheiyo-ferry.co.jp/koro/#jikan",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "いしかり, きそ, きたかみ",
   "color": "#21386A"
 },
@@ -960,6 +1101,9 @@
   "routeName": "師崎～篠島～日間賀島～師崎",
   "url": "https://www.meikaijo.co.jp/timetable",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "color": "#b70106"
 },
 "230202": {
@@ -967,6 +1111,9 @@
   "routeName": "河和～日間賀島～篠島～伊良湖",
   "url": "https://www.meikaijo.co.jp/timetable",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "color": "#b70106"
 },
 "230203": {
@@ -974,6 +1121,9 @@
   "routeName": "師崎～日間賀島",
   "url": "https://www.meikaijo.co.jp/timetable",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "しまゆり",
   "color": "#b70106"
 },
@@ -1041,6 +1191,9 @@
   "routeName": "鳥羽～伊良湖",
   "url": "https://www.isewanferry.co.jp/publics/index/21/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "鳥羽丸, 伊勢丸, 知多丸",
   "color": "#002192"
 },
@@ -1252,6 +1405,9 @@
   "routeName": "大阪～新門司",
   "url": "https://www.cityline.co.jp/route",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "フェリーきょうと, フェリーふくおか, フェリーおおさかⅡ, フェリーきたきゅうしゅうⅡ",
   "color": "#00145A"
 },
@@ -1349,6 +1505,9 @@
   "routeName": "神戸～小豆島（坂手）～高松",
   "url": "https://ferry.co.jp/home/kobe-takamatsu/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "あおい, りつりん２",
   "color": "#668cad"
 },
@@ -1381,6 +1540,9 @@
   "routeName": "姫路～男鹿島～坊勢島",
   "url": "https://bouzehikarikisen.moo.jp/custom.html",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "shipName": "はるか, ぼうぜ２, クイーンぼうぜ",
   "color": "#f18215"
 },
@@ -1432,6 +1594,9 @@
   "url": "https://h-ieshima.jp/liner.html",
   "freq": 3,
   "freqInfo": "1日13～14往復",
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "shipName": "家島ライフ, 高福ライナー, まうら, まうらⅡ",
   "color": "#004430"
 },
@@ -1440,6 +1605,9 @@
   "routeName": "和歌山～徳島",
   "url": "https://nankai-ferry.co.jp/timetable/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "フェリーあい, フェリーかつらぎ",
   "color": "#005fa4"
 },
@@ -1482,6 +1650,9 @@
   "routeName": "七類・境港～知夫里島～西ノ島～中ノ島～島後島",
   "url": "https://www.oki-kisen.co.jp/timetable/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#d90305"
 },
 "320201": {
@@ -1489,6 +1660,9 @@
   "routeName": "知夫里島～西ノ島～中ノ島",
   "url": "https://www.okikankou.com/inter-island-ferry/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#1d2088"
 },
 "330101": {
@@ -1503,6 +1677,9 @@
   "routeName": "笠岡～高島～白石島～北木島～真鍋島",
   "url": "https://sanyo-kisen.jp/%e6%99%82%e5%88%bb%e8%a1%a8/%e7%ac%a0%e5%b2%a1-%ef%bd%9e-%e4%bd%90%e6%9f%b3%e6%9c%ac%e6%b5%a6-%e6%99%82%e5%88%bb%e8%a1%a8",
   "freq": 3,
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#ea4456"
 },
 "330202": {
@@ -1511,6 +1688,9 @@
   "url": "https://sanyo-kisen.jp/%e6%99%82%e5%88%bb%e8%a1%a8/%e7%ac%a0%e5%b2%a1-%ef%bd%9e-%e4%bd%90%e6%9f%b3%e6%9c%ac%e6%b5%a6-%e6%99%82%e5%88%bb%e8%a1%a8",
   "info": "土曜運航",
   "freq": 1,
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#ea4456"
 },
 "330203": {
@@ -1518,6 +1698,9 @@
   "routeName": "笠岡～飛島～六島",
   "url": "https://sanyo-kisen.jp/%e6%99%82%e5%88%bb%e8%a1%a8/%e7%ac%a0%e5%b2%a1%ef%bd%9e%e9%a3%9b%e5%b3%b6%ef%bd%9e%e5%85%ad%e5%b3%b6-%e6%99%82%e5%88%bb%e8%a1%a8",
   "freq": 3,
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#a42277"
 },
 "330301": {
@@ -1525,6 +1708,9 @@
   "routeName": "笠岡～白石島～北木島",
   "url": "https://setouchi-csline.jp/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#ff7e19"
 },
 "330401": {
@@ -1532,6 +1718,9 @@
   "routeName": "笠岡～白石島～北木島",
   "url": "https://kasaoka-ferry.com/boarding/schedule/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#0f8787"
 },
 "330501": {
@@ -1553,6 +1742,9 @@
   "routeName": "児島～本島",
   "url": "https://mukujimaru.co.jp/service01",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "shipName": "ムクジマルホープ",
   "color": "#0033cc"
 },
@@ -1568,6 +1760,9 @@
   "routeName": "鞆～走島",
   "url": "https://www.tomotetsu.co.jp/?page_id=162",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#058d4c"
 },
 "340301": {
@@ -1575,6 +1770,9 @@
   "routeName": "尾道～因島～佐木島～生口島",
   "url": "https://s-cruise.jp/timetable/",
   "freq": 3,
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#00469b"
 },
 "340302": {
@@ -1583,7 +1781,10 @@
   "url": "https://s-cruise.jp/timetable/",
   "info": "季節運航・土日祝運航",
   "note": "season",
-  "freq": 3,
+  "freq": 2,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "color": "#009fe8"
 },
 "340401": {
@@ -1591,6 +1792,9 @@
   "routeName": "常石～百島～満越～向島～戸崎～尾道",
   "url": "http://bingoshosen.co.jp/fare/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#ff6c9a"
 },
 "340501": {
@@ -1599,6 +1803,9 @@
   "url": "https://onomichijp.com/shimanami/utado_ferry.html",
   "info": "歌フェリー",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#55ad86"
 },
 "340502": {
@@ -1607,6 +1814,9 @@
   "url": "https://onomichijp.com/shimanami/onomichi_tosen.html",
   "info": "兼吉渡し",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#c97586"
 },
 "340503": {
@@ -1615,6 +1825,9 @@
   "url": "https://onomichijp.com/shimanami/ekimae_tosen.html",
   "info": "向島運航",
   "freq": 3,
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#00a73c"
 },
 "340701": {
@@ -1622,6 +1835,9 @@
   "routeName": "三原～佐木島（鷺）～因島～生名島（立石）",
   "url": "https://habushosen.jp/timetable/timetable02",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "color": "#228822"
 },
 "340801": {
@@ -1629,6 +1845,9 @@
   "routeName": "三原～生口島",
   "url": "https://habushosen.jp/timetable/timetable06",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "color": "#eecc22"
 },
 "340802": {
@@ -1636,6 +1855,9 @@
   "routeName": "須波～佐木島（向田）～生口島（沢）",
   "url": "https://habushosen.jp/timetable/timetable05",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#dd5588"
 },
 "340803": {
@@ -1661,6 +1883,9 @@
   "routeName": "大崎上島（明石）～大崎下島（小長）",
   "url": "https://habushosen.jp/timetable/timetable04",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#990088"
 },
 "341001": {
@@ -1668,6 +1893,9 @@
   "routeName": "三原～小佐木島～佐木島（向田）～生口島",
   "url": "http://www.marutokisen.sakura.ne.jp/main-page/timetable2.htm",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "color": "#6f06df"
 },
 "341101": {
@@ -1675,6 +1903,9 @@
   "routeName": "因島（重井西）～細島",
   "url": "https://www.city.onomichi.hiroshima.jp/soshiki/39/69388.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#b20825"
 },
 "341201": {
@@ -1683,6 +1914,9 @@
   "url": "https://sankohkisen.jp/fare_times/innoshima/",
   "info": "土日祝運休",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#f9353e"
 },
 "341202": {
@@ -1690,6 +1924,9 @@
   "routeName": "岩城島（小漕）～生口島（洲江）",
   "url": "https://sankohkisen.jp/fare_times/ikuchi/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#f9353e"
 },
 "341301": {
@@ -1697,6 +1934,9 @@
   "routeName": "因島（家老渡）～弓削島（上弓削）",
   "url": "https://karouto-ferry.com/time/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#46a6c8"
 },
 "341401": {
@@ -1704,6 +1944,9 @@
   "routeName": "忠海～大久野島～大三島（盛）",
   "url": "http://sanyo-shosen.jp/omishima/time.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#c02629"
 },
 "341501": {
@@ -1718,6 +1961,9 @@
   "routeName": "竹原～大崎上島",
   "url": "http://sanyo-shosen.jp/time.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#d5131d"
 },
 "341701": {
@@ -1725,6 +1971,9 @@
   "routeName": "竹原～大崎上島",
   "url": "http://www.oktravel.co.jp/timetable2021.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#5ba717"
 },
 "341801": {
@@ -1732,6 +1981,9 @@
   "routeName": "大崎上島（白水）～生野島～契島",
   "url": "https://www.town.osakikamijima.hiroshima.jp/soshiki/kensetsu/1/2/1/1308.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#00a0e9"
 },
 "341901": {
@@ -1740,6 +1992,9 @@
   "url": "https://www.toho-zinc.co.jp/chigirishimaunyu/ippanryokyaku.html",
   "info": "会社休日は旅客船のみ",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#003264"
 },
 "341902": {
@@ -1747,6 +2002,9 @@
   "routeName": "大崎上島（白水）～契島",
   "url": "https://www.toho-zinc.co.jp/chigirishimaunyu/ippanryokyaku.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#003264"
 },
 "342001": {
@@ -1754,6 +2012,9 @@
   "routeName": "安芸津～大崎上島（大西）",
   "url": "http://sanyo-shosen.jp/akitsu/time.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#c9061e"
 },
 "342101": {
@@ -1761,6 +2022,9 @@
   "routeName": "大崎下島～豊島～大崎下島～斎島",
   "url": "https://www.city.kure.lg.jp/soshiki/28/kouro-ituki.html",
   "freq": 3,
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#a4213a"
 },
 "342102": {
@@ -1768,6 +2032,9 @@
   "routeName": "大崎下島（久比）～三角島",
   "url": "https://www.city.kure.lg.jp/soshiki/28/kouro-mikado.html",
   "freq": 3,
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#c57116"
 },
 "342201": {
@@ -1776,6 +2043,9 @@
   "url": "https://setonaikaikisen.co.jp/#section-ride",
   "info": "スーパージェット・クルーズフェリー",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#e2b836"
 },
 "342202": {
@@ -2023,6 +2293,9 @@
   "routeName": "萩～見島",
   "url": "http://hagikaiun.co.jp/mishima/time-table.html",
   "freq": 3,
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#0187b0"
 },
 "351302": {
@@ -2030,6 +2303,9 @@
   "routeName": "萩～相島",
   "url": "http://hagikaiun.co.jp/aishima/time-table.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#d83d17"
 },
 "351303": {
@@ -2037,6 +2313,9 @@
   "routeName": "萩～大島",
   "url": "http://hagikaiun.co.jp/oshima/time-table.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#0544ed"
 },
 "351401": {
@@ -2065,7 +2344,11 @@
   "businessName": "オーシャントランス",
   "routeName": "東京～徳島～新門司",
   "url": "https://www.otf.jp/schedule/",
+  "info": "オーシャン東九フェリー",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "フェリーびざん, フェリーしまんと, フェリーどうご, フェリーりつりん",
   "color": "#9ac245"
 },
@@ -2120,6 +2403,9 @@
   "routeName": "岡山～小豆島（土庄）",
   "url": "https://www.shikokuferry.com/timetable/okayama-tonoshou",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#ec2637"
 },
 "370201": {
@@ -2127,6 +2413,9 @@
   "routeName": "姫路～小豆島（福田）",
   "url": "https://www.shikokuferry.com/timetable/himeji-fukuda",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#03b95b"
 },
 "370202": {
@@ -2134,6 +2423,9 @@
   "routeName": "高松～小豆島（土庄）",
   "url": "https://www.shikokuferry.com/timetable",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#03b95b"
 },
 "370301": {
@@ -2141,6 +2433,9 @@
   "routeName": "宇野～豊島～小豆島（土庄）",
   "url": "https://www.shodoshima-ferry.co.jp/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#4c34e5"
 },
 "370401": {
@@ -2148,6 +2443,9 @@
   "routeName": "高松～小豆島（池田）",
   "url": "https://ryobi-shodoshima.jp/timetable/timetable_takamatsu/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#01a5a5"
 },
 "370402": {
@@ -2155,6 +2453,9 @@
   "routeName": "岡山～小豆島（土庄）",
   "url": "https://ryobi-shodoshima.jp/timetable/timetable_okayama/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#01a5a5"
 },
 "370501": {
@@ -2162,6 +2463,9 @@
   "routeName": "高松～直島（宮浦）",
   "url": "https://www.shikokukisen.com/instant/#route01",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#f8b725"
 },
 "370502": {
@@ -2169,6 +2473,9 @@
   "routeName": "宇野～直島（宮浦）",
   "url": "https://www.shikokukisen.com/instant/#route02",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#4273ab"
 },
 "370503": {
@@ -2176,6 +2483,9 @@
   "routeName": "宇野～直島（本村）",
   "url": "https://www.shikokukisen.com/instant/#route03",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "color": "#633490"
 },
 "370504": {
@@ -2183,6 +2493,9 @@
   "routeName": "直島（宮浦）～豊島（家浦）～犬島",
   "url": "https://www.shikokukisen.com/instant/#route04",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "color": "#e73690"
 },
 "370505": {
@@ -2191,6 +2504,9 @@
   "url": "https://www.shikokukisen.com/instant/#route05",
   "info": "徒歩乗船不可",
   "freq": 3,
+  "car": 1,
+  "bike": 0,
+  "bicycle": 0,
   "color": "#82b743"
 },
 "370601": {
@@ -2198,6 +2514,9 @@
   "routeName": "高松～直島（本村）～豊島（家浦）",
   "url": "https://www.t-ferry.com/schedule/",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "color": "#29a6dc"
 },
 "370602": {
@@ -2214,6 +2533,9 @@
   "routeName": "高松～女木島～男木島",
   "url": "https://meon.co.jp/access",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#ff0000"
 },
 "370801": {
@@ -2252,6 +2574,9 @@
   "routeName": "丸亀～牛島～本島",
   "url": "https://honjima-kisen.com/about/#col-time",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#90c31f"
 },
 "371301": {
@@ -2259,6 +2584,9 @@
   "routeName": "丸亀～広島～小手島～手島",
   "url": "http://bisan-ferry.jp/time_table/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#0085cc"
 },
 "371401": {
@@ -2266,6 +2594,9 @@
   "routeName": "多度津～高見島～佐柳島",
   "url": "https://tadotsu-kisen.jp/%e6%99%82%e5%88%bb%e8%a1%a8",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#2dc2ff"
 },
 "371501": {
@@ -2273,6 +2604,9 @@
   "routeName": "須田～粟島～志々島～宮の下",
   "url": "https://www.city.mitoyo.lg.jp/kakuka/seisaku/koutsuu/1_1/1_3/2670.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#14a953"
 },
 "371601": {
@@ -2289,6 +2623,9 @@
   "routeName": "観音寺～伊吹島",
   "url": "https://www.city.kanonji.kagawa.jp/soshiki/14/423.html",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "color": "#df5656"
 },
 "380101": {
@@ -2296,6 +2633,9 @@
   "routeName": "東予～大阪",
   "url": "https://www.orange-ferry.co.jp/fare-price/kansai/toyo-osaka/index.html",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "おれんじ えひめ, おれんじ おおさか",
   "color": "#22b573"
 },
@@ -2305,6 +2645,9 @@
   "url": "https://www.orange-ferry.co.jp/fare-price/kansai/niihama-kobe/index.html",
   "info": "運航日注意",
   "freq": 1,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "おれんじホープ",
   "color": "#22b573"
 },
@@ -2313,6 +2656,9 @@
   "routeName": "八幡浜～臼杵",
   "url": "https://www.orange-ferry.co.jp/time-table/kyuushi/yawatahama-usuki/index.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "おれんじ四国, おれんじ九州",
   "color": "#fc7a1D"
 },
@@ -2321,6 +2667,9 @@
   "routeName": "八幡浜～別府",
   "url": "https://www.uwajimaunyu.co.jp/timetable/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#bf9c50"
 },
 "380402": {
@@ -2328,6 +2677,9 @@
   "routeName": "八幡浜～臼杵",
   "url": "https://www.uwajimaunyu.co.jp/timetable/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#bf9c50"
 },
 "380501": {
@@ -2335,6 +2687,9 @@
   "routeName": "黒島～大島",
   "url": "https://www.city.niihama.lg.jp/soshiki/koutsu/tokaisenjikokuhyo.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#0074ca"
 },
 "380601": {
@@ -2342,6 +2697,9 @@
   "routeName": "今治～大島～伯方島～岩城島～佐島～弓削島～生名島～因島",
   "url": "https://geiyokisen.com/#schedule",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "color": "#5a72bc"
 },
 "380701": {
@@ -2349,6 +2707,9 @@
   "routeName": "因島～弓削島～豊島～高井神島～魚島",
   "url": "https://www.town.kamijima.lg.jp/site/access/5640.html",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "color": "#ff0000"
 },
 "380702": {
@@ -2356,6 +2717,9 @@
   "routeName": "生名島（立石）～因島（長崎）",
   "url": "https://www.town.kamijima.lg.jp/site/access/5639.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#f8a500"
 },
 "380801": {
@@ -2363,6 +2727,9 @@
   "routeName": "大島（宮窪）～鵜島～伯方島（尾浦）",
   "url": "https://www.city.imabari.ehime.jp/kanko/access/pdf/ship_hakata-oshima.pdf",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#12cc30"
 },
 "380901": {
@@ -2400,6 +2767,9 @@
   "routeName": "今治～大三島（宗方）～大崎上島（木江）",
   "url": "https://omishima-bl.net/#schedule",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#096bD4"
 },
 "381202": {
@@ -2407,6 +2777,9 @@
   "routeName": "大三島（宗方）～岡村島",
   "url": "https://omishima-bl.net/#schedule",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#e7d90c"
 },
 "381301": {
@@ -2422,6 +2795,9 @@
   "url": "https://www.city.matsuyama.ehime.jp/shisetsu/kuko/mituwatasi.html",
   "info": "三津の渡し",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "color": "#aa1e2d"
 },
 "381402": {
@@ -2436,6 +2812,9 @@
   "routeName": "松山～呉～広島",
   "url": "http://www.ishizakikisen.co.jp/contents/timetable.shtml",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#2151b0"
 },
 "381601": {
@@ -2443,6 +2822,9 @@
   "routeName": "松山～睦月島～野忽那島～中島",
   "url": "http://www.nakajimakisen.co.jp/contents/time-table.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#cc0033"
 },
 "381602": {
@@ -2450,6 +2832,9 @@
   "routeName": "松山～釣島～中島～二神島～津和地島～怒和島～中島",
   "url": "http://www.nakajimakisen.co.jp/contents/time-table.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#003399"
 },
 "381701": {
@@ -2543,22 +2928,31 @@
   "routeName": "横須賀～新門司",
   "url": "https://tqf.co.jp/time_schedule/",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "はまゆう, それいゆ",
   "color": "#fa0000"
 },
 "400201": {
   "businessName": "阪九フェリー",
   "routeName": "神戸～新門司",
-  "url": "https://www.han9f.co.jp/timetable/",
+  "url": "https://www.han9f.co.jp/kobe/timetable/",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "せっつ, やまと",
   "color": "#e10915"
 },
 "400202": {
   "businessName": "阪九フェリー",
   "routeName": "泉大津～新門司",
-  "url": "https://www.han9f.co.jp/timetable/",
+  "url": "https://www.han9f.co.jp/izumiotsu/timetable/",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "いずみ, ひびき",
   "color": "#e10915"
 },
@@ -2567,6 +2961,9 @@
   "routeName": "博多～壱岐島～対馬島（厳原）",
   "url": "https://www.kyu-you.co.jp/route/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#ea151d"
 },
 "400302": {
@@ -2574,6 +2971,9 @@
   "routeName": "唐津東～印通寺",
   "url": "https://www.kyu-you.co.jp/route/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#ea151d"
 },
 "400303": {
@@ -2581,6 +2981,9 @@
   "routeName": "博多～対馬島（比田勝）",
   "url": "https://www.kyu-you.co.jp/route/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#ea151d"
 },
 "400401": {
@@ -2588,6 +2991,9 @@
   "routeName": "福岡～壱岐島（芦辺）～対馬島（厳原）",
   "url": "https://iki-tsushima.com/price/",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#6ca330"
 },
 "400501": {
@@ -2747,6 +3153,9 @@
   "routeName": "博多～宇久島～小値賀島～中通島～奈留島～福江島",
   "url": "https://www.nomo.co.jp/taiko/timetable.html",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#f29600"
 },
 "420102": {
@@ -2754,6 +3163,9 @@
   "routeName": "長崎～伊王島～高島",
   "url": "https://www.nomo.co.jp/nomo/takasu-shunkan/",
   "freq": 3,
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#c95b52"
 },
 "420201": {
@@ -2843,6 +3255,9 @@
   "info": "フェリー",
   "freq": 3,
   "freqInfo": "1日2～4周",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "椿, 万葉",
   "color": "#52ab44"
 },
@@ -2853,6 +3268,9 @@
   "info": "ジェット船",
   "freq": 3,
   "freqInfo": "1日3～6往復",
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "shipName": "ぺがさす, ぺがさす2",
   "color": "#d7003f"
 },
@@ -2874,6 +3292,9 @@
   "info": "高速船",
   "freq": 3,
   "freqInfo": "1日2～3周",
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "shipName": "シーエンジェル, シークイーン",
   "color": "#d7003f"
 },
@@ -2884,6 +3305,9 @@
   "info": "フェリー",
   "freq": 3,
   "freqInfo": "1日1～2往復",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "いのり",
   "color": "#0033ff"
 },
@@ -2894,6 +3318,9 @@
   "info": "フェリー",
   "freq": 3,
   "freqInfo": "1日1～2往復",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "フェリーなみじ, フェリーニューこしき",
   "color": "#52ab44"
 },
@@ -2902,6 +3329,9 @@
   "routeName": "佐世保～崎戸～江島～平島～中通島（友住）",
   "url": "https://www.city.saikai.nagasaki.jp/kurashi/kotsu/2/2737.html",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#36867e"
 },
 "421101": {
@@ -2909,6 +3339,9 @@
   "routeName": "佐世保～相浦～平戸島（前津吉）",
   "url": "https://www.nomo.co.jp/tsuyoshi/tsuyoshi/",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "color": "#2584c2"
 },
 "421201": {
@@ -2916,6 +3349,9 @@
   "routeName": "相浦～高島～黒島",
   "url": "https://kuroshimakanko.com/index.php/view/172",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#fc3232"
 },
 "421301": {
@@ -2925,6 +3361,9 @@
   "info": "高速船、火・金曜日以外は佐世保～大島のみ",
   "freq": 3,
   "freqInfo": "1日9～10往復",
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "shipName": "れぴーど, Rapid Lily",
   "color": "#3cc45f"
 },
@@ -2935,6 +3374,9 @@
   "info": "フェリー",
   "freq": 3,
   "freqInfo": "1日5往復",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "フェリー かしま",
   "color": "#ff8900"
 },
@@ -2973,6 +3415,9 @@
   "routeName": "長崎～中通島（鯛之浦）",
   "url": "https://www.goto-sangyo.co.jp/line/line01/#line01",
   "freq": 2,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "color": "#00a6e7"
 },
 "421901": {
@@ -2980,6 +3425,9 @@
   "routeName": "若松島～中通島～奈留島～福江島",
   "url": "https://goto-ryokyakusen.com/guide/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#2b96d0"
 },
 "422001": {
@@ -3051,6 +3499,9 @@
   "url": "http://www.ariake-ferry.com/timetable/",
   "info": "有明フェリー",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#2d649f"
 },
 "422701": {
@@ -3067,6 +3518,9 @@
   "routeName": "熊本～島原",
   "url": "https://www.kyusho-ferry.co.jp/diagram/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#f53540"
 },
 "422901": {
@@ -3074,6 +3528,9 @@
   "routeName": "口之津～天草下島（鬼池）",
   "url": "https://www.shimatetsu.co.jp/ferry/guide/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#1777a9"
 },
 "423001": {
@@ -3083,6 +3540,9 @@
   "info": "RORO船",
   "freq": 2,
   "freqInfo": "1日1往復",
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "フェリーたいしゅう",
   "color": "#32369a"
 },
@@ -3091,6 +3551,9 @@
   "routeName": "熊本～島原",
   "url": "https://www.kumamotoferry.co.jp/timefare/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#0562f9"
 },
 "430201": {
@@ -3105,6 +3568,9 @@
   "routeName": "下島（富岡）～茂木",
   "url": "https://www.reihoku-kisen.jp/time-table.php",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "color": "#25499d"
 },
 "430401": {
@@ -3163,6 +3629,9 @@
   "routeName": "長島（蔵之元）～下島（牛深）",
   "url": "https://ezax.co.jp/time/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#0944a6"
 },
 "440101": {
@@ -3170,6 +3639,9 @@
   "routeName": "佐賀関～三崎",
   "url": "https://www.koku94.jp/operation",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#e92031"
 },
 "440201": {
@@ -3253,6 +3725,9 @@
   "routeName": "神戸～宮崎",
   "url": "https://www.miyazakicarferry.com/schedule/",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "shipName": "フェリーたかちほ, フェリーろっこう",
   "color": "#e39300"
 },
@@ -3292,6 +3767,9 @@
   "url": "https://www.aline-ferry.com/kagoshima/time/",
   "info": "隔日運航",
   "freq": 1,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#fd0000"
 },
 "460201": {
@@ -3300,6 +3778,9 @@
   "url": "https://www.marix-line.co.jp/cgi-bin/19carriage/cgi/index.cgi",
   "info": "隔日運航",
   "freq": 1,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#4d94c8"
 },
 "460301": {
@@ -3307,6 +3788,9 @@
   "routeName": "鹿児島～喜界島～奄美大島～徳之島～沖永良部島",
   "url": "https://www.aline-ferry.com/amami/time/",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#f68001"
 },
 "460401": {
@@ -3315,6 +3799,9 @@
   "url": "http://www.tokara.jp/ferryinfo/ferrytoshima/",
   "info": "週2往復",
   "freq": 1,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#3f93df"
 },
 "460501": {
@@ -3322,6 +3809,9 @@
   "routeName": "鹿児島～種子島～屋久島",
   "url": "https://www.tykousoku.jp/fare_time/",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "color": "#ff0000"
 },
 "460601": {
@@ -3329,6 +3819,9 @@
   "routeName": "鹿児島～種子島（西之表）",
   "url": "http://cosmoline.jp/",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#6b2bd9"
 },
 "460701": {
@@ -3336,6 +3829,9 @@
   "routeName": "鹿児島～種子島（西之表）～屋久島（宮之浦）",
   "url": "https://www.yakushimaferry.com/hibisukasu-basic-information/",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#eaa8bf"
 },
 "460801": {
@@ -3343,13 +3839,19 @@
   "routeName": "鹿児島～屋久島（宮之浦）",
   "url": "https://ferryyakusima2.com/timetable",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#22448b"
 },
 "460901": {
   "businessName": "屋久島町",
   "routeName": "種子島（島間）～屋久島（宮之浦）～口永良部島",
-  "url": "https://www.town.yakushima.kagoshima.jp/ferry-taiyou/",
+  "url": "https://www.town.yakushima.kagoshima.jp/soshiki/seisaku_suisin/senpaku/choeisen-ferry-taiyo2/1046.html",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#ffa74a"
 },
 "461001": {
@@ -3357,6 +3859,9 @@
   "routeName": "鹿児島～桜島港",
   "url": "https://www.city.kagoshima.lg.jp/sakurajima-ferry/koro-jikoku/timetable.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#c21b7e"
 },
 "461101": {
@@ -3364,6 +3869,9 @@
   "routeName": "鴨池～垂水",
   "url": "https://www.iwasaki-corp.com/marinetp/tarumizuferry/t-timetable/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#007739"
 },
 "461201": {
@@ -3371,6 +3879,9 @@
   "routeName": "山川～根占",
   "url": "http://nankyu-ferry.com/time/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#d40115"
 },
 "461202": {
@@ -3387,6 +3898,9 @@
   "routeName": "鹿児島～竹島～硫黄島～黒島",
   "url": "http://mishimamura.com/ferry/",
   "freq": 1,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#208d63"
 },
 "461401": {
@@ -3394,6 +3908,9 @@
   "routeName": "串木野～上甑島（里）～下甑島（長浜）",
   "url": "https://www.koshikisho.co.jp/timetable",
   "freq": 2,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#3cc886"
 },
 "461402": {
@@ -3401,13 +3918,19 @@
   "routeName": "川内～上甑島（里）～下甑島（長浜）",
   "url": "https://www.koshikisho.co.jp/timetable",
   "freq": 2,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 1,
   "color": "#337ab7"
 },
 "461501": {
   "businessName": "獅子島汽船",
   "routeName": "水俣～獅子島（幣串）",
-  "url": "https://peraichi.com/landing_pages/view/shishijimakisen/",
+  "url": "https://www.town.nagashima.lg.jp/wp-content/uploads/2017/03/pub_080712.pdf",
   "freq": 3,
+  "car": 0,
+  "bike": 0,
+  "bicycle": 0,
   "color": "#d01f4b"
 },
 "461601": {
@@ -3415,6 +3938,9 @@
   "routeName": "下島（中田）～獅子島（片側）～諸浦島",
   "url": "https://tenchou-ferry.co.jp/pages/44/",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#0327f3"
 },
 "461701": {
@@ -3422,6 +3948,9 @@
   "routeName": "古仁屋～加計呂麻島（瀬相）",
   "url": "https://www.town.setouchi.lg.jp/senpaku/jikokuhyou.html",
   "freq": 3,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#50a0c6"
 },
 "461702": {
@@ -3429,6 +3958,9 @@
   "routeName": "古仁屋～請島～与路島",
   "url": "https://www.town.setouchi.lg.jp/senpaku/jikokuhyou.html",
   "freq": 2,
+  "car": 0,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#ff0000"
 },
 "470101": {
@@ -3437,6 +3969,9 @@
   "url": "https://daitoline.co.jp/schedule",
   "info": "週1～2回往復",
   "freq": 1,
+  "car": 1,
+  "bike": 1,
+  "bicycle": 1,
   "color": "#8224e3"
 },
 "470201": {

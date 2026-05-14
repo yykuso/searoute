@@ -35,7 +35,7 @@ export default class routeFilterControl {
                 { group: 'status', key: 'suspend', label: '休止中', icon: 'fa-solid fa-ban' },
             ])}
             <hr>
-            ${this.buildFilterSection('航送可否', 'fa-solid fa-ship', [
+            ${this.buildFilterSection('航送可否 (仮)', 'fa-solid fa-ship', [
                 { group: 'carriage', key: 'car', label: '自動車', icon: 'fa-solid fa-car' },
                 { group: 'carriage', key: 'bike', label: 'バイク', icon: 'fa-solid fa-motorcycle' },
                 { group: 'carriage', key: 'bicycle', label: '自転車', icon: 'fa-solid fa-bicycle' },
