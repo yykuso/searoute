@@ -346,6 +346,16 @@
   "shipName": "JIN XING NO6（金星6號）",
   "color": "#af6971"
 },
+"TW000601": {
+  "businessName": "Uniwagon Shipping（東聯航運）",
+  "routeName": "基隆～石垣島",
+  "url": "https://yaimaline.com/map.html",
+  "info": "Yaima Line",
+  "freq": 1,
+  "freqInfo": "週1～2往復",
+  "shipName": "YAIMAMARU（やいま丸）",
+  "color": "#21357F"
+},
 "RU000101": {
   "businessName": "サハリン海洋汽船（北海道サハリン航路）",
   "routeName": "コルサコフ～稚内",
