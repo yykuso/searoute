@@ -334,6 +334,12 @@ body {
   background-color: var(--layers-control-hover);
 }
 
+.maplibregl-ctrl-filter-toggle.route-filter-active {
+  background-color: var(--color-gray-600);
+  border-radius: var(--border-radius-sm);
+  box-shadow: inset 0 0 0 1px var(--color-gray-500);
+}
+
 .maplibregl-ctrl-layers-toggle i {
   color: var(--layers-control-icon);
   font-size: 18px;
@@ -350,12 +356,24 @@ body {
   line-height: 1;
 }
 
+.maplibregl-ctrl-filter-toggle.route-filter-active i {
+  color: #ffffff;
+}
+
 .maplibregl-ctrl-layers-toggle:hover i {
   color: var(--layers-control-text);
 }
 
 .maplibregl-ctrl-filter-toggle:hover i {
   color: var(--layers-control-text);
+}
+
+.maplibregl-ctrl-filter-toggle.route-filter-active:hover {
+  background-color: var(--layers-control-text);
+}
+
+.maplibregl-ctrl-filter-toggle.route-filter-active:hover i {
+  color: #ffffff;
 }
 
 .maplibregl-ctrl-layers-list {

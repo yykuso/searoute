@@ -676,6 +676,7 @@ function initSettings() {
     currentRouteFilters = getInitialRouteFilters();
     syncRouteFilterInputs(currentRouteFilters);
     setRouteFilters(currentRouteFilters);
+    updateRouteFilterToggleState(currentRouteFilters);
 
     filterInputs.forEach((input) => {
         if (input.dataset.routeFilterBound === 'true') {
@@ -716,6 +717,25 @@ function normalizeRouteFilters(filters) {
     });
 
     return normalized;
+}
+
+function isDefaultRouteFilters(filters) {
+    const normalized = normalizeRouteFilters(filters);
+
+    return Object.keys(DEFAULT_ROUTE_FILTERS).every((group) => {
+        return Object.keys(DEFAULT_ROUTE_FILTERS[group]).every((key) => {
+            return normalized[group][key] === DEFAULT_ROUTE_FILTERS[group][key];
+        });
+    });
+}
+
+function updateRouteFilterToggleState(filters) {
+    const filterToggle = document.querySelector('.maplibregl-ctrl-filter-toggle');
+    if (!filterToggle) {
+        return;
+    }
+
+    filterToggle.classList.toggle('route-filter-active', !isDefaultRouteFilters(filters));
 }
 
 function getLegacyRouteFilters() {
@@ -770,6 +790,7 @@ function applyRouteFilterState(filters) {
     currentRouteFilters = normalizedFilters;
     syncRouteFilterInputs(normalizedFilters);
     setRouteFilters(normalizedFilters);
+    updateRouteFilterToggleState(normalizedFilters);
     setCookie('routeFilters', encodeURIComponent(JSON.stringify(normalizedFilters)), 365);
     setCookie('showSuspendedRoutes', normalizedFilters.status.suspend.toString(), 365);
 }
