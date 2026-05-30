@@ -84,7 +84,7 @@ const MAP_STYLE_CONFIG = {
         rasterLayerId: null
     },
     [mapStyle["OSM_CUSTOM_MAP"]]: {
-        url: "./style/osm-bright-style.json",
+        url: "./style/maptiler-basic-ja-custom.json",
         rasterLayerId: null
     },
     [mapStyle["OTM_MAP"]]: {
