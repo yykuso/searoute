@@ -4,11 +4,12 @@
 export default class routeFilterControl {
     onAdd() {
         this.container = document.createElement('div');
-        this.container.className = 'maplibregl-ctrl maplibregl-ctrl-group route-filter-control';
-        this.container.title = 'フィルタ';
+        this.container.className = 'maplibregl-ctrl maplibregl-ctrl-group';
+        this.container.id = 'route-filter-control';
 
         const button = document.createElement('div');
         button.className = 'maplibregl-ctrl-filter-toggle';
+        button.setAttribute('aria-label', '航路フィルタ');
 
         const icon = document.createElement('i');
         icon.className = 'fa-solid fa-filter fa-lg';
