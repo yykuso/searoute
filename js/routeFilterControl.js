@@ -7,7 +7,8 @@ export default class routeFilterControl {
         this.container.className = 'maplibregl-ctrl maplibregl-ctrl-group';
         this.container.id = 'route-filter-control';
 
-        const button = document.createElement('div');
+        const button = document.createElement('button');
+        button.type = 'button';
         button.className = 'maplibregl-ctrl-filter-toggle';
         button.setAttribute('aria-label', '航路フィルタ');
 
