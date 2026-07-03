@@ -153,9 +153,74 @@ if (getCookie("currentLayer")) {
 // スマホにおける長押しを検出するための変数
 let touchTimeout;
 let isDragging = false;
+let mapResizeBurstTimerIds = [];
+let mapContainerResizeObserver = null;
+
+function requestMapResize() {
+    if (!map) {
+        return;
+    }
+
+    requestAnimationFrame(() => {
+        if (!map) {
+            return;
+        }
+
+        try {
+            // canvas の inline size が壊れた状態を含め、描画サイズを再同期する
+            map.resize();
+        } catch (error) {
+            console.warn('Map resize failed:', error);
+        }
+    });
+}
+
+function scheduleMapResizeBurst() {
+    mapResizeBurstTimerIds.forEach((timerId) => clearTimeout(timerId));
+    mapResizeBurstTimerIds = [];
+
+    [0, 120, 360].forEach((delay) => {
+        const timerId = setTimeout(() => requestMapResize(), delay);
+        mapResizeBurstTimerIds.push(timerId);
+    });
+}
+
+function watchMapContainerResize() {
+    if (mapContainerResizeObserver) {
+        return;
+    }
+
+    const mapContainer = document.getElementById('map');
+    if (!mapContainer || typeof ResizeObserver === 'undefined') {
+        return;
+    }
+
+    mapContainerResizeObserver = new ResizeObserver(() => {
+        requestMapResize();
+    });
+    mapContainerResizeObserver.observe(mapContainer);
+}
+
+function bindMapResizeGuards() {
+    window.addEventListener('load', scheduleMapResizeBurst);
+    window.addEventListener('pageshow', scheduleMapResizeBurst);
+    window.addEventListener('orientationchange', scheduleMapResizeBurst);
+    window.addEventListener('resize', requestMapResize, { passive: true });
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            scheduleMapResizeBurst();
+        }
+    });
+
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', requestMapResize, { passive: true });
+    }
+}
 
 // 初期化
 initMap();
+bindMapResizeGuards();
 
 // styleファイルの読み込み後に発火
 map.once('styledata', () => {
@@ -207,6 +272,9 @@ function initMap() {
 
     // マップの初期化完了時にUI要素を表示 & URLクエリからドロワーを復元
     map.on('load', async () => {
+        watchMapContainerResize();
+        scheduleMapResizeBurst();
+
         const detailDrawer = document.getElementById('detail-drawer');
         if (detailDrawer) detailDrawer.style.display = '';
 
