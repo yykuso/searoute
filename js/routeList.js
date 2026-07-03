@@ -38,8 +38,10 @@ class RouteTableManager {
                 throw new Error(`Table body not found: ${config.selector}`);
             }
 
-            const details = await this.loadDetailsIndex(config);
-            const rows = this.normalizeRows(data, details);
+            const rows = this.normalizeRows(data);
+            const visibleColumns = this.getVisibleColumns(rows);
+
+            this.applyColumnVisibility(tableBody, visibleColumns);
 
             this.tableData[config.selector] = rows;
 
@@ -56,34 +58,38 @@ class RouteTableManager {
                     row.classList.add('suspend-row');
                 }
 
-                // セル作成
-                [routeId, businessName, info, shipName].forEach((value) => {
+                visibleColumns.forEach((column) => {
+                    if (column === 'routeName') {
+                        const routeNameCell = document.createElement('td');
+                        const routeNameLink = document.createElement('a');
+                        routeNameLink.href = this.buildRouteMapUrl(routeId, config.sourceId);
+                        routeNameLink.textContent = routeName || '-';
+                        routeNameLink.rel = 'noopener noreferrer';
+                        routeNameCell.appendChild(routeNameLink);
+                        row.appendChild(routeNameCell);
+                        return;
+                    }
+
+                    if (column === 'url') {
+                        const urlCell = document.createElement('td');
+                        if (url) {
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.textContent = 'リンク';
+                            link.target = '_blank';
+                            link.rel = 'noopener noreferrer';
+                            urlCell.appendChild(link);
+                        } else {
+                            urlCell.textContent = '-';
+                        }
+                        row.appendChild(urlCell);
+                        return;
+                    }
+
                     const cell = document.createElement('td');
-                    cell.textContent = value || '-';
+                    cell.textContent = rowData[column] || '-';
                     row.appendChild(cell);
                 });
-
-                const routeNameCell = document.createElement('td');
-                const routeNameLink = document.createElement('a');
-                routeNameLink.href = this.buildRouteMapUrl(routeId, config.sourceId);
-                routeNameLink.textContent = routeName || '-';
-                routeNameLink.rel = 'noopener noreferrer';
-                routeNameCell.appendChild(routeNameLink);
-                row.insertBefore(routeNameCell, row.children[2]);
-
-                // URL セル
-                const urlCell = document.createElement('td');
-                if (url) {
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.textContent = 'リンク';
-                    link.target = '_blank';
-                    link.rel = 'noopener noreferrer';
-                    urlCell.appendChild(link);
-                } else {
-                    urlCell.textContent = '-';
-                }
-                row.appendChild(urlCell);
 
                 tableBody.appendChild(row);
             });
@@ -95,26 +101,13 @@ class RouteTableManager {
         }
     }
 
-    async loadDetailsIndex(config) {
-        if (!config.detailsPath) {
-            return {};
-        }
-
-        try {
-            const response = await fetch(config.detailsPath);
-            if (!response.ok) {
-                return {};
-            }
-            return await response.json();
-        } catch (error) {
-            console.warn(`詳細データ読み込み失敗 (${config.detailsPath}):`, error);
-            return {};
-        }
-    }
-
-    normalizeRows(data, detailsIndex) {
+    normalizeRows(data) {
         if (data && Array.isArray(data.features)) {
-            return this.normalizeGeoJsonRows(data, detailsIndex);
+            return this.normalizeGeoJsonRows(data);
+        }
+
+        if (data && Array.isArray(data.records)) {
+            return this.normalizeLightweightRows(data.records);
         }
 
         if (data && typeof data === 'object') {
@@ -132,7 +125,23 @@ class RouteTableManager {
         return [];
     }
 
-    normalizeGeoJsonRows(geojson, detailsIndex) {
+    normalizeLightweightRows(records) {
+        return records
+            .map((record) => {
+                return {
+                    routeId: String(record.routeId),
+                    businessName: record.businessName,
+                    routeName: record.routeName,
+                    info: record.info || record.information || this.infoFromNote(record.note),
+                    shipName: record.shipName,
+                    note: record.note,
+                    url: record.url,
+                };
+            })
+            .sort((a, b) => this.compareRouteId(a.routeId, b.routeId));
+    }
+
+    normalizeGeoJsonRows(geojson) {
         const routeMap = new Map();
 
         geojson.features.forEach((feature) => {
@@ -142,21 +151,60 @@ class RouteTableManager {
             }
 
             const routeId = String(props.routeId);
-            const detail = detailsIndex[routeId] || {};
             const previous = routeMap.get(routeId) || {};
 
             routeMap.set(routeId, {
                 routeId,
-                businessName: detail.businessName || props.businessName || previous.businessName,
-                routeName: detail.routeName || props.routeName || previous.routeName,
-                info: detail.info || detail.information || props.info || props.information || this.infoFromNote(detail.note || props.note) || previous.info,
-                shipName: detail.shipName || props.shipName || previous.shipName,
-                note: detail.note || props.note || previous.note,
-                url: detail.url || props.url || previous.url,
+                businessName: props.businessName || previous.businessName,
+                routeName: props.routeName || previous.routeName,
+                info: props.info || props.information || this.infoFromNote(props.note) || previous.info,
+                shipName: props.shipName || previous.shipName,
+                note: props.note || previous.note,
+                url: props.url || previous.url,
             });
         });
 
         return Array.from(routeMap.values()).sort((a, b) => this.compareRouteId(a.routeId, b.routeId));
+    }
+
+    getVisibleColumns(rows) {
+        const columns = ['routeId', 'businessName', 'routeName', 'info', 'shipName', 'url'];
+
+        return columns.filter((column) => {
+            if (column === 'routeId' || column === 'businessName' || column === 'routeName') {
+                return true;
+            }
+
+            return rows.some((row) => {
+                const value = row[column];
+                return value !== undefined && value !== null && value !== '';
+            });
+        });
+    }
+
+    applyColumnVisibility(tableBody, visibleColumns) {
+        const table = tableBody.closest('table');
+        if (!table) {
+            return;
+        }
+
+        const columnClassMap = {
+            routeId: ['route-id'],
+            businessName: ['business-name'],
+            routeName: ['route-name'],
+            info: ['info', 'information'],
+            shipName: ['ship-name'],
+            url: ['url'],
+        };
+
+        Object.entries(columnClassMap).forEach(([column, classNames]) => {
+            const isVisible = visibleColumns.includes(column);
+            classNames.forEach((className) => {
+                table.querySelectorAll(`.${className}`).forEach((cell) => {
+                    cell.style.display = isVisible ? '' : 'none';
+                });
+            });
+        });
     }
 
     infoFromNote(note) {
@@ -287,20 +335,17 @@ class RouteTableManager {
 // テーブル設定
 const TABLE_CONFIGS = [
     {
-        dataPath: './data/seaRoute_enriched.geojson',
-        detailsPath: './data/old/seaRouteDetails.json',
+        dataPath: 'https://pmtiles.searoute.info/lightweight/seaRoute.json',
         selector: '.sea-route-table tbody',
         sourceId: 'geojson_sea_route'
     },
     {
-        dataPath: './data/old/internationalSeaRoute.geojson',
-        detailsPath: './data/old/internationalSeaRouteDetails.json',
+        dataPath: 'https://pmtiles.searoute.info/lightweight/seaRoute_international.json',
         selector: '.international-sea-route-table tbody',
         sourceId: 'geojson_international_sea_route'
     },
     {
-        dataPath: './data/old/seaRouteKR.geojson',
-        detailsPath: './data/old/seaRouteKRDetails.json',
+        dataPath: 'https://pmtiles.searoute.info/lightweight/seaRoute_KR.json',
         selector: '.sea-route-KR-table tbody',
         sourceId: 'geojson_KR_sea_route'
     },

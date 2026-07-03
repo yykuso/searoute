@@ -37,6 +37,73 @@ const eventHandle = {};
 // GeoJSONデータのキャッシュ（ポートレイヤー用）
 const geoJsonDataCache = {};
 
+const ROUTE_SHARE_OVERVIEW = {
+    geojson_sea_route: {
+        center: [137.5, 36.5],
+        zoom: 4,
+    },
+    geojson_international_sea_route: {
+        center: [127, 33],
+        zoom: 3,
+    },
+    geojson_KR_sea_route: {
+        center: [129, 35.5],
+        zoom: 5,
+    },
+    geojson_limited_sea_route: {
+        center: [137.5, 36.5],
+        zoom: 5,
+    },
+};
+
+async function waitForMapSettled() {
+    await new Promise((resolve) => map.once('moveend', resolve));
+    await new Promise((resolve) => map.once('idle', resolve));
+}
+
+function getRouteShareOverview(sourceId) {
+    return ROUTE_SHARE_OVERVIEW[sourceId] || {
+        center: [137.5, 36.5],
+        zoom: 4,
+    };
+}
+
+async function queryRouteFeaturesWithOverviewFallback(sourceId, normalizedRouteId) {
+    let data = queryRouteFeatures(sourceId);
+    let matchingFeatures = data?.features?.filter(
+        (f) => f?.properties?.routeId == normalizedRouteId
+    ) || [];
+
+    if (matchingFeatures.length > 0) {
+        return matchingFeatures;
+    }
+
+    const previousCenter = map.getCenter();
+    const previousZoom = map.getZoom();
+    const overview = getRouteShareOverview(sourceId);
+
+    map.jumpTo({
+        center: overview.center,
+        zoom: overview.zoom,
+    });
+    await waitForMapSettled();
+
+    data = queryRouteFeatures(sourceId);
+    matchingFeatures = data?.features?.filter(
+        (f) => f?.properties?.routeId == normalizedRouteId
+    ) || [];
+
+    if (matchingFeatures.length === 0) {
+        map.jumpTo({
+            center: [previousCenter.lng, previousCenter.lat],
+            zoom: previousZoom,
+        });
+        await waitForMapSettled();
+    }
+
+    return matchingFeatures;
+}
+
 /**
  * GeoJsonLayerを追加する関数
  * @param {string} id - GeoJsonのID
@@ -165,29 +232,49 @@ export function addResetClickEvent() {
  */
 export async function initShareFromUrl() {
     await restoreDrawerFromUrl({
-        route: async (routeId, sourceId) => {
+        route: async (routeId, sourceId, lat, lng, zoom) => {
             const normalizedRouteId = isNaN(routeId) ? routeId : Number(routeId);
 
-            const data = queryRouteFeatures(sourceId);
-            const matchingFeatures = data?.features?.filter(
-                (f) => f?.properties?.routeId == normalizedRouteId
-            ) || [];
+            if (!isNaN(lat) && !isNaN(lng)) {
+                map.flyTo({
+                    center: [lng, lat],
+                    zoom: !isNaN(zoom) ? zoom : Math.max(map.getZoom(), 8),
+                    duration: 1000,
+                });
+
+                await waitForMapSettled();
+            }
+
+            const matchingFeatures = !isNaN(lat) && !isNaN(lng)
+                ? (queryRouteFeatures(sourceId)?.features?.filter(
+                    (f) => f?.properties?.routeId == normalizedRouteId
+                ) || [])
+                : await queryRouteFeaturesWithOverviewFallback(sourceId, normalizedRouteId);
 
             const feature = matchingFeatures[0];
             if (!feature) return false;
 
-            const bounds = calculateBounds(matchingFeatures);
-            if (bounds) {
-                map.fitBounds(
-                    [[bounds.minLng, bounds.minLat], [bounds.maxLng, bounds.maxLat]],
-                    { padding: calculateFitBoundsPadding(), duration: 1000 }
-                );
+            if (isNaN(lat) || isNaN(lng)) {
+                const bounds = calculateBounds(matchingFeatures);
+                if (bounds) {
+                    map.fitBounds(
+                        [[bounds.minLng, bounds.minLat], [bounds.maxLng, bounds.maxLat]],
+                        { padding: calculateFitBoundsPadding(), duration: 1000 }
+                    );
+                }
             }
 
             const details = await loadRouteDetails(normalizedRouteId, sourceId);
             const businessNameParts = splitBusinessName(feature.properties.businessName);
             const sidebarContent = buildSeaRouteSidebarContent(feature.properties, details, sourceId);
-            setDrawerContext({ type: 'route', routeId, sourceId });
+            setDrawerContext({
+                type: 'route',
+                routeId,
+                sourceId,
+                lat: !isNaN(lat) ? lat : undefined,
+                lng: !isNaN(lng) ? lng : undefined,
+                zoom: !isNaN(zoom) ? zoom : undefined,
+            });
             window.showDetailDrawerWithPinClear(
                 sidebarContent,
                 businessNameParts.primary,

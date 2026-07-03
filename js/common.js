@@ -218,9 +218,11 @@ function initMap() {
         }
 
         // 共有復元はレイヤー有効化の待機でブロックさせず、先に実行する
-        ensureSharedLayerEnabled().catch((error) => {
+        try {
+            await ensureSharedLayerEnabled();
+        } catch (error) {
             console.warn('Failed to enable shared layer:', error);
-        });
+        }
         await initShareFromUrl();
     });
 

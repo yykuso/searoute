@@ -31,12 +31,40 @@
   <meta name="twitter:image" content="https://searoute.info/searoute/img/twbanner.png" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
-  <link href="./css/route-list.css" rel="stylesheet" />
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+  <link href="./css/route-list.css" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="./css/route-list.css" rel="stylesheet"></noscript>
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-03DRMSWKPW"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "航路一覧 | おでかけ航路マップ",
+    "url": "https://searoute.info/routeList.html",
+    "description": "日本全国の旅客船の航路情報をマップ上で確認できるサイト。掲載航路一覧を表示するページ。",
+    "inLanguage": "ja",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "おでかけ航路マップ",
+      "url": "https://searoute.info/"
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "yy_kuso",
+      "url": "https://x.com/yy_kuso"
+    }
+  }
+  </script>
+
+  <link rel="modulepreload" href="./js/routeList.js">
+
+  <!-- フォントを早期に取得 -->
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
 </head>
 <body>
@@ -125,10 +153,21 @@
 <script type="module" src="./js/routeList.js"></script>
 
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-03DRMSWKPW');
+  (function() {
+    var GA_ID = 'G-03DRMSWKPW';
+    function loadGA() {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', GA_ID);
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(s);
+    }
+    loadGA();
+  })();
 </script>
 
 </html>

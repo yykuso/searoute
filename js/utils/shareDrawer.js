@@ -17,7 +17,24 @@ const SHARE_CONTEXT_CONFIG = {
         parseParams: (params) => {
             const routeId = params.get('routeId');
             const sourceId = params.get('sourceId');
-            return routeId && sourceId ? { routeId, sourceId } : null;
+            const lat = parseFloat(params.get('lat'));
+            const lng = parseFloat(params.get('lng'));
+            const zoom = parseFloat(params.get('zoom'));
+
+            if (!routeId || !sourceId) {
+                return null;
+            }
+
+            const parsed = { routeId, sourceId };
+            if (!isNaN(lat) && !isNaN(lng)) {
+                parsed.lat = lat;
+                parsed.lng = lng;
+            }
+            if (!isNaN(zoom)) {
+                parsed.zoom = zoom;
+            }
+
+            return parsed;
         },
         getLayerId: (context) => context.sourceId,
     },
@@ -52,7 +69,7 @@ const SHARE_CONTEXT_CONFIG = {
 /**
  * ドロワーコンテキストを設定する
  * @param {Object} context
- *   route: { type: 'route', routeId, sourceId }
+ *   route: { type: 'route', routeId, sourceId, lat?, lng?, zoom? }
  *   port:  { type: 'port', lat, lng, name }
  *   coord: { type: 'coord', lat, lng }
  */

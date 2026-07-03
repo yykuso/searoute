@@ -293,7 +293,14 @@ function addSeaRouteClickEvent(id, handleId = id) {
         const businessNameParts = splitBusinessName(properties.businessName);
         const sidebarContent = buildSeaRouteSidebarContent(properties, details, id);
 
-        setDrawerContext({ type: 'route', routeId: properties.routeId, sourceId: id });
+        setDrawerContext({
+            type: 'route',
+            routeId: properties.routeId,
+            sourceId: id,
+            lat: event.lngLat?.lat,
+            lng: event.lngLat?.lng,
+            zoom: map.getZoom(),
+        });
         window.showDetailDrawerWithPinClear(
             sidebarContent,
             businessNameParts.primary,
