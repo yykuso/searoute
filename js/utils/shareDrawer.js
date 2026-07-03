@@ -176,11 +176,15 @@ export async function restoreDrawerFromUrl(handlers) {
     if (!shareContext) return;
 
     const handler = handlers?.[shareContext.type];
+    let restored = false;
     if (handler) {
         const { type, ...payload } = shareContext;
-        await handler(...Object.values(payload));
+        const result = await handler(...Object.values(payload));
+        restored = result !== false;
     }
 
-    // 復元完了後にURLクエリを削除
-    history.replaceState(null, '', location.pathname);
+    // 復元成功時のみURLクエリを削除
+    if (restored) {
+        history.replaceState(null, '', location.pathname);
+    }
 }

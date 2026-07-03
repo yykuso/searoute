@@ -15,6 +15,7 @@
 ## 技術スタック
 
 - **地図ライブラリ**: MapLibre GL JS
+- **航路データ配信**: PMTiles（`https://pmtiles.searoute.info/`）
 - **スタイリング**: Tailwind CSS（ビルド済み静的CSS）
 - **フレームワーク**: Vanilla JavaScript (フレームワークレス)
 - **ホスティング**: GitHub Pages
@@ -58,14 +59,25 @@ searoute/
 ├── service-worker.js       # Service Worker
 ├── css/                    # スタイルシート
 ├── js/                     # JavaScriptモジュール
-│   ├── common.js
-│   ├── dataLoader.js
-│   ├── geoJsonLayers.js
-│   ├── rasterLayers.js
-│   └── ...
-├── data/                   # 航路・港湾データ（GeoJSON）
-│   ├── seaRoute.geojson
-│   ├── seaRouteDetails.json
+│   ├── common.js               # マップ初期化・ベースマップ切替・レイヤー管理（メイン）
+│   ├── dataLoader.js           # GeoJSON・詳細JSONの非同期読み込み
+│   ├── pmtilesLayers.js        # PMTiles航路レイヤー追加・フィルタ・ズーム
+│   ├── geoJsonLayers.js        # 港湾GeoJSONレイヤー・URLシェア復元
+│   ├── rasterLayers.js         # 衛星画像などラスタータイルレイヤー管理
+│   ├── layerConfig.js          # レイヤーメタデータ定義
+│   ├── layersControl.js        # レイヤー表示切替パネルUI
+│   ├── routeFilterControl.js   # 航路フィルタコントロール
+│   ├── detailDrawer.js         # 詳細情報パネル制御
+│   ├── hamburgerControl.js     # ハンバーガーメニューUI
+│   ├── contextMenu.js          # 地図右クリックコンテキストメニュー
+│   ├── cookieControl.js        # ユーザー設定のCookie永続化
+│   ├── routeList.js            # 航路一覧ページのテーブル・検索
+│   └── utils/
+│       ├── drawerHelpers.js        # ドロワーHTML生成ヘルパー
+│       ├── shareDrawer.js          # ドロワー状態のURLシェア機能
+│       ├── outsideClickHandler.js  # 要素外クリック検出ユーティリティ
+│       └── wikipediaImage.js       # Wikipedia APIによる船画像取得
+├── data/                   # 港湾データ（GeoJSON）
 │   ├── portData.geojson
 │   └── ...
 └── img/                    # 画像・アイコン

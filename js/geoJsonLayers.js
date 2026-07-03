@@ -2,61 +2,40 @@
  * GeoJSONレイヤー管理モジュール
  *
  * 責務:
- * - 航路・港湾データのGeoJSONレイヤーの追加・描画
+ * - 港湾データのGeoJSONレイヤーの追加・描画
  * - マーカー画像の読み込みと管理
  * - GeoJSONレイヤーのクリックイベント処理
- * - ズーム・ハイライト機能の実装
- * - 運休中の航路表示切り替え
+ * - URLシェアからの航路/港湾復元
  */
 
-import { loadData, loadAndMergeData } from './dataLoader.js';
+import { loadData } from './dataLoader.js';
 import { loadShipImageIntoDrawer } from './utils/wikipediaImage.js';
 import { setDrawerContext, restoreDrawerFromUrl } from './utils/shareDrawer.js';
 import { map } from './common.js';
 import {
-    escapeHtml,
     splitBusinessName,
-    toBlockLines,
-    createDrawerAccentBar,
-    createDrawerSection,
-    getLinkHostname,
     buildSeaRouteSidebarContent,
     buildPortSidebarContent,
 } from './utils/drawerHelpers.js';
+import {
+    ROUTE_LAYER_CONFIGS,
+    addSeaRouteLayer,
+    removeSeaRouteClickEvent,
+    getSeaRouteHandleIds,
+    removeRouteHighlight,
+    loadRouteDetails,
+    queryRouteFeatures,
+    calculateBounds,
+    calculateFitBoundsPadding,
+} from './pmtilesLayers.js';
 
-// EventHandle情報の保存
-var eventHandle = {};
+export { setRouteFilters, toggleSuspendedRoutes } from './pmtilesLayers.js';
 
-// 設定値の管理
-let routeFilters = {
-    status: {
-        active: true,
-        season: true,
-        suspend: false,
-    },
-    carriage: {
-        car: false,
-        bike: false,
-        bicycle: false,
-    },
-};
+// EventHandle情報の保存（ポートレイヤー用）
+const eventHandle = {};
 
-// GeoJSONデータのキャッシュ
+// GeoJSONデータのキャッシュ（ポートレイヤー用）
 const geoJsonDataCache = {};
-
-// detail-drawer のサイズキャッシュ（ResizeObserver で更新）
-const drawerSizeCache = { width: 0, height: 0 };
-{
-    const drawerEl = document.getElementById('detail-drawer');
-    if (drawerEl) {
-        const ro = new ResizeObserver(entries => {
-            const entry = entries[0];
-            drawerSizeCache.width = entry.contentRect.width;
-            drawerSizeCache.height = entry.contentRect.height;
-        });
-        ro.observe(drawerEl);
-    }
-}
 
 /**
  * GeoJsonLayerを追加する関数
@@ -64,13 +43,14 @@ const drawerSizeCache = { width: 0, height: 0 };
  */
 export async function addGeoJsonLayer(id) {
     if (id === 'geojson_port') {
-        addGeoJsonPortLayer();
+        await addGeoJsonPortLayer();
         addPortClickEvent('geojson_port');
+        return true;
     } else if (id in ROUTE_LAYER_CONFIGS) {
-        addGenericSeaRouteLayer(id);
-        addSeaRouteClickEvent(id, `${id}_outline`);
+        return addSeaRouteLayer(id);
     } else {
         console.log('[Error] Layer not found : addGeoJsonLayer( ' + id + ' )');
+        return false;
     }
 }
 
@@ -79,148 +59,17 @@ export async function addGeoJsonLayer(id) {
  * @param {string} id - ImageID
  * @param {string} url - 画像URL
  */
-export async function addMarker(id, url){
+export async function addMarker(id, url) {
     if (!map.hasImage(id)) {
         const anchorImage = await map.loadImage(url);
         map.addImage(id, anchorImage.data);
     }
 }
 
-// 航路レイヤーごとの設定
-const ROUTE_LAYER_CONFIGS = {
-    'geojson_sea_route': {
-        geojsonPath:  './data/seaRoute.geojson',
-        detailsPath:  './data/seaRouteDetails.json',
-        outlineColor: '#FFFFFF',
-        freqDefault:  3,
-        freqMultZ3:   0.5,
-    },
-    'geojson_international_sea_route': {
-        geojsonPath:  './data/internationalSeaRoute.geojson',
-        detailsPath:  './data/internationalSeaRouteDetails.json',
-        outlineColor: '#FFFFFF',
-        freqDefault:  1,
-        freqMultZ3:   0.75,
-    },
-    'geojson_KR_sea_route': {
-        geojsonPath:  './data/seaRouteKR.geojson',
-        detailsPath:  './data/seaRouteKRDetails.json',
-        outlineColor: '#FFFFFF',
-        freqDefault:  1,
-        freqMultZ3:   0.75,
-    },
-    'geojson_limited_sea_route': {
-        geojsonPath:  './data/limitedSeaRoute.geojson',
-        detailsPath:  './data/limitedSeaRouteDetails.json',
-        outlineColor: '#000000',
-        freqDefault:  1,
-        freqMultZ3:   0.75,
-    },
-};
-
-/**
- * 汎用航路レイヤーを追加する関数
- * @param {string} id - ROUTE_LAYER_CONFIGSのキー
- */
-async function addGenericSeaRouteLayer(id) {
-    const cfg = ROUTE_LAYER_CONFIGS[id];
-    const seaRouteGeojson = await loadAndMergeData(cfg.geojsonPath, cfg.detailsPath, 'routeId');
-
-    geoJsonDataCache[id] = seaRouteGeojson;
-
-    map.addSource(id, { type: 'geojson', data: seaRouteGeojson });
-
-    const lineWidth = (freqDefault, multZ3) => [
-        'interpolate', ['linear'], ['zoom'],
-        3, ['*', ['coalesce', ['get', 'freq'], freqDefault], multZ3],
-        6, ['*', ['coalesce', ['get', 'freq'], freqDefault], 1.0],
-    ];
-    const outlineWidth = (freqDefault, multZ3) => [
-        'interpolate', ['linear'], ['zoom'],
-        3, ['*', ['coalesce', ['get', 'freq'], freqDefault], multZ3],
-        6, ['+', ['*', ['coalesce', ['get', 'freq'], freqDefault], 1.0], 4],
-    ];
-
-    map.addLayer({
-        id: `${id}_outline`,
-        type: 'line',
-        source: id,
-        layout: { 'line-join': 'round', 'line-cap': 'round' },
-        paint: {
-            'line-color': cfg.outlineColor,
-            'line-width': outlineWidth(cfg.freqDefault, cfg.freqMultZ3),
-            'line-opacity': 0.5,
-        },
-    });
-    map.addLayer({
-        id: `${id}_solidline`,
-        type: 'line',
-        source: id,
-        layout: { 'line-join': 'round', 'line-cap': 'round' },
-        filter: ['==', ['get', 'note'], null],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': lineWidth(cfg.freqDefault, cfg.freqMultZ3),
-            'line-dasharray': [1, 0],
-        },
-    });
-    map.addLayer({
-        id: `${id}_dashline`,
-        type: 'line',
-        source: id,
-        layout: { 'line-join': 'round', 'line-cap': 'round' },
-        filter: ['==', ['get', 'note'], 'season'],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': lineWidth(cfg.freqDefault, cfg.freqMultZ3),
-            'line-dasharray': [1, 2],
-        },
-    });
-    map.addLayer({
-        id: `${id}_thinline`,
-        type: 'line',
-        source: id,
-        layout: { 'line-join': 'round', 'line-cap': 'round' },
-        filter: ['==', ['get', 'note'], 'suspend'],
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#000000'],
-            'line-width': lineWidth(cfg.freqDefault, cfg.freqMultZ3),
-            'line-dasharray': [1, 4],
-        },
-    });
-    map.addLayer({
-        id: `${id}_name`,
-        type: 'symbol',
-        source: id,
-        layout: {
-            'symbol-placement': 'line',
-            'text-offset': [0, 1],
-            'text-field': [
-                'step', ['zoom'],
-                '',
-                4, ['get', 'businessName'],
-                6, ['format', ['get', 'businessName'], {}, ' (', {}, ['get', 'routeName'], {}, ') ', {}],
-            ],
-            'text-font': ['NotoSansCJKjp-Regular'],
-            'text-size': 9,
-        },
-        paint: {
-            'text-color': ['coalesce', ['get', 'color'], '#000000'],
-            'text-halo-color': '#FFFFFF',
-            'text-halo-width': 2,
-            'text-halo-blur': 2,
-        },
-    });
-
-    applyRouteFilters();
-}
-
 async function addGeoJsonPortLayer() {
-    // マーカー読み込み
     addMarker('anchor_marker', './img/anchor.png');
-    var portGeojson = await loadData('./data/portData.geojson');
 
-    // キャッシュに保存
+    const portGeojson = await loadData('./data/portData.geojson');
     geoJsonDataCache['geojson_port'] = portGeojson;
 
     map.addSource('geojson_port', {
@@ -236,45 +85,12 @@ async function addGeoJsonPortLayer() {
             'icon-image': 'anchor_marker',
             'icon-size': 0.3,
             'text-field': ['get', 'Name'],
-            'text-font': ["NotoSansCJKjp-Regular"],
+            'text-font': ['NotoSansCJKjp-Regular'],
             'text-size': 12,
             'text-offset': [0, 0.8],
-            'text-anchor': 'top'
+            'text-anchor': 'top',
         },
     });
-}
-
-/**
- * 航路ラインに関するイベントを追加
- * @param {string} id - 紐づけ元GeoJsonのID
- * @param {string} handleId - EventをHandleするID
- */
-function addSeaRouteClickEvent(id, handleId = id) {
-    map.on('click', handleId, (event) => {
-        const properties = event.features[0].properties;
-        const businessNameParts = splitBusinessName(properties.businessName);
-        const sidebarContent = buildSeaRouteSidebarContent(properties, id);
-
-        setDrawerContext({ type: 'route', routeId: properties.routeId, sourceId: id });
-        window.showDetailDrawerWithPinClear(
-            sidebarContent,
-            businessNameParts.primary,
-            businessNameParts.secondary
-        );
-        loadShipImageIntoDrawer(properties.shipName || null, properties.businessName || '');
-        gtag('event', 'marker_click', {
-            'event_category': 'map',
-            'event_label': properties.businessName,
-            'value': 1
-        });
-    });
-    map.on('mousemove', handleId, () => {
-        map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', handleId, () => {
-        map.getCanvas().style.cursor = '';
-    });
-    eventHandle[id] = handleId;
 }
 
 /**
@@ -283,7 +99,9 @@ function addSeaRouteClickEvent(id, handleId = id) {
  * @param {string} handleId - EventをHandleするID
  */
 function addPortClickEvent(id, handleId = id) {
-    map.on('click', handleId, (event) => {
+    removeClickEvent(id);
+
+    const onClick = (event) => {
         const properties = event.features[0].properties;
         const portName = properties.Name || properties.portName || 'N/A';
         const coords = event.features[0].geometry.coordinates;
@@ -294,19 +112,16 @@ function addPortClickEvent(id, handleId = id) {
         const sidebarContent = buildPortSidebarContent(properties, googleMapsUrl);
 
         setDrawerContext({ type: 'port', lat: coords[1], lng: coords[0], name: portName });
-        window.showDetailDrawerWithPinClear(
-            sidebarContent,
-            portName,
-            "港湾情報"
-        );
-    });
-    map.on('mousemove', handleId, () => {
-        map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', handleId, () => {
-        map.getCanvas().style.cursor = '';
-    });
-    eventHandle[id] = handleId;
+        window.showDetailDrawerWithPinClear(sidebarContent, portName, '港湾情報');
+    };
+    const onMouseMove = () => { map.getCanvas().style.cursor = 'pointer'; };
+    const onMouseLeave = () => { map.getCanvas().style.cursor = ''; };
+
+    map.on('click', handleId, onClick);
+    map.on('mousemove', handleId, onMouseMove);
+    map.on('mouseleave', handleId, onMouseLeave);
+
+    eventHandle[id] = { handleId, click: onClick, mousemove: onMouseMove, mouseleave: onMouseLeave };
 }
 
 /**
@@ -314,10 +129,18 @@ function addPortClickEvent(id, handleId = id) {
  * @param {string} id - 紐づけ元GeoJsonのID
  */
 export function removeClickEvent(id) {
-    var handleId = eventHandle[id];
-    if (handleId) {
-        map.off('click', handleId);
+    const binding = eventHandle[id];
+    if (binding) {
+        const handleId = binding.handleId;
+        if (binding.click)     map.off('click',     handleId, binding.click);
+        if (binding.mousemove) map.off('mousemove',  handleId, binding.mousemove);
+        if (binding.mouseleave) map.off('mouseleave', handleId, binding.mouseleave);
+        delete eventHandle[id];
+        return;
     }
+
+    // ポートに該当しない場合は航路イベントとして委譲
+    removeSeaRouteClickEvent(id);
 }
 
 /**
@@ -325,391 +148,15 @@ export function removeClickEvent(id) {
  */
 export function addResetClickEvent() {
     map.on('click', (event) => {
-        const validIds = Object.values(eventHandle);
+        const portHandleIds  = Object.values(eventHandle).map(b => b.handleId).filter(Boolean);
+        const routeHandleIds = getSeaRouteHandleIds();
+        const validIds = [...portHandleIds, ...routeHandleIds];
+
         const features = map.queryRenderedFeatures(event.point);
         if (!features.find(feature => validIds.includes(feature.layer.id))) {
             if (window.hideSidebar) window.hideSidebar();
-            // ハイライトも削除
             removeRouteHighlight();
         }
-    });
-}
-
-/**
- * GeoJSON データを取得する
- * @param {string} sourceId - ソース ID
- * @returns {Object|null} GeoJSON オブジェクト または null
- */
-function getGeoJsonData(sourceId) {
-    let data = geoJsonDataCache[sourceId];
-
-    if (!data) {
-        const source = map.getSource(sourceId);
-        if (!source) {
-            console.error('Source not found:', sourceId);
-            return null;
-        }
-
-        data = source._data;
-
-        if (!data || !data.features) {
-            const features = map.querySourceFeatures(sourceId);
-            if (!features || features.length === 0) {
-                console.error('No features found for source:', sourceId);
-                return null;
-            }
-
-            data = {
-                type: 'FeatureCollection',
-                features: features
-            };
-        }
-    }
-
-    if (!data.features) {
-        console.error('No features found in data:', sourceId);
-        return null;
-    }
-
-    return data;
-}
-
-/**
- * パラメータから一致する feature を検索する
- * @param {Array} features - 検索対象の feature 配列
- * @param {string} routeName - 航路名
- * @param {string} routeId - 航路 ID
- * @param {string} lineId - 区間 ID
- * @returns {Object} { features, searchType } 一致 feature 群と検索タイプ
- */
-function findMatchingFeatures(features, routeName, routeId, lineId) {
-    let matchingFeatures = [];
-    let searchType = '';
-
-    if (routeName) {
-        matchingFeatures = features.filter(feature =>
-            feature.properties && feature.properties.routeName === routeName
-        );
-        searchType = 'routeName';
-    } else if (routeId && lineId) {
-        matchingFeatures = features.filter(feature =>
-            feature.properties &&
-            String(feature.properties.routeId) === String(routeId) &&
-            String(feature.properties.lineId) === String(lineId)
-        );
-        searchType = 'routeSection';
-
-        if (matchingFeatures.length === 0) {
-            matchingFeatures = features.filter(feature =>
-                feature.properties &&
-                String(feature.properties.routeId) === String(routeId)
-            );
-            searchType = 'routeOnly';
-        }
-    } else if (routeId) {
-        matchingFeatures = features.filter(feature =>
-            feature.properties &&
-            String(feature.properties.routeId) === String(routeId)
-        );
-        searchType = 'routeOnly';
-    }
-
-    return { features: matchingFeatures, searchType };
-}
-
-/**
- * feature 群から境界ボックスを計算する
- * @param {Array} features - feature 群
- * @returns {Object|null} { minLng, maxLng, minLat, maxLat } または null
- */
-function calculateBounds(features) {
-    let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
-
-    features.forEach(feature => {
-        if (feature.geometry.type === 'LineString') {
-            feature.geometry.coordinates.forEach(coord => {
-                const [lng, lat] = coord;
-                minLng = Math.min(minLng, lng);
-                maxLng = Math.max(maxLng, lng);
-                minLat = Math.min(minLat, lat);
-                maxLat = Math.max(maxLat, lat);
-            });
-        } else if (feature.geometry.type === 'MultiLineString') {
-            feature.geometry.coordinates.forEach(lineString => {
-                lineString.forEach(coord => {
-                    const [lng, lat] = coord;
-                    minLng = Math.min(minLng, lng);
-                    maxLng = Math.max(maxLng, lng);
-                    minLat = Math.min(minLat, lat);
-                    maxLat = Math.max(maxLat, lat);
-                });
-            });
-        }
-    });
-
-    const isValid = minLng !== Infinity && minLat !== Infinity && maxLng !== -Infinity && maxLat !== -Infinity;
-    if (!isValid) {
-        console.error('Invalid bounds calculated');
-        return null;
-    }
-
-    return { minLng, maxLng, minLat, maxLat };
-}
-
-/**
- * ドロワー表示状態に応じてパディングを計算する
- * @returns {Object} パディングオブジェクト
- */
-function calculateFitBoundsPadding() {
-    const padding = {
-        top: 50,
-        left: 50,
-        right: 50,
-        bottom: 50
-    };
-
-    const detailDrawer = document.getElementById('detail-drawer');
-    if (detailDrawer && !detailDrawer.classList.contains('hidden')) {
-        if (window.innerWidth >= 768) {
-            padding.left = drawerSizeCache.width + 30;
-        } else {
-            padding.bottom = drawerSizeCache.height + 30;
-        }
-    }
-
-    return padding;
-}
-
-/**
- * 航路や航路区間に移動する統一関数をグローバルに公開
- */
-window.zoomToRoute = function(params) {
-    try {
-        const { routeName, routeId, lineId, sourceId } = params;
-
-        const data = getGeoJsonData(sourceId);
-        if (!data) return;
-
-        const { features: matchingFeatures, searchType } = findMatchingFeatures(
-            data.features,
-            routeName,
-            routeId,
-            lineId
-        );
-
-        if (matchingFeatures.length === 0) {
-            console.error('No matching features found for:', params);
-            return;
-        }
-
-        const bounds = calculateBounds(matchingFeatures);
-        if (!bounds) return;
-
-        const padding = calculateFitBoundsPadding();
-
-        map.fitBounds([
-            [bounds.minLng, bounds.minLat],
-            [bounds.maxLng, bounds.maxLat]
-        ], {
-            padding: padding,
-            duration: 1000
-        });
-
-        addRouteHighlight(matchingFeatures, sourceId);
-
-        if (typeof gtag !== 'undefined') {
-            const eventLabel = routeName || `${routeId}-${lineId}`;
-            const eventType = searchType === 'routeName' ? 'route_zoom' : 'route_section_zoom';
-            gtag('event', eventType, {
-                'event_category': 'map',
-                'event_label': eventLabel,
-                'value': 1
-            });
-        }
-
-    } catch (error) {
-        console.error('Error in zoomToRoute:', error);
-    }
-};
-
-/**
- * 航路のハイライト表示を追加
- */
-function addRouteHighlight(features, sourceId) {
-    // 既存のハイライトを削除
-    removeRouteHighlight();
-
-    // ハイライト用のGeoJSONデータを作成
-    const highlightData = {
-        type: 'FeatureCollection',
-        features: features
-    };
-
-    // ハイライト用ソースを追加
-    map.addSource('route-highlight', {
-        type: 'geojson',
-        data: highlightData
-    });
-
-    // ハイライト用レイヤーを追加（航路の色で太い線）
-    map.addLayer({
-        id: 'route-highlight-line',
-        type: 'line',
-        source: 'route-highlight',
-        layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        paint: {
-            'line-color': ['coalesce', ['get', 'color'], '#FF6B35'],
-            'line-width': 8,
-            'line-opacity': 0.6
-        }
-    });
-
-    // 別の航路をクリックするまでハイライトを維持
-}
-
-/**
- * 航路のハイライト表示を削除
- */
-function removeRouteHighlight() {
-    if (map.getLayer('route-highlight-line')) {
-        map.removeLayer('route-highlight-line');
-    }
-    if (map.getSource('route-highlight')) {
-        map.removeSource('route-highlight');
-    }
-}
-
-// ハイライト削除機能をグローバルに公開
-window.removeRouteHighlight = removeRouteHighlight;
-
-// 既存の関数呼び出しとの互換性を保持するためのラッパー関数
-window.zoomToRouteSection = function(routeId, lineId, sourceId) {
-    window.zoomToRoute({ routeId, lineId, sourceId });
-};
-
-const ROUTE_TYPES = ['geojson_sea_route', 'geojson_international_sea_route', 'geojson_KR_sea_route', 'geojson_limited_sea_route'];
-const ROUTE_LAYER_SUFFIXES = ['_outline', '_solidline', '_dashline', '_thinline', '_name'];
-const NEVER_MATCH_FILTER = ['==', ['get', 'routeId'], '__never_match__'];
-
-const STATUS_FILTERS = {
-    active: ['any', ['==', ['get', 'note'], null], ['==', ['get', 'note'], '']],
-    season: ['==', ['get', 'note'], 'season'],
-    suspend: ['==', ['get', 'note'], 'suspend'],
-};
-
-function buildAvailabilityFilter(propertyName) {
-    return ['any',
-        ['==', ['get', propertyName], 1],
-        ['==', ['get', propertyName], '1']
-    ];
-}
-
-function buildAnyFilter(filters, fallback = null) {
-    const validFilters = filters.filter(Boolean);
-    if (validFilters.length === 0) {
-        return fallback;
-    }
-    if (validFilters.length === 1) {
-        return validFilters[0];
-    }
-    return ['any', ...validFilters];
-}
-
-function combineFilters(...filters) {
-    const validFilters = filters.filter(Boolean);
-    if (validFilters.length === 0) {
-        return null;
-    }
-    if (validFilters.length === 1) {
-        return validFilters[0];
-    }
-    return ['all', ...validFilters];
-}
-
-function getStatusFilterForSuffix(suffix) {
-    const selectedStatuses = routeFilters.status || {};
-
-    if (suffix === '_solidline') {
-        return selectedStatuses.active ? STATUS_FILTERS.active : NEVER_MATCH_FILTER;
-    }
-    if (suffix === '_dashline') {
-        return selectedStatuses.season ? STATUS_FILTERS.season : NEVER_MATCH_FILTER;
-    }
-    if (suffix === '_thinline') {
-        return selectedStatuses.suspend ? STATUS_FILTERS.suspend : NEVER_MATCH_FILTER;
-    }
-
-    return buildAnyFilter([
-        selectedStatuses.active ? STATUS_FILTERS.active : null,
-        selectedStatuses.season ? STATUS_FILTERS.season : null,
-        selectedStatuses.suspend ? STATUS_FILTERS.suspend : null,
-    ], NEVER_MATCH_FILTER);
-}
-
-function getCarriageFilter() {
-    const selectedCarriages = routeFilters.carriage || {};
-
-    return buildAnyFilter([
-        selectedCarriages.car ? buildAvailabilityFilter('car') : null,
-        selectedCarriages.bike ? buildAvailabilityFilter('bike') : null,
-        selectedCarriages.bicycle ? buildAvailabilityFilter('bicycle') : null,
-    ]);
-}
-
-function getLayerFilter(suffix) {
-    return combineFilters(getStatusFilterForSuffix(suffix), getCarriageFilter());
-}
-
-function applyRouteFilters() {
-    ROUTE_TYPES.forEach((routeType) => {
-        ROUTE_LAYER_SUFFIXES.forEach((suffix) => {
-            const layerId = routeType + suffix;
-            if (map.getLayer(layerId)) {
-                map.setFilter(layerId, getLayerFilter(suffix));
-            }
-        });
-    });
-}
-
-/**
- * 航路フィルタを更新する
- * @param {Object} filters - フィルタ設定
- */
-export function setRouteFilters(filters) {
-    routeFilters = {
-        status: {
-            active: Boolean(filters?.status?.active),
-            season: Boolean(filters?.status?.season),
-            suspend: Boolean(filters?.status?.suspend),
-        },
-        carriage: {
-            car: Boolean(filters?.carriage?.car),
-            bike: Boolean(filters?.carriage?.bike),
-            bicycle: Boolean(filters?.carriage?.bicycle),
-        },
-    };
-    applyRouteFilters();
-}
-
-/**
- * 休止中航路の表示・非表示を切り替える互換ラッパー
- * @param {boolean} showSuspended - 休止中航路を表示するかどうか
- */
-export function toggleSuspendedRoutes(showSuspended) {
-    setRouteFilters({
-        status: {
-            active: true,
-            season: true,
-            suspend: showSuspended,
-        },
-        carriage: {
-            car: false,
-            bike: false,
-            bicycle: false,
-        },
     });
 }
 
@@ -719,45 +166,38 @@ export function toggleSuspendedRoutes(showSuspended) {
 export async function initShareFromUrl() {
     await restoreDrawerFromUrl({
         route: async (routeId, sourceId) => {
-            // キャッシュがなければデータだけ先にロード（レイヤーは追加しない）
-            if (!geoJsonDataCache[sourceId]) {
-                const cfg = ROUTE_LAYER_CONFIGS[sourceId];
-                if (!cfg) return;
-                geoJsonDataCache[sourceId] = await loadAndMergeData(cfg.geojsonPath, cfg.detailsPath, 'routeId');
+            const normalizedRouteId = isNaN(routeId) ? routeId : Number(routeId);
+
+            const data = queryRouteFeatures(sourceId);
+            const matchingFeatures = data?.features?.filter(
+                (f) => f?.properties?.routeId == normalizedRouteId
+            ) || [];
+
+            const feature = matchingFeatures[0];
+            if (!feature) return false;
+
+            const bounds = calculateBounds(matchingFeatures);
+            if (bounds) {
+                map.fitBounds(
+                    [[bounds.minLng, bounds.minLat], [bounds.maxLng, bounds.maxLat]],
+                    { padding: calculateFitBoundsPadding(), duration: 1000 }
+                );
             }
 
-            const data = geoJsonDataCache[sourceId];
-            if (!data) return;
-
-            // routeId に一致する最初のフィーチャーからプロパティ取得（数値・文字列どちらにも対応）
-            const normalizedRouteId = isNaN(routeId) ? routeId : Number(routeId);
-            const feature = data.features.find(f => f.properties.routeId == normalizedRouteId);
-            if (!feature) return;
-            const properties = feature.properties;
-            const businessNameParts = splitBusinessName(properties.businessName);
-            const sidebarContent = buildSeaRouteSidebarContent(properties, sourceId);
+            const details = await loadRouteDetails(normalizedRouteId, sourceId);
+            const businessNameParts = splitBusinessName(feature.properties.businessName);
+            const sidebarContent = buildSeaRouteSidebarContent(feature.properties, details, sourceId);
             setDrawerContext({ type: 'route', routeId, sourceId });
             window.showDetailDrawerWithPinClear(
                 sidebarContent,
                 businessNameParts.primary,
                 businessNameParts.secondary
             );
-            loadShipImageIntoDrawer(properties.shipName || null, properties.businessName || '');
-
-            // routeId に一致する全フィーチャーの座標からバウンドを計算して移動
-            const matchingFeatures = data.features.filter(f => f.properties.routeId == normalizedRouteId);
-            const bounds = calculateBounds(matchingFeatures);
-            if (bounds) {
-                const padding = calculateFitBoundsPadding();
-                map.fitBounds(
-                    [[bounds.minLng, bounds.minLat], [bounds.maxLng, bounds.maxLat]],
-                    { padding, duration: 1000 }
-                );
-            }
+            loadShipImageIntoDrawer(details.shipName || feature.properties.shipName || null, feature.properties.businessName || '');
+            return true;
         },
         port: async (lat, lng, name) => {
             map.flyTo({ center: [lng, lat], zoom: 12, duration: 1000 });
-            // キャッシュがなければポートデータをロード
             if (!geoJsonDataCache['geojson_port']) {
                 geoJsonDataCache['geojson_port'] = await loadData('./data/portData.geojson');
             }
@@ -771,12 +211,12 @@ export async function initShareFromUrl() {
             const sidebarContent = buildPortSidebarContent(properties, googleMapsUrl);
             setDrawerContext({ type: 'port', lat, lng, name });
             window.showDetailDrawerWithPinClear(sidebarContent, name, '港湾情報');
+            return true;
         },
         coord: async (lat, lng) => {
             map.flyTo({ center: [lng, lat], zoom: 14, duration: 1000 });
-            if (window.openCoordinateDrawer) {
-                window.openCoordinateDrawer(lat, lng);
-            }
+            if (window.openCoordinateDrawer) window.openCoordinateDrawer(lat, lng);
+            return true;
         },
     });
 }

@@ -31,14 +31,21 @@ class RouteTableManager {
     async loadTableData(config) {
         try {
             const response = await fetch(config.dataPath);
-            const details = await response.json();
+            const data = await response.json();
             const tableBody = document.querySelector(config.selector);
 
-            this.tableData[config.selector] = details;
+            if (!tableBody) {
+                throw new Error(`Table body not found: ${config.selector}`);
+            }
+
+            const details = await this.loadDetailsIndex(config);
+            const rows = this.normalizeRows(data, details);
+
+            this.tableData[config.selector] = rows;
 
             // テーブルに行を追加
-            Object.keys(details).forEach((routeId) => {
-                const { businessName, routeName, info, shipName, note, url } = details[routeId];
+            rows.forEach((rowData) => {
+                const { routeId, businessName, routeName, info, shipName, note, url } = rowData;
 
                 const row = document.createElement('tr');
 
@@ -71,6 +78,7 @@ class RouteTableManager {
                     link.href = url;
                     link.textContent = 'リンク';
                     link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
                     urlCell.appendChild(link);
                 } else {
                     urlCell.textContent = '-';
@@ -87,11 +95,96 @@ class RouteTableManager {
         }
     }
 
+    async loadDetailsIndex(config) {
+        if (!config.detailsPath) {
+            return {};
+        }
+
+        try {
+            const response = await fetch(config.detailsPath);
+            if (!response.ok) {
+                return {};
+            }
+            return await response.json();
+        } catch (error) {
+            console.warn(`詳細データ読み込み失敗 (${config.detailsPath}):`, error);
+            return {};
+        }
+    }
+
+    normalizeRows(data, detailsIndex) {
+        if (data && Array.isArray(data.features)) {
+            return this.normalizeGeoJsonRows(data, detailsIndex);
+        }
+
+        if (data && typeof data === 'object') {
+            return Object.entries(data).map(([routeId, detail]) => ({
+                routeId,
+                businessName: detail.businessName,
+                routeName: detail.routeName,
+                info: detail.info || detail.information || this.infoFromNote(detail.note),
+                shipName: detail.shipName,
+                note: detail.note,
+                url: detail.url,
+            }));
+        }
+
+        return [];
+    }
+
+    normalizeGeoJsonRows(geojson, detailsIndex) {
+        const routeMap = new Map();
+
+        geojson.features.forEach((feature) => {
+            const props = feature?.properties || {};
+            if (props.routeId === undefined || props.routeId === null) {
+                return;
+            }
+
+            const routeId = String(props.routeId);
+            const detail = detailsIndex[routeId] || {};
+            const previous = routeMap.get(routeId) || {};
+
+            routeMap.set(routeId, {
+                routeId,
+                businessName: detail.businessName || props.businessName || previous.businessName,
+                routeName: detail.routeName || props.routeName || previous.routeName,
+                info: detail.info || detail.information || props.info || props.information || this.infoFromNote(detail.note || props.note) || previous.info,
+                shipName: detail.shipName || props.shipName || previous.shipName,
+                note: detail.note || props.note || previous.note,
+                url: detail.url || props.url || previous.url,
+            });
+        });
+
+        return Array.from(routeMap.values()).sort((a, b) => this.compareRouteId(a.routeId, b.routeId));
+    }
+
+    infoFromNote(note) {
+        if (note === 'season') {
+            return '季節運航';
+        }
+        if (note === 'suspend') {
+            return '運休中';
+        }
+        return undefined;
+    }
+
+    compareRouteId(a, b) {
+        const aNumeric = /^\d+$/.test(a);
+        const bNumeric = /^\d+$/.test(b);
+
+        if (aNumeric && bNumeric) {
+            return Number(a) - Number(b);
+        }
+
+        return a.localeCompare(b, 'ja', { numeric: true });
+    }
+
     /**
      * 航路の共有URLを生成
      */
     buildRouteMapUrl(routeId, sourceId) {
-        const url = new URL('./', window.location.href);
+        const url = new URL('./index.html', window.location.href);
         url.searchParams.set('share', 'route');
         url.searchParams.set('routeId', routeId);
         url.searchParams.set('sourceId', sourceId);
@@ -193,9 +286,24 @@ class RouteTableManager {
 
 // テーブル設定
 const TABLE_CONFIGS = [
-    { dataPath: './data/seaRouteDetails.json', selector: '.sea-route-table tbody', sourceId: 'geojson_sea_route' },
-    { dataPath: './data/internationalSeaRouteDetails.json', selector: '.international-sea-route-table tbody', sourceId: 'geojson_international_sea_route' },
-    { dataPath: './data/seaRouteKRDetails.json', selector: '.sea-route-KR-table tbody', sourceId: 'geojson_KR_sea_route' },
+    {
+        dataPath: './data/seaRoute_enriched.geojson',
+        detailsPath: './data/old/seaRouteDetails.json',
+        selector: '.sea-route-table tbody',
+        sourceId: 'geojson_sea_route'
+    },
+    {
+        dataPath: './data/old/internationalSeaRoute.geojson',
+        detailsPath: './data/old/internationalSeaRouteDetails.json',
+        selector: '.international-sea-route-table tbody',
+        sourceId: 'geojson_international_sea_route'
+    },
+    {
+        dataPath: './data/old/seaRouteKR.geojson',
+        detailsPath: './data/old/seaRouteKRDetails.json',
+        selector: '.sea-route-KR-table tbody',
+        sourceId: 'geojson_KR_sea_route'
+    },
 ];
 
 // テーブルマネージャーインスタンス

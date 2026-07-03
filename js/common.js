@@ -13,7 +13,7 @@ import layersControl from './layersControl.js';
 import routeFilterControl from './routeFilterControl.js';
 import hamburgerControl from './hamburgerControl.js';
 import { addRasterLayer } from './rasterLayers.js';
-import { addGeoJsonLayer, addMarker, addResetClickEvent, setRouteFilters, initShareFromUrl } from './geoJsonLayers.js';
+import { addGeoJsonLayer, addMarker, addResetClickEvent, removeClickEvent, setRouteFilters, initShareFromUrl } from './geoJsonLayers.js';
 import { copyShareUrl, getShareQueryContext, getShareTargetLayerId, setDrawerContext } from './utils/shareDrawer.js';
 import { showDetailDrawer } from './detailDrawer.js';
 import { initCenterZoom, setCookie, getCookie } from './cookieControl.js';
@@ -126,6 +126,22 @@ const DEFAULT_ROUTE_FILTERS = {
     },
 };
 
+function setupPmtilesProtocol() {
+    window.__searoutePmtilesReady = false;
+
+    if (!window.pmtiles || !window.maplibregl) {
+        return;
+    }
+
+    try {
+        const protocol = new window.pmtiles.Protocol();
+        window.maplibregl.addProtocol('pmtiles', protocol.tile);
+        window.__searoutePmtilesReady = true;
+    } catch (error) {
+        console.warn('PMTiles protocol setup failed:', error);
+    }
+}
+
 // Cookieから情報を取得
 if (getCookie("currentMap")) {
     defaultMap = parseInt(getCookie("currentMap"));
@@ -158,6 +174,8 @@ map.once('styledata', () => {
 
 // マップの初期化
 function initMap() {
+    setupPmtilesProtocol();
+
     // マップの中心・拡大をCookieから取得して初期化
     const [mapCenter, mapZoom] = initCenterZoom();
 
@@ -199,7 +217,10 @@ function initMap() {
             setTimeout(() => map.addControl(addGeocoderControl(), 'top-left'), 100);
         }
 
-        await ensureSharedLayerEnabled();
+        // 共有復元はレイヤー有効化の待機でブロックさせず、先に実行する
+        ensureSharedLayerEnabled().catch((error) => {
+            console.warn('Failed to enable shared layer:', error);
+        });
         await initShareFromUrl();
     });
 
@@ -403,6 +424,8 @@ export async function addOverLayer(layerId) {
         return;
     }
 
+    let layerAdded = true;
+
     if (layerId.startsWith('tile')) {
         const mapStyleId = TILE_LAYER_MAP[layerId];
         if (mapStyleId === undefined) {
@@ -411,9 +434,13 @@ export async function addOverLayer(layerId) {
         }
         addRasterLayer(mapStyleId);
     } else if (layerId.startsWith('geojson')) {
-        await addGeoJsonLayer(layerId);
+        layerAdded = await addGeoJsonLayer(layerId);
     } else {
         console.log('[Error] Layer not found : addOverLayer( ' + layerId + ' )');
+        return;
+    }
+
+    if (!layerAdded) {
         return;
     }
 
@@ -441,6 +468,9 @@ export async function removeOverLayer(layerId, sourceId = layerId) {
         console.log('[Warning] Layer already not exists : removeOverLayer( ' + layerId + ' )');
         return;
     } else {
+        if (layerId.startsWith('geojson')) {
+            removeClickEvent(layerId);
+        }
         removeLayerSource(layerId, sourceId);
     }
 

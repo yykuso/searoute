@@ -116,21 +116,25 @@ export function getLinkHostname(url) {
 /**
  * 航路ドロワー用のサイドバーコンテンツを生成
  * @param {Object} properties - 航路プロパティ
+ * @param {Object} details - 詳細JSON（航路ID単位）
  * @param {string} sourceId - ソース ID（クリックイベント用）
  * @returns {string} - HTML コンテンツ
  */
-export function buildSeaRouteSidebarContent(properties, sourceId) {
+export function buildSeaRouteSidebarContent(properties, details = {}, sourceId) {
     const routeId = escapeHtml(properties.routeId || '');
     const lineId = escapeHtml(properties.lineId || '');
     const routeName = escapeHtml(properties.routeName || 'N/A');
     const sectionName = `${escapeHtml(properties.portName1 || 'N/A')}～${escapeHtml(properties.portName2 || 'N/A')}`;
-    const url = properties.url || '';
+    const url = details.url || properties.url || '';
     const linkDomain = escapeHtml(getLinkHostname(url));
 
     // 各セクションのbodyをあらかじめ構築（nullのときは空文字列）
-    const freqInfoBody = properties.freqInfo ? `<div class="text-gray-800 text-xs">${toBlockLines(properties.freqInfo)}</div>` : '';
-    const infoBody = properties.info ? `<div class="text-gray-800 text-xs">${toBlockLines(properties.info)}</div>` : '';
-    const shipNameBody = properties.shipName ? `<ul class="text-gray-800 text-xs">${toBlockLines(properties.shipName, '・')}</ul>` : '';
+    const freqInfo = details.freqInfo || properties.freqInfo;
+    const info = details.info || properties.info;
+    const shipName = details.shipName || properties.shipName;
+    const freqInfoBody = freqInfo ? `<div class="text-gray-800 text-xs">${toBlockLines(freqInfo)}</div>` : '';
+    const infoBody = info ? `<div class="text-gray-800 text-xs">${toBlockLines(info)}</div>` : '';
+    const shipNameBody = shipName ? `<ul class="text-gray-800 text-xs">${toBlockLines(shipName, '・')}</ul>` : '';
     const urlBody = url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="text-gray-800 underline text-xs hover:text-blue-600 transition-all duration-200 rounded">運行スケジュール - ${linkDomain}</a>` : '';
 
     // 航送情報を構築
