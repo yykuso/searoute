@@ -181,6 +181,30 @@ table td a:hover {
     padding: 10px 10px;
 }
 
+.feedback-callout {
+    margin: 0 10px 12px;
+    padding: 10px 12px;
+    border-left: 4px solid #0ea5e9;
+    background-color: #f0f9ff;
+    width: fit-content;
+    max-width: calc(100% - 20px);
+}
+
+.feedback-callout p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.feedback-callout a {
+    color: #0369a1;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.feedback-callout a:hover {
+    text-decoration: underline;
+}
+
 .sbox-inner {
     display: flex;
 }
