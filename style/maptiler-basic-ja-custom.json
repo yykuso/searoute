@@ -1137,9 +1137,9 @@
       "source-layer": "transportation_name",
       "minzoom": 13,
       "filter": [
-        "==",
-        "$type",
-        "LineString"
+        "all",
+        ["==", "$type", "LineString"],
+        ["!=", "class", "ferry"]
       ],
       "layout": {
         "symbol-placement": "line",
