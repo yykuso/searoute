@@ -16,6 +16,10 @@ rm -rf .github .git .cloudflare .gitignore README.md _config.yml
 cd ..
 mv .tmp_deploy deploy
 
+# docs と src は配信対象外（存在する場合のみ削除）。
+rm -rf deploy/docs
+rm -rf deploy/src
+
 # 4. GeoJSONとJSONの最適化 (jqの代わりにNode.jsを使用)
 node -e '
 const fs = require("fs");
