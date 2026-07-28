@@ -255,7 +255,13 @@ function initMap() {
 
     // コントロールを追加
     map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
-    map.addControl(new maplibregl.GeolocateControl(), 'bottom-right');
+    map.addControl(new maplibregl.GeolocateControl({
+        trackUserLocation: true,
+        positionOptions: {
+            enableHighAccuracy: true,
+        },
+        showUserHeading: true,
+    }), 'bottom-right');
     map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
     map.addControl(new hamburgerControl(), 'top-right');
 
