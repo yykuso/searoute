@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -o pipefail
 
 # 1. 実行場所をリポジトリルートに固定
 cd "$(dirname "$0")/.."
@@ -57,7 +58,7 @@ optimize("deploy/manifest.json");
 # 5. JS/CSSの最適化
 if [ -d "deploy/js" ]; then
   find deploy/js -name '*.js' | while read file; do
-    npx terser "$file" --module -c -m -o "$file.min" && mv "$file.min" "$file"
+    npx -p esbuild esbuild "$file" --minify --format=esm --outfile="$file.min" && mv "$file.min" "$file"
   done
 fi
 
