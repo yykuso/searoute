@@ -63,15 +63,17 @@ find deploy/css -name '*.css' | while read file; do
   npx -p esbuild esbuild "$file" --minify --outfile="$file.min" && mv "$file.min" "$file"
 done
 
-# 6. サイトマップとrobots.txtの生成
-BASE_URL="https://searoute.info"
-echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" > deploy/sitemap.xml
-find deploy -name "*.html" | while read filepath; do
-  relative_path="${filepath#deploy/}"
-  url_path="${relative_path%index.html}"
-  mod_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-  echo "  <url><loc>${BASE_URL}/${url_path}</loc><lastmod>${mod_time}</lastmod></url>" >> deploy/sitemap.xml
-done
-echo "</urlset>" >> deploy/sitemap.xml
+# 6. サイトマップとrobots.txtの生成 (Production のみ)
+if [ "${CF_PAGES_BRANCH}" = "main" ]; then
+  BASE_URL="https://searoute.info"
+  echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" > deploy/sitemap.xml
+  find deploy -name "*.html" | while read filepath; do
+    relative_path="${filepath#deploy/}"
+    url_path="${relative_path%index.html}"
+    mod_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    echo "  <url><loc>${BASE_URL}/${url_path}</loc><lastmod>${mod_time}</lastmod></url>" >> deploy/sitemap.xml
+  done
+  echo "</urlset>" >> deploy/sitemap.xml
 
-echo -e "User-agent: *\nAllow: /\n\nSitemap: ${BASE_URL}/sitemap.xml" > deploy/robots.txt
+  echo -e "User-agent: *\nAllow: /\n\nSitemap: ${BASE_URL}/sitemap.xml" > deploy/robots.txt
+fi
