@@ -343,28 +343,7 @@
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      const SW_RESET_VERSION = '2026-07-17';
-      const RESET_DONE_KEY = 'sw-reset-done-' + SW_RESET_VERSION;
-
-      const runOneTimeReset = async () => {
-        if (localStorage.getItem(RESET_DONE_KEY) === '1') {
-          return;
-        }
-
-        const registrations = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(registrations.map((registration) => registration.unregister()));
-
-        if ('caches' in window) {
-          const cacheNames = await caches.keys();
-          await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
-        }
-
-        localStorage.setItem(RESET_DONE_KEY, '1');
-        window.location.reload();
-      };
-
-      runOneTimeReset()
-        .then(() => navigator.serviceWorker.register('./service-worker.js?v=20260717'))
+      navigator.serviceWorker.register('./service-worker.js')
         .then((registration) => {
           if (registration.waiting) {
             registration.waiting.postMessage({ type: 'SKIP_WAITING' });
