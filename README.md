@@ -15,10 +15,11 @@
 ## 技術スタック
 
 - **地図ライブラリ**: MapLibre GL JS
-- **航路データ配信**: PMTiles（`https://pmtiles.searoute.info/`）
-- **スタイリング**: Tailwind CSS（ビルド済み静的CSS）
+- **航路データ配信**: PMTiles + lightweight JSON（`https://pmtiles.searoute.info/`）
+- **スタイリング**: Tailwind CSS 4（ビルド済み静的CSS）
 - **フレームワーク**: Vanilla JavaScript (フレームワークレス)
-- **ホスティング**: GitHub Pages
+- **テスト**: Vitest / Playwright
+- **ホスティング**: Cloudflare Pages / 静的ホスティング
 
 ## セットアップ & 開発
 
@@ -27,6 +28,15 @@
 ```bash
 # 依存パッケージのインストール
 npm install
+```
+
+### ローカル確認
+
+静的サイトとして動作するため、任意のローカルサーバーで確認できます。
+
+```bash
+# 例: ルートディレクトリを配信
+npx http-server .
 ```
 
 ### Tailwind CSS のビルド
@@ -43,6 +53,16 @@ npm run watch:css
 
 ビルドされたCSSは `css/tailwind.css` に出力されます。
 
+### テスト
+
+```bash
+# 単体テスト
+npm test
+
+# E2E テスト
+npm run test:e2e
+```
+
 ## データソース
 
 - **航路データ**: 独自に収集・作成
@@ -57,31 +77,31 @@ searoute/
 ├── routeList.html          # 航路一覧ページ
 ├── manifest.json           # PWAマニフェスト
 ├── service-worker.js       # Service Worker
-├── css/                    # スタイルシート
-├── js/                     # JavaScriptモジュール
-│   ├── common.js               # マップ初期化・ベースマップ切替・レイヤー管理（メイン）
-│   ├── dataLoader.js           # GeoJSON・詳細JSONの非同期読み込み
-│   ├── pmtilesLayers.js        # PMTiles航路レイヤー追加・フィルタ・ズーム
-│   ├── geoJsonLayers.js        # 港湾GeoJSONレイヤー・URLシェア復元
-│   ├── rasterLayers.js         # 衛星画像などラスタータイルレイヤー管理
-│   ├── layerConfig.js          # レイヤーメタデータ定義
-│   ├── layersControl.js        # レイヤー表示切替パネルUI
-│   ├── routeFilterControl.js   # 航路フィルタコントロール
-│   ├── detailDrawer.js         # 詳細情報パネル制御
-│   ├── hamburgerControl.js     # ハンバーガーメニューUI
-│   ├── contextMenu.js          # 地図右クリックコンテキストメニュー
-│   ├── cookieControl.js        # ユーザー設定のCookie永続化
-│   ├── routeList.js            # 航路一覧ページのテーブル・検索
-│   └── utils/
-│       ├── drawerHelpers.js        # ドロワーHTML生成ヘルパー
-│       ├── shareDrawer.js          # ドロワー状態のURLシェア機能
-│       ├── outsideClickHandler.js  # 要素外クリック検出ユーティリティ
-│       └── wikipediaImage.js       # Wikipedia APIによる船画像取得
-├── data/                   # 港湾データ（GeoJSON）
-│   ├── portData.geojson
-│   └── ...
-└── img/                    # 画像・アイコン
+├── css/                    # ビルド済みCSSと共通スタイル
+├── data/                   # 港湾データなどの静的データ
+├── docs/                   # 仕様書・補助ドキュメント
+├── img/                    # 画像・アイコン
+├── js/
+│   ├── entrypoints/        # Composition Root
+│   │   ├── mapPage.js
+│   │   └── routeListPage.js
+│   ├── application/        # 初期化・共有URL復元などのユースケース
+│   ├── adapters/           # MapLibre, データ取得, Cookie, Analytics 連携
+│   ├── presentation/       # UI描画とイベント接続
+│   ├── domain/             # 純粋なドメインロジック
+│   └── config/             # レイヤー定義・地図スタイル設定
+├── style/                  # MapLibre スタイルJSON・スプライト定義
+└── tests/                  # Vitest / Playwright テスト
 ```
+
+### 主要ファイル
+
+- `js/entrypoints/mapPage.js`: マップ画面のエントリーポイント
+- `js/application/initializeMap.js`: MapLibre 初期化、コントロール追加、共有URL復元
+- `js/adapters/map/pmtilesLayerAdapter.js`: PMTiles 航路レイヤーの描画、ズーム、ハイライト
+- `js/presentation/map/`: ドロワー、レイヤー切替、コンテキストメニューなどの UI
+- `js/presentation/routeList/`: 航路一覧の表示と検索
+- `js/domain/`: フィルター、共有URL、航路データ整形などの純粋ロジック
 
 ## 仕様書
 
