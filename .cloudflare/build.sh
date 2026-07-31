@@ -28,7 +28,10 @@ const path = require("path");
 function walk(dir) {
   fs.readdirSync(dir).forEach(f => {
     let p = path.join(dir, f);
-    if (fs.statSync(p).isDirectory()) walk(p);
+    if (fs.statSync(p).isDirectory()) {
+      if (f === "node_modules") return;
+      walk(p);
+    }
     else if (p.endsWith(".json") || p.endsWith(".geojson")) {
       let data = JSON.parse(fs.readFileSync(p, "utf8"));
       // 座標の丸め処理 (GeoJSON用)
