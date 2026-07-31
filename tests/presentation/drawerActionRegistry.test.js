@@ -4,7 +4,7 @@ import {
     executeDrawerCloseHandlers,
     registerDrawerAction,
     registerDrawerCloseHandler,
-} from '../../js/presentation/drawerActionRegistry.js';
+} from '../../js/presentation/drawerViewModel.js';
 
 describe('drawerActionRegistry', () => {
     it('登録したアクションへpayloadを渡す', () => {

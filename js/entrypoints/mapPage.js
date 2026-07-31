@@ -15,7 +15,7 @@ import { createLayersConfig } from '../config/layerConfig.js';
 import { map } from '../adapters/map/mapRegistry.js';
 import { mapStyle } from '../config/mapStyles.js';
 import { initMap } from '../application/initializeMap.js';
-import { registerDrawerAction, registerDrawerCloseHandler } from '../presentation/drawerActionRegistry.js';
+import { registerDrawerAction, registerDrawerCloseHandler } from '../presentation/drawerViewModel.js';
 import { removeRouteHighlight, zoomToRoute, zoomToRouteSection } from '../adapters/map/pmtilesLayerAdapter.js';
 import { initRouteFilterSettings } from '../presentation/map/routeFilterSettingsView.js';
 import { createMapViewModel } from '../presentation/map/mapViewModel.js';

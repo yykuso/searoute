@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { getInitialMapView } from '../../js/application/getInitialMapView.js';
+import { getInitialMapView } from '../../js/adapters/persistence/cookieControl.js';
 
 describe('getInitialMapView', () => {
     it('保存値がない場合は既定の中心座標とズームを返す', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createCookieSettingsRepository } from '../../../js/adapters/persistence/cookieSettingsRepository.js';
+import { createCookieSettingsRepository } from '../../../js/adapters/persistence/cookieControl.js';
 
 describe('cookieSettingsRepository', () => {
     it('指定したCookieをデコードして取得する', () => {

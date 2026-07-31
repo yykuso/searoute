@@ -13,7 +13,7 @@ import { loadShipImageIntoDrawer } from '../data/wikipediaImageAdapter.js';
 import { setDrawerContext, restoreDrawerFromUrl } from '../../presentation/shareDrawer.js';
 import { map } from './mapRegistry.js';
 import { ROUTE_LAYER_CONFIGS, getRouteShareOverview } from '../../config/routeLayers.js';
-import { hideDrawer, openCoordinateDrawer, showDrawer } from '../../presentation/drawerPresenter.js';
+import { hideDrawer, openCoordinateDrawer, showDrawer } from '../../presentation/drawerViewModel.js';
 import {
     splitBusinessName,
     buildSeaRouteSidebarContent,

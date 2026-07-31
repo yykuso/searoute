@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { restoreSharedRoute } from '../../js/application/restoreSharedRoute.js';
+import { restoreSharedRoute } from '../../js/application/initializeMap.js';
 
 describe('restoreSharedRoute', () => {
     it('ensureSharedLayerEnabled と initShareFromUrl を順番に呼ぶ', async () => {

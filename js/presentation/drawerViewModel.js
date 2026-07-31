@@ -86,3 +86,61 @@ export function createDrawerViewModel() {
 }
 
 export const drawerViewModel = createDrawerViewModel();
+
+// --- drawerPresenter ---
+
+const defaultPresenter = {
+    show: () => false,
+    hide: () => false,
+    openCoordinate: () => false,
+};
+
+let presenter = { ...defaultPresenter };
+
+export function configureDrawerPresenter(overrides = {}) {
+    presenter = { ...defaultPresenter, ...overrides };
+}
+
+export function showDrawer(content, title, subtitle) {
+    const result = presenter.show(content, title, subtitle);
+    drawerViewModel.open();
+    return result;
+}
+
+export function hideDrawer() {
+    const result = presenter.hide();
+    drawerViewModel.close();
+    return result;
+}
+
+export function openCoordinateDrawer(lat, lng) {
+    const result = presenter.openCoordinate(lat, lng);
+    drawerViewModel.open({ type: 'coord' });
+    return result;
+}
+
+// --- drawerActionRegistry ---
+
+const handlers = new Map();
+const closeHandlers = new Set();
+
+export function registerDrawerAction(action, handler) {
+    handlers.set(action, handler);
+    return () => handlers.delete(action);
+}
+
+export function executeDrawerAction(action, payload = {}) {
+    const handler = handlers.get(action);
+    if (!handler) return false;
+    handler(payload);
+    return true;
+}
+
+export function registerDrawerCloseHandler(handler) {
+    closeHandlers.add(handler);
+    return () => closeHandlers.delete(handler);
+}
+
+export function executeDrawerCloseHandlers() {
+    closeHandlers.forEach(handler => handler());
+}

@@ -8,7 +8,7 @@ import {
     buildRouteFilter,
     buildStatusFilterForSuffix,
     combineFilters,
-} from '../../../js/adapters/map/routeFilterExpressions.js';
+} from '../../../js/adapters/map/pmtilesLayerAdapter.js';
 
 describe('buildAvailabilityFilter', () => {
     it('プロパティが 1 または "1" のときにマッチする expression を返す', () => {

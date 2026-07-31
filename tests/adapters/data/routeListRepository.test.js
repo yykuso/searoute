@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createRouteListRepository } from '../../../js/adapters/data/routeListRepository.js';
+import { createRouteListRepository } from '../../../js/presentation/routeList/routeListViewModel.js';
 
 function jsonResponse(body, ok = true) {
     return { ok, status: ok ? 200 : 500, json: async () => body };

@@ -4,7 +4,7 @@ import {
     hideDrawer,
     openCoordinateDrawer,
     showDrawer,
-} from '../../js/presentation/drawerPresenter.js';
+} from '../../js/presentation/drawerViewModel.js';
 import { drawerViewModel } from '../../js/presentation/drawerViewModel.js';
 
 describe('drawerPresenter', () => {
