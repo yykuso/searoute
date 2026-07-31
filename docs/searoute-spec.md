@@ -138,8 +138,8 @@
 
 - 配信: Cloudflare Pages
 - 実装方式: Vanilla JavaScript モジュール
-- 地図: MapLibre GL JS
-- 検索補助: Maplibre Geocoder + Nominatim
+- 地図: MapLibre GL JS（`lib/maplibre-gl-js/6.1.0/` のローカル配布ファイルを使用）
+- 検索補助: Maplibre Geocoder + Nominatim（`lib/maplibre-gl-geocoder/1.9.4/` を使用）
 - スタイル: Tailwind CSS と独自 CSS
 - PWA: manifest.json と service-worker.js
 - 計測: Google Analytics

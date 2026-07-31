@@ -55,13 +55,29 @@ optimize("deploy/manifest.json");
 '
 
 # 5. JS/CSSの最適化
-find deploy/js -name '*.js' | while read file; do
-  npx terser "$file" -c -m -o "$file.min" && mv "$file.min" "$file"
-done
+if [ -d "deploy/js" ]; then
+  find deploy/js -name '*.js' | while read file; do
+    npx terser "$file" -c -m -o "$file.min" && mv "$file.min" "$file"
+  done
+fi
 
-find deploy/css -name '*.css' | while read file; do
-  npx -p esbuild esbuild "$file" --minify --outfile="$file.min" && mv "$file.min" "$file"
-done
+if [ -d "deploy/lib" ]; then
+  find deploy/lib -name '*.mjs' | while read file; do
+    npx terser "$file" --module -c -m --comments '/@license|copyright/i' -o "$file.min" && mv "$file.min" "$file"
+  done
+fi
+
+if [ -d "deploy/css" ]; then
+  find deploy/css -name '*.css' | while read file; do
+    npx -p esbuild esbuild "$file" --minify --outfile="$file.min" && mv "$file.min" "$file"
+  done
+fi
+
+if [ -d "deploy/lib" ]; then
+  find deploy/lib -name '*.css' | while read file; do
+    npx -p esbuild esbuild "$file" --minify --outfile="$file.min" && mv "$file.min" "$file"
+  done
+fi
 
 # 6. サイトマップとrobots.txtの生成 (Production のみ)
 if [ "${CF_PAGES_BRANCH}" = "main" ]; then
