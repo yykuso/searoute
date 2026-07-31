@@ -1,5 +1,14 @@
-import { getVisibleRouteColumns } from '../../domain/route.js';
-import { createRouteListRepository } from '../../adapters/data/routeListRepository.js';
+import { getVisibleRouteColumns, normalizeRouteRows } from '../../domain/route.js';
+
+export function createRouteListRepository({ fetchImpl = globalThis.fetch } = {}) {
+    async function loadRouteRows(dataPath) {
+        const response = await fetchImpl(dataPath);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        return normalizeRouteRows(data);
+    }
+    return { loadRouteRows };
+}
 
 function createInitialState() {
     return {

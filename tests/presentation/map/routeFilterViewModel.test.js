@@ -3,7 +3,7 @@ import {
     createRouteFilterViewModel,
     getInitialRouteFilters,
     getLegacyRouteFilters,
-} from '../../../js/presentation/map/routeFilterViewModel.js';
+} from '../../../js/presentation/map/routeFilterSettingsView.js';
 
 describe('getLegacyRouteFilters', () => {
     it('routeFilterMode=suspend の場合は運休のみ有効になる', () => {

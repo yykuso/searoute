@@ -12,7 +12,7 @@
 // Detail Drawer（詳細ドロワー）制御モジュール
 
 import { copyShareUrl } from '../shareDrawer.js';
-import { executeDrawerAction, executeDrawerCloseHandlers } from '../drawerActionRegistry.js';
+import { executeDrawerAction, executeDrawerCloseHandlers } from '../drawerViewModel.js';
 
 // --- DOM要素参照（initDetailDrawer() で解決） ---
 export let detailDrawer = null;

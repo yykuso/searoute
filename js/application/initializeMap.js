@@ -5,8 +5,7 @@ import { initCenterZoom } from '../adapters/persistence/cookieControl.js';
 import { initContextMenu } from '../presentation/map/contextMenuView.js';
 import { map, setMap } from '../adapters/map/mapRegistry.js';
 import { getCurrentMapStyleUrl } from '../adapters/map/layerManager.js';
-import { setupPmtilesProtocol } from '../adapters/map/pmtilesProtocol.js';
-import { initPmtilesLayers } from '../adapters/map/pmtilesLayerAdapter.js';
+import { initPmtilesLayers, setupPmtilesProtocol } from '../adapters/map/pmtilesLayerAdapter.js';
 import { addContextEvent, addGeocoderControl } from '../presentation/map/mapPointerInteractions.js';
 import {
     bindMapMoveEndPersistence,
@@ -15,7 +14,15 @@ import {
     watchMapContainerResize,
 } from '../presentation/map/mapViewportGuard.js';
 import { ensureSharedLayerEnabled } from '../presentation/map/sharedLayerRestorer.js';
-import { restoreSharedRoute } from './restoreSharedRoute.js';
+
+export async function restoreSharedRoute({ ensureSharedLayerEnabled, initShareFromUrl }) {
+    try {
+        await ensureSharedLayerEnabled();
+    } catch (error) {
+        console.warn('Failed to enable shared layer:', error);
+    }
+    await initShareFromUrl();
+}
 
 export function initMap() {
     setupPmtilesProtocol();

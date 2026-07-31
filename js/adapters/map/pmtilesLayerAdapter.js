@@ -19,13 +19,79 @@ import { normalizeRouteFilters } from '../../domain/routeFilter.js';
 import { calculateBounds } from '../../domain/geoBounds.js';
 import { createRouteDetailsRepository } from '../data/routeDetailsRepository.js';
 import { ROUTE_LAYER_CONFIGS } from '../../config/routeLayers.js';
-import { showDrawer } from '../../presentation/drawerPresenter.js';
-import {
-    ROUTE_LAYER_SUFFIXES,
-    buildRouteFilter,
-} from './routeFilterExpressions.js';
+import { showDrawer } from '../../presentation/drawerViewModel.js';
+
+export const ROUTE_LAYER_SUFFIXES = ['_outline', '_solidline', '_dashline', '_thinline', '_name'];
+export const NEVER_MATCH_FILTER = ['==', ['get', 'routeId'], '__never_match__'];
+export const STATUS_FILTERS = {
+    active: ['any', ['==', ['get', 'note'], null], ['==', ['get', 'note'], '']],
+    season: ['==', ['get', 'note'], 'season'],
+    suspend: ['==', ['get', 'note'], 'suspend'],
+};
+export function buildAvailabilityFilter(propertyName) {
+    return ['any', ['==', ['get', propertyName], 1], ['==', ['get', propertyName], '1']];
+}
+export function buildAnyFilter(filters, fallback = null) {
+    const validFilters = filters.filter(Boolean);
+    if (validFilters.length === 0) return fallback;
+    if (validFilters.length === 1) return validFilters[0];
+    return ['any', ...validFilters];
+}
+export function combineFilters(...filters) {
+    const validFilters = filters.filter(Boolean);
+    if (validFilters.length === 0) return null;
+    if (validFilters.length === 1) return validFilters[0];
+    return ['all', ...validFilters];
+}
+export function buildStatusFilterForSuffix(suffix, status = {}) {
+    if (suffix === '_solidline') return status.active  ? STATUS_FILTERS.active  : NEVER_MATCH_FILTER;
+    if (suffix === '_dashline')  return status.season  ? STATUS_FILTERS.season  : NEVER_MATCH_FILTER;
+    if (suffix === '_thinline')  return status.suspend ? STATUS_FILTERS.suspend : NEVER_MATCH_FILTER;
+    return buildAnyFilter([
+        status.active  ? STATUS_FILTERS.active  : null,
+        status.season  ? STATUS_FILTERS.season  : null,
+        status.suspend ? STATUS_FILTERS.suspend : null,
+    ], NEVER_MATCH_FILTER);
+}
+export function buildCarriageFilter(carriage = {}) {
+    return buildAnyFilter([
+        carriage.car     ? buildAvailabilityFilter('car')     : null,
+        carriage.bike    ? buildAvailabilityFilter('bike')    : null,
+        carriage.bicycle ? buildAvailabilityFilter('bicycle') : null,
+    ]);
+}
+export function buildRouteFilter(suffix, routeFilters) {
+    return combineFilters(
+        buildStatusFilterForSuffix(suffix, routeFilters?.status),
+        buildCarriageFilter(routeFilters?.carriage),
+    );
+}
 import { trackEvent } from '../analytics/googleAnalyticsAdapter.js';
-import { calculateFitBoundsPadding as _fitBoundsPadding } from '../../presentation/map/fitBoundsPadding.js';
+
+export function calculateFitBoundsPadding({ documentRef = document, windowRef = globalThis, drawerWidth = 0, drawerHeight = 0 } = {}) {
+    const padding = { top: 50, left: 50, right: 50, bottom: 50 };
+    const drawer = documentRef.getElementById('detail-drawer');
+    if (drawer && !drawer.classList.contains('hidden')) {
+        if (windowRef.innerWidth >= 768) {
+            padding.left = drawerWidth + 30;
+        } else {
+            padding.bottom = drawerHeight + 30;
+        }
+    }
+    return padding;
+}
+
+export function setupPmtilesProtocol({ windowRef = window } = {}) {
+    windowRef.__searoutePmtilesReady = false;
+    if (!windowRef.pmtiles || !windowRef.maplibregl) return;
+    try {
+        const protocol = new windowRef.pmtiles.Protocol();
+        windowRef.maplibregl.addProtocol('pmtiles', protocol.tile);
+        windowRef.__searoutePmtilesReady = true;
+    } catch (error) {
+        console.warn('PMTiles protocol setup failed:', error);
+    }
+}
 
 export { calculateBounds };
 export { ROUTE_LAYER_CONFIGS };
@@ -301,13 +367,6 @@ export function queryRouteFeatures(sourceId) {
     return { type: 'FeatureCollection', features };
 }
 
-export function calculateFitBoundsPadding() {
-    return _fitBoundsPadding({
-        drawerWidth: drawerSizeCache.width,
-        drawerHeight: drawerSizeCache.height,
-    });
-}
-
 export function zoomToRoute(params) {
     try {
         const { routeName, routeId, lineId, sourceId } = params;
@@ -351,7 +410,7 @@ export function zoomToRoute(params) {
 
         map.fitBounds(
             [[bounds.minLng, bounds.minLat], [bounds.maxLng, bounds.maxLat]],
-            { padding: calculateFitBoundsPadding(), duration: 1000 }
+            { padding: calculateFitBoundsPadding({ drawerWidth: drawerSizeCache.width, drawerHeight: drawerSizeCache.height }), duration: 1000 }
         );
 
         addRouteHighlight(matchingFeatures);

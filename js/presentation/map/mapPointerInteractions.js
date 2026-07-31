@@ -3,8 +3,8 @@ import { forwardGeocode, reverseGeocode } from '../../adapters/geocoding/nominat
 import { setDrawerContext } from '../shareDrawer.js';
 import { hideDetailDrawer, showDetailDrawer } from './detailDrawerView.js';
 import { showContextMenu } from './contextMenuView.js';
-import { registerDrawerCloseHandler } from '../drawerActionRegistry.js';
-import { configureDrawerPresenter } from '../drawerPresenter.js';
+import { registerDrawerCloseHandler } from '../drawerViewModel.js';
+import { configureDrawerPresenter } from '../drawerViewModel.js';
 
 /**
  * 検索バーを追加する関数

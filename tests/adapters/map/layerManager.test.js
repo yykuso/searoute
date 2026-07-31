@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../../../js/adapters/map/rasterLayerAdapter.js', () => ({ addRasterLayer: vi.fn() }));
 vi.mock('../../../js/adapters/map/geoJsonLayerAdapter.js', () => ({
     addGeoJsonLayer: vi.fn().mockResolvedValue(true),
     addMarker: vi.fn(),
@@ -8,7 +7,6 @@ vi.mock('../../../js/adapters/map/geoJsonLayerAdapter.js', () => ({
 }));
 vi.mock('../../../js/adapters/persistence/cookieControl.js', () => ({ setCookie: vi.fn() }));
 
-import { addRasterLayer } from '../../../js/adapters/map/rasterLayerAdapter.js';
 import { addGeoJsonLayer, removeClickEvent } from '../../../js/adapters/map/geoJsonLayerAdapter.js';
 import { setCookie } from '../../../js/adapters/persistence/cookieControl.js';
 import { setMap } from '../../../js/adapters/map/mapRegistry.js';
@@ -23,8 +21,6 @@ import {
     updateBaseMap,
 } from '../../../js/adapters/map/layerManager.js';
 
-// layerManager.js はモジュール内に currentMap/currentLayer の状態を保持するシングルトンのため、
-// テスト間ではモックの呼び出し履歴のみをクリアし、各テストではまだ使われていない一意なレイヤーIDを使う。
 function createFakeMap({ layers = [] } = {}) {
     return {
         setStyle: vi.fn(),
@@ -35,14 +31,19 @@ function createFakeMap({ layers = [] } = {}) {
         moveLayer: vi.fn(),
         removeLayer: vi.fn(),
         removeSource: vi.fn(),
+        addSource: vi.fn(),
+        addLayer: vi.fn(),
     };
 }
+
+let fakeMap;
 
 describe('layerManager', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         addGeoJsonLayer.mockResolvedValue(true);
-        setMap(createFakeMap());
+        fakeMap = createFakeMap();
+        setMap(fakeMap);
     });
 
     it('isIdInLayer は配列にIDが含まれるかを判定する', () => {
@@ -54,7 +55,7 @@ describe('layerManager', () => {
     it('addOverLayer はタイルレイヤーを追加し状態とCookieを更新する', async () => {
         await addOverLayer('tile_gsi_photo');
 
-        expect(addRasterLayer).toHaveBeenCalledWith(mapStyle.GSI_PHOTO_MAP);
+        expect(fakeMap.addSource).toHaveBeenCalled();
         expect(isLayerActive('tile_gsi_photo')).toBe(true);
         expect(setCookie).toHaveBeenCalledWith('currentLayer', expect.arrayContaining(['tile_gsi_photo']), 30);
     });
@@ -70,9 +71,10 @@ describe('layerManager', () => {
 
     it('同じレイヤーを二重に追加しようとした場合は何もしない', async () => {
         await addOverLayer('tile_gsi_relief');
+        const addSourceCount = fakeMap.addSource.mock.calls.length;
         await addOverLayer('tile_gsi_relief');
 
-        expect(addRasterLayer).toHaveBeenCalledTimes(1);
+        expect(fakeMap.addSource.mock.calls.length).toBe(addSourceCount);
         expect(isLayerActive('tile_gsi_relief')).toBe(true);
     });
 

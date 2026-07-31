@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateFitBoundsPadding } from '../../../js/presentation/map/fitBoundsPadding.js';
+import { calculateFitBoundsPadding } from '../../../js/adapters/map/pmtilesLayerAdapter.js';
 
 const DEFAULT = { top: 50, left: 50, right: 50, bottom: 50 };
 

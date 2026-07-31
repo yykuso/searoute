@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { setupPmtilesProtocol } from '../../../js/adapters/map/pmtilesProtocol.js';
+import { setupPmtilesProtocol } from '../../../js/adapters/map/pmtilesLayerAdapter.js';
 
 describe('setupPmtilesProtocol', () => {
     it('pmtiles/maplibregl が未ロードの場合は何もしない', () => {
