@@ -57,7 +57,7 @@ optimize("deploy/manifest.json");
 # 5. JS/CSSの最適化
 if [ -d "deploy/js" ]; then
   find deploy/js -name '*.js' | while read file; do
-    npx terser "$file" -c -m -o "$file.min" && mv "$file.min" "$file"
+    npx terser "$file" --module -c -m -o "$file.min" && mv "$file.min" "$file"
   done
 fi
 
