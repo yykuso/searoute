@@ -1,0 +1,16 @@
+export const mapStyle = Object.freeze({
+    EMPTY_MAP: 0,
+    OSM_BRIGHT_MAP: 10,
+    OSM_PLANET_MAP: 11,
+    OTM_MAP: 12,
+    OPEN_SEA_MAP: 13,
+    RAILWAY_MAP: 14,
+    GSI_STD_MAP: 20,
+    GSI_PALE_MAP: 21,
+    GSI_BLANK_MAP: 22,
+    GSI_PHOTO_MAP: 23,
+    GSI_RELIEF_MAP: 24,
+    TRANSPORT_MAP: 30,
+    ESRI_PHOTO_MAP: 40,
+    OSM_CUSTOM_MAP: 90,
+});

@@ -59,21 +59,22 @@
   </script>
 
   <!-- JS モジュール連鎖を並列化 -->
-  <link rel="modulepreload" href="./js/common.js">
-  <link rel="modulepreload" href="./js/detailDrawer.js">
-  <link rel="modulepreload" href="./js/pmtilesLayers.js">
-  <link rel="modulepreload" href="./js/geoJsonLayers.js">
-  <link rel="modulepreload" href="./js/layersControl.js">
-  <link rel="modulepreload" href="./js/hamburgerControl.js">
-  <link rel="modulepreload" href="./js/rasterLayers.js">
-  <link rel="modulepreload" href="./js/cookieControl.js">
-  <link rel="modulepreload" href="./js/contextMenu.js">
-  <link rel="modulepreload" href="./js/layerConfig.js">
-  <link rel="modulepreload" href="./js/dataLoader.js">
-  <link rel="modulepreload" href="./js/utils/drawerHelpers.js">
-  <link rel="modulepreload" href="./js/utils/wikipediaImage.js">
-  <link rel="modulepreload" href="./js/utils/outsideClickHandler.js">
-  <link rel="modulepreload" href="./js/utils/shareDrawer.js">
+  <link rel="modulepreload" href="./js/entrypoints/mapPage.js">
+  <link rel="modulepreload" href="./js/application/initializeMap.js">
+  <link rel="modulepreload" href="./js/adapters/map/pmtilesLayerAdapter.js">
+  <link rel="modulepreload" href="./js/adapters/map/geoJsonLayerAdapter.js">
+  <link rel="modulepreload" href="./js/presentation/map/layerControlView.js">
+  <link rel="modulepreload" href="./js/presentation/map/hamburgerControl.js">
+  <link rel="modulepreload" href="./js/presentation/map/detailDrawerView.js">
+  <link rel="modulepreload" href="./js/adapters/map/rasterLayerAdapter.js">
+  <link rel="modulepreload" href="./js/adapters/persistence/cookieControl.js">
+  <link rel="modulepreload" href="./js/presentation/map/contextMenuView.js">
+  <link rel="modulepreload" href="./js/config/layerConfig.js">
+  <link rel="modulepreload" href="./js/adapters/data/dataLoader.js">
+  <link rel="modulepreload" href="./js/presentation/drawerHelpers.js">
+  <link rel="modulepreload" href="./js/adapters/data/wikipediaImageAdapter.js">
+  <link rel="modulepreload" href="./js/presentation/outsideClickHandler.js">
+  <link rel="modulepreload" href="./js/presentation/shareDrawer.js">
 
   <!-- フォントを早期に取得 -->
   <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
@@ -255,7 +256,7 @@
     <div class="flex items-center justify-between mx-4 mb-2">
       <h2 id="detail-drawer-title" class="text-lg font-bold text-sky-700 wrap-break-word max-w-[calc(100%-5rem)] leading-tight">詳細情報</h2>
       <div class="flex items-center gap-2">
-        <button id="detail-drawer-share-btn" aria-label="URLをコピーして共有" class="self-start text-slate-400 hover:text-slate-700 text-2xl font-bold focus:outline-none" onclick="window.copyDrawerShareUrl()">
+        <button id="detail-drawer-share-btn" aria-label="URLをコピーして共有" class="self-start text-slate-400 hover:text-slate-700 text-2xl font-bold focus:outline-none">
           <span class="bg-slate-200 hover:bg-slate-300 w-8 h-8 flex items-center justify-center rounded-full p-0 transition-colors">
             <i class="fa-solid fa-share-nodes text-base cursor-pointer"></i>
           </span>
@@ -337,8 +338,8 @@
   </div>
 </body>
 
-<script type="module" src="./js/common.js"></script>
-<script type="module" src="./js/detailDrawer.js"></script>
+<script type="module" src="./js/entrypoints/mapPage.js"></script>
+<script type="module" src="./js/presentation/map/detailDrawerView.js"></script>
 
 <script>
   if ('serviceWorker' in navigator) {

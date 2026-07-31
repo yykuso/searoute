@@ -9,7 +9,9 @@
   "scripts": {
     "build:css": "tailwindcss -i ./css/tailwind-input.css -o ./css/tailwind.css --minify",
     "watch:css": "tailwindcss -i ./css/tailwind-input.css -o ./css/tailwind.css --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "repository": {
     "type": "git",
@@ -24,7 +26,10 @@
   },
   "homepage": "https://github.com/yykuso/searoute#readme",
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/cli": "^4.2.2",
-    "tailwindcss": "^4.2.2"
+    "http-server": "^14.1.1",
+    "tailwindcss": "^4.2.2",
+    "vitest": "^4.1.10"
   }
 }

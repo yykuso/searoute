@@ -2,7 +2,7 @@
 
 ## 1. 文書の目的
 
-この文書は、おでかけ航路マップの現行仕様を Spec-Driven Development 風に整理し、機能改修時の影響確認と回帰テストの基準として使うための設計書である。
+この文書は、おでかけ航路マップの現行仕様を Spec-Driven Development 風に整理し、機能改修時の影響確認と回帰テストの基準として利用する設計書である。
 
 主な用途は以下の通り。
 
@@ -13,7 +13,7 @@
 
 ## 2. 対象範囲
 
-対象は GitHub Pages 上で配信される静的 Web アプリケーション全体。
+対象は Cloudflare Pages 上で配信される静的 Web アプリケーション全体。
 
 - マップ画面: index.html
 - 航路一覧画面: routeList.html
@@ -29,7 +29,7 @@
 
 ## 3. システム概要
 
-本サイトは、日本国内外の旅客船・フェリー航路情報を地図上で探索できる静的 Web アプリである。利用者は、地図上の航路や港湾をクリックして詳細情報を確認し、外部の時刻表や公式サイトへ遷移できる。
+本サイトは、日本国内外の旅客船・フェリー航路情報を地図上で探索できる静的 Web アプリである。利用者は地図上の航路や港湾をクリックして詳細情報を確認し、外部の時刻表や公式サイトへ遷移できる。
 
 主要な利用シナリオは以下。
 
@@ -47,15 +47,17 @@
 対象ファイル。
 
 - index.html
-- js/common.js
-- js/geoJsonLayers.js
-- js/detailDrawer.js
-- js/layersControl.js
-- js/contextMenu.js
-- js/cookieControl.js
-- js/dataLoader.js
-- js/rasterLayers.js
-- js/layerConfig.js
+- js/entrypoints/mapPage.js
+- js/application/initializeMap.js
+- js/adapters/map/geoJsonLayerAdapter.js
+- js/adapters/map/pmtilesLayerAdapter.js
+- js/adapters/map/rasterLayerAdapter.js
+- js/adapters/map/layerManager.js
+- js/presentation/map/detailDrawerView.js
+- js/presentation/map/layerControlView.js
+- js/presentation/map/contextMenuView.js
+- js/presentation/map/mapPointerInteractions.js
+- js/config/layerConfig.js
 
 主要 UI 要素。
 
@@ -74,7 +76,10 @@
 対象ファイル。
 
 - routeList.html
-- js/routeList.js
+- js/entrypoints/routeListPage.js
+- js/presentation/routeList/routeListView.js
+- js/presentation/routeList/routeListViewModel.js
+- js/adapters/data/routeListRepository.js
 
 主要 UI 要素。
 
@@ -131,7 +136,7 @@
 
 ### 6.1 技術要素
 
-- 配信: GitHub Pages
+- 配信: Cloudflare Pages
 - 実装方式: Vanilla JavaScript モジュール
 - 地図: MapLibre GL JS
 - 検索補助: Maplibre Geocoder + Nominatim
@@ -141,16 +146,106 @@
 
 ### 6.2 モジュール責務
 
-- js/common.js: 地図初期化、ベースマップ切替、レイヤー状態管理、コンテキストイベント
-- js/geoJsonLayers.js: GeoJSON レイヤー追加、クリックイベント、詳細表示、航路ズーム、休止中表示切替
-- js/dataLoader.js: GeoJSON / 詳細 JSON の取得、結合、ローディング制御
-- js/detailDrawer.js: 詳細ドロワーの表示制御、モバイルスナップ動作
-- js/layersControl.js: レイヤー切替 UI の生成とイベント配線
-- js/layerConfig.js: レイヤー構成定義
-- js/routeList.js: 一覧テーブル生成、検索、リセット
-- js/cookieControl.js: Cookie の読み書き
+依存方向（上から下のみ）。
+
+```mermaid
+flowchart TD
+    E["**entrypoints/**
+    mapPage.js
+    routeListPage.js"]
+
+    A["**application/**
+    initializeMap.js
+    restoreSharedRoute.js
+    getInitialMapView.js"]
+
+    AD["**adapters/**
+    map/ · data/ · analytics/
+    geocoding/ · http/ · persistence/"]
+
+    P["**presentation/**
+    map/ · routeList/
+    shareDrawer.js · drawerPresenter.js"]
+
+    D["**domain/**
+    routeFilter.js · shareContext.js
+    geoBounds.js · route.js"]
+
+    C["**config/**
+    layerConfig.js · routeLayers.js
+    rasterLayerConfig.js · mapStyles.js"]
+
+    E --> A & AD & P
+    A --> AD & D & C
+    P --> AD & D
+    AD --> D & C
+```
+
+レイヤーごとの主な責務。
+
+| レイヤー | ファイル | 責務 |
+|---|---|---|
+| entrypoints | mapPage.js | マップ画面の Composition Root |
+| entrypoints | routeListPage.js | 一覧画面の Composition Root |
+| application | initializeMap.js | MapLibre 初期化・コントロール追加・ロードイベント |
+| application | restoreSharedRoute.js | 共有 URL からのドロワー復元 |
+| application | getInitialMapView.js | Cookie から初期中心座標・ズーム取得 |
+| adapters/map | geoJsonLayerAdapter.js | GeoJSON レイヤー追加・クリックイベント・共有 URL 復元 |
+| adapters/map | pmtilesLayerAdapter.js | PMTiles 航路レイヤー追加・フィルター・ズーム・ハイライト |
+| adapters/map | layerManager.js | ベースマップ切替・オーバーレイ追加削除・表示順管理 |
+| adapters/map | rasterLayerAdapter.js | ラスタータイルレイヤー追加 |
+| adapters/data | dataLoader.js | GeoJSON / JSON 取得、マージ、ローディング制御 |
+| adapters/data | routeDetailsRepository.js | 航路詳細 JSON の取得・キャッシュ |
+| adapters/data | wikipediaImageAdapter.js | Wikipedia API 画像取得 |
+| adapters/geocoding | nominatimGeocodingAdapter.js | Nominatim 地名検索・逆ジオコーディング |
+| adapters/persistence | cookieSettingsRepository.js | Cookie の低レベル読み書き |
+| adapters/persistence | cookieControl.js | Cookie アクセスの薄いラッパー |
+| adapters/analytics | googleAnalyticsAdapter.js | gtag イベント送信ラッパー |
+| presentation/map | detailDrawerView.js | 詳細ドロワー表示・モバイルスナップ・タッチ操作 |
+| presentation/map | layerControlView.js | レイヤー切替パネル UI |
+| presentation/map | mapPointerInteractions.js | ジオコーダー・長押し・右クリック操作 |
+| presentation/map | mapViewportGuard.js | マップリサイズ監視・moveend Cookie 永続化 |
+| presentation/map | sharedLayerRestorer.js | 共有 URL で指定されたレイヤーの有効化 |
+| presentation/map | mapViewModel.js | ベースマップ・表示レイヤーの状態管理 |
+| presentation/map | routeFilterViewModel.js | 航路フィルターの状態管理と永続化判断 |
+| presentation/map | routeFilterSettingsView.js | フィルター入力 UI と ViewModel の接続 |
+| presentation/routeList | routeListViewModel.js | 一覧テーブルの読み込み状態・検索クエリ管理 |
+| presentation | drawerPresenter.js | ドロワー表示ポート（show / hide / openCoordinate） |
+| presentation | drawerViewModel.js | ドロワー種別・開閉・選択状態の管理 |
+| presentation | shareDrawer.js | 共有 URL コンテキスト管理・クリップボードコピー |
+| config | layerConfig.js | レイヤー一覧定義（ベース / オーバーレイ / GeoJSON） |
+| config | routeLayers.js | PMTiles 航路レイヤー設定・共有 URL 初期ビュー |
+| config | rasterLayerConfig.js | ラスタータイル URL・属性情報 |
+| domain | routeFilter.js | フィルター正規化・既定値判定 |
+| domain | shareContext.js | 共有 URL のビルド・パース・対象レイヤー判定 |
+| domain | geoBounds.js | フィーチャー群からの境界ボックス計算 |
+| domain | route.js | 航路データ正規化・検索 |
+
+### 6.3 Presentation パターン（MVVM）
+
+本アプリの Presentation 層は MVVM を採用する。
+
+- View: DOM 描画、入力イベント購読、MapLibre コントロール表示
+- ViewModel: 画面状態と状態遷移（初期化、検索、フィルター、開閉）
+- Model: Domain / Application / Adapter が提供するデータ・操作
+
+主要な ViewModel は以下。
+
+- js/presentation/routeList/routeListViewModel.js
+- js/presentation/map/mapViewModel.js
+- js/presentation/map/routeFilterViewModel.js
+- js/presentation/drawerViewModel.js
+
+Entrypoint は Composition Root として View と ViewModel を接続し、業務ルールは Domain / Application 側へ委譲する。
 
 ## 7. 機能仕様
+
+機能仕様は以下の共通フォーマットで記述する。
+
+- 目的
+- 入力または対象
+- 期待動作
+- 受け入れ条件
 
 ### 7.1 MAP-01 初期表示
 
@@ -360,8 +455,9 @@
 
 期待動作。
 
-- 設定ウィンドウのトグルで切り替える
-- Cookie showSuspendedRoutes に保存する
+- フィルターコントロールの suspend チェックで切り替える
+- routeFilters Cookie に状態を保存する
+- 互換維持のため showSuspendedRoutes Cookie も保存する
 - OFF 時は thinline を非表示にし、outline と name は suspend を除外する
 - ON 時は元のフィルターを復元する
 
@@ -483,20 +579,99 @@ PC とモバイルで詳細情報を見やすく提示する。
 - 対応ブラウザでインストール可能と認識される
 - キャッシュ済み対象は再訪時に利用できる
 
+### 7.16 MAP-13 共有 URL の生成と復元
+
+目的。
+
+利用者が表示中の航路、港湾、座標情報を URL で共有し、受信側が同じ文脈を再現できるようにする。
+
+対象。
+
+- 詳細ドロワーの共有ボタン
+- URL クエリ share
+- routeId, sourceId, lat, lng, zoom, name
+
+期待動作。
+
+- 航路、港湾、座標のドロワー文脈から共有 URL を生成する
+- 共有 URL コピー成功時に一時的なフィードバックを表示する
+- 初期表示時に URL クエリを解析し、対象レイヤーを必要に応じて有効化してから復元処理を行う
+- 復元成功時はクエリ文字列を URL から除去する
+
+受け入れ条件。
+
+- 航路共有 URL で該当航路ドロワーが開く
+- 港湾共有 URL で該当港湾ドロワーが開く
+- 座標共有 URL で座標ドロワーが開く
+- 共有対象レイヤーが未表示でも復元処理が継続される
+
+### 7.17 MAP-14 航路フィルター設定
+
+目的。
+
+利用者が航路の状態と航送可否を条件に表示を絞り込めるようにする。
+
+対象。
+
+- 状態フィルター: active, season, suspend
+- 航送可否フィルター: car, bike, bicycle
+
+期待動作。
+
+- フィルターコントロールでチェック状態を変更できる
+- チェック状態を routeFilters Cookie に保存し、再読み込み時に復元する
+- 旧設定 routeFilterMode と showSuspendedRoutes が存在する場合は互換的に初期状態へ変換する
+- 既定値から変更がある場合はフィルタートグルを active 表示にする
+
+受け入れ条件。
+
+- フィルター変更後に地図表示が即時更新される
+- 再読み込み後も選択状態が維持される
+- 既定値へ戻すと active 表示が解除される
+
+### 7.18 LIST-03 一覧から地図への遷移
+
+目的。
+
+一覧ページから選択した航路を地図ページで即座に確認できるようにする。
+
+対象。
+
+- 一覧の航路名リンク
+- index.html への share 付き URL
+
+期待動作。
+
+- 航路名セルを share=route 付き URL リンクとして出力する
+- routeId と sourceId をクエリに付与して地図ページへ遷移する
+- 遷移先では共有 URL 復元機能により対象航路ドロワーを表示する
+
+受け入れ条件。
+
+- 一覧の航路名クリックで地図ページへ遷移する
+- 遷移後に対象航路の詳細ドロワーが表示される
+
 ## 8. 状態管理
 
-Cookie を利用して以下を保持する。
+状態は Runtime（ViewModel）と Cookie 永続化に分けて管理する。
 
-- currentMap: ベースマップ ID
-- currentLayer: 表示中レイヤー ID のカンマ区切り
-- mapCenter: 地図中心座標
-- mapZoom: 地図ズーム値
-- showSuspendedRoutes: 休止中航路表示フラグ
+Runtime 状態（主要）。
 
-保持期間。
+- mapViewModel: baseMap, enabledLayers
+- routeFilterViewModel: status / carriage フィルター状態
+- routeListViewModel: table 読み込み状態、検索クエリ
+- drawerViewModel: drawer.type, drawer.isOpen, selectedRoute, coordinate, context
 
-- currentMap, currentLayer, mapCenter, mapZoom: 30 日
-- showSuspendedRoutes: 365 日
+Cookie で以下を保持する。
+
+| キー | 内容 | 保持期間 |
+|---|---|---|
+| currentMap | ベースマップ ID | 30 日 |
+| currentLayer | 表示中レイヤー ID のカンマ区切り | 30 日 |
+| mapCenter | 地図中心座標 | 30 日 |
+| mapZoom | 地図ズーム値 | 30 日 |
+| routeFilters | 航路フィルター状態 JSON | 365 日 |
+| showSuspendedRoutes | 休止中航路表示フラグ | 365 日 |
 
 ## 9. 外部依存
 
@@ -540,9 +715,10 @@ Cookie を利用して以下を保持する。
 
 ### 11.1 レイヤー追加・削除
 
-- layerConfig
-- common.js の addOverLayer / removeOverLayer
-- geoJsonLayers.js の描画定義
+- js/config/layerConfig.js のレイヤー定義
+- js/config/routeLayers.js の PMTiles ソース設定
+- js/adapters/map/layerManager.js の addOverLayer / removeOverLayer
+- js/adapters/map/geoJsonLayerAdapter.js の描画定義
 - Cookie 復元
 - レイヤー順序
 - 一覧ページへの反映有無
@@ -569,6 +745,14 @@ Cookie を利用して以下を保持する。
 - 長押しの誤発火
 - moveend による状態保存
 
+### 11.5 共有 URL とフィルター変更
+
+- share クエリのパース仕様
+- 共有対象レイヤーの事前有効化
+- 復元成功時のクエリ除去
+- routeFilters と旧 Cookie 値の互換読み込み
+- 一覧ページの routeId/sourceId 連携
+
 ## 12. 回帰テスト項目
 
 ### 12.1 スモークテスト
@@ -593,6 +777,9 @@ Cookie を利用して以下を保持する。
 10. 何もない場所をクリックするとハイライトが消える
 11. 地名検索で地図移動できる
 12. リロード後に地図位置、ズーム、表示レイヤー、ベースマップが保持される
+13. 状態フィルター active/season/suspend の各切替が反映される
+14. 航送可否フィルター car/bike/bicycle の各切替が反映される
+15. share クエリ付き URL で対象レイヤーが自動有効化され、ドロワーが復元される
 
 ### 12.3 モバイルテスト
 
@@ -610,6 +797,7 @@ Cookie を利用して以下を保持する。
 3. 該当なし時にメッセージが出る
 4. リセットで全文字・表示状態・ハイライトが戻る
 5. note に応じた行スタイルが保たれる
+6. 航路名リンクから地図ページへ遷移し、対象航路ドロワーが表示される
 
 ### 12.5 PWA / キャッシュテスト
 
@@ -640,5 +828,5 @@ Cookie を利用して以下を保持する。
 
 例。
 
-- 影響仕様: MAP-06, MAP-08
-- 追加確認: 12.2-5, 12.2-7, 12.2-9
+- 影響仕様: MAP-06, MAP-08, MAP-13
+- 追加確認: 12.2-5, 12.2-7, 12.2-9, 12.2-15
