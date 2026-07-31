@@ -14,12 +14,21 @@
 
 ## 技術スタック
 
-- **地図ライブラリ**: MapLibre GL JS
+- **地図ライブラリ**: MapLibre GL JS（ローカル配置の ESM を使用）
 - **航路データ配信**: PMTiles + lightweight JSON（`https://pmtiles.searoute.info/`）
 - **スタイリング**: Tailwind CSS 4（ビルド済み静的CSS）
 - **フレームワーク**: Vanilla JavaScript (フレームワークレス)
 - **テスト**: Vitest / Playwright
 - **ホスティング**: Cloudflare Pages / 静的ホスティング
+
+### MapLibre 関連ライブラリの配置方針
+
+- MapLibre 本体と Geocoder は CDN ではなく `lib/` 配下に配置し、`index.html` からローカルファイルを参照します。
+- 現在の配置:
+	- `lib/maplibre-gl-js/6.1.0/`
+	- `lib/maplibre-gl-geocoder/1.9.4/`
+- バージョンごとにディレクトリを分けることで、差し替え時の影響範囲を明確化し、ロールバックもしやすくします。
+- 静的ホスティング（GitHub Pages / Cloudflare Pages）との相性がよく、外部 CDN 障害の影響を受けにくくなります。
 
 ## セットアップ & 開発
 
