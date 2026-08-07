@@ -427,7 +427,6 @@ body {
 
 .layer-item:hover label {
   color: var(--color-gray-900);
-  font-weight: 600;
 }
 
 .layer-item input[type="radio"],
@@ -446,7 +445,6 @@ body {
   transition: var(--transition-default);
 }
 
-.layer-item.checked label,
 .layer-item input[type="radio"]:checked + label,
 .layer-item input[type="checkbox"]:checked + label {
   color: var(--color-gray-900);
