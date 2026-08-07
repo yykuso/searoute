@@ -42,10 +42,9 @@ const mapViewModel = createMapViewModel({
 
 // 初期化
 initMap();
-mapViewModel.initialize();
 
-// styleファイルの読み込み後に発火
-map.once('styledata', () => {
+// 初期スタイルの読み込み完了後にレイヤーを復元する
+map.once('load', () => {
     const { baseMap, enabledLayers } = mapViewModel.getState();
 
     // レイヤー設定を作成
@@ -68,6 +67,7 @@ map.once('styledata', () => {
     initRouteFilterSettings();
 
 });
+mapViewModel.initialize();
 
 
 // ページ読み込み時に設定を初期化
