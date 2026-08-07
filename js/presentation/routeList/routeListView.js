@@ -12,6 +12,50 @@ const COLUMN_CLASS_MAP = {
     url: ['url'],
 };
 
+const SEARCH_HIGHLIGHT_CLASS = 'route-search-highlight';
+
+function clearSearchHighlights(cell) {
+    cell.querySelectorAll(`.${SEARCH_HIGHLIGHT_CLASS}`).forEach((highlight) => {
+        highlight.replaceWith(highlight.textContent);
+    });
+    cell.normalize();
+}
+
+function highlightSearchMatches(cell, query) {
+    const documentRef = cell.ownerDocument;
+    const textNodes = [];
+    const walker = documentRef.createTreeWalker(cell, documentRef.defaultView.NodeFilter.SHOW_TEXT);
+    let textNode = walker.nextNode();
+
+    while (textNode) {
+        textNodes.push(textNode);
+        textNode = walker.nextNode();
+    }
+
+    textNodes.forEach((node) => {
+        const regex = createRouteSearchPattern(query);
+        const fragment = documentRef.createDocumentFragment();
+        let lastIndex = 0;
+        let match = regex.exec(node.textContent);
+
+        while (match) {
+            fragment.append(node.textContent.slice(lastIndex, match.index));
+            const highlight = documentRef.createElement('span');
+            highlight.className = SEARCH_HIGHLIGHT_CLASS;
+            highlight.style.backgroundColor = '#ffe46f';
+            highlight.textContent = match[0];
+            fragment.append(highlight);
+            lastIndex = regex.lastIndex;
+            match = regex.exec(node.textContent);
+        }
+
+        if (lastIndex > 0) {
+            fragment.append(node.textContent.slice(lastIndex));
+            node.replaceWith(fragment);
+        }
+    });
+}
+
 export function buildRouteMapUrl(routeId, sourceId, { locationRef = window.location } = {}) {
     const url = new URL('./index.html', locationRef.href);
     url.searchParams.set('share', 'route');
@@ -102,23 +146,12 @@ export function searchRoutesInDocument(documentRef, query) {
         let matches = false;
 
         cells.forEach(cell => {
+            clearSearchHighlights(cell);
             const text = cell.textContent;
-
-            const originalHtml = cell.getAttribute('data-original-text');
-            if (originalHtml) {
-                cell.innerHTML = originalHtml;
-                cell.removeAttribute('data-original-text');
-            }
 
             if (matchesRouteSearchText(text, query)) {
                 matches = true;
-
-                if (!cell.getAttribute('data-original-text')) {
-                    cell.setAttribute('data-original-text', cell.innerHTML);
-                }
-
-                const regex = createRouteSearchPattern(query);
-                cell.innerHTML = cell.innerHTML.replace(regex, '<span style="background-color: #ffe46f;">$1</span>');
+                highlightSearchMatches(cell, query);
             }
         });
 
@@ -144,11 +177,7 @@ export function resetRoutesInDocument(documentRef) {
         const cells = row.querySelectorAll('td');
 
         cells.forEach(cell => {
-            const originalHtml = cell.getAttribute('data-original-text');
-            if (originalHtml) {
-                cell.innerHTML = originalHtml;
-                cell.removeAttribute('data-original-text');
-            }
+            clearSearchHighlights(cell);
         });
     });
 
