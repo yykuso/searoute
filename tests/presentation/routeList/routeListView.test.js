@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 import { describe, expect, it, vi } from 'vitest';
 import {
     applyColumnVisibility,
@@ -7,16 +9,10 @@ import {
     searchRoutesInDocument,
 } from '../../../js/presentation/routeList/routeListView.js';
 
-function createCell({ text = '', attrs = {} } = {}) {
-    const attributes = { ...attrs };
-    return {
-        textContent: text,
-        innerHTML: text,
-        style: {},
-        getAttribute: vi.fn((name) => attributes[name] ?? null),
-        setAttribute: vi.fn((name, value) => { attributes[name] = value; }),
-        removeAttribute: vi.fn((name) => { delete attributes[name]; }),
-    };
+function createCell(text = '') {
+    const cell = document.createElement('td');
+    cell.textContent = text;
+    return cell;
 }
 
 function createRow(cells) {
@@ -107,8 +103,8 @@ describe('searchRoutesInDocument', () => {
     });
 
     it('一致しない行を非表示にしてマッチ箇所をハイライトする', () => {
-        const matchCell = createCell({ text: 'Ocean Route' });
-        const noMatchCell = createCell({ text: 'Island Line' });
+        const matchCell = createCell('Ocean Route');
+        const noMatchCell = createCell('Island Line');
         const matchRow = createRow([matchCell]);
         const noMatchRow = createRow([noMatchCell]);
         const searchMessage = { textContent: '' };
@@ -116,15 +112,14 @@ describe('searchRoutesInDocument', () => {
 
         searchRoutesInDocument(documentRef, 'Ocean');
 
-        expect(matchCell.setAttribute).toHaveBeenCalledWith('data-original-text', 'Ocean Route');
-        expect(matchCell.innerHTML).toContain('background-color: #ffe46f');
+        expect(matchCell.querySelector('.route-search-highlight')?.textContent).toBe('Ocean');
         expect(noMatchRow.style.display).toBe('none');
         expect(matchRow.style.display).toBe('');
         expect(searchMessage.textContent).toBe('');
     });
 
     it('一致する行がない場合はメッセージを表示する', () => {
-        const noMatchCell = createCell({ text: 'Island Line' });
+        const noMatchCell = createCell('Island Line');
         const noMatchRow = createRow([noMatchCell]);
         const searchMessage = { textContent: '' };
         const documentRef = createDocumentStub({ rows: [noMatchRow], searchMessage });
@@ -133,11 +128,25 @@ describe('searchRoutesInDocument', () => {
 
         expect(searchMessage.textContent).toBe('見つかりませんでした。');
     });
+
+    it('HTML風の文字列を要素化せず、リンク構造を維持する', () => {
+        const cell = createCell();
+        cell.innerHTML = '<a href="/route">&lt;img src=x onerror=alert(1)&gt; Ocean</a>';
+        const row = createRow([cell]);
+        const documentRef = createDocumentStub({ rows: [row] });
+
+        searchRoutesInDocument(documentRef, 'img');
+
+        expect(cell.querySelector('img')).toBeNull();
+        expect(cell.querySelector('a')).not.toBeNull();
+        expect(cell.querySelector('.route-search-highlight')?.textContent).toBe('img');
+    });
 });
 
 describe('resetRoutesInDocument', () => {
     it('検索ボックス・ハイライト・非表示行をすべて元に戻す', () => {
-        const cell = createCell({ text: '', attrs: { 'data-original-text': 'Ocean Route' } });
+        const cell = createCell();
+        cell.innerHTML = '<a href="/route"><span class="route-search-highlight">Ocean</span> Route</a>';
         const row = createRow([cell]);
         row.style.display = 'none';
         const searchBox = { value: 'Ocean' };
@@ -148,8 +157,9 @@ describe('resetRoutesInDocument', () => {
 
         expect(searchBox.value).toBe('');
         expect(row.style.display).toBe('');
-        expect(cell.innerHTML).toBe('Ocean Route');
-        expect(cell.removeAttribute).toHaveBeenCalledWith('data-original-text');
+        expect(cell.textContent).toBe('Ocean Route');
+        expect(cell.querySelector('.route-search-highlight')).toBeNull();
+        expect(cell.querySelector('a')).not.toBeNull();
         expect(searchMessage.textContent).toBe('');
     });
 });

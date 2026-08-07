@@ -99,12 +99,21 @@ export async function restoreDrawerFromUrl(handlers) {
     const shareContext = getShareQueryContext();
     if (!shareContext) return;
 
-    const handler = handlers?.[shareContext.type];
+    const handlerMap = new Map();
+    for (const type of ['route', 'port', 'coord']) {
+        if (Object.hasOwn(handlers ?? {}, type) && typeof handlers[type] === 'function') {
+            handlerMap.set(type, handlers[type]);
+        }
+    }
+
     let restored = false;
-    if (handler) {
-        const { type, ...payload } = shareContext;
-        const result = await handler(...Object.values(payload));
-        restored = result !== false;
+    if (handlerMap.has(shareContext.type)) {
+        const handler = handlerMap.get(shareContext.type);
+        if (typeof handler === 'function') {
+            const { type, ...payload } = shareContext;
+            const result = await handler(...Object.values(payload));
+            restored = result !== false;
+        }
     }
 
     // 復元成功時のみURLクエリを削除

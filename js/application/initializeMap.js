@@ -24,6 +24,24 @@ export async function restoreSharedRoute({ ensureSharedLayerEnabled, initShareFr
     await initShareFromUrl();
 }
 
+export function bindGeolocateTrackingZoom({ mapRef, geolocateControl, initialMaxZoom = 15 }) {
+    let isTracking = false;
+
+    geolocateControl.on('trackuserlocationstart', () => {
+        isTracking = true;
+        geolocateControl.options.fitBoundsOptions.maxZoom = initialMaxZoom;
+    });
+
+    geolocateControl.on('trackuserlocationend', () => {
+        isTracking = false;
+    });
+
+    mapRef.on('zoomend', (event) => {
+        if (!isTracking || event?.geolocateSource) return;
+        geolocateControl.options.fitBoundsOptions.maxZoom = mapRef.getZoom();
+    });
+}
+
 export function initMap() {
     setupPmtilesProtocol();
     initPmtilesLayers();
@@ -41,11 +59,14 @@ export function initMap() {
     }));
 
     map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
-    map.addControl(new maplibregl.GeolocateControl({
+    const geolocateControl = new maplibregl.GeolocateControl({
         trackUserLocation: true,
         positionOptions: { enableHighAccuracy: true },
         showUserHeading: true,
-    }), 'bottom-right');
+        fitBoundsOptions: { maxZoom: 15 },
+    });
+    map.addControl(geolocateControl, 'bottom-right');
+    bindGeolocateTrackingZoom({ mapRef: map, geolocateControl });
     map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
     map.addControl(new hamburgerControl(), 'top-right');
 
