@@ -68,6 +68,10 @@ body {
 
 /* PWA（Progressive Web App）対応
 ================================================================ */
+.maplibregl-ctrl {
+  touch-action: manipulation;
+}
+
 .maplibregl-ctrl-top-left,
 .maplibregl-ctrl-top-right {
   top: env(safe-area-inset-top);

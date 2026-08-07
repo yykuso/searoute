@@ -1,5 +1,18 @@
 const { test, expect } = require('@playwright/test');
 
+test('マップコントロールのダブルタップ拡大を抑止する', async ({ page }) => {
+    await page.goto('/index.html');
+
+    const controls = page.locator('.maplibregl-ctrl');
+    await expect(controls.first()).toBeVisible({ timeout: 30_000 });
+
+    const touchActions = await controls.evaluateAll((elements) => (
+        elements.map((element) => getComputedStyle(element).touchAction)
+    ));
+    expect(touchActions).not.toHaveLength(0);
+    expect(touchActions.every((touchAction) => touchAction === 'manipulation')).toBe(true);
+});
+
 test('航路フィルターを変更して表示とCookieへ反映する', async ({ page }) => {
     await page.goto('/index.html');
 
