@@ -69,6 +69,46 @@ describe('bindGeolocateTrackingZoom', () => {
         expect(geolocateEmitter.options.fitBoundsOptions.maxZoom).toBe(9);
     });
 
+    it('ユーザーのズーム操作中は終了を待たずに最大ズームを更新する', () => {
+        const mapEmitter = createEmitter();
+        const geolocateEmitter = createEmitter();
+        geolocateEmitter.options = { fitBoundsOptions: { maxZoom: 15 } };
+        let zoom = 15;
+        const mapRef = {
+            ...mapEmitter,
+            getZoom: vi.fn(() => zoom),
+        };
+
+        bindGeolocateTrackingZoom({ mapRef, geolocateControl: geolocateEmitter });
+
+        geolocateEmitter.emit('trackuserlocationstart');
+        mapEmitter.emit('zoomstart', { originalEvent: {} });
+        zoom = 14.6;
+        mapEmitter.emit('zoom', { originalEvent: {} });
+
+        expect(geolocateEmitter.options.fitBoundsOptions.maxZoom).toBe(14.6);
+    });
+
+    it('ユーザーの拡大操作中も終了を待たずに最大ズームを更新する', () => {
+        const mapEmitter = createEmitter();
+        const geolocateEmitter = createEmitter();
+        geolocateEmitter.options = { fitBoundsOptions: { maxZoom: 9 } };
+        let zoom = 9;
+        const mapRef = {
+            ...mapEmitter,
+            getZoom: vi.fn(() => zoom),
+        };
+
+        bindGeolocateTrackingZoom({ mapRef, geolocateControl: geolocateEmitter });
+
+        geolocateEmitter.emit('trackuserlocationstart');
+        mapEmitter.emit('zoomstart', { originalEvent: {} });
+        zoom = 9.4;
+        mapEmitter.emit('zoom', { originalEvent: {} });
+
+        expect(geolocateEmitter.options.fitBoundsOptions.maxZoom).toBe(9.4);
+    });
+
     it('位置情報由来のズーム変更では最大ズームを更新しない', () => {
         const mapEmitter = createEmitter();
         const geolocateEmitter = createEmitter();

@@ -22,6 +22,7 @@ import { ROUTE_LAYER_CONFIGS } from '../../config/routeLayers.js';
 import { showDrawer } from '../../presentation/drawerViewModel.js';
 
 export const ROUTE_LAYER_SUFFIXES = ['_outline', '_solidline', '_dashline', '_thinline', '_name'];
+export const ROUTE_FIT_DURATION_MS = 2000;
 export const NEVER_MATCH_FILTER = ['==', ['get', 'routeId'], '__never_match__'];
 export const STATUS_FILTERS = {
     active: ['any', ['==', ['get', 'note'], null], ['==', ['get', 'note'], '']],
@@ -68,17 +69,40 @@ export function buildRouteFilter(suffix, routeFilters) {
 }
 import { trackEvent } from '../analytics/googleAnalyticsAdapter.js';
 
-export function calculateFitBoundsPadding({ documentRef = document, windowRef = globalThis, drawerWidth = 0, drawerHeight = 0 } = {}) {
+export function calculateFitBoundsPadding({
+    documentRef = document,
+    windowRef = globalThis,
+    drawerWidth = 0,
+    drawerHeight = 0,
+    reserveDrawerSpace = false,
+} = {}) {
     const padding = { top: 50, left: 50, right: 50, bottom: 50 };
     const drawer = documentRef.getElementById('detail-drawer');
-    if (drawer && !drawer.classList.contains('hidden')) {
+    if (drawer && (reserveDrawerSpace || !drawer.classList.contains('hidden'))) {
+        const drawerRect = drawer.getBoundingClientRect?.();
+        const measuredWidth = drawerWidth || drawerRect?.width || drawer.offsetWidth || 0;
+        const measuredHeight = drawerHeight || drawerRect?.height || drawer.offsetHeight || 0;
         if (windowRef.innerWidth >= 768) {
-            padding.left = drawerWidth + 30;
+            padding.left = measuredWidth > 0 ? measuredWidth + 30 : padding.left;
         } else {
-            padding.bottom = drawerHeight + 30;
+            padding.bottom = measuredHeight > 0 ? measuredHeight + 30 : padding.bottom;
         }
     }
     return padding;
+}
+
+export function animateToRouteBounds(mapRef, bounds, padding) {
+    const boundsLike = [[bounds.minLng, bounds.minLat], [bounds.maxLng, bounds.maxLat]];
+    const camera = mapRef.cameraForBounds(boundsLike, { padding });
+    if (!camera) return false;
+
+    mapRef.flyTo({
+        ...camera,
+        duration: ROUTE_FIT_DURATION_MS,
+        curve: 1.42,
+        essential: true,
+    });
+    return true;
 }
 
 export function setupPmtilesProtocol({ windowRef = window } = {}) {
@@ -95,6 +119,16 @@ export function setupPmtilesProtocol({ windowRef = window } = {}) {
 
 export { calculateBounds };
 export { ROUTE_LAYER_CONFIGS };
+
+export function toPlainGeoJsonFeature(feature) {
+    const geoJson = typeof feature?.toJSON === 'function' ? feature.toJSON() : feature;
+    return JSON.parse(JSON.stringify({
+        type: 'Feature',
+        ...(geoJson.id !== undefined ? { id: geoJson.id } : {}),
+        properties: geoJson.properties ?? {},
+        geometry: geoJson.geometry ?? null,
+    }));
+}
 
 // EventHandle情報の保存
 const eventHandle = {};
@@ -132,8 +166,12 @@ export function initPmtilesLayers({
 
     drawerResizeObserver = new ResizeObserverImpl(entries => {
         const entry = entries[0];
-        drawerSizeCache.width = entry.contentRect.width;
-        drawerSizeCache.height = entry.contentRect.height;
+        const borderBox = Array.isArray(entry.borderBoxSize)
+            ? entry.borderBoxSize[0]
+            : entry.borderBoxSize;
+        const drawerRect = drawerElement.getBoundingClientRect?.();
+        drawerSizeCache.width = borderBox?.inlineSize ?? drawerRect?.width ?? entry.contentRect.width;
+        drawerSizeCache.height = borderBox?.blockSize ?? drawerRect?.height ?? entry.contentRect.height;
     });
     drawerResizeObserver.observe(drawerElement);
     return true;
@@ -364,7 +402,7 @@ export function queryRouteFeatures(sourceId) {
     if (!cfg) return null;
     const features = map.querySourceFeatures(sourceId, { sourceLayer: cfg.sourceLayer });
     if (!features || features.length === 0) return null;
-    return { type: 'FeatureCollection', features };
+    return { type: 'FeatureCollection', features: features.map(toPlainGeoJsonFeature) };
 }
 
 export function zoomToRoute(params) {
@@ -408,12 +446,13 @@ export function zoomToRoute(params) {
         const bounds = calculateBounds(matchingFeatures);
         if (!bounds) return;
 
-        map.fitBounds(
-            [[bounds.minLng, bounds.minLat], [bounds.maxLng, bounds.maxLat]],
-            { padding: calculateFitBoundsPadding({ drawerWidth: drawerSizeCache.width, drawerHeight: drawerSizeCache.height }), duration: 1000 }
+        animateToRouteBounds(
+            map,
+            bounds,
+            calculateFitBoundsPadding({ drawerWidth: drawerSizeCache.width, drawerHeight: drawerSizeCache.height }),
         );
 
-        addRouteHighlight(matchingFeatures);
+        highlightRouteFeatures(matchingFeatures);
 
         if (typeof gtag !== 'undefined') {
             const eventLabel = routeName || `${routeId}-${lineId}`;
@@ -429,7 +468,7 @@ export function zoomToRouteSection(routeId, lineId, sourceId) {
     zoomToRoute({ routeId, lineId, sourceId });
 }
 
-function addRouteHighlight(features) {
+export function highlightRouteFeatures(features) {
     removeRouteHighlight();
     map.addSource('route-highlight', {
         type: 'geojson',

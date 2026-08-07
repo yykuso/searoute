@@ -78,6 +78,23 @@ describe('layerManager', () => {
         expect(isLayerActive('tile_gsi_relief')).toBe(true);
     });
 
+    it('同じレイヤーの追加が進行中の場合は先行処理を共有する', async () => {
+        let completeAdd;
+        addGeoJsonLayer.mockImplementationOnce(() => new Promise((resolve) => {
+            completeAdd = resolve;
+        }));
+
+        const firstAdd = addOverLayer('geojson_concurrent_add');
+        const secondAdd = addOverLayer('geojson_concurrent_add');
+
+        expect(addGeoJsonLayer).toHaveBeenCalledTimes(1);
+        completeAdd(true);
+        await Promise.all([firstAdd, secondAdd]);
+
+        expect(isLayerActive('geojson_concurrent_add')).toBe(true);
+        expect(setCookie).toHaveBeenCalledTimes(1);
+    });
+
     it('removeOverLayer は登録済みレイヤーを削除してCookieへ保存する', async () => {
         await addOverLayer('geojson_test_remove_ok');
         setCookie.mockClear();

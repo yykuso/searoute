@@ -165,14 +165,14 @@ export function buildSeaRouteSidebarContent(properties, details = {}, sourceId) 
             title: '航路',
             titleColorClass: 'text-blue-600',
             iconColorClass: 'text-blue-500',
-            body: `<button type="button" class="text-gray-800 text-xs cursor-pointer hover:text-blue-600 underline hover:underline transition-colors" data-drawer-action="zoom-route" data-route-id="${routeId}" data-source-id="${escapedSourceId}">${routeName}</button>`,
+            body: `<button type="button" class="min-w-0 flex-1 text-left text-gray-800 text-xs cursor-pointer hover:text-blue-600 underline hover:underline transition-colors" data-drawer-action="zoom-route" data-route-id="${routeId}" data-source-id="${escapedSourceId}">${routeName}</button>`,
         })}
         ${createDrawerSection({
             iconClass: 'fas fa-map-pin',
             title: '選択部分',
             titleColorClass: 'text-green-600',
             iconColorClass: 'text-green-500',
-            body: `<button type="button" class="text-gray-800 text-xs cursor-pointer hover:text-blue-600 underline hover:underline transition-colors" data-drawer-action="zoom-route-section" data-route-id="${routeId}" data-line-id="${lineId}" data-source-id="${escapedSourceId}">${sectionName}</button>`,
+            body: `<button type="button" class="min-w-0 flex-1 text-left text-gray-800 text-xs cursor-pointer hover:text-blue-600 underline hover:underline transition-colors" data-drawer-action="zoom-route-section" data-route-id="${routeId}" data-line-id="${lineId}" data-source-id="${escapedSourceId}">${sectionName}</button>`,
         })}
         ${createDrawerSection({
             iconClass: 'fas fa-rotate',

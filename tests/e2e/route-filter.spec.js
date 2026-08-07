@@ -1,5 +1,50 @@
 const { test, expect } = require('@playwright/test');
 
+test('マップコントロールのダブルタップ拡大を抑止する', async ({ page }) => {
+    await page.goto('/index.html');
+
+    const controls = page.locator('.maplibregl-ctrl');
+    await expect(controls.first()).toBeVisible({ timeout: 30_000 });
+
+    const touchActions = await controls.evaluateAll((elements) => (
+        elements.map((element) => getComputedStyle(element).touchAction)
+    ));
+    expect(touchActions).not.toHaveLength(0);
+    expect(touchActions.every((touchAction) => touchAction === 'manipulation')).toBe(true);
+});
+
+test('レイヤー項目をオフにすると通常の文字ウェイトへ戻る', async ({ page }) => {
+    await page.goto('/index.html');
+
+    const layersControl = page.locator('#layers-control');
+    await expect(layersControl).toBeVisible({ timeout: 30_000 });
+    await layersControl.hover();
+
+    const checkbox = layersControl.locator('input[type="checkbox"]').first();
+    const layerItem = checkbox.locator('..');
+    const label = layerItem.locator('label');
+    await expect(checkbox).toBeVisible();
+
+    await checkbox.check();
+    await expect(label).toHaveCSS('font-weight', '600');
+
+    await checkbox.uncheck();
+    await layerItem.hover();
+    await expect(label).toHaveCSS('font-weight', '500');
+
+    const radios = layersControl.locator('input[type="radio"]');
+    const previousRadio = radios.first();
+    const nextRadio = radios.nth(1);
+    const previousLabel = previousRadio.locator('..').locator('label');
+
+    await previousRadio.check();
+    await expect(previousLabel).toHaveCSS('font-weight', '600');
+
+    await nextRadio.check();
+    await expect(previousRadio).not.toBeChecked();
+    await expect(previousLabel).toHaveCSS('font-weight', '500');
+});
+
 test('航路フィルターを変更して表示とCookieへ反映する', async ({ page }) => {
     await page.goto('/index.html');
 

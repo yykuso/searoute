@@ -23,6 +23,7 @@ export let detailDrawerShareBtn = null;
 let sidebarGrip = null;
 let windowRef = null;
 let initialized = false;
+let hideTimer = null;
 
 // --- スナップポイント定数 ---
 export const SIDEBAR_SNAP = {
@@ -35,6 +36,11 @@ export const SIDEBAR_SNAP = {
 
 // --- ドロワー表示 ---
 export function showDetailDrawer(html, title = '詳細情報', subtitle = '') {
+    if (hideTimer !== null) {
+        clearTimeout(hideTimer);
+        hideTimer = null;
+    }
+
     detailDrawerContent.innerHTML = html;
     detailDrawerContent.scrollTop = 0;
     if (subtitle) {
@@ -46,13 +52,17 @@ export function showDetailDrawer(html, title = '詳細情報', subtitle = '') {
     // ナビゲーション要素のタッチイベント制御を設定
     setupNavigationTouchControl();
 
-    if (window.innerWidth >= 768) {
+    if (windowRef.innerWidth >= 768) {
         // PC表示
-        detailDrawer.classList.remove('md:-translate-x-full', 'hidden', 'translate-y-full');
-        detailDrawer.style.padding = '';
+        detailDrawer.classList.remove('hidden');
+        applyDesktopDrawerLayout();
+        detailDrawer.classList.add('md:-translate-x-full');
         detailDrawer.style.pointerEvents = 'auto';
         detailDrawer.style.zIndex = 1000;
         detailDrawer.getBoundingClientRect();
+        windowRef.requestAnimationFrame(() => {
+            detailDrawer.classList.remove('md:-translate-x-full');
+        });
     } else {
         // モバイル表示
         detailDrawer.classList.remove('translate-y-full', 'hidden');
@@ -62,40 +72,31 @@ export function showDetailDrawer(html, title = '詳細情報', subtitle = '') {
         detailDrawer.style.padding = '0px';
         detailDrawer.style.zIndex = 1000;
         detailDrawer.getBoundingClientRect();
-        requestAnimationFrame(() => {
-            detailDrawer.classList.add('max-h-[30vh]');
-            detailDrawer.classList.remove('max-h-1/2');
-            detailDrawer.style.maxHeight = `calc(${SIDEBAR_SNAP.midRatio * 100}dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom))`;
-            detailDrawer.style.height = `calc(${SIDEBAR_SNAP.midRatio * 100}dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom))`;
-            detailDrawer.style.overflowY = 'hidden';
-            detailDrawer.style.padding = '0';
+        windowRef.requestAnimationFrame(() => {
+            applyMobileDrawerLayout();
             detailDrawer.style.pointerEvents = 'auto';
-            if (detailDrawerContent) {
-                detailDrawerContent.style.overflowY = 'hidden';
-                detailDrawerContent.style.maxHeight = '100%';
-                detailDrawerContent.style.paddingLeft = '1rem';
-                detailDrawerContent.style.paddingRight = '1rem';
-                detailDrawerContent.style.paddingTop = '0';
-                detailDrawerContent.style.paddingBottom = '0.5rem';
-            }
         });
     }
 }
 
 // --- ドロワー非表示 ---
 export function hideDetailDrawer() {
-    if (window.innerWidth >= 768) {
+    if (windowRef.innerWidth >= 768) {
         detailDrawer.classList.add('md:-translate-x-full');
-        setTimeout(() => detailDrawer.classList.add('hidden'), 300);
+        hideTimer = setTimeout(() => {
+            detailDrawer.classList.add('hidden');
+            hideTimer = null;
+        }, 300);
         detailDrawer.style.padding = '';
     } else {
         detailDrawer.style.transition = 'max-height 0.3s, height 0.3s, padding 0.3s';
         detailDrawer.style.maxHeight = '0px';
         detailDrawer.style.height = '0px';
         detailDrawer.style.padding = '0px';
-        setTimeout(() => {
+        hideTimer = setTimeout(() => {
             detailDrawer.classList.add('hidden');
             detailDrawer.style.padding = '1rem';
+            hideTimer = null;
         }, 300);
     }
     executeDrawerCloseHandlers();
@@ -152,12 +153,49 @@ function handleWindowTouchstart(e) {
     }
 }
 
+function applyDesktopDrawerLayout() {
+    detailDrawer.classList.remove('translate-y-full', 'max-h-[30vh]', 'max-h-1/2');
+    detailDrawer.style.transition = '';
+    detailDrawer.style.maxHeight = '';
+    detailDrawer.style.height = '';
+    detailDrawer.style.padding = '';
+    detailDrawer.style.overflowY = '';
+
+    if (detailDrawerContent) {
+        detailDrawerContent.style.overflowY = '';
+        detailDrawerContent.style.maxHeight = '';
+        detailDrawerContent.style.paddingLeft = '';
+        detailDrawerContent.style.paddingRight = '';
+        detailDrawerContent.style.paddingTop = '';
+        detailDrawerContent.style.paddingBottom = '';
+    }
+}
+
+function applyMobileDrawerLayout() {
+    detailDrawer.classList.remove('md:-translate-x-full', 'max-h-1/2');
+    detailDrawer.classList.add('max-h-[30vh]');
+    detailDrawer.style.transition = 'max-height 0.3s, height 0.3s, padding 0.3s';
+    detailDrawer.style.maxHeight = `calc(${SIDEBAR_SNAP.midRatio * 100}dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom))`;
+    detailDrawer.style.height = `calc(${SIDEBAR_SNAP.midRatio * 100}dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom))`;
+    detailDrawer.style.padding = '0';
+    detailDrawer.style.overflowY = 'hidden';
+
+    if (detailDrawerContent) {
+        detailDrawerContent.style.overflowY = 'hidden';
+        detailDrawerContent.style.maxHeight = '100%';
+        detailDrawerContent.style.paddingLeft = '1rem';
+        detailDrawerContent.style.paddingRight = '1rem';
+        detailDrawerContent.style.paddingTop = '0';
+        detailDrawerContent.style.paddingBottom = '0.5rem';
+    }
+}
+
 function handleWindowResize() {
     if (!detailDrawer.classList.contains('hidden')) {
         if (windowRef.innerWidth >= 768) {
-            detailDrawer.classList.remove('translate-y-full');
+            applyDesktopDrawerLayout();
         } else {
-            detailDrawer.classList.remove('md:-translate-x-full');
+            applyMobileDrawerLayout();
         }
     }
 }
@@ -489,6 +527,11 @@ export function disposeDetailDrawer() {
     if (sidebarGrip) {
         sidebarGrip.removeEventListener('touchstart', gripDragStart);
         sidebarGrip.removeEventListener('mousedown', gripDragStart);
+    }
+
+    if (hideTimer !== null) {
+        clearTimeout(hideTimer);
+        hideTimer = null;
     }
 
     detailDrawer = null;

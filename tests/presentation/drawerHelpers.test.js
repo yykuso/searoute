@@ -16,6 +16,7 @@ describe('buildSeaRouteSidebarContent', () => {
         expect(html).toContain('data-route-id="route-1"');
         expect(html).toContain('data-line-id="line-2"');
         expect(html).toContain('data-source-id="geojson_sea_route"');
+        expect(html.match(/class="[^"]*text-left[^"]*"/g)).toHaveLength(2);
         expect(html).not.toContain('onclick=');
         expect(html).not.toContain('window.zoomToRoute');
     });
