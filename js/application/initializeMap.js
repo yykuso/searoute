@@ -26,6 +26,7 @@ export async function restoreSharedRoute({ ensureSharedLayerEnabled, initShareFr
 
 export function bindGeolocateTrackingZoom({ mapRef, geolocateControl, initialMaxZoom = 15 }) {
     let isTracking = false;
+    let isUserZooming = false;
 
     geolocateControl.on('trackuserlocationstart', () => {
         isTracking = true;
@@ -34,11 +35,23 @@ export function bindGeolocateTrackingZoom({ mapRef, geolocateControl, initialMax
 
     geolocateControl.on('trackuserlocationend', () => {
         isTracking = false;
+        isUserZooming = false;
+    });
+
+    mapRef.on('zoomstart', (event) => {
+        if (!isTracking || event?.geolocateSource) return;
+        isUserZooming = Boolean(event?.originalEvent);
+    });
+
+    mapRef.on('zoom', (event) => {
+        if (!isTracking || !isUserZooming || event?.geolocateSource) return;
+        geolocateControl.options.fitBoundsOptions.maxZoom = mapRef.getZoom();
     });
 
     mapRef.on('zoomend', (event) => {
         if (!isTracking || event?.geolocateSource) return;
         geolocateControl.options.fitBoundsOptions.maxZoom = mapRef.getZoom();
+        isUserZooming = false;
     });
 }
 
