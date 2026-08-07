@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { bindGeolocateTrackingWithoutZoomLock, restoreSharedRoute } from '../../js/application/initializeMap.js';
+import { bindGeolocateTrackingZoom, restoreSharedRoute } from '../../js/application/initializeMap.js';
 
 function createEmitter() {
     const handlers = new Map();
@@ -35,82 +35,54 @@ describe('restoreSharedRoute', () => {
     });
 });
 
-describe('bindGeolocateTrackingWithoutZoomLock', () => {
-    it('初回 geolocate は既定ズームを尊重し、強制補正しない', () => {
+describe('bindGeolocateTrackingZoom', () => {
+    it('追従開始時は初回位置取得用の最大ズームに戻す', () => {
         const mapEmitter = createEmitter();
         const geolocateEmitter = createEmitter();
+        geolocateEmitter.options = { fitBoundsOptions: { maxZoom: 8 } };
         const mapRef = {
             ...mapEmitter,
             getZoom: vi.fn(() => 5),
-            easeTo: vi.fn(),
         };
 
-        bindGeolocateTrackingWithoutZoomLock({ mapRef, geolocateControl: geolocateEmitter });
+        bindGeolocateTrackingZoom({ mapRef, geolocateControl: geolocateEmitter });
 
         geolocateEmitter.emit('trackuserlocationstart');
-        geolocateEmitter.emit('geolocate', { coords: { longitude: 139.7, latitude: 35.6 } });
 
-        expect(mapRef.easeTo).not.toHaveBeenCalled();
+        expect(geolocateEmitter.options.fitBoundsOptions.maxZoom).toBe(15);
     });
 
-    it('追従中はユーザーが選んだズームを維持して中心のみ更新する', () => {
-        vi.useFakeTimers();
-
-        let currentZoom = 5;
+    it('追従中はユーザーが選んだズームを最大ズームとして維持する', () => {
         const mapEmitter = createEmitter();
         const geolocateEmitter = createEmitter();
+        geolocateEmitter.options = { fitBoundsOptions: { maxZoom: 15 } };
         const mapRef = {
             ...mapEmitter,
-            getZoom: vi.fn(() => currentZoom),
-            easeTo: vi.fn(),
+            getZoom: vi.fn(() => 9),
         };
 
-        bindGeolocateTrackingWithoutZoomLock({ mapRef, geolocateControl: geolocateEmitter });
+        bindGeolocateTrackingZoom({ mapRef, geolocateControl: geolocateEmitter });
 
         geolocateEmitter.emit('trackuserlocationstart');
+        mapEmitter.emit('zoomend', {});
 
-        // 初回追従で既定ズームに変わった状態を想定
-        currentZoom = 12;
-        geolocateEmitter.emit('geolocate', { coords: { longitude: 139.7, latitude: 35.6 } });
-
-        // ユーザーが手動でズーム変更
-        currentZoom = 9;
-        mapEmitter.emit('zoomend');
-
-        geolocateEmitter.emit('geolocate', { coords: { longitude: 140.0, latitude: 36.0 } });
-        vi.runAllTimers();
-
-        expect(mapRef.easeTo).toHaveBeenCalledWith({
-            center: [140.0, 36.0],
-            zoom: 9,
-            duration: 0,
-            animate: false,
-            essential: true,
-        });
-
-        vi.useRealTimers();
+        expect(geolocateEmitter.options.fitBoundsOptions.maxZoom).toBe(9);
     });
 
-    it('追従終了後は geolocate で補正しない', () => {
-        vi.useFakeTimers();
-
+    it('位置情報由来のズーム変更では最大ズームを更新しない', () => {
         const mapEmitter = createEmitter();
         const geolocateEmitter = createEmitter();
+        geolocateEmitter.options = { fitBoundsOptions: { maxZoom: 15 } };
         const mapRef = {
             ...mapEmitter,
             getZoom: vi.fn(() => 10),
-            easeTo: vi.fn(),
         };
 
-        bindGeolocateTrackingWithoutZoomLock({ mapRef, geolocateControl: geolocateEmitter });
+        bindGeolocateTrackingZoom({ mapRef, geolocateControl: geolocateEmitter });
 
         geolocateEmitter.emit('trackuserlocationstart');
-        geolocateEmitter.emit('trackuserlocationend');
-        geolocateEmitter.emit('geolocate', { coords: { longitude: 141.0, latitude: 37.0 } });
-        vi.runAllTimers();
+        mapEmitter.emit('zoomend', { geolocateSource: true });
 
-        expect(mapRef.easeTo).not.toHaveBeenCalled();
-
-        vi.useRealTimers();
+        expect(geolocateEmitter.options.fitBoundsOptions.maxZoom).toBe(15);
     });
 });
