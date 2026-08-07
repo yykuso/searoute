@@ -28,6 +28,8 @@ import {
     queryRouteFeatures,
     calculateBounds,
     calculateFitBoundsPadding,
+    animateToRouteBounds,
+    highlightRouteFeatures,
 } from './pmtilesLayerAdapter.js';
 
 export { setRouteFilters, toggleSuspendedRoutes } from './pmtilesLayerAdapter.js';
@@ -232,12 +234,15 @@ export async function initShareFromUrl() {
             if (isNaN(lat) || isNaN(lng)) {
                 const bounds = calculateBounds(matchingFeatures);
                 if (bounds) {
-                    map.fitBounds(
-                        [[bounds.minLng, bounds.minLat], [bounds.maxLng, bounds.maxLat]],
-                        { padding: calculateFitBoundsPadding(), duration: 1000 }
+                    animateToRouteBounds(
+                        map,
+                        bounds,
+                        calculateFitBoundsPadding({ reserveDrawerSpace: true }),
                     );
                 }
             }
+
+            highlightRouteFeatures(matchingFeatures);
 
             const details = await loadRouteDetails(normalizedRouteId, sourceId);
             const businessNameParts = splitBusinessName(feature.properties.businessName);

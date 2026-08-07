@@ -173,6 +173,7 @@ const TILE_LAYER_MAP = {
 // 現在の状態
 let currentMap = null;
 let currentLayer = [];
+const pendingLayerAdds = new Map();
 
 /**
  * defaultLayerにIDの値が存在するかをチェックする関数
@@ -333,7 +334,7 @@ function removeSource(sourceId) {
  * OverLayer(Tile/GeoJson)を追加する関数
  * @param {string} layerId - OverLayerID
  */
-export async function addOverLayer(layerId) {
+async function performAddOverLayer(layerId) {
     if (currentLayer.includes(layerId)) {
         console.log('[Warning] Layer already exists : addOverLayer( ' + layerId + ' )');
         return;
@@ -370,6 +371,20 @@ export async function addOverLayer(layerId) {
             resolve();
         });
     });
+}
+
+export async function addOverLayer(layerId) {
+    if (pendingLayerAdds.has(layerId)) {
+        return pendingLayerAdds.get(layerId);
+    }
+
+    const pendingAdd = performAddOverLayer(layerId);
+    pendingLayerAdds.set(layerId, pendingAdd);
+    try {
+        return await pendingAdd;
+    } finally {
+        pendingLayerAdds.delete(layerId);
+    }
 }
 
 /**
