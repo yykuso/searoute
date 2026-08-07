@@ -49,9 +49,6 @@ export function showDetailDrawer(html, title = '詳細情報', subtitle = '') {
         detailDrawerTitle.textContent = title;
     }
 
-    // ナビゲーション要素のタッチイベント制御を設定
-    setupNavigationTouchControl();
-
     if (windowRef.innerWidth >= 768) {
         // PC表示
         detailDrawer.classList.remove('hidden');
@@ -205,11 +202,6 @@ function handleDrawerTouchStart(e) {
     if (window.innerWidth >= 768) return;
     if (e.touches.length !== 1) return;
 
-    // ナビゲーション要素のタッチは除外
-    if (isNavigationElement(e.target)) {
-        return;
-    }
-
     const vh = window.innerHeight;
     const h = detailDrawer.offsetHeight;
     const detailDrawerContent = document.getElementById('detail-drawer-content');
@@ -238,11 +230,6 @@ function handleDrawerTouchStart(e) {
 }
 
 function handleDrawerTouchMove(e) {
-    // ナビゲーション要素のタッチは除外
-    if (isNavigationElement(e.target)) {
-        return;
-    }
-
     const vh = window.innerHeight;
     const h = detailDrawer.offsetHeight;
     const detailDrawerContent = document.getElementById('detail-drawer-content');
@@ -405,51 +392,6 @@ function gripDragEnd(e) {
     document.removeEventListener('mouseup', gripDragEnd, false);
     document.removeEventListener('touchmove', gripDragMove, { passive: false });
     document.removeEventListener('touchend', gripDragEnd, { passive: false });
-}
-
-// --- ナビゲーション要素の判定関数 ---
-function isNavigationElement(element) {
-    // クリッカブルな要素かチェック
-    if (element.classList.contains('cursor-pointer') ||
-        element.classList.contains('hover:text-blue-600') ||
-        element.closest('.cursor-pointer')) {
-        return true;
-    }
-
-    // onclick属性があるかチェック
-    if (element.hasAttribute('onclick') || element.closest('[onclick]')) {
-        return true;
-    }
-
-    // リンク要素かチェック
-    if (element.tagName === 'A' || element.closest('a')) {
-        return true;
-    }
-
-    return false;
-}
-
-// --- ナビゲーション要素のタッチイベント制御 ---
-function setupNavigationTouchControl() {
-    // クリッカブル要素を取得
-    const clickableElements = detailDrawerContent.querySelectorAll('.cursor-pointer, [onclick], a');
-
-    clickableElements.forEach((element, index) => {
-        // タッチスタート時にドラッグを無効化
-        element.addEventListener('touchstart', function(e) {
-            e.stopPropagation(); // ドロワーのtouchstartイベントを阻止
-        }, { passive: true });
-
-        // タッチムーブ時もドラッグを無効化
-        element.addEventListener('touchmove', function(e) {
-            e.stopPropagation(); // ドロワーのtouchmoveイベントを阻止
-        }, { passive: true });
-
-        // タッチエンド時のドラッグ処理を無効化
-        element.addEventListener('touchend', function(e) {
-            e.stopPropagation(); // ドロワーのtouchendイベントを阻止
-        }, { passive: true });
-    });
 }
 
 // --- 初期化・破棄ライフサイクル ---

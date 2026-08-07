@@ -27,7 +27,10 @@ function createWindowStub() {
 }
 
 describe('detailDrawerの初期化・破棄ライフサイクル', () => {
-    afterEach(() => disposeDetailDrawer());
+    afterEach(() => {
+        disposeDetailDrawer();
+        vi.unstubAllGlobals();
+    });
 
     it('必須要素が揃っていれば一度だけ初期化される', () => {
         const elements = {
@@ -175,5 +178,42 @@ describe('detailDrawerの初期化・破棄ライフサイクル', () => {
         expect(drawer.style.padding).toBe('0');
         expect(content.style.paddingLeft).toBe('1rem');
         expect(content.style.paddingBottom).toBe('0.5rem');
+    });
+
+    it('リンク上からの下方向スワイプでもドロワーを下げる', () => {
+        const drawer = createElement();
+        drawer.offsetHeight = 240;
+        const content = createElement();
+        content.scrollTop = 0;
+        content.contains = vi.fn(() => true);
+        const elements = {
+            'detail-drawer': drawer,
+            'detail-drawer-content': content,
+            'detail-drawer-title': createElement(),
+            'detail-drawer-close-btn': createElement(),
+            'detail-drawer-share-btn': createElement(),
+            'sidebar-grip': createElement(),
+        };
+        const documentRef = { getElementById: (id) => elements[id] };
+        const windowRef = createWindowStub();
+        windowRef.innerWidth = 390;
+        vi.stubGlobal('window', { innerWidth: 390, innerHeight: 800 });
+        vi.stubGlobal('document', {
+            documentElement: {},
+            getElementById: (id) => elements[id],
+        });
+        vi.stubGlobal('getComputedStyle', () => ({ getPropertyValue: () => '0' }));
+
+        initDetailDrawer({ documentRef, windowRef });
+        const touchStart = drawer.addEventListener.mock.calls.find(([name]) => name === 'touchstart')[1];
+        const touchMove = drawer.addEventListener.mock.calls.find(([name]) => name === 'touchmove')[1];
+        const link = { tagName: 'A' };
+        const preventDefault = vi.fn();
+
+        touchStart({ target: link, touches: [{ clientY: 300 }] });
+        touchMove({ target: link, touches: [{ clientY: 350 }], preventDefault });
+
+        expect(preventDefault).toHaveBeenCalledOnce();
+        expect(drawer.style.height).toBe('190px');
     });
 });
