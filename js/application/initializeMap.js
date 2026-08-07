@@ -24,6 +24,57 @@ export async function restoreSharedRoute({ ensureSharedLayerEnabled, initShareFr
     await initShareFromUrl();
 }
 
+export function bindGeolocateTrackingWithoutZoomLock({ mapRef, geolocateControl }) {
+    let isTracking = false;
+    let hasHandledInitialFix = false;
+    let preservedZoom = NaN;
+
+    geolocateControl.on('trackuserlocationstart', () => {
+        isTracking = true;
+        hasHandledInitialFix = false;
+        preservedZoom = mapRef.getZoom();
+    });
+
+    geolocateControl.on('trackuserlocationend', () => {
+        isTracking = false;
+        hasHandledInitialFix = false;
+        preservedZoom = NaN;
+    });
+
+    mapRef.on('zoomend', () => {
+        if (!isTracking) return;
+        preservedZoom = mapRef.getZoom();
+    });
+
+    geolocateControl.on('geolocate', (event) => {
+        if (!isTracking) return;
+
+        const lng = event?.coords?.longitude;
+        const lat = event?.coords?.latitude;
+        if (!Number.isFinite(lng) || !Number.isFinite(lat)) return;
+
+        // 初回追従時だけは GeolocateControl の既定ズームを尊重する。
+        if (!hasHandledInitialFix) {
+            hasHandledInitialFix = true;
+            preservedZoom = mapRef.getZoom();
+            return;
+        }
+
+        if (!Number.isFinite(preservedZoom)) return;
+
+        // GeolocateControl 内部のカメラ更新後にズームを戻しつつ中心だけ追従する。
+        setTimeout(() => {
+            mapRef.easeTo({
+                center: [lng, lat],
+                zoom: preservedZoom,
+                duration: 0,
+                animate: false,
+                essential: true,
+            });
+        }, 0);
+    });
+}
+
 export function initMap() {
     setupPmtilesProtocol();
     initPmtilesLayers();
@@ -41,11 +92,13 @@ export function initMap() {
     }));
 
     map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
-    map.addControl(new maplibregl.GeolocateControl({
+    const geolocateControl = new maplibregl.GeolocateControl({
         trackUserLocation: true,
         positionOptions: { enableHighAccuracy: true },
         showUserHeading: true,
-    }), 'bottom-right');
+    });
+    map.addControl(geolocateControl, 'bottom-right');
+    bindGeolocateTrackingWithoutZoomLock({ mapRef: map, geolocateControl });
     map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
     map.addControl(new hamburgerControl(), 'top-right');
 
