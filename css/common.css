@@ -72,6 +72,11 @@ body {
   touch-action: pan-y;
 }
 
+.maplibregl-ctrl-geocoder.maplibregl-ctrl-geocoder--collapsed,
+.maplibregl-ctrl-attrib {
+  touch-action: none;
+}
+
 .maplibregl-ctrl button,
 .maplibregl-ctrl-hamburger-toggle,
 .maplibregl-ctrl-layers-toggle {
