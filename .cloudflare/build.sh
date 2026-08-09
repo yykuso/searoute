@@ -13,7 +13,12 @@ mkdir -p .tmp_deploy
 cp -r ./* .tmp_deploy/ 2>/dev/null || true
 
 cd .tmp_deploy
-rm -rf .github .git .cloudflare .gitignore README.md _config.yml
+rm -rf \
+  .github .git .cloudflare .gitignore README.md _config.yml \
+  node_modules tests test-results playwright-report tools \
+  package.json package-lock.json \
+  playwright.config.js vitest.config.js tailwind.config.js \
+  css/tailwind-input.css
 cd ..
 mv .tmp_deploy deploy
 
