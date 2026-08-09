@@ -8,10 +8,12 @@
  */
 
 import { setupOutsideClickListener } from '../outsideClickHandler.js';
+import { bindTouchPanelToggle } from './touchPanelToggle.js';
 
 export default class hamburgerControl {
     constructor() {
         this._infoWindowUnsubscriber = null;
+        this._touchToggleUnsubscriber = null;
     }
 
     onAdd(map) {
@@ -27,6 +29,9 @@ export default class hamburgerControl {
         // クリーンアップ
         if (this._infoWindowUnsubscriber) {
             this._infoWindowUnsubscriber();
+        }
+        if (this._touchToggleUnsubscriber) {
+            this._touchToggleUnsubscriber();
         }
     }
 
@@ -55,6 +60,7 @@ export default class hamburgerControl {
         contentContainer.className = 'maplibregl-ctrl-hamburger-list';
         contentContainer.style.display = 'none';
         this.container.appendChild(contentContainer);
+        this._touchToggleUnsubscriber = bindTouchPanelToggle(toggleContainer, contentContainer);
 
         // メニューアイテムを追加
         this.createMenuItems(contentContainer);
