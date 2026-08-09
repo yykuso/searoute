@@ -405,38 +405,42 @@
     // GAは常時読み込む
     loadGA();
 
-    // バナーは一度閉じたら再表示しない
-    if (getCookie(CONSENT_KEY) === null) {
-      window.addEventListener('DOMContentLoaded', function() {
-        var banner = document.getElementById('cookie-banner');
-        if (banner) banner.style.display = 'block';
+    function openPrivacyPolicy(ppWindow) {
+      if (ppWindow) ppWindow.style.display = 'block';
+    }
 
-        document.getElementById('cookie-close-btn').addEventListener('click', function() {
-          setCookie(CONSENT_KEY, 'closed', CONSENT_DAYS);
-          banner.style.display = 'none';
-        });
+    function closePrivacyPolicy(ppWindow) {
+      if (ppWindow) ppWindow.style.display = 'none';
+    }
 
-        // プライバシーポリシーモーダルの開閉
-        var ppWindow = document.getElementById('privacy-policy-window');
-        document.getElementById('privacy-policy-open-btn').addEventListener('click', function() {
-          if (ppWindow) ppWindow.style.display = 'block';
-        });
-        document.getElementById('privacy-policy-close-btn').addEventListener('click', function() {
-          if (ppWindow) ppWindow.style.display = 'none';
-        });
+    var banner = document.getElementById('cookie-banner');
+    var closeBannerBtn = document.getElementById('cookie-close-btn');
+    var ppWindow = document.getElementById('privacy-policy-window');
+    var openBtn = document.getElementById('privacy-policy-open-btn');
+    var closeBtn = document.getElementById('privacy-policy-close-btn');
+    var hasConsentCookie = getCookie(CONSENT_KEY) !== null;
+
+    // DOM構築完了を待たず、解析中に即時表示することで LCP 遅延を防ぐ
+    if (!hasConsentCookie && banner) {
+      banner.style.display = 'block';
+    }
+
+    if (closeBannerBtn && banner) {
+      closeBannerBtn.addEventListener('click', function() {
+        setCookie(CONSENT_KEY, 'closed', CONSENT_DAYS);
+        banner.style.display = 'none';
       });
-    } else {
-      // バナー非表示時もプライバシーポリシーボタンは機能するようにする
-      window.addEventListener('DOMContentLoaded', function() {
-        var ppWindow = document.getElementById('privacy-policy-window');
-        var openBtn = document.getElementById('privacy-policy-open-btn');
-        var closeBtn = document.getElementById('privacy-policy-close-btn');
-        if (openBtn) openBtn.addEventListener('click', function() {
-          if (ppWindow) ppWindow.style.display = 'block';
-        });
-        if (closeBtn) closeBtn.addEventListener('click', function() {
-          if (ppWindow) ppWindow.style.display = 'none';
-        });
+    }
+
+    if (openBtn) {
+      openBtn.addEventListener('click', function() {
+        openPrivacyPolicy(ppWindow);
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function() {
+        closePrivacyPolicy(ppWindow);
       });
     }
   })();
