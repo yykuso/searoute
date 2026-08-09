@@ -6,6 +6,10 @@ import { showContextMenu } from './contextMenuView.js';
 import { registerDrawerCloseHandler } from '../drawerViewModel.js';
 import { configureDrawerPresenter } from '../drawerViewModel.js';
 
+export function isMapControlTarget(target) {
+    return Boolean(target?.closest?.('.maplibregl-ctrl'));
+}
+
 /**
  * 検索バーを追加する関数
  * MapLibreGeocoderを使用して、地名検索を行う
@@ -113,6 +117,7 @@ export function addContextEvent() {
     // PC: 右クリックでコンテキストメニュー
     mapDiv.addEventListener('contextmenu', (e) => {
         if (window.matchMedia('(pointer: coarse)').matches) return;
+        if (isMapControlTarget(e.target)) return;
         e.preventDefault();
         showContextMenu(e.clientX, e.clientY, map);
     });
@@ -128,6 +133,7 @@ export function addContextEvent() {
     mapDiv.addEventListener('touchstart', (e) => {
         if (!window.matchMedia('(pointer: coarse)').matches) return;
         if (e.touches.length !== 1) return;
+        if (isMapControlTarget(e.target)) return;
         isDragging = false;
         // iOS の TouchEvent はプールで再利用されるため、コールバック内では
         // e.touches[0] が空になっている。座標をここで変数に退避する。
