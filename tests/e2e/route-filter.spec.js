@@ -1,16 +1,21 @@
 const { test, expect } = require('@playwright/test');
 
-test('マップコントロールのダブルタップ拡大を抑止する', async ({ page }) => {
+test('マップUIのピンチ拡大と横ドラッグを抑止する', async ({ page }) => {
     await page.goto('/index.html');
 
     const controls = page.locator('.maplibregl-ctrl');
     await expect(controls.first()).toBeVisible({ timeout: 30_000 });
 
-    const touchActions = await controls.evaluateAll((elements) => (
+    await expect(controls.first()).toHaveCSS('touch-action', 'pan-y');
+    await expect(page.locator('.maplibregl-ctrl button').first()).toHaveCSS('touch-action', 'none');
+    await expect(page.locator('.maplibregl-ctrl-layers-toggle')).toHaveCSS('touch-action', 'none');
+
+    const windows = page.locator('#info-window, #settings-window, #privacy-policy-window');
+    await expect(windows).toHaveCount(3);
+    const touchActions = await windows.evaluateAll((elements) => (
         elements.map((element) => getComputedStyle(element).touchAction)
     ));
-    expect(touchActions).not.toHaveLength(0);
-    expect(touchActions.every((touchAction) => touchAction === 'manipulation')).toBe(true);
+    expect(touchActions).toEqual(['pan-y', 'pan-y', 'pan-y']);
 });
 
 test('レイヤー項目をオフにすると通常の文字ウェイトへ戻る', async ({ page }) => {
