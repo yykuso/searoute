@@ -10,6 +10,7 @@
 
 // レイヤーコントロールボタンの制御
 import { trackEvent } from '../../adapters/analytics/googleAnalyticsAdapter.js';
+import { bindTouchPanelToggle } from './touchPanelToggle.js';
 
 export default class layersControl {
     constructor(options) {
@@ -18,6 +19,7 @@ export default class layersControl {
         this.updateBaseMap = options.updateBaseMap;
         this.addOverLayer = options.addOverLayer;
         this.removeOverLayer = options.removeOverLayer;
+        this._touchToggleUnsubscriber = null;
 
         // レイヤータイプの定義
         this.layerTypes = {
@@ -34,6 +36,9 @@ export default class layersControl {
     }
 
     onRemove() {
+        if (this._touchToggleUnsubscriber) {
+            this._touchToggleUnsubscriber();
+        }
         this.container.parentNode.removeChild(this.container);
         this.map = null;
         return;
@@ -49,13 +54,15 @@ export default class layersControl {
         this.container.id = 'layers-control';
 
         // Toggle Button
-        this.container.appendChild(this.createToggleButton());
+        const toggleButton = this.createToggleButton();
+        this.container.appendChild(toggleButton);
 
         // Control Container (レイヤーリスト)
         const controlContainer = document.createElement('div');
         controlContainer.className = 'maplibregl-ctrl-layers-list';
         controlContainer.style.display = 'none';
         this.container.appendChild(controlContainer);
+        this._touchToggleUnsubscriber = bindTouchPanelToggle(toggleButton, controlContainer);
 
         // レイヤーグループを順番に処理
         this.renderLayerGroups(controlContainer);

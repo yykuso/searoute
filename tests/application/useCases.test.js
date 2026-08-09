@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import { bindGeolocateTrackingZoom, restoreSharedRoute } from '../../js/application/initializeMap.js';
+import {
+    bindGeolocateTrackingZoom,
+    getMapRenderScale,
+    restoreSharedRoute,
+} from '../../js/application/initializeMap.js';
 
 function createEmitter() {
     const handlers = new Map();
@@ -17,6 +21,16 @@ function createEmitter() {
         },
     };
 }
+
+describe('getMapRenderScale', () => {
+    it('高DPR端末では描画倍率を2に制限する', () => {
+        expect(getMapRenderScale(3)).toBe(2);
+    });
+
+    it('DPRが2以下なら端末の描画倍率を維持する', () => {
+        expect(getMapRenderScale(1.5)).toBe(1.5);
+    });
+});
 
 describe('restoreSharedRoute', () => {
     it('ensureSharedLayerEnabled と initShareFromUrl を順番に呼ぶ', async () => {

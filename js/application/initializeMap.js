@@ -15,6 +15,10 @@ import {
 } from '../presentation/map/mapViewportGuard.js';
 import { ensureSharedLayerEnabled } from '../presentation/map/sharedLayerRestorer.js';
 
+export function getMapRenderScale(displayScale = globalThis.devicePixelRatio) {
+    return Math.min(displayScale || 1, 2);
+}
+
 export async function restoreSharedRoute({ ensureSharedLayerEnabled, initShareFromUrl }) {
     try {
         await ensureSharedLayerEnabled();
@@ -69,6 +73,7 @@ export function initMap() {
         center: mapCenter,
         zoom: mapZoom,
         pitch: 0,
+        pixelRatio: getMapRenderScale(),
     }));
 
     map.addControl(new maplibregl.NavigationControl(), 'bottom-right');

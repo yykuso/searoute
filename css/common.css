@@ -69,7 +69,13 @@ body {
 /* PWA（Progressive Web App）対応
 ================================================================ */
 .maplibregl-ctrl {
-  touch-action: pan-x pan-y;
+  touch-action: pan-y;
+}
+
+.maplibregl-ctrl button,
+.maplibregl-ctrl-hamburger-toggle,
+.maplibregl-ctrl-layers-toggle {
+  touch-action: none;
 }
 
 .maplibregl-ctrl-top-left,
@@ -587,6 +593,7 @@ body {
   max-width: 600px;
   max-height: 70vh;
   overflow-y: auto;
+  touch-action: pan-y;
   pointer-events: auto;
 }
 

@@ -1,6 +1,8 @@
 /**
  * 航路フィルタ用の独立コントロール
  */
+import { bindTouchPanelToggle } from './touchPanelToggle.js';
+
 export default class routeFilterControl {
     onAdd() {
         this.container = document.createElement('div');
@@ -23,6 +25,7 @@ export default class routeFilterControl {
 
         this.container.appendChild(button);
         this.container.appendChild(panel);
+        this._touchToggleUnsubscriber = bindTouchPanelToggle(button, panel);
         this.container.addEventListener('mouseover', this.handleOver.bind(this));
         this.container.addEventListener('mouseout', this.handleOut.bind(this));
 
@@ -75,6 +78,9 @@ export default class routeFilterControl {
 
 
     onRemove() {
+        if (this._touchToggleUnsubscriber) {
+            this._touchToggleUnsubscriber();
+        }
         if (this.container && this.container.parentNode) {
             this.container.parentNode.removeChild(this.container);
         }
