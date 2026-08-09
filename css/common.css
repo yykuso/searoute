@@ -69,7 +69,7 @@ body {
 /* PWA（Progressive Web App）対応
 ================================================================ */
 .maplibregl-ctrl {
-  touch-action: manipulation;
+  touch-action: pan-x pan-y;
 }
 
 .maplibregl-ctrl-top-left,
@@ -408,6 +408,7 @@ body {
   max-height: 60vh;
   min-width: 150px;
   overflow-y: auto;
+  touch-action: pan-y;
 }
 
 /* レイヤーアイテム */

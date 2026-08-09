@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<link rel="icon" type="image/x-icon" href="./img/favicon.ico" />
   <link rel="icon" type="image/svg+xml" href="./img/icon.svg" />
   <link rel="icon" type="image/png" sizes="16x16" href="./img/favicon-16x16.png">
@@ -20,7 +20,9 @@
 
   <title>おでかけ航路マップ | 日本全国の旅客船・フェリー航路情報と時刻表リンク</title>
   <meta name="description" content="日本全国の旅客船・フェリー航路情報を地図で探せるサイト。時刻表や公式サイトへのリンクも充実、旅行計画に便利。" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="https://searoute.info/" />
+  <link rel="image_src" href="https://searoute.info/img/banner.png" />
 
   <meta property="og:url" content="https://searoute.info/" />
   <meta property="og:title" content="おでかけ航路マップ | 日本全国の旅客船・フェリー航路情報と時刻表リンク" />
@@ -56,6 +58,26 @@
       "width": 1200,
       "height": 630
     }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    "name": "おでかけ航路マップ サムネイル",
+    "contentUrl": "https://searoute.info/img/banner.png",
+    "thumbnailUrl": "https://searoute.info/img/twbanner.png",
+    "width": 1200,
+    "height": 630,
+    "encodingFormat": "image/png",
+    "copyrightNotice": "yy_kuso",
+    "creator": {
+      "@type": "Person",
+      "name": "yy_kuso",
+      "url": "https://x.com/yy_kuso"
+    },
+    "acquireLicensePage": "https://searoute.info/"
   }
   </script>
 
@@ -254,10 +276,6 @@
     <button id="context-gmap-btn" class="block w-full text-left px-2 py-1 hover:bg-slate-100" type="button">Googleマップで開く</button>
   </div>
 
-  <div style="position: absolute; left: -9999px; top: -9999px;">
-    <img src="https://searoute.info/img/banner.png" alt="おでかけ航路マップのサムネイル" width="1200" height="630">
-  </div>
-
   <!-- Cookie通知バナー -->
   <div id="cookie-banner" class="cookie-banner" style="display:none;" role="note" aria-label="Cookieの利用について">
     <div class="cookie-banner__body">
@@ -359,7 +377,6 @@
             });
           });
 
-          registration.update();
           console.log('ServiceWorker registration successful');
         })
         .catch((err) => {
@@ -374,6 +391,7 @@
     var GA_ID = 'G-03DRMSWKPW';
     var CONSENT_KEY = 'cookieConsent';
     var CONSENT_DAYS = 365;
+    var gaLoaded = false;
 
     function getCookie(name) {
       var cookies = document.cookie.split('; ');
@@ -391,6 +409,8 @@
     }
 
     function loadGA() {
+      if (gaLoaded) return;
+      gaLoaded = true;
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       window.gtag = gtag;
@@ -402,41 +422,62 @@
       document.head.appendChild(s);
     }
 
-    // GAは常時読み込む
-    loadGA();
+    function scheduleGALoad() {
+      // 初期表示への影響を抑えるため、同意後にアイドル/ロード後で遅延読み込みする
+      if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(loadGA, { timeout: 2000 });
+        return;
+      }
+      if (document.readyState === 'complete') {
+        setTimeout(loadGA, 0);
+        return;
+      }
+      window.addEventListener('load', function() {
+        setTimeout(loadGA, 0);
+      }, { once: true });
+    }
 
-    // バナーは一度閉じたら再表示しない
-    if (getCookie(CONSENT_KEY) === null) {
-      window.addEventListener('DOMContentLoaded', function() {
-        var banner = document.getElementById('cookie-banner');
-        if (banner) banner.style.display = 'block';
+    function openPrivacyPolicy(ppWindow) {
+      if (ppWindow) ppWindow.style.display = 'block';
+    }
 
-        document.getElementById('cookie-close-btn').addEventListener('click', function() {
-          setCookie(CONSENT_KEY, 'closed', CONSENT_DAYS);
-          banner.style.display = 'none';
-        });
+    function closePrivacyPolicy(ppWindow) {
+      if (ppWindow) ppWindow.style.display = 'none';
+    }
 
-        // プライバシーポリシーモーダルの開閉
-        var ppWindow = document.getElementById('privacy-policy-window');
-        document.getElementById('privacy-policy-open-btn').addEventListener('click', function() {
-          if (ppWindow) ppWindow.style.display = 'block';
-        });
-        document.getElementById('privacy-policy-close-btn').addEventListener('click', function() {
-          if (ppWindow) ppWindow.style.display = 'none';
-        });
+    var banner = document.getElementById('cookie-banner');
+    var closeBannerBtn = document.getElementById('cookie-close-btn');
+    var ppWindow = document.getElementById('privacy-policy-window');
+    var openBtn = document.getElementById('privacy-policy-open-btn');
+    var closeBtn = document.getElementById('privacy-policy-close-btn');
+    var hasConsentCookie = getCookie(CONSENT_KEY) !== null;
+
+    if (hasConsentCookie) {
+      scheduleGALoad();
+    }
+
+    // DOM構築完了を待たず、解析中に即時表示することで LCP 遅延を防ぐ
+    if (!hasConsentCookie && banner) {
+      banner.style.display = 'block';
+    }
+
+    if (closeBannerBtn && banner) {
+      closeBannerBtn.addEventListener('click', function() {
+        setCookie(CONSENT_KEY, 'closed', CONSENT_DAYS);
+        banner.style.display = 'none';
+        scheduleGALoad();
       });
-    } else {
-      // バナー非表示時もプライバシーポリシーボタンは機能するようにする
-      window.addEventListener('DOMContentLoaded', function() {
-        var ppWindow = document.getElementById('privacy-policy-window');
-        var openBtn = document.getElementById('privacy-policy-open-btn');
-        var closeBtn = document.getElementById('privacy-policy-close-btn');
-        if (openBtn) openBtn.addEventListener('click', function() {
-          if (ppWindow) ppWindow.style.display = 'block';
-        });
-        if (closeBtn) closeBtn.addEventListener('click', function() {
-          if (ppWindow) ppWindow.style.display = 'none';
-        });
+    }
+
+    if (openBtn) {
+      openBtn.addEventListener('click', function() {
+        openPrivacyPolicy(ppWindow);
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function() {
+        closePrivacyPolicy(ppWindow);
       });
     }
   })();
