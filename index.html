@@ -20,7 +20,9 @@
 
   <title>おでかけ航路マップ | 日本全国の旅客船・フェリー航路情報と時刻表リンク</title>
   <meta name="description" content="日本全国の旅客船・フェリー航路情報を地図で探せるサイト。時刻表や公式サイトへのリンクも充実、旅行計画に便利。" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="https://searoute.info/" />
+  <link rel="image_src" href="https://searoute.info/img/banner.png" />
 
   <meta property="og:url" content="https://searoute.info/" />
   <meta property="og:title" content="おでかけ航路マップ | 日本全国の旅客船・フェリー航路情報と時刻表リンク" />
@@ -56,6 +58,26 @@
       "width": 1200,
       "height": 630
     }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    "name": "おでかけ航路マップ サムネイル",
+    "contentUrl": "https://searoute.info/img/banner.png",
+    "thumbnailUrl": "https://searoute.info/img/twbanner.png",
+    "width": 1200,
+    "height": 630,
+    "encodingFormat": "image/png",
+    "copyrightNotice": "yy_kuso",
+    "creator": {
+      "@type": "Person",
+      "name": "yy_kuso",
+      "url": "https://x.com/yy_kuso"
+    },
+    "acquireLicensePage": "https://searoute.info/"
   }
   </script>
 
@@ -252,10 +274,6 @@
   <div id="context-menu" class="bg-white border border-slate-300 rounded shadow-lg py-2 text-sm" style="display:none; position:fixed; z-index:9999; pointer-events:auto;">
     <button id="context-copy-btn" class="block w-full text-left px-2 py-1 hover:bg-slate-100" style="pointer-events:auto;">座標</button>
     <button id="context-gmap-btn" class="block w-full text-left px-2 py-1 hover:bg-slate-100" type="button">Googleマップで開く</button>
-  </div>
-
-  <div style="position: absolute; left: -9999px; top: -9999px;">
-    <img src="https://searoute.info/img/banner.png" alt="おでかけ航路マップのサムネイル" width="1200" height="630">
   </div>
 
   <!-- Cookie通知バナー -->
