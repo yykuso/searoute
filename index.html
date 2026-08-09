@@ -93,7 +93,7 @@
   <link rel="stylesheet" href="./lib/maplibre-gl-js/6.1.0/maplibre-gl.css" media="print" onload="this.media='all'" />
   <link rel="stylesheet" href="./lib/maplibre-gl-geocoder/1.9.4/maplibre-gl-geocoder.css" media="print" onload="this.media='all'" />
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=optional"
     crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -135,6 +135,55 @@
     /* ジオコーダーの幅を事前確保 */
     .maplibregl-ctrl-geocoder {
       min-width: 200px;
+    }
+
+    /* 非同期の common.css より前にバナーの初期レイアウトを確定する */
+    .cookie-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 10000;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      background: #1e293b;
+      color: #f1f5f9;
+      padding: 1rem 1.25rem;
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.3);
+    }
+    .cookie-banner__body {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .cookie-banner__text {
+      flex: 1 1 0;
+      margin: 0;
+      font-size: 0.75rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+    .cookie-banner__link-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #7dd3fc;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: inherit;
+      font-family: inherit;
+    }
+    .cookie-banner__close {
+      flex-shrink: 0;
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.4rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 0.2rem;
     }
   </style>
 
