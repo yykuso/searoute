@@ -392,6 +392,7 @@
     var GA_ID = 'G-03DRMSWKPW';
     var CONSENT_KEY = 'cookieConsent';
     var CONSENT_DAYS = 365;
+    var gaLoaded = false;
 
     function getCookie(name) {
       var cookies = document.cookie.split('; ');
@@ -409,6 +410,8 @@
     }
 
     function loadGA() {
+      if (gaLoaded) return;
+      gaLoaded = true;
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       window.gtag = gtag;
@@ -420,8 +423,20 @@
       document.head.appendChild(s);
     }
 
-    // GAは常時読み込む
-    loadGA();
+    function scheduleGALoad() {
+      // 初期表示への影響を抑えるため、同意後にアイドル/ロード後で遅延読み込みする
+      if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(loadGA, { timeout: 2000 });
+        return;
+      }
+      if (document.readyState === 'complete') {
+        setTimeout(loadGA, 0);
+        return;
+      }
+      window.addEventListener('load', function() {
+        setTimeout(loadGA, 0);
+      }, { once: true });
+    }
 
     function openPrivacyPolicy(ppWindow) {
       if (ppWindow) ppWindow.style.display = 'block';
@@ -438,6 +453,10 @@
     var closeBtn = document.getElementById('privacy-policy-close-btn');
     var hasConsentCookie = getCookie(CONSENT_KEY) !== null;
 
+    if (hasConsentCookie) {
+      scheduleGALoad();
+    }
+
     // DOM構築完了を待たず、解析中に即時表示することで LCP 遅延を防ぐ
     if (!hasConsentCookie && banner) {
       banner.style.display = 'block';
@@ -447,6 +466,7 @@
       closeBannerBtn.addEventListener('click', function() {
         setCookie(CONSENT_KEY, 'closed', CONSENT_DAYS);
         banner.style.display = 'none';
+        scheduleGALoad();
       });
     }
 
