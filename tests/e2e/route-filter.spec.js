@@ -42,7 +42,7 @@ test('モバイルで右上コントロールの最初のタップはパネル�
     await context.close();
 });
 
-test('マップUIのピンチ拡大と横ドラッグを抑止する', async ({ page }) => {
+test('マップUIのピンチ拡大と意図しないドラッグを抑止する', async ({ page }) => {
     await page.goto('/index.html');
 
     const controls = page.locator('.maplibregl-ctrl');
@@ -51,6 +51,8 @@ test('マップUIのピンチ拡大と横ドラッグを抑止する', async ({ 
     await expect(controls.first()).toHaveCSS('touch-action', 'pan-y');
     await expect(page.locator('.maplibregl-ctrl button').first()).toHaveCSS('touch-action', 'none');
     await expect(page.locator('.maplibregl-ctrl-layers-toggle')).toHaveCSS('touch-action', 'none');
+    await expect(page.locator('.maplibregl-ctrl-geocoder--collapsed')).toHaveCSS('touch-action', 'none');
+    await expect(page.locator('.maplibregl-ctrl-attrib')).toHaveCSS('touch-action', 'none');
 
     const windows = page.locator('#info-window, #settings-window, #privacy-policy-window');
     await expect(windows).toHaveCount(3);
