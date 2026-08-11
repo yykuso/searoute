@@ -43,11 +43,16 @@
 
 /* 基本レイアウト
 ================================================================ */
+html {
+  overscroll-behavior-y: none;
+}
+
 body {
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
   overflow: hidden;
+  overscroll-behavior-y: none;
 }
 
 #map {
@@ -81,6 +86,14 @@ body {
 .maplibregl-ctrl-hamburger-toggle,
 .maplibregl-ctrl-layers-toggle {
   touch-action: none;
+}
+
+.maplibregl-ctrl-geocoder .suggestions {
+  max-height: 60vh;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 .maplibregl-ctrl-top-left,
@@ -220,6 +233,11 @@ body {
   width: auto;
   white-space: nowrap;
   padding: 8px 0;
+  max-height: 60vh;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 .maplibregl-ctrl-hamburger-list a {
@@ -294,6 +312,11 @@ body {
   min-width: 150px;
   white-space: nowrap;
   padding: 8px 0;
+  max-height: 60vh;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 .route-filter-section {
@@ -419,6 +442,8 @@ body {
   max-height: 60vh;
   min-width: 150px;
   overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
 }
 
