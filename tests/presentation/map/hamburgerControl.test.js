@@ -52,11 +52,10 @@ describe('hamburgerControl', () => {
         expect(control.menuPanel.style.display).toBe('none');
     });
 
-    it('情報ウィンドウの閉じるボタンでメニュー状態も閉じる', () => {
-        const closeButton = { onclick: null };
+    it('情報ウィンドウの初期化時に閉じるボタンの責務を持たない', () => {
         const infoWindow = {
             style: { display: 'none' },
-            querySelector: vi.fn(() => closeButton),
+            addEventListener: vi.fn(),
         };
         const documentRef = {
             createElement: vi.fn(() => createElement()),
@@ -66,11 +65,8 @@ describe('hamburgerControl', () => {
 
         const control = new hamburgerControl();
         control.addHamburgerControl();
-        control.menuPanel.style.display = 'block';
 
-        closeButton.onclick();
-
-        expect(control.menuPanel.style.display).toBe('none');
-        expect(control.infoWindow.style.display).toBe('none');
+        expect(control.infoWindow).toBe(infoWindow);
+        expect(infoWindow.addEventListener).toHaveBeenCalledWith('modalclose', expect.any(Function));
     });
 });

@@ -8,11 +8,13 @@
  */
 
 import { setupOutsideClickListener } from '../outsideClickHandler.js';
+import { closeModal, openModal } from '../modalController.js';
 import { bindTouchPanelToggle } from './touchPanelToggle.js';
 
 export default class hamburgerControl {
     constructor() {
         this._infoWindowUnsubscriber = null;
+        this._infoWindowCloseHandler = null;
         this._touchToggleUnsubscriber = null;
         this.menuPanel = null;
     }
@@ -30,6 +32,9 @@ export default class hamburgerControl {
         // クリーンアップ
         if (this._infoWindowUnsubscriber) {
             this._infoWindowUnsubscriber();
+        }
+        if (this.infoWindow && this._infoWindowCloseHandler) {
+            this.infoWindow.removeEventListener('modalclose', this._infoWindowCloseHandler);
         }
         if (this._touchToggleUnsubscriber) {
             this._touchToggleUnsubscriber();
@@ -69,13 +74,13 @@ export default class hamburgerControl {
 
         // ウィンドウ要素を取得
         this.infoWindow = document.getElementById('info-window');
-
-        // ウィンドウのクローズボタンにイベント設定
         if (this.infoWindow) {
-            this.infoWindow.querySelector('#info-close-top-btn').onclick = () => {
-                this.infoWindow.style.display = 'none';
+            this._infoWindowCloseHandler = () => {
+                this._infoWindowUnsubscriber?.();
+                this._infoWindowUnsubscriber = null;
                 this.closeMenuPanel();
             };
+            this.infoWindow.addEventListener('modalclose', this._infoWindowCloseHandler);
         }
     }
 
@@ -115,8 +120,7 @@ export default class hamburgerControl {
 
         event.preventDefault();
         this.closeMenuPanel();
-        this.infoWindow.scrollTop = 0;
-        this.infoWindow.style.display = 'block';
+        openModal(this.infoWindow, { trigger: event.currentTarget });
 
         // 前の登録をクリーンアップ
         if (this._infoWindowUnsubscriber) {
@@ -127,7 +131,7 @@ export default class hamburgerControl {
         this._infoWindowUnsubscriber = setupOutsideClickListener(
             this.infoWindow,
             () => {
-                this.infoWindow.style.display = 'none';
+                closeModal(this.infoWindow, { restoreFocus: false });
                 this.closeMenuPanel();
             },
             { delay: 100 }

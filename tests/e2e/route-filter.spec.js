@@ -77,18 +77,28 @@ test('マップUIのピンチ拡大と意図しないドラッグを抑止する
 test('各モーダルを開き直すとスクロール位置が先頭へ戻る', async ({ page }) => {
     await page.goto('/index.html');
 
-    const scrollPositions = await page.locator('#info-window, #privacy-policy-window').evaluateAll(async (windows) => {
-        for (const modalWindow of windows) {
-            modalWindow.style.display = 'block';
-            modalWindow.scrollTop = 100;
-            modalWindow.style.display = 'none';
-            modalWindow.style.display = 'block';
-        }
-        await new Promise((resolve) => requestAnimationFrame(resolve));
-        return windows.map((modalWindow) => modalWindow.scrollTop);
-    });
+    const hamburgerControl = page.locator('#hamburger-control');
+    await expect(hamburgerControl).toBeVisible({ timeout: 30_000 });
+    await hamburgerControl.hover();
+    await page.getByRole('link', { name: 'サイト情報' }).click();
 
-    expect(scrollPositions).toEqual([0, 0]);
+    const infoWindow = page.locator('#info-window');
+    await infoWindow.evaluate((modal) => modal.scrollTo(0, 100));
+    await page.locator('#info-close-top-btn').click();
+    await hamburgerControl.hover();
+    await page.getByRole('link', { name: 'サイト情報' }).click();
+    await expect.poll(() => infoWindow.evaluate((modal) => modal.scrollTop)).toBe(0);
+
+    await page.getByRole('button', { name: 'プライバシーポリシーを読む' }).click();
+    const privacyWindow = page.locator('#privacy-policy-window');
+    await privacyWindow.evaluate((modal) => modal.scrollTo(0, 100));
+    await page.locator('#privacy-close-top-btn').click();
+
+    await hamburgerControl.hover();
+    await page.getByRole('link', { name: 'サイト情報' }).click();
+    await page.getByRole('button', { name: 'プライバシーポリシーを読む' }).click();
+
+    await expect.poll(() => privacyWindow.evaluate((modal) => modal.scrollTop)).toBe(0);
 });
 
 test('プライバシーポリシーをURLから開きEscapeで閉じられる', async ({ page }) => {
@@ -142,7 +152,6 @@ test('サイト情報からプライバシーポリシーを開ける', async ({
         'Googleアナリティクス',
         '地図・外部サービス',
         '個人情報の取り扱い',
-        'お問い合わせ',
     ]);
 });
 

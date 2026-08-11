@@ -451,44 +451,9 @@
       }, { once: true });
     }
 
-    var privacyTrigger = null;
-
-    function openPrivacyPolicy(ppWindow, trigger) {
-      if (!ppWindow) return;
-      privacyTrigger = trigger || document.activeElement;
-      ppWindow.scrollTop = 0;
-      ppWindow.style.display = 'block';
-      ppWindow.querySelector('.modal-close-btn').focus();
-    }
-
-    function closePrivacyPolicy(ppWindow) {
-      if (!ppWindow) return;
-      ppWindow.style.display = 'none';
-      if (privacyTrigger && privacyTrigger.offsetParent !== null && typeof privacyTrigger.focus === 'function') {
-        privacyTrigger.focus();
-      }
-    }
-
-    function resetScrollWhenOpened(modalWindow) {
-      if (!modalWindow) return;
-      var wasOpen = modalWindow.style.display !== 'none';
-      new MutationObserver(function() {
-        var isOpen = modalWindow.style.display !== 'none';
-        if (isOpen && !wasOpen) {
-          modalWindow.scrollTop = 0;
-        }
-        wasOpen = isOpen;
-      }).observe(modalWindow, { attributes: true, attributeFilter: ['style'] });
-    }
-
     var banner = document.getElementById('cookie-banner');
     var closeBannerBtn = document.getElementById('cookie-close-btn');
-    var infoWindow = document.getElementById('info-window');
-    var ppWindow = document.getElementById('privacy-policy-window');
-    var openBtn = document.getElementById('privacy-policy-open-btn');
     var hasConsentCookie = getCookie(CONSENT_KEY) !== null;
-
-    [infoWindow, ppWindow].forEach(resetScrollWhenOpened);
 
     if (hasConsentCookie) {
       scheduleGALoad();
@@ -507,45 +472,6 @@
       });
     }
 
-    if (openBtn) {
-      openBtn.addEventListener('click', function() {
-        openPrivacyPolicy(ppWindow, openBtn);
-      });
-    }
-
-    // info-window 内のプライバシーポリシーボタン
-    var infoPrivacyBtn = document.getElementById('info-privacy-policy-btn');
-    if (infoPrivacyBtn) {
-      infoPrivacyBtn.addEventListener('click', function() {
-        if (infoWindow) infoWindow.style.display = 'none';
-        openPrivacyPolicy(ppWindow, infoPrivacyBtn);
-      });
-    }
-
-    // モーダル右上の×ボタンのイベントハンドラ
-    var infoCloseBtn = document.getElementById('info-close-top-btn');
-    if (infoCloseBtn) {
-      infoCloseBtn.addEventListener('click', function() {
-        if (infoWindow) infoWindow.style.display = 'none';
-      });
-    }
-
-    var privacyCloseBtn = document.getElementById('privacy-close-top-btn');
-    if (privacyCloseBtn) {
-      privacyCloseBtn.addEventListener('click', function() {
-        closePrivacyPolicy(ppWindow);
-      });
-    }
-
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape' && ppWindow && ppWindow.style.display !== 'none') {
-        closePrivacyPolicy(ppWindow);
-      }
-    });
-
-    if (window.location.hash === '#privacy') {
-      openPrivacyPolicy(ppWindow);
-    }
   })();
 </script>
 
