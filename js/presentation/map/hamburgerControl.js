@@ -14,6 +14,7 @@ export default class hamburgerControl {
     constructor() {
         this._infoWindowUnsubscriber = null;
         this._touchToggleUnsubscriber = null;
+        this.menuPanel = null;
     }
 
     onAdd(map) {
@@ -60,6 +61,7 @@ export default class hamburgerControl {
         contentContainer.className = 'maplibregl-ctrl-hamburger-list';
         contentContainer.style.display = 'none';
         this.container.appendChild(contentContainer);
+        this.menuPanel = contentContainer;
         this._touchToggleUnsubscriber = bindTouchPanelToggle(toggleContainer, contentContainer);
 
         // メニューアイテムを追加
@@ -70,10 +72,16 @@ export default class hamburgerControl {
 
         // ウィンドウのクローズボタンにイベント設定
         if (this.infoWindow) {
-            this.infoWindow.querySelector('#info-close-btn').onclick = () => {
+            this.infoWindow.querySelector('#info-close-top-btn').onclick = () => {
                 this.infoWindow.style.display = 'none';
+                this.closeMenuPanel();
             };
         }
+    }
+
+    closeMenuPanel() {
+        if (!this.menuPanel) return;
+        this.menuPanel.style.display = 'none';
     }
 
     /**
@@ -106,6 +114,8 @@ export default class hamburgerControl {
         if (!this.infoWindow) return;
 
         event.preventDefault();
+        this.closeMenuPanel();
+        this.infoWindow.scrollTop = 0;
         this.infoWindow.style.display = 'block';
 
         // 前の登録をクリーンアップ
@@ -118,6 +128,7 @@ export default class hamburgerControl {
             this.infoWindow,
             () => {
                 this.infoWindow.style.display = 'none';
+                this.closeMenuPanel();
             },
             { delay: 100 }
         );

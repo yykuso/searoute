@@ -22,6 +22,11 @@ rm -rf \
 cd ..
 mv .tmp_deploy deploy
 
+# Cloudflare PagesのコミットSHAをビルド番号として表示へ埋め込む。
+BUILD_SHA="${CF_PAGES_COMMIT_SHA:-$(git rev-parse HEAD 2>/dev/null || echo local)}"
+BUILD_NUMBER=$(printf '%.7s' "$BUILD_SHA")
+sed -i "s|<span id=\"site-build-number\">[^<]*</span>|<span id=\"site-build-number\">${BUILD_NUMBER}</span>|" deploy/index.html
+
 # docs と src は配信対象外（存在する場合のみ削除）。
 rm -rf deploy/docs
 rm -rf deploy/src
