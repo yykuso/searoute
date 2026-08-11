@@ -376,6 +376,7 @@
       </section>
     </div>
   </div>
+  <script type="module" src="./js/entrypoints/serviceWorkerRegistration.js"></script>
 </body>
 
 <!-- JS モジュール連鎖を並列化 -->
@@ -398,37 +399,6 @@
 <link rel="modulepreload" href="./js/presentation/outsideClickHandler.js">
 <link rel="modulepreload" href="./js/presentation/shareDrawer.js">
 <script type="module" src="./js/entrypoints/mapBootstrap.js"></script>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./service-worker.js')
-        .then((registration) => {
-          if (registration.waiting) {
-            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-          }
-
-          registration.addEventListener('updatefound', () => {
-            const installingWorker = registration.installing;
-            if (!installingWorker) {
-              return;
-            }
-
-            installingWorker.addEventListener('statechange', () => {
-              if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                installingWorker.postMessage({ type: 'SKIP_WAITING' });
-              }
-            });
-          });
-
-          console.log('ServiceWorker registration successful');
-        })
-        .catch((err) => {
-          console.log('ServiceWorker registration failed: ', err);
-        });
-    });
-  }
-</script>
 
 <script>
   (function() {

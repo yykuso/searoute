@@ -1,5 +1,17 @@
 const { devices, test, expect } = require('@playwright/test');
 
+test('外部エントリーポイントからService Workerを登録する', async ({ page }) => {
+    await page.goto('/index.html');
+
+    await expect(page.locator('script[src="./js/entrypoints/serviceWorkerRegistration.js"]')).toHaveCount(1);
+    const serviceWorkerUrl = await page.evaluate(async () => {
+        const registration = await navigator.serviceWorker.ready;
+        return registration.active?.scriptURL;
+    });
+
+    expect(serviceWorkerUrl).toMatch(/\/service-worker\.js$/);
+});
+
 test('モバイルで右上コントロールの最初のタップはパネルを開くだけにする', async ({ browser }) => {
     const context = await browser.newContext({ ...devices['Pixel 7'] });
     const page = await context.newPage();
