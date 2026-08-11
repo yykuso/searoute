@@ -57,6 +57,9 @@ test('モバイルで右上コントロールの最初のタップはパネル�
 test('マップUIのピンチ拡大と意図しないドラッグを抑止する', async ({ page }) => {
     await page.goto('/index.html');
 
+    await expect(page.locator('html')).toHaveCSS('overscroll-behavior-y', 'none');
+    await expect(page.locator('body')).toHaveCSS('overscroll-behavior-y', 'none');
+
     const controls = page.locator('.maplibregl-ctrl');
     await expect(controls.first()).toBeVisible({ timeout: 30_000 });
 
@@ -76,6 +79,27 @@ test('マップUIのピンチ拡大と意図しないドラッグを抑止する
         elements.map((element) => getComputedStyle(element).overscrollBehaviorY)
     ));
     expect(overscrollBehaviors).toEqual(['contain', 'contain']);
+
+    const menuPanels = page.locator(
+        '.maplibregl-ctrl-hamburger-list, .maplibregl-ctrl-layers-list, .maplibregl-ctrl-filter-list'
+    );
+    await expect(menuPanels).toHaveCount(3);
+    const menuPanelStyles = await menuPanels.evaluateAll((elements) => elements.map((element) => ({
+        overflowY: getComputedStyle(element).overflowY,
+        overscrollBehaviorY: getComputedStyle(element).overscrollBehaviorY,
+        touchAction: getComputedStyle(element).touchAction,
+    })));
+    expect(menuPanelStyles).toEqual([
+        { overflowY: 'auto', overscrollBehaviorY: 'contain', touchAction: 'pan-y' },
+        { overflowY: 'auto', overscrollBehaviorY: 'contain', touchAction: 'pan-y' },
+        { overflowY: 'auto', overscrollBehaviorY: 'contain', touchAction: 'pan-y' },
+    ]);
+
+    const searchSuggestions = page.locator('.maplibregl-ctrl-geocoder .suggestions');
+    await expect(searchSuggestions).toHaveCount(1);
+    await expect(searchSuggestions).toHaveCSS('overflow-y', 'auto');
+    await expect(searchSuggestions).toHaveCSS('overscroll-behavior-y', 'contain');
+    await expect(searchSuggestions).toHaveCSS('touch-action', 'pan-y');
 });
 
 test('各モーダルを開き直すとスクロール位置が先頭へ戻る', async ({ page }) => {
