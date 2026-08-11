@@ -1,5 +1,17 @@
 const { devices, test, expect } = require('@playwright/test');
 
+test('外部エントリーポイントからService Workerを登録する', async ({ page }) => {
+    await page.goto('/index.html');
+
+    await expect(page.locator('script[src="./js/entrypoints/serviceWorkerRegistration.js"]')).toHaveCount(1);
+    const serviceWorkerUrl = await page.evaluate(async () => {
+        const registration = await navigator.serviceWorker.ready;
+        return registration.active?.scriptURL;
+    });
+
+    expect(serviceWorkerUrl).toMatch(/\/service-worker\.js$/);
+});
+
 test('モバイルで右上コントロールの最初のタップはパネルを開くだけにする', async ({ browser }) => {
     const context = await browser.newContext({ ...devices['Pixel 7'] });
     const page = await context.newPage();
@@ -54,12 +66,154 @@ test('マップUIのピンチ拡大と意図しないドラッグを抑止する
     await expect(page.locator('.maplibregl-ctrl-geocoder--collapsed')).toHaveCSS('touch-action', 'none');
     await expect(page.locator('.maplibregl-ctrl-attrib')).toHaveCSS('touch-action', 'none');
 
-    const windows = page.locator('#info-window, #settings-window, #privacy-policy-window');
-    await expect(windows).toHaveCount(3);
+    const windows = page.locator('#info-window, #privacy-policy-window');
+    await expect(windows).toHaveCount(2);
     const touchActions = await windows.evaluateAll((elements) => (
         elements.map((element) => getComputedStyle(element).touchAction)
     ));
-    expect(touchActions).toEqual(['pan-y', 'pan-y', 'pan-y']);
+    expect(touchActions).toEqual(['pan-y', 'pan-y']);
+});
+
+test('各モーダルを開き直すとスクロール位置が先頭へ戻る', async ({ page }) => {
+    await page.goto('/index.html');
+
+    const hamburgerControl = page.locator('#hamburger-control');
+    await expect(hamburgerControl).toBeVisible({ timeout: 30_000 });
+    await hamburgerControl.hover();
+    await page.getByRole('link', { name: 'サイト情報' }).click();
+
+    const infoWindow = page.locator('#info-window');
+    await infoWindow.evaluate((modal) => modal.scrollTo(0, 100));
+    await page.locator('#info-close-top-btn').click();
+    await hamburgerControl.hover();
+    await page.getByRole('link', { name: 'サイト情報' }).click();
+    await expect.poll(() => infoWindow.evaluate((modal) => modal.scrollTop)).toBe(0);
+
+    await page.getByRole('button', { name: 'プライバシーポリシーを読む' }).click();
+    const privacyWindow = page.locator('#privacy-policy-window');
+    await privacyWindow.evaluate((modal) => modal.scrollTo(0, 100));
+    await page.locator('#privacy-close-top-btn').click();
+
+    await hamburgerControl.hover();
+    await page.getByRole('link', { name: 'サイト情報' }).click();
+    await page.getByRole('button', { name: 'プライバシーポリシーを読む' }).click();
+
+    await expect.poll(() => privacyWindow.evaluate((modal) => modal.scrollTop)).toBe(0);
+});
+
+test('プライバシーポリシーをURLから開きEscapeで閉じられる', async ({ page }) => {
+    await page.goto('/index.html#privacy');
+
+    const privacyDialog = page.getByRole('dialog', { name: 'プライバシーポリシー' });
+    await expect(privacyDialog).toBeVisible();
+    const closeButton = page.locator('#privacy-close-top-btn');
+    await expect(closeButton).toBeFocused();
+
+    const positionsBeforeScroll = await privacyDialog.evaluate((dialog) => {
+        const dialogRect = dialog.getBoundingClientRect();
+        const buttonRect = dialog.querySelector('.modal-close-btn').getBoundingClientRect();
+        return {
+            topOffset: buttonRect.top - dialogRect.top,
+            rightOffset: dialogRect.right - buttonRect.right,
+        };
+    });
+    expect(positionsBeforeScroll.topOffset).toBeCloseTo(9, 0);
+    expect(positionsBeforeScroll.rightOffset).toBeCloseTo(9, 0);
+    await privacyDialog.evaluate((element) => element.scrollTo(0, element.scrollHeight));
+    const positionsAfterScroll = await privacyDialog.evaluate((dialog) => {
+        const dialogRect = dialog.getBoundingClientRect();
+        const buttonRect = dialog.querySelector('.modal-close-btn').getBoundingClientRect();
+        return {
+            topOffset: buttonRect.top - dialogRect.top,
+            rightOffset: dialogRect.right - buttonRect.right,
+        };
+    });
+    expect(positionsAfterScroll).toEqual(positionsBeforeScroll);
+
+    await page.keyboard.press('Escape');
+    await expect(privacyDialog).toBeHidden();
+});
+
+test('サイト情報からプライバシーポリシーを開ける', async ({ page }) => {
+    await page.goto('/index.html');
+
+    const hamburgerControl = page.locator('#hamburger-control');
+    await expect(hamburgerControl).toBeVisible({ timeout: 30_000 });
+    await hamburgerControl.hover();
+    await page.getByRole('link', { name: 'サイト情報' }).click();
+
+    await expect(page.locator('#info-window')).toBeVisible();
+    await page.getByRole('button', { name: 'プライバシーポリシーを読む' }).click();
+
+    const privacyDialog = page.getByRole('dialog', { name: 'プライバシーポリシー' });
+    await expect(privacyDialog).toBeVisible();
+    await expect(privacyDialog.getByRole('heading', { level: 3 })).toHaveText([
+        'Cookieの利用について',
+        'Googleアナリティクス',
+        '地図・外部サービス',
+        '個人情報の取り扱い',
+    ]);
+});
+
+test('サイト情報にGitHubリポジトリとビルド番号を表示する', async ({ page }) => {
+    await page.goto('/index.html');
+
+    const infoWindow = page.locator('#info-window');
+    await infoWindow.evaluate((element) => { element.style.display = 'block'; });
+
+    await expect(infoWindow.locator('.heading-tag')).toHaveText([
+        'サイト情報',
+        '開発者について',
+    ]);
+    await expect(infoWindow.getByRole('heading', { level: 3 })).toHaveText([
+        '掲載データについて',
+        'GitHubリポジトリ',
+        'プライバシーポリシー',
+        '免責事項',
+    ]);
+    await expect(infoWindow.getByText('当サイトでは、船による人の移動を目的とした定期航路を主な掲載対象としています。')).toBeVisible();
+    await expect(infoWindow.locator('ul').filter({ hasText: '発着地が同じ遊覧航路' }).getByRole('listitem')).toHaveText([
+        '発着地が同じ遊覧航路（途中の港で乗降できるものを除く）',
+        '不定期に運航される航路',
+        '旅客利用を目的としない業務用航路',
+        '長期間運休している航路（一部を除く）',
+    ]);
+    await expect(infoWindow.getByText('yy_kuso が個人で開発・運営しています。')).toBeVisible();
+    await expect(infoWindow.locator('a[href="https://x.com/yy_kuso"]')).toHaveText(/Twitter/);
+    await expect(infoWindow.locator('a[href="https://lnk.yy-kuso.com/"]')).toHaveText(/開発者のサイト/);
+    await expect(infoWindow.locator('a[href="https://www.amazon.co.jp/hz/wishlist/ls/KF9GONGN9M1K"]')).toHaveText(/ほしいものリスト/);
+    await expect(infoWindow.locator('a[href="https://github.com/yykuso/searoute/"]')).toBeVisible();
+    await expect(infoWindow.locator('a[href="https://github.com/yykuso/searoute-pmtiles"]')).toBeVisible();
+    await expect(infoWindow.locator('#site-build-number')).toHaveText(/^(local|[0-9a-f]{7})$/);
+});
+
+test('サイト情報の次の見出しが固定見出しを置き換える', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 240 });
+    await page.goto('/index.html');
+
+    const infoWindow = page.locator('#info-window');
+    await infoWindow.evaluate((element) => { element.style.display = 'block'; });
+    const siteHeading = infoWindow.getByRole('heading', { name: 'サイト情報' });
+    const developerHeading = infoWindow.getByRole('heading', { name: '開発者について' });
+
+    const siteHeadingTopBeforeScroll = await siteHeading.evaluate((element) => element.getBoundingClientRect().top);
+    await infoWindow.evaluate((element) => element.scrollTo(0, 40));
+    const siteHeadingTopAfterScroll = await siteHeading.evaluate((element) => element.getBoundingClientRect().top);
+    expect(siteHeadingTopAfterScroll).toBeCloseTo(siteHeadingTopBeforeScroll, 0);
+
+    await developerHeading.evaluate((element) => {
+        const scrollContainer = element.closest('#info-window');
+        scrollContainer.scrollTo(0, element.offsetTop + 80);
+    });
+
+    const developerHeadingTop = await developerHeading.evaluate((element) => element.getBoundingClientRect().top);
+    expect(developerHeadingTop).toBeCloseTo(siteHeadingTopBeforeScroll, 0);
+    const visibleHeading = await developerHeading.evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        return document.elementFromPoint(rect.left + 20, rect.top + rect.height / 2)?.closest('.heading-tag')?.textContent.trim();
+    });
+    expect(visibleHeading).toBe('開発者について');
+    await expect(page.locator('#info-close-top-btn')).toBeVisible();
 });
 
 test('レイヤー項目をオフにすると通常の文字ウェイトへ戻る', async ({ page }) => {
@@ -114,7 +268,6 @@ test('航路フィルターを変更して表示とCookieへ反映する', async
     await suspendedFilter.check();
 
     await expect(filterToggle).toHaveClass(/route-filter-active/);
-    await expect(page.locator('#settings-window [data-route-filter-group="status"][data-route-filter-key="suspend"]')).toBeChecked();
 
     const savedFilters = await page.evaluate(() => {
         const cookie = document.cookie

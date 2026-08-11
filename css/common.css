@@ -581,7 +581,6 @@ body {
 /* モーダルウィンドウ
 ================================================================ */
 #info-window,
-#settings-window,
 #privacy-policy-window {
   display: none;
   position: fixed;
@@ -593,7 +592,7 @@ body {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   border-radius: var(--border-radius-lg);
   z-index: 9999;
-  padding: 1.5rem;
+  padding: 1.0rem;
   width: 90vw;
   max-width: 600px;
   max-height: 70vh;
@@ -602,19 +601,71 @@ body {
   pointer-events: auto;
 }
 
-#info-window .heading-tag,
-#settings-window .heading-tag,
-#privacy-policy-window .heading-tag {
+.modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  height: 0;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-gray-400);
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
-  border-left: 5px solid var(--color-sky-400);
-  background-color: var(--color-gray-50);
-  padding: 0.75rem;
-  font-size: 1.1rem;
+  justify-content: center;
+  transition: color 0.2s ease;
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  z-index: 3;
+}
+
+.modal-close-btn:hover {
+  color: var(--color-gray-700);
+}
+
+.modal-close-btn:active {
+  opacity: 0.7;
+}
+
+/* セクションタイトル */
+.heading-tag {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  border-bottom: 3px solid var(--color-sky-500);
+  background-color: var(--color-white);
+  margin-right: -1rem;
+  margin-left: -1rem;
+  padding: 0 3.5rem 0.2rem 0.5rem;
+  font-size: 1.0rem;
   font-weight: 700;
   color: var(--color-gray-700);
-  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
-  margin-bottom: 1rem;
+  border-radius: 0;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.heading-tag::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  height: 1rem;
+  background-color: var(--color-white);
+}
+
+#info-window > .heading-tag:first-of-type,
+#privacy-policy-window > .heading-tag:first-of-type {
+  margin-top: 0;
 }
 
 /* ジオコーダーコントロール

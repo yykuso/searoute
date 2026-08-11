@@ -62,7 +62,7 @@ searoute は PWA（Progressive Web App）として動作し、Service Worker を
 - 新バージョンが検出されると `updatefound` イベント発火
 
 ### 即時切替（Skipwait）
-`index.html` では以下の仕組みで待機中の Service Worker を即座に切り替える：
+`js/entrypoints/serviceWorkerRegistration.js` では以下の仕組みで待機中の Service Worker を即座に切り替える：
 
 ```javascript
 if (registration.waiting) {

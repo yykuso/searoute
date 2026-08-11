@@ -204,102 +204,102 @@
   <div id="map"></div>
   <div class="safe-bottom-blocker"></div>
 
+  <!-- 情報モーダル -->
   <div id="info-window" class="text-xs" style="display:none;">
+    <div class="modal-header">
+      <button type="button" class="modal-close-btn" id="info-close-top-btn" aria-label="閉じる">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
     <h2 class="heading-tag">サイト情報</h2>
-    <div class="mb-4 space-y-4 text-slate-600 p-2">
+    <div class="space-y-2 px-2 text-slate-600">
       <p>
         このサイトは、公共交通による旅を愛する一人の開発者が、「もっと気軽に、直感的に航路情報を探せたら」という想いから生まれました。<br />
         日本各地の航路を地図上に集約し、視覚的にわかりやすく表示することで、「地図から航路を探す」「航路から旅のヒントを得る」体験を提供します。
-      <p>
       </p>
+      <p>
         海に囲まれたこの国の旅を、もっと自由に、もっと身近に。次の旅のお供になれば幸いです。
       </p>
-      <p>
-        データの追加・修正依頼や機能要望は、
+      <h3 class="mt-3 flex w-full border-l-4 border-sky-500 bg-slate-100 px-2 py-1 font-semibold text-slate-700">掲載データについて</h3>
+      <p class="pl-3">
+        当サイトでは、船による人の移動を目的とした定期航路を主な掲載対象としています。以下に該当する航路は、原則として掲載対象外です。
+      </p>
+      <ul class="list-disc space-y-1 pl-7">
+        <li>発着地が同じ遊覧航路（途中の港で乗降できるものを除く）</li>
+        <li>不定期に運航される航路</li>
+        <li>旅客利用を目的としない業務用航路</li>
+        <li>長期間運休している航路（一部を除く）</li>
+      </ul>
+      <p class="pl-3">
+        航路データの追加・修正依頼や機能要望は、
         <a href="https://forms.gle/xXyqvDkZKNwEXPv27" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline">
           <i class="fa-solid fa-pen-to-square"></i> 専用フォーム
         </a>
-        からお送りください。ご意見・ご不明な点などは、
-        <a href="https://x.com/yy_kuso" id="twitter-link" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline">
-          <i class="fa-brands fa-twitter"></i> Twitter
-        </a>
-        までご連絡ください。
+        からお送りください。
       </p>
-    </div>
-
-    <h2 class="heading-tag">免責事項</h2>
-    <div class="mb-4 space-y-4 text-slate-600 p-2">
-      <p>
-        情報の正確性には努めていますが、内容の保証はできません。
-        詳細や最新情報は必ず公式サイト等でご確認ください。<br />
-        なお、本サイトの情報利用による損害等について、運営者は一切責任を負いません。
+      <h3 class="mt-3 flex w-full border-l-4 border-sky-500 bg-slate-100 px-2 py-1 font-semibold text-slate-700">GitHubリポジトリ</h3>
+      <ul class="mt-1 space-y-1 pl-3">
+        <li>
+          <a href="https://github.com/yykuso/searoute/" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline">
+            <i class="fa-brands fa-github"></i> searoute
+          </a>
+          <span class="text-slate-500">(<span id="site-build-number">local</span>)</span>
+        </li>
+        <li>
+          <a href="https://github.com/yykuso/searoute-pmtiles" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline">
+            <i class="fa-brands fa-github"></i> searoute-pmtiles
+          </a>
+        </li>
+      </ul>
+      <h3 class="mt-3 flex w-full border-l-4 border-sky-500 bg-slate-100 px-2 py-1 font-semibold text-slate-700">プライバシーポリシー</h3>
+      <p class="pl-3">
+        Cookieの利用、Googleアナリティクス、個人情報の取り扱いについては、以下のプライバシーポリシーをご確認ください。
       </p>
-    </div>
-
-    <div class="mt-4 space-y-3">
-      <a href="https://forms.gle/xXyqvDkZKNwEXPv27" target="_blank" rel="noopener noreferrer" class="group w-full flex items-center justify-center rounded-lg bg-slate-900 py-3 px-4 font-bold text-white shadow-sm transition-all hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 active:scale-95">
-        <i class="fa-solid fa-pen-to-square mr-3 text-slate-200 group-hover:scale-110 transition-transform"></i>
-        データ追加・修正・要望フォーム
-      </a>
-      <a href="https://www.amazon.co.jp/hz/wishlist/ls/KF9GONGN9M1K" id="wishlist-link" target="_blank" rel="noopener noreferrer" class="group w-full flex items-center justify-center rounded-lg bg-amber-100 py-3 px-4 font-bold text-amber-800 shadow-sm transition-all hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 active:scale-95">
-        <i class="fa-solid fa-gift mr-3 text-amber-500 group-hover:scale-110 transition-transform"></i>
-        運営の励みになります（ほしいものリスト）
-      </a>
-      <button id="info-close-btn" class="w-full rounded-lg bg-sky-600 py-3 px-4 font-bold text-white shadow-md transition-all hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 active:scale-95">
-        閉じる
+      <button type="button" id="info-privacy-policy-btn" class="pl-3 flex cursor-pointer items-center gap-1 border-0 bg-transparent p-0 font-bold text-sky-600 hover:underline">
+        <i class="fa-solid fa-lock"></i>
+        プライバシーポリシーを読む
       </button>
-    </div>
-  </div>
-
-  <div id="settings-window" class="text-xs" style="display:none;">
-    <h2 class="heading-tag">フィルタ</h2>
-    <div class="mb-4 space-y-4 text-slate-600 p-2">
-      <div class="p-3 bg-slate-50 rounded-lg space-y-3">
-        <div class="route-filter-section route-filter-modal-section">
-          <div class="route-filter-section-title">
-            <i class="fa-solid fa-circle-info"></i><span>情報</span>
-          </div>
-          <label class="route-filter-item route-filter-modal-item">
-            <input type="checkbox" data-route-filter-group="status" data-route-filter-key="active">
-            <span class="route-filter-item-label"><i class="fa-solid fa-circle-check"></i><span>就航中</span></span>
-          </label>
-          <label class="route-filter-item route-filter-modal-item">
-            <input type="checkbox" data-route-filter-group="status" data-route-filter-key="season">
-            <span class="route-filter-item-label"><i class="fa-solid fa-calendar-days"></i><span>季節運航</span></span>
-          </label>
-          <label class="route-filter-item route-filter-modal-item">
-            <input type="checkbox" data-route-filter-group="status" data-route-filter-key="suspend">
-            <span class="route-filter-item-label"><i class="fa-solid fa-ban"></i><span>休止中</span></span>
-          </label>
-        </div>
-        <div class="border-t border-slate-200"></div>
-        <div class="route-filter-section route-filter-modal-section">
-          <div class="route-filter-section-title">
-            <i class="fa-solid fa-ship"></i><span>航送</span>
-          </div>
-          <label class="route-filter-item route-filter-modal-item">
-            <input type="checkbox" data-route-filter-group="carriage" data-route-filter-key="car">
-            <span class="route-filter-item-label"><i class="fa-solid fa-car"></i><span>自動車</span></span>
-          </label>
-          <label class="route-filter-item route-filter-modal-item">
-            <input type="checkbox" data-route-filter-group="carriage" data-route-filter-key="bike">
-            <span class="route-filter-item-label"><i class="fa-solid fa-motorcycle"></i><span>バイク</span></span>
-          </label>
-          <label class="route-filter-item route-filter-modal-item">
-            <input type="checkbox" data-route-filter-group="carriage" data-route-filter-key="bicycle">
-            <span class="route-filter-item-label"><i class="fa-solid fa-bicycle"></i><span>自転車</span></span>
-          </label>
-        </div>
+      <h3 class="mt-3 flex w-full border-l-4 border-sky-500 bg-slate-100 px-2 py-1 font-semibold text-slate-700">免責事項</h3>
+      <div class="space-y-2 pl-3">
+        <p>
+          情報の正確性には努めていますが、内容の保証はできません。
+          詳細や最新情報は必ず公式サイト等でご確認ください。
+        </p>
+        <p>
+          なお、本サイトの情報利用による損害等について、運営者は一切責任を負いません。
+        </p>
       </div>
     </div>
 
-    <div class="mt-4 space-y-3">
-      <button id="settings-close-btn" class="w-full rounded-lg bg-sky-600 py-3 px-4 font-bold text-white shadow-md transition-all hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 active:scale-95">
-        閉じる
-      </button>
+    <h2 class="heading-tag">開発者について</h2>
+    <div class="space-y-2 px-2 text-slate-600">
+      <p>
+        当サイトは、<strong class="font-semibold text-slate-700">ゎぃゎぃ @yy_kuso</strong> が個人で開発・運営しています。
+      </p>
+      <p>
+        <ul class="space-y-1 ml-3">
+          <li>
+            <a href="https://x.com/yy_kuso" id="twitter-link" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline">
+              <i class="fa-brands fa-twitter"></i> Twitter
+            </a>
+          </li>
+          <li>
+            <a href="https://lnk.yy-kuso.com/" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline">
+              <i class="fa-solid fa-link"></i> 開発者のサイト
+            </a>
+          </li>
+          <li>
+            <a href="https://www.amazon.co.jp/hz/wishlist/ls/KF9GONGN9M1K" id="wishlist-link" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline">
+              <i class="fa-solid fa-gift"></i> 運営の励みになります（ほしいものリスト）
+            </a>
+          </li>
+        </ul>
+      </p>
     </div>
+
   </div>
 
+  <!-- 詳細情報ドロワー -->
   <div id="detail-drawer" class="fixed z-50 bg-white shadow-xl border-slate-200 border transition-transform duration-300 ease-in-out w-full max-h-[30vh] left-0 bottom-0 rounded-t-2xl p-4 md:top-0 md:left-0 md:bottom-0 md:w-96 md:max-h-full md:rounded-none md:rounded-r-2xl md:p-6 translate-y-full md:translate-y-0 md:-translate-x-full overflow-y-auto touch-pan-y" style="display:none;">
     <div id="sidebar-grip" class="mx-auto mt-2 mb-1 h-1 w-12 rounded-full bg-slate-300 md:hidden cursor-ns-resize"></div>
     <div class="flex items-center justify-between mx-4 mb-2">
@@ -320,6 +320,7 @@
     <div id="detail-drawer-content" class="text-sm text-slate-700 space-y-2" style="overscroll-behavior:none"></div>
   </div>
 
+  <!-- 右クリックメニュー -->
   <div id="context-menu" class="bg-white border border-slate-300 rounded shadow-lg py-2 text-sm" style="display:none; position:fixed; z-index:9999; pointer-events:auto;">
     <button id="context-copy-btn" class="block w-full text-left px-2 py-1 hover:bg-slate-100" style="pointer-events:auto;">座標</button>
     <button id="context-gmap-btn" class="block w-full text-left px-2 py-1 hover:bg-slate-100" type="button">Googleマップで開く</button>
@@ -337,50 +338,45 @@
   </div>
 
   <!-- プライバシーポリシーモーダル -->
-  <div id="privacy-policy-window" class="text-xs" style="display:none;">
-    <h2 class="heading-tag">プライバシーポリシー</h2>
-    <div class="mb-4 space-y-4 text-slate-600 p-2">
-      <section>
-        <h3 class="font-semibold text-slate-700 mb-1">Cookieの利用について</h3>
-        <p>当サイトでは、以下の目的でCookieを使用しています。</p>
-        <ul class="list-disc list-inside mt-1 space-y-1">
+  <div id="privacy-policy-window" class="text-xs" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="privacy-policy-title" tabindex="-1">
+    <div class="modal-header">
+      <button type="button" class="modal-close-btn" id="privacy-close-top-btn" aria-label="閉じる">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <h2 id="privacy-policy-title" class="heading-tag">プライバシーポリシー</h2>
+    <div class="space-y-2 px-2 text-slate-600">
+      <section class="space-y-2">
+        <h3 class="flex w-full border-l-4 border-sky-500 bg-slate-100 px-2 py-1 font-semibold text-slate-700">Cookieの利用について</h3>
+        <p class="pl-3">当サイトでは、以下の目的でCookieを使用しています。</p>
+        <ul class="list-disc list-inside space-y-1 pl-3">
           <li>地図の表示位置・ズームレベルの記憶</li>
           <li>各種表示設定の保存</li>
           <li>Googleアナリティクスによるアクセス解析</li>
         </ul>
-        <p class="mt-2">Cookieの利用を希望されない場合は、ブラウザの設定によりCookieを無効にすることができます。ただし、一部機能が正常に動作しない場合があります。</p>
+        <p class="pl-3">Cookieの利用を希望されない場合は、ブラウザの設定によりCookieを無効にすることができます。ただし、一部機能が正常に動作しない場合があります。</p>
       </section>
-      <section>
-        <h3 class="font-semibold text-slate-700 mb-1">Googleアナリティクス</h3>
-        <p>
+      <section class="space-y-2">
+        <h3 class="mt-3 flex w-full border-l-4 border-sky-500 bg-slate-100 px-2 py-1 font-semibold text-slate-700">Googleアナリティクス</h3>
+        <p class="pl-3">
           当サイトはGoogleが提供するアクセス解析ツール「Googleアナリティクス」を利用しています。Googleアナリティクスはトラフィックデータの収集のためにCookieを使用しています。このデータは匿名で収集されており、個人を特定するものではありません。
         </p>
-        <p class="mt-1">
+        <p class="pl-3">
           Googleアナリティクスの利用規約・プライバシーポリシーについては、
           <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline">Googleのプライバシーポリシー</a>をご確認ください。
         </p>
       </section>
-      <section>
-        <h3 class="font-semibold text-slate-700 mb-1">地図・外部サービス</h3>
-        <p>地図表示にMapLibre GLおよびOpenStreetMapのタイルを使用しています。これらサービスのプライバシーポリシーについては各サービスのサイトをご確認ください。</p>
+      <section class="space-y-2">
+        <h3 class="mt-3 flex w-full border-l-4 border-sky-500 bg-slate-100 px-2 py-1 font-semibold text-slate-700">地図・外部サービス</h3>
+        <p class="pl-3">地図表示にMapLibre GLおよびOpenStreetMapのタイルを使用しています。これらサービスのプライバシーポリシーについては各サービスのサイトをご確認ください。</p>
       </section>
-      <section>
-        <h3 class="font-semibold text-slate-700 mb-1">お問い合わせ</h3>
-        <p>
-          データの追加・修正依頼や機能要望は
-          <a href="https://forms.gle/xXyqvDkZKNwEXPv27" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline"><i class="fa-solid fa-pen-to-square"></i> 専用フォーム</a>
-          をご利用ください。ご不明な点は
-          <a href="https://x.com/yy_kuso" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-600 hover:underline"><i class="fa-brands fa-twitter"></i> Twitter</a>
-          までご連絡ください。
-        </p>
+      <section class="space-y-2">
+        <h3 class="mt-3 flex w-full border-l-4 border-sky-500 bg-slate-100 px-2 py-1 font-semibold text-slate-700">個人情報の取り扱い</h3>
+        <p class="pl-3">お問い合わせ時に送信された情報は、内容の確認と回答のためにのみ利用します。法令に基づく場合を除き、ご本人の同意なく第三者へ提供しません。</p>
       </section>
-    </div>
-    <div class="mt-4">
-      <button id="privacy-policy-close-btn" class="w-full rounded-lg bg-sky-600 py-3 px-4 font-bold text-white shadow-md transition-all hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 active:scale-95">
-        閉じる
-      </button>
     </div>
   </div>
+  <script type="module" src="./js/entrypoints/serviceWorkerRegistration.js"></script>
 </body>
 
 <!-- JS モジュール連鎖を並列化 -->
@@ -403,37 +399,6 @@
 <link rel="modulepreload" href="./js/presentation/outsideClickHandler.js">
 <link rel="modulepreload" href="./js/presentation/shareDrawer.js">
 <script type="module" src="./js/entrypoints/mapBootstrap.js"></script>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./service-worker.js')
-        .then((registration) => {
-          if (registration.waiting) {
-            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-          }
-
-          registration.addEventListener('updatefound', () => {
-            const installingWorker = registration.installing;
-            if (!installingWorker) {
-              return;
-            }
-
-            installingWorker.addEventListener('statechange', () => {
-              if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                installingWorker.postMessage({ type: 'SKIP_WAITING' });
-              }
-            });
-          });
-
-          console.log('ServiceWorker registration successful');
-        })
-        .catch((err) => {
-          console.log('ServiceWorker registration failed: ', err);
-        });
-    });
-  }
-</script>
 
 <script>
   (function() {
@@ -486,19 +451,8 @@
       }, { once: true });
     }
 
-    function openPrivacyPolicy(ppWindow) {
-      if (ppWindow) ppWindow.style.display = 'block';
-    }
-
-    function closePrivacyPolicy(ppWindow) {
-      if (ppWindow) ppWindow.style.display = 'none';
-    }
-
     var banner = document.getElementById('cookie-banner');
     var closeBannerBtn = document.getElementById('cookie-close-btn');
-    var ppWindow = document.getElementById('privacy-policy-window');
-    var openBtn = document.getElementById('privacy-policy-open-btn');
-    var closeBtn = document.getElementById('privacy-policy-close-btn');
     var hasConsentCookie = getCookie(CONSENT_KEY) !== null;
 
     if (hasConsentCookie) {
@@ -518,17 +472,6 @@
       });
     }
 
-    if (openBtn) {
-      openBtn.addEventListener('click', function() {
-        openPrivacyPolicy(ppWindow);
-      });
-    }
-
-    if (closeBtn) {
-      closeBtn.addEventListener('click', function() {
-        closePrivacyPolicy(ppWindow);
-      });
-    }
   })();
 </script>
 

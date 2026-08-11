@@ -19,6 +19,7 @@ import { registerDrawerAction, registerDrawerCloseHandler } from '../presentatio
 import { removeRouteHighlight, zoomToRoute, zoomToRouteSection } from '../adapters/map/pmtilesLayerAdapter.js';
 import { initRouteFilterSettings } from '../presentation/map/routeFilterSettingsView.js';
 import { createMapViewModel } from '../presentation/map/mapViewModel.js';
+import { initModalDialogs } from '../presentation/modalDialogs.js';
 import {
     addOverLayer,
     isIdInLayer,
@@ -33,6 +34,7 @@ registerDrawerAction('zoom-route-section', ({ routeId, lineId, sourceId }) => {
     zoomToRouteSection(routeId, lineId, sourceId);
 });
 registerDrawerCloseHandler(removeRouteHighlight);
+initModalDialogs();
 
 const mapViewModel = createMapViewModel({
     updateBaseMap,
