@@ -22,7 +22,7 @@ function createElement(rect = {}) {
 describe('contextMenu', () => {
     afterEach(() => disposeContextMenu());
 
-    it('明示初期化後にメニューを表示して外側クリックを解除する', () => {
+    it('明示初期化後にメニューを表示してコピー完了を通知する', async () => {
         const menu = createElement();
         const copyButton = createElement();
         const googleMapsButton = createElement();
@@ -33,12 +33,14 @@ describe('contextMenu', () => {
         };
         const unsubscribe = vi.fn();
         const setupOutsideClick = vi.fn(() => unsubscribe);
+        const writeText = vi.fn(() => Promise.resolve());
+        const notify = vi.fn();
 
         expect(initContextMenu({
             documentRef: { getElementById: id => elements[id] },
             windowImpl: { innerWidth: 1024, innerHeight: 768, open: vi.fn() },
-            navigatorImpl: { clipboard: { writeText: vi.fn() } },
-            alertImpl: vi.fn(),
+            navigatorImpl: { clipboard: { writeText } },
+            notifyImpl: notify,
             setupOutsideClick,
         })).toBe(true);
 
@@ -46,6 +48,12 @@ describe('contextMenu', () => {
         expect(menu.style).toMatchObject({ left: '20px', top: '30px', display: 'block' });
         expect(copyButton.textContent).toBe('35.00000,136.00000');
         expect(setupOutsideClick).toHaveBeenCalledWith(menu, hideContextMenu, { delay: 50 });
+
+        copyButton.onclick({ stopPropagation: vi.fn() });
+        await vi.waitFor(() => {
+            expect(writeText).toHaveBeenCalledWith('35.00000,136.00000');
+            expect(notify).toHaveBeenCalledWith('座標をコピーしました');
+        });
 
         hideContextMenu();
         expect(menu.style.display).toBe('none');
@@ -57,7 +65,7 @@ describe('contextMenu', () => {
             documentRef: { getElementById: () => null },
             windowImpl: {},
             navigatorImpl: {},
-            alertImpl: vi.fn(),
+            notifyImpl: vi.fn(),
         })).toBe(false);
         expect(showContextMenu(0, 0, null)).toBeUndefined();
     });

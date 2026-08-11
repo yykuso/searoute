@@ -8,13 +8,14 @@
  */
 
 import { setupOutsideClickListener } from '../outsideClickHandler.js';
+import { showToast } from '../toastNotification.js';
 
 let menu = null;
 let copyBtn = null;
 let gmapBtn = null;
 let windowRef = null;
 let navigatorRef = null;
-let alertFn = null;
+let notify = showToast;
 let outsideClickSetup = setupOutsideClickListener;
 
 // アウトサイドクリック用のアンサブスクライバー
@@ -24,7 +25,7 @@ export function initContextMenu({
     documentRef = document,
     windowImpl = window,
     navigatorImpl = navigator,
-    alertImpl = alert,
+    notifyImpl = showToast,
     setupOutsideClick = setupOutsideClickListener,
 } = {}) {
     menu = documentRef.getElementById('context-menu');
@@ -32,7 +33,7 @@ export function initContextMenu({
     gmapBtn = documentRef.getElementById('context-gmap-btn');
     windowRef = windowImpl;
     navigatorRef = navigatorImpl;
-    alertFn = alertImpl;
+    notify = notifyImpl;
     outsideClickSetup = setupOutsideClick;
     return Boolean(menu && copyBtn && gmapBtn);
 }
@@ -44,7 +45,7 @@ export function disposeContextMenu() {
     gmapBtn = null;
     windowRef = null;
     navigatorRef = null;
-    alertFn = null;
+    notify = showToast;
 }
 
 /**
@@ -106,14 +107,14 @@ export function hideContextMenu() {
  */
 function setupContextMenuActions(lat, lng) {
     // 座標コピーボタンの設定
-    copyBtn.textContent = (lat && lng) ? `${lat.toFixed(5)},${lng.toFixed(5)}` : '座標';
+    copyBtn.textContent = (lat != null && lng != null) ? `${lat.toFixed(5)},${lng.toFixed(5)}` : '座標';
     copyBtn.style.whiteSpace = 'nowrap';
     copyBtn.onclick = (e) => {
         e.stopPropagation();
-        if (lat && lng) {
+        if (lat != null && lng != null) {
             navigatorRef.clipboard.writeText(`${lat.toFixed(5)},${lng.toFixed(5)}`)
-                .then(() => alertFn('座標がコピーされました'))
-                .catch(() => alertFn('座標のコピーに失敗しました'));
+            .then(() => notify('座標をコピーしました'))
+            .catch(() => notify('座標のコピーに失敗しました'));
         }
         hideContextMenu();
     };
