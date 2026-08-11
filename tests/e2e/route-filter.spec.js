@@ -60,7 +60,7 @@ test('マップUIのピンチ拡大と意図しないドラッグを抑止する
     const controls = page.locator('.maplibregl-ctrl');
     await expect(controls.first()).toBeVisible({ timeout: 30_000 });
 
-    await expect(controls.first()).toHaveCSS('touch-action', 'pan-y');
+    await expect(page.locator('#hamburger-control')).toHaveCSS('touch-action', 'pan-y');
     await expect(page.locator('.maplibregl-ctrl button').first()).toHaveCSS('touch-action', 'none');
     await expect(page.locator('.maplibregl-ctrl-layers-toggle')).toHaveCSS('touch-action', 'none');
     await expect(page.locator('.maplibregl-ctrl-geocoder--collapsed')).toHaveCSS('touch-action', 'none');
@@ -72,6 +72,10 @@ test('マップUIのピンチ拡大と意図しないドラッグを抑止する
         elements.map((element) => getComputedStyle(element).touchAction)
     ));
     expect(touchActions).toEqual(['pan-y', 'pan-y']);
+    const overscrollBehaviors = await windows.evaluateAll((elements) => (
+        elements.map((element) => getComputedStyle(element).overscrollBehaviorY)
+    ));
+    expect(overscrollBehaviors).toEqual(['contain', 'contain']);
 });
 
 test('各モーダルを開き直すとスクロール位置が先頭へ戻る', async ({ page }) => {
