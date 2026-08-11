@@ -11,6 +11,7 @@ import {
     parseShareContext,
 } from '../domain/shareContext.js';
 import { drawerViewModel } from './drawerViewModel.js';
+import { showToast } from './toastNotification.js';
 
 export { getShareTargetLayerId };
 
@@ -74,18 +75,7 @@ function showCopyFeedback() {
         }, 1500);
     }
 
-    // トースト通知
-    const toast = document.createElement('div');
-    toast.textContent = 'URLをコピーしました';
-    toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-sm px-4 py-2 rounded-full shadow-lg z-[9999] opacity-0 transition-opacity duration-300';
-    document.body.appendChild(toast);
-    requestAnimationFrame(() => {
-        toast.style.opacity = '1';
-    });
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 300);
-    }, 2000);
+    showToast('URLをコピーしました');
 }
 
 /**
