@@ -320,14 +320,14 @@ export async function addSeaRouteLayer(id) {
                 4, ['get', 'businessName'],
                 6, ['format', ['get', 'businessName'], {}, ' (', {}, ['get', 'routeName'], {}, ') ', {}],
             ],
-            'text-font': ['NotoSansCJKjp-Regular'],
+            'text-font': ['Noto Sans Regular'],
             'text-size': 9,
         },
         paint: {
             'text-color': ['coalesce', ['get', 'color'], '#000000'],
-            'text-halo-color': '#FFFFFF',
+            'text-halo-color': 'rgba(255,255,255,0.75)',
             'text-halo-width': 2,
-            'text-halo-blur': 2,
+            'text-halo-blur': 0,
         },
     });
 
