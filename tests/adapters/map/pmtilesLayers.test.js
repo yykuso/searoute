@@ -67,28 +67,43 @@ describe('PMTiles航路featureの変換', () => {
 });
 
 describe('航路選択時の移動', () => {
-    it('航路全体へMapLibreのflyToでアニメーションする', () => {
+    it('詳細JSONのbboxを使って航路全体へアニメーションする', async () => {
         const cameraForBounds = vi.fn(() => ({ center: [130.5, 33.5], zoom: 8 }));
         const flyTo = vi.fn();
+        const addSource = vi.fn();
+        let onIdle;
+        const once = vi.fn((_event, callback) => { onIdle = callback; });
+        const firstRouteFragment = {
+            type: 'Feature',
+            properties: { routeId: '10101' },
+            geometry: { type: 'LineString', coordinates: [[141.2, 45.3], [141.3, 45.4]] },
+        };
+        const secondRouteFragment = {
+            type: 'Feature',
+            properties: { routeId: '10101' },
+            geometry: { type: 'LineString', coordinates: [[141.3, 45.4], [141.7, 45.47]] },
+        };
         vi.stubGlobal('document', { getElementById: vi.fn(() => null) });
         setMap({
-            querySourceFeatures: vi.fn(() => [{
-                type: 'Feature',
-                properties: { routeId: '10101' },
-                geometry: { type: 'LineString', coordinates: [[130, 33], [131, 34]] },
-            }]),
+            querySourceFeatures: vi.fn()
+                .mockReturnValueOnce([firstRouteFragment])
+                .mockReturnValueOnce([firstRouteFragment, secondRouteFragment]),
             cameraForBounds,
             flyTo,
+            once,
             getLayer: vi.fn(() => null),
             getSource: vi.fn(() => null),
-            addSource: vi.fn(),
+            addSource,
             addLayer: vi.fn(),
         });
 
-        zoomToRoute({ routeId: '10101', sourceId: 'geojson_sea_route' });
+        await zoomToRoute(
+            { routeId: '10101', sourceId: 'geojson_sea_route' },
+            { loadDetails: vi.fn(async () => ({ bbox: [141.04, 45.24, 141.71, 45.47] })) },
+        );
 
         expect(cameraForBounds).toHaveBeenCalledWith(
-            [[130, 33], [131, 34]],
+            [[141.04, 45.24], [141.71, 45.47]],
             { padding: { top: 50, left: 50, right: 50, bottom: 50 } },
         );
         expect(flyTo).toHaveBeenCalledWith(
@@ -100,6 +115,53 @@ describe('航路選択時の移動', () => {
                 essential: true,
             },
         );
+        expect(once).toHaveBeenCalledWith('idle', expect.any(Function));
+
+        onIdle();
+
+        expect(addSource).toHaveBeenLastCalledWith('route-highlight', {
+            type: 'geojson',
+            data: {
+                type: 'FeatureCollection',
+                features: [firstRouteFragment, secondRouteFragment],
+            },
+        });
+        vi.unstubAllGlobals();
+    });
+
+    it.each([
+        ['詳細JSONにbboxがない', async () => ({})],
+        ['詳細JSON自体を取得できない', async () => { throw new Error('not found'); }],
+    ])('%s場合は表示中featureの境界へフォールバックする', async (_label, loadDetails) => {
+        const cameraForBounds = vi.fn(() => ({ center: [130.5, 33.5], zoom: 8 }));
+        const once = vi.fn();
+        vi.stubGlobal('document', { getElementById: vi.fn(() => null) });
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+        setMap({
+            querySourceFeatures: vi.fn(() => [{
+                type: 'Feature',
+                properties: { routeId: '10101' },
+                geometry: { type: 'LineString', coordinates: [[130, 33], [131, 34]] },
+            }]),
+            cameraForBounds,
+            flyTo: vi.fn(),
+            once,
+            getLayer: vi.fn(() => null),
+            getSource: vi.fn(() => null),
+            addSource: vi.fn(),
+            addLayer: vi.fn(),
+        });
+
+        await expect(zoomToRoute(
+            { routeId: '10101', sourceId: 'geojson_sea_route' },
+            { loadDetails },
+        )).resolves.toBeUndefined();
+
+        expect(cameraForBounds).toHaveBeenCalledWith(
+            [[130, 33], [131, 34]],
+            { padding: { top: 50, left: 50, right: 50, bottom: 50 } },
+        );
+        expect(once).not.toHaveBeenCalled();
         vi.unstubAllGlobals();
     });
 });

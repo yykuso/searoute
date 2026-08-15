@@ -16,7 +16,7 @@ import {
     buildSeaRouteSidebarContent,
 } from '../../presentation/drawerHelpers.js';
 import { normalizeRouteFilters } from '../../domain/routeFilter.js';
-import { calculateBounds } from '../../domain/geoBounds.js';
+import { boundsFromBbox, calculateBounds } from '../../domain/geoBounds.js';
 import { createRouteDetailsRepository } from '../data/routeDetailsRepository.js';
 import { ROUTE_LAYER_CONFIGS } from '../../config/routeLayers.js';
 import { showDrawer } from '../../presentation/drawerViewModel.js';
@@ -405,7 +405,7 @@ export function queryRouteFeatures(sourceId) {
     return { type: 'FeatureCollection', features: features.map(toPlainGeoJsonFeature) };
 }
 
-export function zoomToRoute(params) {
+export async function zoomToRoute(params, { loadDetails = loadRouteDetails } = {}) {
     try {
         const { routeName, routeId, lineId, sourceId } = params;
 
@@ -443,7 +443,17 @@ export function zoomToRoute(params) {
             return;
         }
 
-        const bounds = calculateBounds(matchingFeatures);
+        let detailsBounds = null;
+        if (searchType === 'routeOnly' && routeId) {
+            try {
+                const details = await loadDetails(routeId, sourceId);
+                detailsBounds = boundsFromBbox(details?.bbox);
+            } catch (error) {
+                console.warn(`Failed to load route bounds for ${routeId}`, error);
+            }
+        }
+
+        const bounds = detailsBounds || calculateBounds(matchingFeatures);
         if (!bounds) return;
 
         animateToRouteBounds(
@@ -453,6 +463,17 @@ export function zoomToRoute(params) {
         );
 
         highlightRouteFeatures(matchingFeatures);
+
+        if (detailsBounds && typeof map.once === 'function') {
+            map.once('idle', () => {
+                const refreshedFeatures = queryRouteFeatures(sourceId)?.features?.filter(feature =>
+                    feature.properties && String(feature.properties.routeId) === String(routeId)
+                ) || [];
+                if (refreshedFeatures.length > 0) {
+                    highlightRouteFeatures(refreshedFeatures);
+                }
+            });
+        }
 
         if (typeof gtag !== 'undefined') {
             const eventLabel = routeName || `${routeId}-${lineId}`;
@@ -465,7 +486,7 @@ export function zoomToRoute(params) {
 }
 
 export function zoomToRouteSection(routeId, lineId, sourceId) {
-    zoomToRoute({ routeId, lineId, sourceId });
+    return zoomToRoute({ routeId, lineId, sourceId });
 }
 
 export function highlightRouteFeatures(features) {

@@ -1,3 +1,16 @@
+export function boundsFromBbox(bbox) {
+    if (!Array.isArray(bbox) || bbox.length !== 4 || !bbox.every(Number.isFinite)) {
+        return null;
+    }
+
+    const [minLng, minLat, maxLng, maxLat] = bbox;
+    const isValid = minLng >= -180 && maxLng <= 180
+        && minLat >= -90 && maxLat <= 90
+        && minLng <= maxLng && minLat <= maxLat;
+
+    return isValid ? { minLng, minLat, maxLng, maxLat } : null;
+}
+
 export function calculateBounds(features) {
     let minLng = Infinity;
     let minLat = Infinity;
