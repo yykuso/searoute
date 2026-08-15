@@ -110,8 +110,39 @@ export async function addMarker(id, url) {
     }
 }
 
+function addCircleMarker(id, {
+    size = 24,
+    fillColor = '#ffffff',
+    strokeColor = '#111111',
+    strokeWidth = 3,
+} = {}) {
+    if (map.hasImage(id)) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+
+    const context = canvas.getContext('2d');
+    if (!context) return;
+
+    const radius = (size - strokeWidth) / 2;
+    const center = size / 2;
+
+    context.beginPath();
+    context.arc(center, center, radius, 0, Math.PI * 2);
+    context.fillStyle = fillColor;
+    context.fill();
+    context.lineWidth = strokeWidth;
+    context.strokeStyle = strokeColor;
+    context.stroke();
+
+    const imageData = context.getImageData(0, 0, size, size);
+    map.addImage(id, imageData);
+}
+
 async function addGeoJsonPortLayer() {
-    addMarker('anchor_marker', './img/anchor.png');
+    await addMarker('anchor_marker', './img/anchor.png');
+    addCircleMarker('port_dot_marker');
 
     const portGeojson = await loadData('./data/portData.geojson');
     geoJsonDataCache['geojson_port'] = portGeojson;
@@ -126,13 +157,44 @@ async function addGeoJsonPortLayer() {
         type: 'symbol',
         source: 'geojson_port',
         layout: {
-            'icon-image': 'anchor_marker',
-            'icon-size': 0.3,
-            'text-field': ['get', 'Name'],
-            'text-font': ['NotoSansCJKjp-Regular'],
-            'text-size': 12,
-            'text-offset': [0, 0.8],
+            'icon-image': [
+                'step', ['zoom'],
+                'port_dot_marker',
+                9, 'anchor_marker',
+            ],
+            'icon-size': [
+                'interpolate', ['linear'], ['zoom'],
+                4, 0.3,
+                8, 0.5,
+                9, 0.3,
+                12, 0.38,
+                16, 0.5,
+            ],
+            'text-field': [
+                'step', ['zoom'],
+                '',
+                8, ['coalesce', ['get', 'Name'], ['get', 'portName'], ''],
+            ],
+            'text-font': ['Noto Sans Regular'],
+            'text-size': [
+                'interpolate', ['linear'], ['zoom'],
+                8, 10,
+                14, 13,
+            ],
+            'text-offset': [0, 0],
+            'text-radial-offset': [
+                'interpolate', ['linear'], ['zoom'],
+                8, 1.1,
+                12, 1.3,
+                16, 1.6,
+            ],
             'text-anchor': 'top',
+        },
+        paint: {
+            'text-color': '#111111',
+            'text-halo-color': 'rgba(255,255,255,0.8)',
+            'text-halo-width': 2,
+            'text-halo-blur': 0,
         },
     });
 }
