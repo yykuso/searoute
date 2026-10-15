@@ -26,10 +26,10 @@
   },
   "homepage": "https://github.com/yykuso/searoute#readme",
   "devDependencies": {
-    "@playwright/test": "^1.63.0",
+    "@playwright/test": "^1.64.0",
     "@tailwindcss/cli": "^4.3.3",
     "http-server": "^14.1.1",
-    "jsdom": "^30.1.1",
+    "jsdom": "^30.1.2",
     "tailwindcss": "^4.3.3",
     "vitest": "^5.0.3"
   }
