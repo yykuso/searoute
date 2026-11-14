@@ -12,6 +12,7 @@ searoute は PWA（Progressive Web App）として動作し、Service Worker を
 - 静的アセット：favicon, apple-touch-icon, icons
 - 初期化用 style：`./style/empty.json`
 - **HTML は install キャッシュから除外**（Network-first のため）
+- Vite のビルド成果物（`/assets/<name>-<hash>.js|css`）は、初回アクセス時に fetch 経由でキャッシュされる（同一オリジン）。オフライン時はこのキャッシュから画面を表示する
 
 ### キャッシュ戦略：**Network-First with Cache Fallback**
 1. リクエスト時はまずネットワークを試す
@@ -39,22 +40,28 @@ searoute は PWA（Progressive Web App）として動作し、Service Worker を
 
 ### activate
 - 現行バージョン（`CACHE_NAME`）以外のキャッシュを全削除
+- 現行キャッシュ内のハッシュ付きアセット（`/assets/<name>-<hash8>.<ext>`）を名前ごとにまとめ、最後に保存したもの以外（古いハッシュ）を削除する（`pruneStaleAssets`）
 - `clients.claim()` を呼び出し、すべての client に適用
 
 ### fetch
 - GET リクエストのみ処理
 - ネットワーク → キャッシュの優先順で動作
+- ハッシュ付きアセットを保存したときは、同じ名前の別ハッシュ版をその場で削除する（デプロイを重ねてもキャッシュが肥大化しない）
 
 ---
 
 ## バージョン管理と更新
 
 ### キャッシュバージョンの変更手順
-1. [service-worker.js](../service-worker.js) の `CACHE_NAME` を更新
+1. [service-worker.js](../public/service-worker.js) の `CACHE_NAME` を更新
    ```javascript
-   const CACHE_NAME = 'searoute-v1.X';  // バージョン番号を上げる
+   const CACHE_NAME = 'searoute-v2.X';  // バージョン番号を上げる
    ```
 2. 新バージョンで activate 時、旧バージョンのキャッシュが自動削除される
+
+**履歴**
+- `searoute-v2.0`：React + TypeScript 化（Vite のハッシュ付きアセット配信に変更）に合わせて更新。旧 `js/`・`lib/` の個別ファイルキャッシュを破棄し、古いハッシュアセットの掃除を追加
+- `searoute-v1.3`：旧 Vanilla JS 版
 
 ### Service Worker の更新タイミング
 - ブラウザは定期的に (通常 24 時間以内) Service Worker の更新をチェック
@@ -62,7 +69,7 @@ searoute は PWA（Progressive Web App）として動作し、Service Worker を
 - 新バージョンが検出されると `updatefound` イベント発火
 
 ### 即時切替（Skipwait）
-`js/entrypoints/serviceWorkerRegistration.js` では以下の仕組みで待機中の Service Worker を即座に切り替える：
+[`src/entrypoints/serviceWorkerRegistration.ts`](../src/entrypoints/serviceWorkerRegistration.ts)（`main-map.tsx` から呼び出し。index.html のみ登録）では、ページの `load` 後（読み込み済みなら即時）に登録し、以下の仕組みで待機中の Service Worker を即座に切り替える：
 
 ```javascript
 if (registration.waiting) {

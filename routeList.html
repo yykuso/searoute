@@ -60,8 +60,6 @@
   }
   </script>
 
-  <link rel="modulepreload" href="./js/entrypoints/routeListPage.js">
-
   <!-- フォントを早期に取得 -->
   <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 
@@ -69,113 +67,9 @@
 
 </head>
 <body>
-  <header class="header">
-    <div class="wrapper-inner">
-      <p>おでかけ航路マップ</p>
-      <nav>
-        <ul>
-          <li>
-            <a href="./" title="マップ">
-              <i class="fas fa-map"></i>
-              <span>マップ</span>
-            </a>
-          </li>
-          <li>
-            <a href="./routeList.html" title="航路一覧">
-              <i class="fas fa-ship"></i>
-              <span>航路一覧</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-  <h1>航路一覧</h1>
-  <div class = "sbox">
-    <div class = "sbox-inner">
-      <input type="text" id="searchbox" placeholder="検索キーワードを入力">
-      <button id="searchbutton">検索</button>
-      <button id="resetbutton">リセット</button>
-    </div>
-    <p id="search-message" style="color: red; font-size: 12px; margin-top: 5px;"></p>
-  </div>
-  <div class="feedback-callout">
-    <p>
-      データの追加・修正依頼や機能要望は
-      <a href="https://forms.gle/xXyqvDkZKNwEXPv27" target="_blank" rel="noopener noreferrer">専用フォーム</a>
-      から送れます。
-    </p>
-  </div>
-  <h2>国内航路</h2>
-  <table class="sea-route-table">
-    <thead>
-      <tr>
-        <th class="route-id">航路ID</th>
-        <th class="business-name">事業者名</th>
-        <th class="route-name">航路名</th>
-        <th class="info">情報</th>
-        <th class="ship-name">船名</th>
-        <th class="url">時刻表</th>
-      </tr>
-    </thead>
-    <tbody>
-    <!-- データがここに挿入される -->
-    </tbody>
-  </table>
-
-  <h2>国際航路</h2>
-  <table class="international-sea-route-table">
-    <thead>
-      <tr>
-        <th class="route-id">航路ID</th>
-        <th class="business-name">事業者名</th>
-        <th class="route-name">航路名</th>
-        <th class="information">情報</th>
-        <th class="ship-name">船名</th>
-        <th class="url">時刻表</th>
-      </tr>
-    </thead>
-    <tbody>
-    <!-- データがここに挿入される -->
-    </tbody>
-  </table>
-
-  <h2>韓国 国内航路</h2>
-  <table class="sea-route-KR-table">
-    <thead>
-      <tr>
-        <th class="route-id">航路ID</th>
-        <th class="business-name">事業者名</th>
-        <th class="route-name">航路名</th>
-        <th class="information">情報</th>
-        <th class="ship-name">船名</th>
-        <th class="url">時刻表</th>
-      </tr>
-    </thead>
-    <tbody>
-    <!-- データがここに挿入される -->
-    </tbody>
-  </table>
+  <!-- 画面は React（src/entrypoints/main-routeList.tsx）が描画する -->
+  <div id="app"></div>
+  <script type="module" src="./src/entrypoints/main-routeList.tsx"></script>
 </body>
-
-<script type="module" src="./js/entrypoints/routeListPage.js"></script>
-
-<script>
-  (function() {
-    var GA_ID = 'G-03DRMSWKPW';
-    function loadGA() {
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      window.gtag = gtag;
-      gtag('js', new Date());
-      gtag('config', GA_ID);
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
-      document.head.appendChild(s);
-    }
-    loadGA();
-  })();
-</script>
 
 </html>

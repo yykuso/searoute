@@ -2,13 +2,15 @@
   "name": "searoute",
   "version": "1.0.0",
   "description": "日本全国の旅客船・フェリー航路情報を地図で探せるWebアプリケーションです。時刻表や公式サイトへのリンクも充実、旅行計画に便利です。",
-  "main": "service-worker.js",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "build:css": "tailwindcss -i ./css/tailwind-input.css -o ./css/tailwind.css --minify",
-    "watch:css": "tailwindcss -i ./css/tailwind-input.css -o ./css/tailwind.css --watch",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test"
@@ -20,20 +22,36 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/yykuso/searoute/issues"
   },
   "homepage": "https://github.com/yykuso/searoute#readme",
   "devDependencies": {
-    "@playwright/test": "^1.65.0",
-    "@tailwindcss/cli": "^4.3.5",
-    "http-server": "^14.1.1",
-    "jsdom": "^31.0.0",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.65.1",
+    "@tailwindcss/vite": "^4.3.5",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "eslint": "^10.15.0",
+    "eslint-plugin-boundaries": "^7.4.3",
+    "jsdom": "^31.0.1",
     "tailwindcss": "^4.3.5",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.2",
+    "vite": "^8.3.8",
     "vitest": "^5.1.0"
   },
   "dependencies": {
-    "follow-redirects": "^1.16.3"
+    "@maplibre/maplibre-gl-geocoder": "1.9.4",
+    "follow-redirects": "^1.16.3",
+    "maplibre-gl": "6.18.0",
+    "pmtiles": "4.5.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   }
 }
