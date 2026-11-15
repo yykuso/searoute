@@ -22,9 +22,16 @@ describe('loadRouteListTables', () => {
         const promise = loadRouteListTables(configs, {
             loadRouteRows: async (path: string) => {
                 if (path.endsWith('b.json')) throw new Error('boom');
-                return [];
+                return [{ routeId: '1', businessName: 'B', routeName: 'R' }];
             },
         });
         await expect(promise).rejects.toThrow('https://example.com/b.json');
+    });
+
+    it('いずれかのテーブルが空なら dataPath を含むエラーで reject する', async () => {
+        const promise = loadRouteListTables(configs, {
+            loadRouteRows: async (path: string) => (path.endsWith('c.json') ? [] : [{ routeId: '1', businessName: 'B', routeName: 'R' }]),
+        });
+        await expect(promise).rejects.toThrow(/航路データが空です.*https:\/\/example\.com\/c\.json/);
     });
 });

@@ -4,8 +4,9 @@
  * 地図・データ取得などブラウザ専用の処理は副作用（useEffect）でのみ動くため、ここではサービスを空実装で渡す
  */
 import { renderToString } from 'react-dom/server';
+import type { FetchLike } from '../adapters/http/fetchWithRetry';
 import { createRouteListRepository } from '../adapters/data/routeListRepository';
-import { buildRouteListJsonLd } from '../application/routeListPublication';
+import { buildLlmsFullText, buildRouteListJsonLd } from '../application/routeListPublication';
 import { serializeRouteListSnapshot } from '../application/routeListSnapshot';
 import { loadRouteListTables } from '../application/useCases/loadRouteListTables';
 import type { RouteTableState } from '../application/viewModels/routeListViewModel';
@@ -19,6 +20,7 @@ import type { MapPageServices } from '../presentation/map/mapPageServices';
 import { RouteListPage } from '../presentation/routeList/RouteListPage';
 import { ROUTE_LIST_TABLE_CONFIGS } from './routeListServices';
 
+const FETCH_TIMEOUT_MS = 30_000;
 export const SITE_URL = 'https://searoute.info';
 
 function unavailable(): never {
@@ -61,6 +63,8 @@ export function renderRouteListPage(routeTables: RouteTableState[] = []): string
     return renderToString(<RouteListPage viewModel={viewModel} />);
 }
 
+export { buildLlmsFullText };
+
 export type PrerenderedPage = { app: string; head?: string; bodyEnd?: string };
 
 /** ページごとのプリレンダリング結果（キーはビルド成果物の HTML ファイル名） */
@@ -79,6 +83,7 @@ export function renderPages(buildNumber: string, routeTables: RouteTableState[] 
 /** ビルド時に航路一覧データを取得する（1件でも失敗したら reject） */
 export function loadPrerenderRouteTables(): Promise<RouteTableState[]> {
     const stamp = Date.now();
+    const fetchImpl: FetchLike = (input, init) => fetch(input, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
     const configs = ROUTE_LIST_TABLE_CONFIGS.map((config) => ({ ...config, dataPath: `${config.dataPath}?v=${stamp}` }));
-    return loadRouteListTables(configs, createRouteListRepository());
+    return loadRouteListTables(configs, createRouteListRepository({ fetchImpl }));
 }

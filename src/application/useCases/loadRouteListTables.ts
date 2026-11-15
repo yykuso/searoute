@@ -2,6 +2,12 @@ import { getVisibleRouteColumns } from '../../domain/route';
 import type { RouteListRepository } from '../ports';
 import type { RouteTableConfig, RouteTableState } from '../viewModels/routeListViewModel';
 
+class EmptyRouteDataError extends Error {
+    constructor(dataPath: string) {
+        super(`航路データが空です: ${dataPath}`);
+    }
+}
+
 /** 全テーブルの航路データを取得する。1件でも失敗したら dataPath を含むエラーで reject する */
 export async function loadRouteListTables(
     configs: RouteTableConfig[],
@@ -10,6 +16,9 @@ export async function loadRouteListTables(
     return Promise.all(configs.map(async (config) => {
         try {
             const rows = await repository.loadRouteRows(config.dataPath);
+            if (rows.length === 0) {
+                throw new EmptyRouteDataError(config.dataPath);
+            }
             return {
                 selector: config.selector,
                 sourceId: config.sourceId,
@@ -17,6 +26,7 @@ export async function loadRouteListTables(
                 visibleColumns: getVisibleRouteColumns(rows),
             };
         } catch (error) {
+            if (error instanceof EmptyRouteDataError) throw error;
             const reason = error instanceof Error ? error.message : String(error);
             throw new Error(`航路データの取得に失敗しました: ${config.dataPath} (${reason})`, { cause: error });
         }

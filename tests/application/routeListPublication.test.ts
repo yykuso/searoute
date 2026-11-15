@@ -40,4 +40,36 @@ describe('buildLlmsFullText', () => {
         expect(lines.find((l) => l.includes('ハートランドフェリー'))).toContain('公式: https://example.com/');
         expect(lines.find((l) => l.includes('URLなし航路'))).not.toContain('公式:');
     });
+
+    it('各項目の空白・改行を1つのスペースにまとめる', () => {
+        const text = buildLlmsFullText([{
+            selector: '.a',
+            sourceId: 'geojson_sea_route',
+            rows: [{ routeId: '9', businessName: '改行\n事業者', routeName: '航路  名', shipName: '船\r\n名', url: 'https://example.com/\n' }],
+            visibleColumns: [],
+        }], 'https://searoute.info', 'x');
+        const line = text.split('\n').find((l) => l.includes('事業者'))!;
+        expect(line).toBe('- 改行 事業者｜航路 名（船 名）: https://searoute.info/index.html?share=route&routeId=9&sourceId=geojson_sea_route / 公式: https://example.com/');
+    });
+
+    it('事業者名・航路名が両方空の行は出力しない', () => {
+        const text = buildLlmsFullText([{
+            selector: '.a',
+            sourceId: 'geojson_sea_route',
+            rows: [{ routeId: '8', businessName: '', routeName: ' ' }],
+            visibleColumns: [],
+        }], 'https://searoute.info', 'x');
+        expect(text).not.toContain('routeId=8');
+    });
+
+    it('info があれば［info］として付ける', () => {
+        const text = buildLlmsFullText([{
+            selector: '.a',
+            sourceId: 'geojson_sea_route',
+            rows: [{ routeId: '7', businessName: '事業者', routeName: '航路', shipName: '船', info: '1日2便\n冬季運休' }],
+            visibleColumns: [],
+        }], 'https://searoute.info', 'x');
+        const line = text.split('\n').find((l) => l.includes('routeId=7'))!;
+        expect(line).toBe('- 事業者｜航路（船）［1日2便 冬季運休］: https://searoute.info/index.html?share=route&routeId=7&sourceId=geojson_sea_route');
+    });
 });

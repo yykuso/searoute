@@ -1,9 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { RouteTableState } from '../../src/application/viewModels/routeListViewModel';
-import { renderPages } from '../../src/entrypoints/prerender';
+import { loadPrerenderRouteTables, renderPages } from '../../src/entrypoints/prerender';
+import { ROUTE_LIST_TABLE_CONFIGS } from '../../src/entrypoints/routeListServices';
 
 // 旧版（develop ブランチの Vanilla JS 版）の HTML。body の静的マークアップをプリレンダリング結果と比較する
 const fixtureDir = fileURLToPath(new URL('../fixtures/legacy/', import.meta.url));
@@ -103,5 +104,25 @@ describe('航路データ付きプリレンダリング', () => {
         const page = renderPages(BUILD_NUMBER, [])['routeList.html'];
         expect(page.head).toBeUndefined();
         expect(page.bodyEnd).toBeUndefined();
+    });
+});
+
+describe('loadPrerenderRouteTables', () => {
+    afterEach(() => {
+        vi.unstubAllGlobals();
+    });
+
+    it('全テーブルの dataPath を ?v= 付き・タイムアウト付きで取得する', async () => {
+        const fetchMock = vi.fn(async () => new Response(JSON.stringify([{ routeId: '1', businessName: 'B', routeName: 'R' }])));
+        vi.stubGlobal('fetch', fetchMock);
+        const tables = await loadPrerenderRouteTables();
+        expect(tables).toHaveLength(ROUTE_LIST_TABLE_CONFIGS.length);
+        const calls = fetchMock.mock.calls as unknown as [string, RequestInit | undefined][];
+        expect(calls).toHaveLength(ROUTE_LIST_TABLE_CONFIGS.length);
+        for (const config of ROUTE_LIST_TABLE_CONFIGS) {
+            const call = calls.find(([url]) => url.startsWith(`${config.dataPath}?v=`));
+            expect(call, config.dataPath).toBeDefined();
+            expect(call![1]?.signal).toBeInstanceOf(AbortSignal);
+        }
     });
 });

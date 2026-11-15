@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { createServer, defineConfig } from 'vite';
 import type { Plugin } from 'vite';
-import type { RouteTableState } from './src/application/viewModels/routeListViewModel';
+import type * as Prerender from './src/entrypoints/prerender';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 
@@ -40,14 +40,7 @@ function prerenderPages(): Plugin {
                 plugins: [react()],
             });
             try {
-                const { renderPages, loadPrerenderRouteTables, SITE_URL } = await server.ssrLoadModule('/src/entrypoints/prerender.tsx') as {
-                    renderPages: (buildNumber: string, routeTables?: RouteTableState[]) => Record<string, { app: string; head?: string; bodyEnd?: string }>;
-                    loadPrerenderRouteTables: () => Promise<RouteTableState[]>;
-                    SITE_URL: string;
-                };
-                const { buildLlmsFullText } = await server.ssrLoadModule('/src/application/routeListPublication.ts') as {
-                    buildLlmsFullText: (tables: RouteTableState[], siteUrl: string, generatedAt: string) => string;
-                };
+                const { renderPages, loadPrerenderRouteTables, buildLlmsFullText, SITE_URL } = await server.ssrLoadModule('/src/entrypoints/prerender.tsx') as typeof Prerender;
                 // SEAROUTE_SKIP_ROUTE_DATA=1 のときは航路データを取得しない（E2E など）。取得失敗はビルド失敗にする
                 const routeTables = process.env.SEAROUTE_SKIP_ROUTE_DATA === '1' ? [] : await loadPrerenderRouteTables();
                 for (const [fileName, page] of Object.entries(renderPages(BUILD_NUMBER, routeTables))) {

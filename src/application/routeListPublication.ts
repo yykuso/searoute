@@ -32,6 +32,11 @@ export function buildRouteListJsonLd(tables: RouteTableState[], siteUrl: string)
     return `<script type="application/ld+json">${json}</script>`;
 }
 
+/** 1行に収めるため空白・改行を1つのスペースにまとめる */
+function clean(value: string | undefined): string {
+    return (value ?? '').replace(/\s+/g, ' ').trim();
+}
+
 export function buildLlmsFullText(tables: RouteTableState[], siteUrl: string, generatedAt: string): string {
     const lines = [
         '# おでかけ航路マップ 全航路一覧',
@@ -42,10 +47,12 @@ export function buildLlmsFullText(tables: RouteTableState[], siteUrl: string, ge
     for (const table of tables) {
         lines.push(`## ${ROUTE_TABLE_LABELS[table.sourceId] ?? table.sourceId}`, '');
         for (const row of table.rows) {
-            const ship = row.shipName ? `（${row.shipName}）` : '';
-            const official = row.url ? ` / 公式: ${row.url}` : '';
-            const heading = [row.businessName, row.routeName].filter(Boolean).join('｜');
-            lines.push(`- ${heading}${ship}: ${mapUrl(siteUrl, row, table.sourceId)}${official}`);
+            const heading = [row.businessName, row.routeName].map(clean).filter(Boolean).join('｜');
+            if (!heading) continue;
+            const ship = clean(row.shipName) ? `（${clean(row.shipName)}）` : '';
+            const info = clean(row.info) ? `［${clean(row.info)}］` : '';
+            const official = clean(row.url) ? ` / 公式: ${clean(row.url)}` : '';
+            lines.push(`- ${heading}${ship}${info}: ${mapUrl(siteUrl, row, table.sourceId)}${official}`);
         }
         lines.push('');
     }
