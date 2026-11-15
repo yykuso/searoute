@@ -143,6 +143,13 @@ export default defineConfig({
             },
         },
     },
+    server: {
+        host: '127.0.0.1',
+        port: 5173,
+        strictPort: true,
+        // Cloudflare Quick Tunnel（*.trycloudflare.com）経由のアクセスを許可
+        allowedHosts: ['.trycloudflare.com'],
+    },
     preview: {
         port: 4173,
         strictPort: true,
