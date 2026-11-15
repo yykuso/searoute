@@ -19,6 +19,37 @@ describe('SEO metadata', () => {
     });
 });
 
+describe('og:image と 404 ページ', () => {
+    it.each(['index.html', 'routeList.html'])('%s の og:image は絶対URLの banner.png', (fileName) => {
+        const html = readFileSync(`${projectRoot}${fileName}`, 'utf8');
+        const { document } = new JSDOM(html).window;
+
+        expect(document.querySelector('meta[property="og:image"]')?.getAttribute('content')).toBe(
+            'https://searoute.info/img/banner.png',
+        );
+    });
+
+    it('routeList.html の twitter:image は /searoute/ を含まない', () => {
+        const html = readFileSync(`${projectRoot}routeList.html`, 'utf8');
+        const { document } = new JSDOM(html).window;
+
+        expect(document.querySelector('meta[name="twitter:image"]')?.getAttribute('content')).toBe(
+            'https://searoute.info/img/twbanner.png',
+        );
+    });
+
+    it('public/404.html は noindex でトップと航路一覧へのリンクを持つ', () => {
+        const html = readFileSync(`${projectRoot}public/404.html`, 'utf8');
+        const { document } = new JSDOM(html).window;
+
+        expect(document.documentElement.getAttribute('lang')).toBe('ja');
+        expect(document.querySelector('meta[name="robots"]')?.getAttribute('content')).toBe('noindex');
+        expect(document.querySelector('a[href="/"]')).not.toBeNull();
+        expect(document.querySelector('a[href="/routeList.html"]')).not.toBeNull();
+        expect(document.querySelector('script')).toBeNull();
+    });
+});
+
 describe('初期レイアウト', () => {
     it('Cookie バナーを非同期 CSS の適用前から固定配置する', () => {
         const html = readFileSync(`${projectRoot}index.html`, 'utf8');

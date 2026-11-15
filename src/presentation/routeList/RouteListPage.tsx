@@ -6,20 +6,12 @@
 import { Fragment, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { RouteListState, RouteListViewModel, RouteTableState } from '../../application/viewModels/routeListViewModel';
-import { createRouteSearchPattern, matchesRouteSearchText } from '../../domain/route';
+import { buildRouteMapPath, createRouteSearchPattern, matchesRouteSearchText } from '../../domain/route';
 import type { RouteColumn, RouteRow } from '../../domain/route';
 import { useViewModelState } from '../hooks/useViewModelState';
 import { Icon } from '../common/Icon';
 
 const SEARCH_HIGHLIGHT_CLASS = 'route-search-highlight';
-
-export function buildRouteMapUrl(routeId: string, sourceId: string, { locationRef = window.location }: { locationRef?: Pick<Location, 'href'> } = {}): string {
-    const url = new URL('./index.html', locationRef.href);
-    url.searchParams.set('share', 'route');
-    url.searchParams.set('routeId', routeId);
-    url.searchParams.set('sourceId', sourceId);
-    return url.toString();
-}
 
 /** 一致箇所を <span class="route-search-highlight"> で囲む */
 function highlightText(text: string, query: string): ReactNode {
@@ -46,13 +38,13 @@ interface CellModel {
     external?: boolean;
 }
 
-function toCells(row: RouteRow, visibleColumns: RouteColumn[], sourceId: string, locationRef?: Pick<Location, 'href'>): CellModel[] {
+function toCells(row: RouteRow, visibleColumns: RouteColumn[], sourceId: string): CellModel[] {
     return visibleColumns.map((column) => {
         if (column === 'routeName') {
             return {
                 column,
                 text: row.routeName || '-',
-                href: buildRouteMapUrl(row.routeId, sourceId, locationRef ? { locationRef } : {}),
+                href: buildRouteMapPath(row.routeId, sourceId),
             };
         }
         if (column === 'url') {
@@ -62,14 +54,13 @@ function toCells(row: RouteRow, visibleColumns: RouteColumn[], sourceId: string,
     });
 }
 
-function RouteTableRow({ row, visibleColumns, sourceId, query, locationRef }: {
+function RouteTableRow({ row, visibleColumns, sourceId, query }: {
     row: RouteRow;
     visibleColumns: RouteColumn[];
     sourceId: string;
     query: string;
-    locationRef?: Pick<Location, 'href'>;
 }) {
-    const cells = toCells(row, visibleColumns, sourceId, locationRef);
+    const cells = toCells(row, visibleColumns, sourceId);
     const matchedCells = query ? cells.map((cell) => matchesRouteSearchText(cell.text, query)) : [];
     const hidden = Boolean(query) && !matchedCells.some(Boolean);
 
@@ -109,12 +100,11 @@ const HEADER_COLUMNS: Array<{ column: RouteColumn; className: string; label: str
     { column: 'url', className: 'url', label: '時刻表' },
 ];
 
-function RouteTable({ tableClassName, infoClassName, table, query, locationRef }: {
+function RouteTable({ tableClassName, infoClassName, table, query }: {
     tableClassName: string;
     infoClassName: string;
     table: RouteTableState | undefined;
     query: string;
-    locationRef?: Pick<Location, 'href'>;
 }) {
     return (
         <table className={tableClassName}>
@@ -136,7 +126,6 @@ function RouteTable({ tableClassName, infoClassName, table, query, locationRef }
                         visibleColumns={table.visibleColumns}
                         sourceId={table.sourceId}
                         query={query}
-                        locationRef={locationRef}
                     />
                 ))}
             </tbody>
@@ -144,9 +133,9 @@ function RouteTable({ tableClassName, infoClassName, table, query, locationRef }
     );
 }
 
-function hasVisibleRow(state: RouteListState, locationRef?: Pick<Location, 'href'>): boolean {
+function hasVisibleRow(state: RouteListState): boolean {
     return state.tables.some((table) => table.rows.some((row) => (
-        toCells(row, table.visibleColumns, table.sourceId, locationRef).some((cell) => matchesRouteSearchText(cell.text, state.query))
+        toCells(row, table.visibleColumns, table.sourceId).some((cell) => matchesRouteSearchText(cell.text, state.query))
     )));
 }
 
@@ -156,9 +145,8 @@ const TABLES = [
     { title: '韓国 国内航路', tableClassName: 'sea-route-KR-table', infoClassName: 'information' },
 ];
 
-export function RouteListPage({ viewModel, locationRef }: {
+export function RouteListPage({ viewModel }: {
     viewModel: Pick<RouteListViewModel, 'getState' | 'subscribe' | 'search' | 'reset'>;
-    locationRef?: Pick<Location, 'href'>;
 }) {
     const state = useViewModelState(viewModel);
     const [searchText, setSearchText] = useState('');
@@ -169,7 +157,7 @@ export function RouteListPage({ viewModel, locationRef }: {
     }, [state]);
 
     const findTable = (tableClassName: string) => state.tables.find((table) => table.selector === `.${tableClassName} tbody`);
-    const searchMessage = state.query && !hasVisibleRow(state, locationRef) ? '見つかりませんでした。' : '';
+    const searchMessage = state.query && !hasVisibleRow(state) ? '見つかりませんでした。' : '';
 
     return (
         <>
@@ -218,7 +206,6 @@ export function RouteListPage({ viewModel, locationRef }: {
                         infoClassName={infoClassName}
                         table={findTable(tableClassName)}
                         query={state.query}
-                        locationRef={locationRef}
                     />
                 </Fragment>
             ))}

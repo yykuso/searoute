@@ -1,6 +1,7 @@
 /**
  * 航路一覧ページの依存組み立て（Composition Root）
  */
+import type { RouteTableState } from '../application/viewModels/routeListViewModel';
 import { createRouteListViewModel } from '../application/viewModels/routeListViewModel';
 import type { RouteTableConfig } from '../application/viewModels/routeListViewModel';
 import { createRouteListRepository } from '../adapters/data/routeListRepository';
@@ -24,10 +25,11 @@ export const ROUTE_LIST_TABLE_CONFIGS: RouteTableConfig[] = [
     },
 ];
 
-export function createRouteListServices() {
+export function createRouteListServices({ initialTables }: { initialTables?: RouteTableState[] } = {}) {
     const viewModel = createRouteListViewModel({
         tables: ROUTE_LIST_TABLE_CONFIGS,
         repository: createRouteListRepository(),
+        initialTables,
     });
     return { viewModel };
 }

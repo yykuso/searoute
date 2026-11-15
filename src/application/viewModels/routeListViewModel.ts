@@ -26,14 +26,15 @@ export interface RouteListViewModelOptions {
     tables: RouteTableConfig[];
     repository: RouteListRepository;
     logger?: Pick<LoggerPort, 'error'>;
+    initialTables?: RouteTableState[];
 }
 
 type Listener = (state: RouteListState) => void;
 
-function createInitialState(): RouteListState {
+function createInitialState(initialTables?: RouteTableState[]): RouteListState {
     return {
-        status: 'idle',
-        tables: [],
+        status: initialTables ? 'ready' : 'idle',
+        tables: initialTables ?? [],
         query: '',
         errorMessage: '',
     };
@@ -43,9 +44,10 @@ export function createRouteListViewModel({
     tables,
     repository,
     logger = console,
+    initialTables,
 }: RouteListViewModelOptions) {
     const listeners = new Set<Listener>();
-    const state = createInitialState();
+    const state = createInitialState(initialTables);
 
     function getState(): RouteListState {
         return {
