@@ -21,6 +21,7 @@
 - データ表示ロジック: src 配下の React + TypeScript モジュール群
 - 航路データ: `https://pmtiles.searoute.info/` から配信する PMTiles と JSON
 - 港湾データ: public/data/portData.geojson
+- AI・クローラー向け出力: public/llms.txt、ビルド時に生成する llms-full.txt、航路一覧の構造化データ、public/404.html
 
 対象外。
 
@@ -78,6 +79,10 @@
 - src/presentation/routeList/RouteListPage.tsx
 - src/application/viewModels/routeListViewModel.ts
 - src/adapters/data/routeListRepository.ts
+- src/application/routeListSnapshot.ts（埋め込みデータの直列化・復元）
+- src/application/useCases/loadRouteListTables.ts（ビルド時の一覧データ取得）
+- src/application/routeListPublication.ts（JSON-LD・llms-full.txt の生成）
+- src/entrypoints/prerender.tsx（ビルド時の描画とデータ取得）
 
 主要 UI 要素。
 
@@ -550,7 +555,9 @@ PC とモバイルで詳細情報を見やすく提示する。
 
 期待動作。
 
-- 各テーブルの一覧用 JSON を fetch して tbody に行を描画する
+- 本番ビルドでは、各テーブルの一覧用 JSON をビルド時に取得し、全行を routeList.html の静的 HTML に描画しておく（JS を実行しないクローラーにも見える。詳細は SEO-01）
+- 同じデータを `<script type="application/json" id="route-list-data">` として埋め込み、ブラウザはそれを初期状態にしてハイドレーションする。このとき一覧用 JSON は取得しない
+- 埋め込みデータが無い・壊れている場合（開発サーバー、`SEAROUTE_SKIP_ROUTE_DATA=1` のビルド）は、従来どおりブラウザで一覧用 JSON を fetch して描画する
 - note が season の行は season-row クラスを付与する
 - note が suspend の行は suspend-row クラスを付与する
 - URL があれば別タブで開くリンクを表示する
@@ -559,6 +566,8 @@ PC とモバイルで詳細情報を見やすく提示する。
 
 - 3 テーブルとも表示される
 - 欠損値は - で表示する
+- 本番の routeList.html のソースに航路名が含まれ、表示時に一覧用 JSON への通信が発生しない
+- サーバー描画とブラウザの初回描画が一致し、ハイドレーションのエラーが出ない
 
 ### 7.14 LIST-02 一覧検索
 
@@ -658,7 +667,7 @@ PC とモバイルで詳細情報を見やすく提示する。
 
 期待動作。
 
-- 航路名セルを share=route 付き URL リンクとして出力する
+- 航路名セルを share=route 付き URL リンクとして出力する。URL は `buildRouteMapPath`（src/domain/route.ts）で作る相対 URL `index.html?share=route&routeId=<id>&sourceId=<sourceId>` とし、ホストに依存させない（ビルド時の描画とブラウザの描画を一致させるため）
 - routeId と sourceId をクエリに付与して地図ページへ遷移する
 - 遷移先では共有 URL 復元機能により対象航路ドロワーを表示する
 
@@ -666,6 +675,59 @@ PC とモバイルで詳細情報を見やすく提示する。
 
 - 一覧の航路名クリックで地図ページへ遷移する
 - 遷移後に対象航路の詳細ドロワーが表示される
+
+### 7.19 SEO-01 AI・クローラー向けの公開
+
+目的。
+
+JS を実行しない AI クローラー・AI エージェント・検索エンジンにも航路情報を読めるようにし、AI 検索の回答に引用されやすくする（AI 検索で用が済みクリックが減る状況への対策）。
+
+対象。
+
+- routeList.html（静的 HTML の全航路、埋め込みデータ、構造化データ）
+- llms.txt / llms-full.txt
+- 404.html
+- sitemap.xml / robots.txt（.cloudflare/build.sh が main ブランチのビルドでのみ生成）
+
+期待動作。
+
+- routeList.html: 全航路の表を静的 HTML に含める（LIST-01）。`<head>` に schema.org の `ItemList` JSON-LD を入れ、各要素は `position` / `name`（事業者 航路名）/ `url`（`https://searoute.info/index.html?share=route&...`）を持つ
+- 埋め込みデータと JSON-LD は `<` を `<` にエスケープし、航路名に `</script>` が含まれても HTML が壊れないようにする
+- llms.txt: サイト概要と主要ページへのリンク（public/llms.txt を手で管理）。llms-full.txt へのリンクを含める
+- llms-full.txt: ビルド時に一覧用 JSON から生成する Markdown。カテゴリ（国内航路 / 国際航路 / 韓国国内航路）ごとに `- 事業者｜航路名（船名）［運航情報］: 地図URL / 公式: URL` を並べる（無い項目は省略、改行などの空白は 1 つの空白にまとめ、事業者名と航路名が両方空の行は出さない）。末尾に、最新情報は公式を優先する旨の注意書きを置く
+- 404.html: 存在しない URL に HTTP 404 を返す（Cloudflare Pages は 404.html が無いと全 URL に 200 で index.html を返し、ソフト404 になる）。外部 CSS / JS に依存しない自己完結の静的ページで、`noindex`、地図と航路一覧へのリンクを持つ。sitemap.xml には含めない
+
+設計判断。
+
+- 生成方式はビルド時取得（SSG）とした。航路データの更新頻度が低いため。更新頻度が上がった場合は、Cloudflare Pages Functions でリクエスト時に差し込む方式へ移行できるよう、変換処理は application 層の純関数にしてある
+- 生成物は searoute.info 上に置く（pmtiles.searoute.info に置くと評価が別ドメインに付くため）
+- ai-catalog.json / ard.json（Agentic Resource Discovery）は作らない。エージェントが呼び出せる API や MCP サーバーを公開していないため。公開する場合は両方を置く
+
+受け入れ条件。
+
+- 本番の routeList.html に航路名・`id="route-list-data"`・`"ItemList"` が含まれる
+- /llms-full.txt が 200 で全航路を返す
+- 存在しない URL（例: /.well-known/ai-catalog.json）が 404 を返す
+- sitemap.xml に 404.html が含まれない
+
+### 7.20 OPS-01 航路データ更新とビルド
+
+目的。
+
+R2 の航路データが更新されたら、ビルド時に埋め込んだ一覧データも自動で更新する。また、取得に失敗した状態のまま空の一覧を公開しない。
+
+期待動作。
+
+- ビルド時の取得: vite.config.ts の `searoute-prerender` プラグインが `loadPrerenderRouteTables` を呼ぶ。一覧用 JSON 3 件（`ROUTE_LIST_TABLE_CONFIGS`）を、CDN キャッシュを避けるクエリ `?v=<時刻>` 付きで、1 件あたり 30 秒のタイムアウトで取得する
+- 次のいずれかでビルドを失敗させる（Cloudflare Pages では前回のデプロイが残る）: 取得失敗（HTTP エラー・タイムアウト）、データが空（`航路データが空です: <URL>`）
+- `SEAROUTE_SKIP_ROUTE_DATA=1` のときは取得・埋め込み・llms-full.txt の生成を行わない（E2E 用。playwright.config.ts の webServer で指定）
+- 自動再ビルド: searoute-pmtiles の deploy-r2.yml は、`geojson/` または `details/` に変更があると lightweight JSON を作り直して R2 へアップロードし、最後に Cloudflare Pages の Deploy Hook（GitHub Secret `CF_PAGES_DEPLOY_HOOK`、main ブランチ）を呼ぶ。Secret が未設定なら警告のみで失敗にしない
+- develop などのプレビューは Cloudflare Access で保護されているため、外部からの確認はできない（ログインしたブラウザで確認する）
+
+受け入れ条件。
+
+- R2 の一覧用 JSON を更新すると、本番の routeList.html と llms-full.txt に反映される
+- 一覧用 JSON が取得できない・空のとき、ビルドが失敗する
 
 ## 8. 状態管理
 
@@ -698,7 +760,8 @@ Cookie で以下を保持する。
 
 - MapLibre GL JS
 - Maplibre Geocoder
-- 航路データの配信（`https://pmtiles.searoute.info/`）
+- 航路データの配信（`https://pmtiles.searoute.info/`）。一覧用 JSON はビルド時にも取得するため、R2 の障害はビルドの失敗になる（OPS-01）
+- Cloudflare Pages の Deploy Hook（searoute-pmtiles からの再ビルド）
 - Nominatim 検索 API
 - Wikipedia API（船の画像検索）
 - Google Maps URL スキーム
@@ -755,6 +818,7 @@ Cookie で以下を保持する。
 - routeId / lineId の一致判定
 - 詳細 JSON マージ
 - 一覧テーブル生成
+- ビルド時の埋め込みデータ・JSON-LD・llms-full.txt の生成（SEO-01）。`parseRouteListSnapshot` は配列かどうかしか検証しないため、埋め込みデータの形を変える場合は検証も合わせて変え、古い形のデータで描画が壊れないことを確認する
 - note に依存する描画・色・行クラス
 
 ### 11.4 地図イベント変更
@@ -817,6 +881,14 @@ Cookie で以下を保持する。
 4. リセットで全文字・表示状態・ハイライトが戻る
 5. note に応じた行スタイルが保たれる
 6. 航路名リンクから地図ページへ遷移し、対象航路ドロワーが表示される
+7. 実データでビルドした routeList.html のソースに航路名があり、表示時に lightweight JSON への通信がなく、コンソールにハイドレーションのエラーが出ない
+
+### 12.6 AI・クローラー向け出力テスト
+
+1. /llms.txt と /llms-full.txt が表示され、llms-full.txt に 3 カテゴリの航路が並ぶ
+2. routeList.html に `ItemList` の JSON-LD がある
+3. 存在しない URL が 404 を返し、404 ページから地図・一覧へ戻れる
+4. sitemap.xml に 404.html が含まれない
 
 ### 12.5 PWA / キャッシュテスト
 
@@ -833,6 +905,7 @@ Cookie で以下を保持する。
 - データ欠損行で UI が壊れない
 - Cookie 保存が無効でも致命的に壊れない
 - キャッシュ更新で古いファイルが残留しない
+- 本番ビルドのログで航路データの取得が成功している（SEO-01 / OPS-01）
 
 ## 14. 今後の運用方針
 
