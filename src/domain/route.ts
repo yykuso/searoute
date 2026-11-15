@@ -128,3 +128,9 @@ function toRouteRow(record: RouteRecord): RouteRow {
         url: record.url,
     };
 }
+
+/** 航路の地図共有リンク（相対URL。ビルド時描画とクライアント描画で同一になる） */
+export function buildRouteMapPath(routeId: string, sourceId: string): string {
+    const params = new URLSearchParams({ share: 'route', routeId, sourceId });
+    return `index.html?${params.toString()}`;
+}

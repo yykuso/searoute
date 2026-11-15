@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+    buildRouteMapPath,
     compareRouteIds,
     createRouteSearchPattern,
     getRouteInfoFromNote,
@@ -9,6 +10,10 @@ import {
 } from '../../src/domain/route';
 
 describe('route', () => {
+    it('buildRouteMapPath は相対の共有URLを返す', () => {
+        expect(buildRouteMapPath('2', 'geojson_sea_route')).toBe('index.html?share=route&routeId=2&sourceId=geojson_sea_route');
+    });
+
     it('lightweight JSONをRoute行へ変換してrouteId順に並べる', () => {
         expect(normalizeRouteRows({ records: [
             { routeId: 10, businessName: 'B社', routeName: '航路B', note: 'suspend' },

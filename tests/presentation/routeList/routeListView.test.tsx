@@ -3,11 +3,9 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest';
 import { createRouteListViewModel } from '../../../src/application/viewModels/routeListViewModel';
 import type { RouteRow } from '../../../src/domain/route';
-import { buildRouteMapUrl, RouteListPage } from '../../../src/presentation/routeList/RouteListPage';
+import { RouteListPage } from '../../../src/presentation/routeList/RouteListPage';
 
 afterEach(cleanup);
-
-const locationRef = { href: 'https://searoute.info/routeList.html' };
 
 async function renderPage(rowsByPath: Record<string, RouteRow[]>) {
     const viewModel = createRouteListViewModel({
@@ -17,18 +15,12 @@ async function renderPage(rowsByPath: Record<string, RouteRow[]>) {
         ],
         repository: { loadRouteRows: async (path) => rowsByPath[path] ?? [] },
     });
-    render(<RouteListPage viewModel={viewModel} locationRef={locationRef} />);
+    render(<RouteListPage viewModel={viewModel} />);
     await act(() => viewModel.initialize());
     return viewModel;
 }
 
 const domesticRows = () => Array.from(document.querySelectorAll<HTMLTableRowElement>('.sea-route-table tbody tr'));
-
-describe('buildRouteMapUrl', () => {
-    it('共有パラメータ付きの index.html URL を生成する', () => {
-        expect(buildRouteMapUrl('2', 'geojson_sea_route', { locationRef })).toBe('https://searoute.info/index.html?share=route&routeId=2&sourceId=geojson_sea_route');
-    });
-});
 
 describe('RouteListPage', () => {
     it('可視列のみのセルを描画し、季節運航行にクラスを付け、空の列見出しを隠す', async () => {
@@ -37,7 +29,7 @@ describe('RouteListPage', () => {
         const [row] = domesticRows();
         expect(row.classList.contains('season-row')).toBe(true);
         expect(row.querySelectorAll('td')).toHaveLength(4);
-        expect(screen.getByRole('link', { name: 'Route A' }).getAttribute('href')).toBe('https://searoute.info/index.html?share=route&routeId=2&sourceId=geojson_sea_route');
+        expect(screen.getByRole('link', { name: 'Route A' }).getAttribute('href')).toBe('index.html?share=route&routeId=2&sourceId=geojson_sea_route');
         expect(screen.getByRole('link', { name: 'リンク' }).getAttribute('target')).toBe('_blank');
         const table = document.querySelector('.sea-route-table') as HTMLElement;
         expect((table.querySelector('th.ship-name') as HTMLElement).style.display).toBe('none');
