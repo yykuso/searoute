@@ -9,6 +9,7 @@ import type { RouteListState, RouteListViewModel, RouteTableState } from '../../
 import { createRouteSearchPattern, matchesRouteSearchText } from '../../domain/route';
 import type { RouteColumn, RouteRow } from '../../domain/route';
 import { useViewModelState } from '../hooks/useViewModelState';
+import { Icon } from '../common/Icon';
 
 const SEARCH_HIGHLIGHT_CLASS = 'route-search-highlight';
 
@@ -179,13 +180,13 @@ export function RouteListPage({ viewModel, locationRef }: {
                         <ul>
                             <li>
                                 <a href="./" title="マップ">
-                                    <i className="fas fa-map"></i>
+                                    <Icon className="fas fa-map" />
                                     <span>マップ</span>
                                 </a>
                             </li>
                             <li>
                                 <a href="./routeList.html" title="航路一覧">
-                                    <i className="fas fa-ship"></i>
+                                    <Icon className="fas fa-ship" />
                                     <span>航路一覧</span>
                                 </a>
                             </li>

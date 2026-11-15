@@ -10,6 +10,7 @@ import type { AnalyticsPort } from '../../application/ports';
 import type { MapViewModel } from '../../application/viewModels/mapViewModel';
 import type { LayersConfig } from '../../config/layerConfig';
 import { usePanelToggle } from './touchPanelToggle';
+import { Icon } from '../common/Icon';
 
 type GroupType = 'base' | 'overlay' | 'geojson';
 
@@ -187,7 +188,7 @@ export function LayerControl({ container, layers, defaultBaseLayer, mapViewModel
     return createPortal(
         <>
             <div className="maplibregl-ctrl-layers-toggle" ref={toggleRef}>
-                <i className="fa-solid fa-layer-group fa-lg"></i>
+                <Icon className="fa-solid fa-layer-group fa-lg" />
             </div>
             <div className="maplibregl-ctrl-layers-list" style={{ display: open ? 'block' : 'none' }} ref={panelRef}>
                 {groups.map((groupType, index) => {

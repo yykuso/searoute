@@ -12,6 +12,7 @@ import type { SubscribableViewModel } from '../hooks/useViewModelState';
 import { DrawerBodyView } from './DrawerBody';
 import { createDetailDrawerController } from './detailDrawerController';
 import type { DetailDrawerController } from './detailDrawerController';
+import { Icon } from '../common/Icon';
 
 const DRAWER_CLASS = 'fixed z-50 bg-white shadow-xl border-slate-200 border transition-transform duration-300 ease-in-out w-full max-h-[30vh] left-0 bottom-0 rounded-t-2xl p-4 md:top-0 md:left-0 md:bottom-0 md:w-96 md:max-h-full md:rounded-none md:rounded-r-2xl md:p-6 translate-y-full md:translate-y-0 md:-translate-x-full overflow-y-auto touch-pan-y';
 const COPY_FEEDBACK_MS = 1500;
@@ -72,7 +73,7 @@ function ShareButton({ copyShareUrl }: Pick<DetailDrawerProps, 'copyShareUrl'>) 
     return (
         <button id="detail-drawer-share-btn" aria-label="URLをコピーして共有" className="self-start text-slate-400 hover:text-slate-700 text-2xl font-bold focus:outline-none" onClick={share}>
             <span className="bg-slate-200 hover:bg-slate-300 w-8 h-8 flex items-center justify-center rounded-full p-0 transition-colors">
-                <i className={`fa-solid ${copied ? 'fa-check' : 'fa-share-nodes'} text-base cursor-pointer`}></i>
+                <Icon className={`fa-solid ${copied ? 'fa-check' : 'fa-share-nodes'} text-base cursor-pointer`} />
             </span>
         </button>
     );
@@ -112,7 +113,7 @@ export const DetailDrawer = memo(function DetailDrawer({ viewModel, ready, copyS
                     <ShareButton copyShareUrl={copyShareUrl} />
                     <button id="detail-drawer-close-btn" aria-label="詳細情報を閉じる" className="self-start text-slate-400 hover:text-slate-700 text-2xl font-bold focus:outline-none" onClick={() => hideDrawer()}>
                         <span className="bg-slate-200 hover:bg-slate-300 w-8 h-8 flex items-center justify-center rounded-full p-0 transition-colors">
-                            <i className="fa-solid fa-xmark cursor-pointer"></i>
+                            <Icon className="fa-solid fa-xmark cursor-pointer" />
                         </span>
                     </button>
                 </div>

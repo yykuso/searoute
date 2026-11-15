@@ -2,6 +2,7 @@
  * 地図ページの依存組み立て（Composition Root）
  * adapters の実装を application のポートへ注入し、presentation の MapPageServices として返す
  * 戻り値は React の Context（MapServicesProvider）経由で UI へ配布する
+ * MapLibre 本体（adapters/map/mapFactory）は地図生成時に動的 import し、初回描画・ハイドレーションと評価を分ける
  */
 import { createDrawerUseCases } from '../application/useCases/drawerUseCases';
 import { ensureSharedLayerEnabled, copyShareUrl } from '../application/useCases/shareUseCases';
@@ -24,7 +25,7 @@ import { nominatimGeocoding } from '../adapters/geocoding/nominatimGeocodingAdap
 import { ContainerControl } from '../adapters/map/controlContainer';
 import { focusSharedRoute, portRepository, setPortClickHandler } from '../adapters/map/geoJsonLayerAdapter';
 import { isIdInLayer, layerManager } from '../adapters/map/layerManager';
-import { addGeocoderControlWhenIdle, createMarkerAdapter, createSearouteMap, mapCamera } from '../adapters/map/mapFactory';
+import { mapCamera } from '../adapters/map/mapCamera';
 import {
     removeRouteHighlight,
     routeDetailsRepository,
@@ -35,14 +36,22 @@ import {
 } from '../adapters/map/pmtilesLayerAdapter';
 import { getCookieSettingsRepository } from '../adapters/persistence/cookieControl';
 import { createLoadingIndicator } from '../presentation/common/loadingIndicator';
+import type { MarkerPort } from '../application/ports';
 import type { MapHandle, MapPageServices } from '../presentation/map/mapPageServices';
+
+type MapFactoryModule = typeof import('../adapters/map/mapFactory');
 
 export function createMapServices({
     buildNumber,
     initialHash = location.hash,
 }: { buildNumber: string; initialHash?: string }): MapPageServices {
     const settings = getCookieSettingsRepository();
-    const marker = createMarkerAdapter();
+    // ピン操作は地図生成後（MapLibre 読み込み後）にのみ呼ばれる
+    let markerImpl: MarkerPort | null = null;
+    const marker: MarkerPort = {
+        showPin: (lngLat) => markerImpl?.showPin(lngLat),
+        clearPin: () => markerImpl?.clearPin(),
+    };
     const routeMap = {
         focusSharedRoute,
         zoomToRoute: (params: Parameters<typeof zoomToRoute>[0]) => zoomToRoute(params),
@@ -94,7 +103,9 @@ export function createMapServices({
         loading,
         buildNumber,
         initialHash,
-        createMap(container): MapHandle {
+        async createMap(container): Promise<MapHandle> {
+            const { addGeocoderControlWhenIdle, createMarkerAdapter, createSearouteMap }: MapFactoryModule = await import('../adapters/map/mapFactory');
+            markerImpl = createMarkerAdapter();
             const map = createSearouteMap({
                 container,
                 settings,

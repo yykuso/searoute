@@ -23,8 +23,8 @@ export interface MapHandle {
 }
 
 export interface MapPageServices {
-    /** 地図を生成する（コンテナ要素の描画後に呼ぶ） */
-    createMap(container: HTMLElement): MapHandle;
+    /** 地図を生成する（コンテナ要素の描画後に呼ぶ。MapLibre を遅延読み込みするため非同期） */
+    createMap(container: HTMLElement): Promise<MapHandle>;
     drawerViewModel: Pick<DrawerViewModel, 'getState' | 'subscribe'>;
     /** 右クリック・長押し地点の座標ドロワーを開く */
     openCoordinate(lat: number, lng: number): void;

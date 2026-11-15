@@ -81,11 +81,6 @@
   }
   </script>
 
-  <!-- フォントを早期に取得 -->
-  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://tile.openstreetmap.jp" crossorigin>
@@ -96,25 +91,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=optional"
     crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+  <!-- searoute:icon-css（ビルド時に src/styles/icons.css をインライン展開。Font Awesome のアイコンはインライン SVG） -->
   <style>
-    @font-face {
-      font-family: 'Font Awesome 6 Free';
-      font-style: normal;
-      font-weight: 900;
-      font-display: swap;
-      src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2') format('woff2');
-    }
-    @font-face {
-      font-family: 'Font Awesome 6 Brands';
-      font-style: normal;
-      font-weight: 400;
-      font-display: swap;
-      src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2') format('woff2');
-    }
-
     /* MapLibre コントロールの初期位置を確保して CLS を防止 */
     .maplibregl-ctrl-top-left,
     .maplibregl-ctrl-top-right {
@@ -131,6 +109,21 @@
     .maplibregl-ctrl-top-right,
     .maplibregl-ctrl-bottom-right {
       right: env(safe-area-inset-right);
+    }
+    /* iOS のホーム画面アプリ（PWA）は、画面最上部に固定要素が無いとステータスバー下へ自動でぼかしを重ねる。
+       WebKit の「上端に固定ヘッダーがある」判定を満たす見えないダミー要素を置いてぼかしを止める。
+       opacity:0 や transparent は判定から外れるため、背景色を指定した上で background-clip:text で描画を消す */
+    .top-edge-guard {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: max(env(safe-area-inset-top), 11px);
+      background-color: #ffffff;
+      -webkit-background-clip: text;
+      background-clip: text;
+      z-index: 10001;
+      pointer-events: none;
     }
     /* ジオコーダーの幅を事前確保 */
     .maplibregl-ctrl-geocoder {
@@ -213,6 +206,7 @@
     </div>
   </noscript>
   <!-- 画面は React（src/entrypoints/main-map.tsx）が描画する -->
+  <div class="top-edge-guard" aria-hidden="true"></div>
   <div id="app"></div>
   <script type="module" src="./src/entrypoints/main-map.tsx"></script>
 </body>

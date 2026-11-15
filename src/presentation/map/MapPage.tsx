@@ -3,7 +3,7 @@
  *
  * 初期化順序（旧 initializeMap / mapPage と同じ）:
  * 1. 詳細ドロワー・コンテキストメニュー・長押しを地図の load より前に登録（iOS の初回タップ対策）
- * 2. 地図生成 → 縮尺コントロールの直後にハンバーガーメニューを追加
+ * 2. 地図生成（MapLibre は遅延読み込み） → 縮尺コントロールの直後にハンバーガーメニューを追加
  * 3. load 後に #detail-drawer を表示可能にし、レイヤー → 航路フィルターの順でコントロールを追加
  * 4. 共有URLの対象レイヤーを有効化してドロワーを復元
  */
@@ -24,6 +24,7 @@ import { DetailDrawer } from './DetailDrawer';
 import { HamburgerMenu } from './HamburgerMenu';
 import { createLayerSelectionStore, LayerControl } from './LayerControl';
 import { useMapServices } from './mapPageServices';
+import type { MapHandle } from './mapPageServices';
 import { bindMapPointerInteractions } from './mapPointerInteractions';
 import { RouteFilterControl } from './RouteFilterControl';
 
@@ -56,43 +57,50 @@ export function MapPage({ modalController }: { modalController?: ModalController
         const mapElement = mapRef.current;
         if (!mapElement) return undefined;
 
-        let map;
-        try {
-            map = services.createMap(mapElement);
-        } catch (error) {
+        let disposed = false;
+        let unbindPointer: (() => void) | undefined;
+
+        const initializeMap = (map: MapHandle) => {
+            setHamburgerContainer(map.addControlContainer('hamburger-control'));
+
+            // load より前に登録しないと iOS Safari で初回タップが拾えない
+            unbindPointer = bindMapPointerInteractions(mapElement, {
+                onContextMenu: (x, y) => {
+                    const point = map.unproject(x, y);
+                    setContextMenu({ x, y, lat: point.lat, lng: point.lng });
+                },
+                onLongPress: (x, y) => {
+                    const point = map.unproject(x, y);
+                    services.openCoordinate(point.lat, point.lng);
+                },
+            });
+
+            map.onceLoad(() => {
+                const { baseMap, enabledLayers } = services.mapViewModel.getState();
+                setLoadedControls({
+                    layersContainer: map.addControlContainer('layers-control'),
+                    filterContainer: map.addControlContainer('route-filter-control'),
+                    layers: services.getLayersConfig(enabledLayers),
+                    baseMap,
+                    routeFilterViewModel: services.createRouteFilterViewModel(),
+                });
+                void services.restoreShare((layerId) => layerSelection.markEnabled(layerId));
+            });
+
+            services.mapViewModel.initialize();
+        };
+
+        services.createMap(mapElement).then((map) => {
+            if (!disposed) initializeMap(map);
+        }, (error: unknown) => {
             // MapLibre 6.7 以降は WebGL2 が使えないと生成時に例外を投げる（旧版は error イベント）。他の UI は動かし続ける
             console.error('Map initialization failed:', error);
-            return undefined;
-        }
-        setHamburgerContainer(map.addControlContainer('hamburger-control'));
-
-        // load より前に登録しないと iOS Safari で初回タップが拾えない
-        const unbindPointer = bindMapPointerInteractions(mapElement, {
-            onContextMenu: (x, y) => {
-                const point = map.unproject(x, y);
-                setContextMenu({ x, y, lat: point.lat, lng: point.lng });
-            },
-            onLongPress: (x, y) => {
-                const point = map.unproject(x, y);
-                services.openCoordinate(point.lat, point.lng);
-            },
         });
 
-        map.onceLoad(() => {
-            const { baseMap, enabledLayers } = services.mapViewModel.getState();
-            setLoadedControls({
-                layersContainer: map.addControlContainer('layers-control'),
-                filterContainer: map.addControlContainer('route-filter-control'),
-                layers: services.getLayersConfig(enabledLayers),
-                baseMap,
-                routeFilterViewModel: services.createRouteFilterViewModel(),
-            });
-            void services.restoreShare((layerId) => layerSelection.markEnabled(layerId));
-        });
-
-        services.mapViewModel.initialize();
-
-        return unbindPointer;
+        return () => {
+            disposed = true;
+            unbindPointer?.();
+        };
     }, [services, layerSelection]);
 
     return (

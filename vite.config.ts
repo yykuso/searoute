@@ -87,8 +87,30 @@ function asyncStylesheets(): Plugin {
     };
 }
 
+const ICON_CSS_PLACEHOLDER = /<!-- searoute:icon-css[\s\S]*?-->/;
+const ICON_CSS_PATH = resolve(root, 'src/styles/icons.css');
+const ICON_LICENSE = '/*! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. */';
+
+/**
+ * アイコン（インライン SVG）用の CSS を各 HTML の head へインライン展開する
+ * 非同期読み込みの CSS より前に効かせ、SVG が未スタイルの大きさで一瞬描画されるのを防ぐ（旧 Font Awesome の CSS と同じ位置）
+ */
+function inlineIconStyles(): Plugin {
+    return {
+        name: 'searoute-inline-icon-css',
+        async transformIndexHtml(html) {
+            if (!ICON_CSS_PLACEHOLDER.test(html)) return html;
+            const css = (await readFile(ICON_CSS_PATH, 'utf8'))
+                .replace(/\/\*[\s\S]*?\*\//g, '')
+                .replace(/\s*\n\s*/g, '')
+                .trim();
+            return html.replace(ICON_CSS_PLACEHOLDER, `<style>${ICON_LICENSE}${css}</style>`);
+        },
+    };
+}
+
 export default defineConfig({
-    plugins: [react(), tailwindcss(), asyncStylesheets(), prerenderPages()],
+    plugins: [react(), tailwindcss(), inlineIconStyles(), asyncStylesheets(), prerenderPages()],
     // 公開ディレクトリ（data/ style/ img/ manifest.json 等）は同じURLのまま dist 直下へコピーされる
     publicDir: 'public',
     define: DEFINE,
@@ -102,6 +124,10 @@ export default defineConfig({
                 // MapLibre（約 800KB）を独立チャンクにしてエントリーの肥大化とキャッシュ無効化を避ける
                 manualChunks(id) {
                     const normalizedId = id.replace(/\\/g, '/');
+                    // CSS（エントリーで静的 import）をこのチャンクに入れるとエントリーが MapLibre を静的 import してしまう
+                    if (/\.css($|\?)/.test(normalizedId)) {
+                        return undefined;
+                    }
                     if (normalizedId.includes('node_modules/maplibre-gl/') || normalizedId.includes('node_modules/@maplibre/')) {
                         return 'maplibre';
                     }
