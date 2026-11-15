@@ -34,6 +34,17 @@ describe('routeListViewModel', () => {
         expect(last.errorMessage).toBe('');
     });
 
+    it('initialTables を渡すと ready で開始し読み込みを行わない', () => {
+        const initialTables = [
+            { selector: '.a tbody', sourceId: 'a', rows: [{ routeId: '1' }], visibleColumns: ['routeId' as const] },
+        ];
+        const repository = { loadRouteRows: vi.fn() };
+        const viewModel = createRouteListViewModel({ tables: [], repository, initialTables });
+
+        expect(viewModel.getState()).toMatchObject({ status: 'ready', tables: initialTables });
+        expect(repository.loadRouteRows).not.toHaveBeenCalled();
+    });
+
     it('search/reset は query を更新する', () => {
         const viewModel = createRouteListViewModel({
             tables: [],

@@ -65,6 +65,7 @@ if [ "${CF_PAGES_BRANCH}" = "main" ]; then
   BASE_URL="https://searoute.info"
   echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" > deploy/sitemap.xml
   find deploy -name "*.html" | while read filepath; do
+    [ "$(basename "$filepath")" = "404.html" ] && continue
     relative_path="${filepath#deploy/}"
     url_path="${relative_path%index.html}"
     mod_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")

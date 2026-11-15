@@ -4,6 +4,12 @@
  * 地図・データ取得などブラウザ専用の処理は副作用（useEffect）でのみ動くため、ここではサービスを空実装で渡す
  */
 import { renderToString } from 'react-dom/server';
+import type { FetchLike } from '../adapters/http/fetchWithRetry';
+import { createRouteListRepository } from '../adapters/data/routeListRepository';
+import { buildLlmsFullText, buildRouteListJsonLd } from '../application/routeListPublication';
+import { serializeRouteListSnapshot } from '../application/routeListSnapshot';
+import { loadRouteListTables } from '../application/useCases/loadRouteListTables';
+import type { RouteTableState } from '../application/viewModels/routeListViewModel';
 import { createDrawerViewModel } from '../application/viewModels/drawerViewModel';
 import { createMapViewModel } from '../application/viewModels/mapViewModel';
 import { createRouteListViewModel } from '../application/viewModels/routeListViewModel';
@@ -12,6 +18,10 @@ import { MapPage } from '../presentation/map/MapPage';
 import { MapServicesProvider } from '../presentation/map/mapPageServices';
 import type { MapPageServices } from '../presentation/map/mapPageServices';
 import { RouteListPage } from '../presentation/routeList/RouteListPage';
+import { ROUTE_LIST_TABLE_CONFIGS } from './routeListServices';
+
+const FETCH_TIMEOUT_MS = 30_000;
+export const SITE_URL = 'https://searoute.info';
 
 function unavailable(): never {
     throw new Error('プリレンダリング中は利用できません');
@@ -44,18 +54,36 @@ export function renderMapPage(buildNumber: string): string {
     );
 }
 
-export function renderRouteListPage(): string {
+export function renderRouteListPage(routeTables: RouteTableState[] = []): string {
     const viewModel = createRouteListViewModel({
         tables: [],
         repository: { loadRouteRows: async () => [] },
+        initialTables: routeTables.length > 0 ? routeTables : undefined,
     });
     return renderToString(<RouteListPage viewModel={viewModel} />);
 }
 
+export { buildLlmsFullText };
+
+export type PrerenderedPage = { app: string; head?: string; bodyEnd?: string };
+
 /** ページごとのプリレンダリング結果（キーはビルド成果物の HTML ファイル名） */
-export function renderPages(buildNumber: string): Record<string, string> {
+export function renderPages(buildNumber: string, routeTables: RouteTableState[] = []): Record<string, PrerenderedPage> {
+    const routeList: PrerenderedPage = { app: renderRouteListPage(routeTables) };
+    if (routeTables.length > 0) {
+        routeList.head = buildRouteListJsonLd(routeTables, SITE_URL);
+        routeList.bodyEnd = serializeRouteListSnapshot(routeTables);
+    }
     return {
-        'index.html': renderMapPage(buildNumber),
-        'routeList.html': renderRouteListPage(),
+        'index.html': { app: renderMapPage(buildNumber) },
+        'routeList.html': routeList,
     };
+}
+
+/** ビルド時に航路一覧データを取得する（1件でも失敗したら reject） */
+export function loadPrerenderRouteTables(): Promise<RouteTableState[]> {
+    const stamp = Date.now();
+    const fetchImpl: FetchLike = (input, init) => fetch(input, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+    const configs = ROUTE_LIST_TABLE_CONFIGS.map((config) => ({ ...config, dataPath: `${config.dataPath}?v=${stamp}` }));
+    return loadRouteListTables(configs, createRouteListRepository({ fetchImpl }));
 }
