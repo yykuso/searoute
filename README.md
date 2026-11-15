@@ -82,6 +82,7 @@ searoute/
 - 地図ページの UI が必要とするサービスは `presentation/map/mapPageServices.tsx` の `MapPageServices` として定義し、`entrypoints/mapServices.ts` が adapters を組み合わせて実装し、`MapServicesProvider` で注入します。
 - MapLibre のコントロール（ハンバーガー・レイヤー・航路フィルター）は adapters の `ContainerControl` が空のコンテナを追加し、React がポータルで中身を描画します。
 - ビルド時プリレンダリング（SSG）: `npm run build` の最後に `src/entrypoints/prerender.tsx` を SSR で描画し、`dist/*.html` の `#app` に静的 HTML（見出し・サイト情報・プライバシーポリシー・一覧の検索 UI 等）を埋め込みます。クライアントは `hydrateRoot` で引き継ぐため、コンポーネントは描画中に window / document / Cookie を参照せず、副作用内で参照してください。Cookie バナーの表示判定は index.html head のインラインスクリプトが `html[data-cookie-banner]` を付けて CSS で行います。
+- 航路一覧のビルド時データ: ビルド時に `https://pmtiles.searoute.info/lightweight/*.json` を取得し、`dist/routeList.html` に全航路の行・`route-list-data`（JSON）・`ItemList` JSON-LD を埋め込み、`dist/llms-full.txt`（全航路のテキスト一覧）を生成します。取得に失敗するとビルドも失敗します。ネットワークを使わない検証（E2E など）は `SEAROUTE_SKIP_ROUTE_DATA=1` で取得・埋め込みを省略できます。
 - 初回表示の高速化: React アプリは静的 HTML の初回描画（FCP）後に動的 import してハイドレーションし、MapLibre は地図生成時に動的 import します。
 - アイコンは Font Awesome Free 6.4.0 のうち使用分だけをインライン SVG で描画します（位置合わせ用 CSS は `src/styles/icons.css`）。新しいアイコンを使うときは、`presentation/common/Icon.tsx` の `ICONS` に登録してください。未登録のアイコンは SVG のない空の `<i>` になり、コンソールに警告が出ます。
 

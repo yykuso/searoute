@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
+import type { RouteTableState } from '../../src/application/viewModels/routeListViewModel';
 import { renderPages } from '../../src/entrypoints/prerender';
 
 // 旧版（develop ブランチの Vanilla JS 版）の HTML。body の静的マークアップをプリレンダリング結果と比較する
@@ -15,7 +16,7 @@ function legacyBody(fileName: string): Document {
 }
 
 function prerendered(fileName: string): Document {
-    const html = renderPages(BUILD_NUMBER)[fileName];
+    const html = renderPages(BUILD_NUMBER)[fileName].app;
     return new JSDOM(`<!DOCTYPE html><body><div id="app">${html}</div></body>`).window.document;
 }
 
@@ -80,5 +81,27 @@ describe('プリレンダリング結果は旧版の静的 body と同等', () =
         ));
         expect(tableHeaders(currentDocument)).toEqual(tableHeaders(legacyDocument));
         expect(currentDocument.getElementById('searchbox')?.getAttribute('placeholder')).toBe('検索キーワードを入力');
+    });
+});
+
+describe('航路データ付きプリレンダリング', () => {
+    const tables: RouteTableState[] = [{
+        selector: '.sea-route-table tbody',
+        sourceId: 'geojson_sea_route',
+        rows: [{ routeId: '2', businessName: 'ハートランドフェリー', routeName: '稚内～利尻' }],
+        visibleColumns: ['routeId', 'businessName', 'routeName'],
+    }];
+
+    it('routeList.html に航路名・スナップショット・JSON-LD が入る', () => {
+        const page = renderPages(BUILD_NUMBER, tables)['routeList.html'];
+        expect(page.app).toContain('稚内～利尻');
+        expect(page.bodyEnd).toContain('id="route-list-data"');
+        expect(page.head).toContain('ItemList');
+    });
+
+    it('データが空なら head / bodyEnd を付けない', () => {
+        const page = renderPages(BUILD_NUMBER, [])['routeList.html'];
+        expect(page.head).toBeUndefined();
+        expect(page.bodyEnd).toBeUndefined();
     });
 });

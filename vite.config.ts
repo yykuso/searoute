@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { createServer, defineConfig } from 'vite';
 import type { Plugin } from 'vite';
+import type { RouteTableState } from './src/application/viewModels/routeListViewModel';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 
@@ -39,16 +40,29 @@ function prerenderPages(): Plugin {
                 plugins: [react()],
             });
             try {
-                const { renderPages } = await server.ssrLoadModule('/src/entrypoints/prerender.tsx') as {
-                    renderPages: (buildNumber: string) => Record<string, string>;
+                const { renderPages, loadPrerenderRouteTables, SITE_URL } = await server.ssrLoadModule('/src/entrypoints/prerender.tsx') as {
+                    renderPages: (buildNumber: string, routeTables?: RouteTableState[]) => Record<string, { app: string; head?: string; bodyEnd?: string }>;
+                    loadPrerenderRouteTables: () => Promise<RouteTableState[]>;
+                    SITE_URL: string;
                 };
-                for (const [fileName, appHtml] of Object.entries(renderPages(BUILD_NUMBER))) {
+                const { buildLlmsFullText } = await server.ssrLoadModule('/src/application/routeListPublication.ts') as {
+                    buildLlmsFullText: (tables: RouteTableState[], siteUrl: string, generatedAt: string) => string;
+                };
+                // SEAROUTE_SKIP_ROUTE_DATA=1 のときは航路データを取得しない（E2E など）。取得失敗はビルド失敗にする
+                const routeTables = process.env.SEAROUTE_SKIP_ROUTE_DATA === '1' ? [] : await loadPrerenderRouteTables();
+                for (const [fileName, page] of Object.entries(renderPages(BUILD_NUMBER, routeTables))) {
                     const filePath = resolve(outDir, fileName);
                     const html = await readFile(filePath, 'utf8');
                     if (!html.includes(APP_ROOT)) {
                         throw new Error(`${fileName} に ${APP_ROOT} が見つかりません`);
                     }
-                    await writeFile(filePath, html.replace(APP_ROOT, `<div id="app">${appHtml}</div>`));
+                    let output = html.replace(APP_ROOT, () => `<div id="app">${page.app}</div>`);
+                    if (page.head) output = output.replace('</head>', () => `${page.head}\n</head>`);
+                    if (page.bodyEnd) output = output.replace('</body>', () => `${page.bodyEnd}\n</body>`);
+                    await writeFile(filePath, output);
+                }
+                if (routeTables.length > 0) {
+                    await writeFile(resolve(outDir, 'llms-full.txt'), buildLlmsFullText(routeTables, SITE_URL, new Date().toISOString()));
                 }
             } finally {
                 await server.close();
