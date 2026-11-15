@@ -11,8 +11,9 @@ export const ROUTE_TABLE_LABELS: Record<string, string> = {
     geojson_KR_sea_route: '韓国国内航路',
 };
 
+/** 公開用の絶対 URL。Cloudflare Pages は /index.html を / へリダイレクトするため、正規形の /?share=... にする */
 function mapUrl(siteUrl: string, row: RouteRow, sourceId: string): string {
-    return `${siteUrl}/${buildRouteMapPath(row.routeId, sourceId)}`;
+    return `${siteUrl}/${buildRouteMapPath(row.routeId, sourceId).replace(/^index\.html/, '')}`;
 }
 
 export function buildRouteListJsonLd(tables: RouteTableState[], siteUrl: string): string {
