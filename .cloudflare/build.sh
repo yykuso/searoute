@@ -5,33 +5,21 @@ set -o pipefail
 # 1. 実行場所をリポジトリルートに固定
 cd "$(dirname "$0")/.."
 
-# 2. 成果物用ディレクトリの作成
-rm -rf deploy
-mkdir -p .tmp_deploy
-
-# 3. ファイルのコピー
-cp -r ./* .tmp_deploy/ 2>/dev/null || true
-
-cd .tmp_deploy
-rm -rf \
-  .github .git .cloudflare .gitignore README.md _config.yml \
-  node_modules tests test-results playwright-report tools \
-  package.json package-lock.json \
-  playwright.config.js vitest.config.js tailwind.config.js \
-  css/tailwind-input.css
-cd ..
-mv .tmp_deploy deploy
-
-# Cloudflare PagesのコミットSHAをビルド番号として表示へ埋め込む。
+# 2. ビルド番号（Cloudflare Pages のコミットSHA 先頭7桁）を Vite へ渡す
+#    サイト情報の #site-build-number は React が import.meta.env.VITE_BUILD_NUMBER で描画する（vite.config.ts の define）
 BUILD_SHA="${CF_PAGES_COMMIT_SHA:-$(git rev-parse HEAD 2>/dev/null || echo local)}"
 BUILD_NUMBER=$(printf '%.7s' "$BUILD_SHA")
-sed -i "s|<span id=\"site-build-number\">[^<]*</span>|<span id=\"site-build-number\">${BUILD_NUMBER}</span>|" deploy/index.html
+export VITE_BUILD_NUMBER="${BUILD_NUMBER}"
 
-# docs と src は配信対象外（存在する場合のみ削除）。
-rm -rf deploy/docs
-rm -rf deploy/src
+# 3. 依存のインストールと Vite ビルド（型チェック込み）。JS/CSS の最小化は Vite が行う
+npm ci
+npm run build
 
-# 4. GeoJSONとJSONの最適化 (jqの代わりにNode.jsを使用)
+# 4. 成果物を Cloudflare Pages の出力ディレクトリ（deploy/）へ配置
+rm -rf deploy
+mv dist deploy
+
+# 5. GeoJSONとJSONの最適化 (jqの代わりにNode.jsを使用)
 node -e '
 const fs = require("fs");
 const path = require("path");
@@ -65,32 +53,14 @@ function optimize(p) {
 optimize("deploy/manifest.json");
 '
 
-# 5. JS/CSSの最適化
-if [ -d "deploy/js" ]; then
-  find deploy/js -name '*.js' | while read file; do
-    npx -p esbuild esbuild "$file" --minify --format=esm --outfile="$file.min" && mv "$file.min" "$file"
-  done
-fi
-
-if [ -d "deploy/lib" ]; then
-  find deploy/lib -name '*.mjs' | while read file; do
-    npx terser "$file" --module -c -m --comments '/@license|copyright/i' -o "$file.min" && mv "$file.min" "$file"
-  done
-fi
-
+# 6. 静的配信する CSS（public/css）の最適化
 if [ -d "deploy/css" ]; then
   find deploy/css -name '*.css' | while read file; do
     npx -p esbuild esbuild "$file" --minify --outfile="$file.min" && mv "$file.min" "$file"
   done
 fi
 
-if [ -d "deploy/lib" ]; then
-  find deploy/lib -name '*.css' | while read file; do
-    npx -p esbuild esbuild "$file" --minify --outfile="$file.min" && mv "$file.min" "$file"
-  done
-fi
-
-# 6. サイトマップとrobots.txtの生成 (Production のみ)
+# 7. サイトマップとrobots.txtの生成 (Production のみ)
 if [ "${CF_PAGES_BRANCH}" = "main" ]; then
   BASE_URL="https://searoute.info"
   echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" > deploy/sitemap.xml

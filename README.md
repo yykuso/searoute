@@ -2,119 +2,94 @@
 
 日本全国の旅客船・フェリー航路情報を地図で探せるWebアプリケーションです。時刻表や公式サイトへのリンクも充実、旅行計画に便利です。
 
-🌐 **デモサイト**: [https://searoute.info/](https://searoute.info/)
+デモサイト: [https://searoute.info/](https://searoute.info/)
 
 ## 特徴
 
-- 📍 **インタラクティブな地図表示**: 日本全国の航路を地図上で可視化
-- 🚢 **豊富な航路情報**: 国内航路、国際航路、韓国航路を網羅
-- 🔗 **時刻表リンク**: 各航路の時刻表や公式サイトへ直接アクセス
-- 📱 **PWA対応**: スマートフォンでもアプリのように利用可能
-- 🗺️ **複数の地図スタイル**: OpenStreetMap、衛星画像、国土地理院など
+- 日本全国の航路をインタラクティブな地図上で可視化
+- 国内航路、国際航路、韓国航路を網羅した豊富な航路情報
+- 時刻表リンクから各航路の時刻表や公式サイトへ直接アクセス
+- PWA に対応し、スマートフォンでもアプリのように利用可能
+- 複数の地図スタイル: OpenStreetMap、衛星画像、国土地理院など
 
 ## 技術スタック
 
-- **地図ライブラリ**: MapLibre GL JS（ローカル配置の ESM を使用）
-- **航路データ配信**: PMTiles + lightweight JSON（`https://pmtiles.searoute.info/`）
-- **スタイリング**: Tailwind CSS 4（ビルド済み静的CSS）
-- **フレームワーク**: Vanilla JavaScript (フレームワークレス)
-- **テスト**: Vitest / Playwright
-- **ホスティング**: Cloudflare Pages / 静的ホスティング
-
-### MapLibre 関連ライブラリの配置方針
-
-- MapLibre 本体と Geocoder は CDN ではなく `lib/` 配下に配置し、`index.html` からローカルファイルを参照します。
-- 現在の配置:
-	- `lib/maplibre-gl-js/6.1.0/`
-	- `lib/maplibre-gl-geocoder/1.9.4/`
-- バージョンごとにディレクトリを分けることで、差し替え時の影響範囲を明確化し、ロールバックもしやすくします。
-- 静的ホスティング（GitHub Pages / Cloudflare Pages）との相性がよく、外部 CDN 障害の影響を受けにくくなります。
+- フレームワーク: React 19 + TypeScript（strict）/ Vite 8（マルチページ: `index.html`, `routeList.html`）
+- 地図ライブラリ: MapLibre GL JS 6.18.0 / MapLibre Geocoder 1.9.4 / PMTiles 4.5.0（npm パッケージ）
+- 航路データ配信: PMTiles + lightweight JSON（`https://pmtiles.searoute.info/`）
+- スタイリング: Tailwind CSS 4（`@tailwindcss/vite`）+ 静的CSS（`public/css/`）
+- アイコン: Font Awesome Free 6.4.0（`@fortawesome/free-solid-svg-icons` / `@fortawesome/free-brands-svg-icons`）。使用分だけをインライン SVG で描画
+- テスト: Vitest + React Testing Library / Playwright
+- 静的解析: ESLint + eslint-plugin-boundaries（レイヤー依存ルール）
+- ホスティング: Cloudflare Pages（`.cloudflare/build.sh` → `deploy/`）
 
 ## セットアップ & 開発
 
-### インストール
-
 ```bash
-# 依存パッケージのインストール
-npm install
+npm install        # 依存パッケージのインストール
+npm run dev        # 開発サーバー
+npm run build      # 型チェック + 本番ビルド（dist/）
+npm run preview    # ビルド成果物の確認
+npm run typecheck  # 型チェックのみ
+npm run lint       # ESLint（レイヤー境界チェックを含む）
+npm test           # 単体テスト
+npm run test:e2e   # E2E テスト（ビルド成果物に対して実行）
 ```
 
-### ローカル確認
+- 開発サーバーは `http://127.0.0.1:5173/` で起動します（ポート固定。使用中なら起動しません）。Cloudflare Quick Tunnel（`*.trycloudflare.com`）経由のアクセスも許可しています。
+- `npm run preview` は `http://localhost:4173/` で起動します。`npm run test:e2e` は `npm run build` のあと `http://127.0.0.1:4173` でプレビューを起動して検証します。
+- Windows では、`npm test` を大文字のドライブ名（`C:\`）で始まるカレントディレクトリから実行してください。Git Bash などで `c:\` のように小文字になっていると、Vitest がモジュールを二重に読み込み、全テストが失敗します。
 
-静的サイトとして動作するため、任意のローカルサーバーで確認できます。
+## デプロイ
 
-```bash
-# 例: ルートディレクトリを配信
-npx http-server .
-```
+Cloudflare Pages が `.cloudflare/build.sh` を実行し、`deploy/` を公開します。
 
-### Tailwind CSS のビルド
-
-本プロジェクトは Tailwind CSS を静的ビルド済みで運用しています。HTMLやJSファイルのクラスを変更した場合は、以下を実行してください：
-
-```bash
-# 一回のビルド
-npm run build:css
-
-# 開発中（自動再ビルド）
-npm run watch:css
-```
-
-ビルドされたCSSは `css/tailwind.css` に出力されます。
-
-### テスト
-
-```bash
-# 単体テスト
-npm test
-
-# E2E テスト
-npm run test:e2e
-```
+1. ビルド番号（コミット SHA の先頭7桁）を `VITE_BUILD_NUMBER` に設定する
+2. `npm ci` と `npm run build` を実行し、`dist/` を `deploy/` に移す
+3. `deploy/data`・`deploy/style` の JSON / GeoJSON と `deploy/manifest.json` を最小化する（GeoJSON の数値は小数第5位に丸める）
+4. `deploy/css` の CSS を esbuild で最小化する
+5. `main` ブランチのときだけ `sitemap.xml` と `robots.txt` を生成する
 
 ## データソース
 
-- **航路データ**: 独自に収集・作成
-- **港湾データ**: [国土数値情報（港湾データ）](https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-C02-v3_2.html)を加工して作成
-- **地図タイル**: OpenStreetMap、国土地理院、Esri
+- 航路データ: 独自に収集・作成
+- 港湾データ: [国土数値情報（港湾データ）](https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-C02-v3_2.html)を加工して作成
+- 地図タイル: OpenStreetMap、国土地理院、Esri
 
 ## プロジェクト構成
 
 ```
 searoute/
-├── index.html              # メインページ
-├── routeList.html          # 航路一覧ページ
-├── manifest.json           # PWAマニフェスト
-├── service-worker.js       # Service Worker
-├── css/                    # ビルド済みCSSと共通スタイル
-├── data/                   # 港湾データなどの静的データ
-├── docs/                   # 仕様書・補助ドキュメント
-├── img/                    # 画像・アイコン
-├── js/
-│   ├── entrypoints/        # Composition Root
-│   │   ├── mapPage.js
-│   │   └── routeListPage.js
-│   ├── application/        # 初期化・共有URL復元などのユースケース
-│   ├── adapters/           # MapLibre, データ取得, Cookie, Analytics 連携
-│   ├── presentation/       # UI描画とイベント接続
-│   ├── domain/             # 純粋なドメインロジック
-│   └── config/             # レイヤー定義・地図スタイル設定
-├── style/                  # MapLibre スタイルJSON・スプライト定義
-└── tests/                  # Vitest / Playwright テスト
+├── index.html / routeList.html  # Vite のエントリー HTML（head の SEO/OGP/解析設定を含む）
+├── public/                      # そのまま配信する静的ファイル（data/ style/ img/ css/ manifest.json service-worker.js llms.txt 等）
+├── src/
+│   ├── domain/          # 純粋なドメインロジックと型（外部依存なし）
+│   ├── config/          # レイヤー定義・地図スタイル設定（純データ）
+│   ├── application/     # ユースケース・ViewModel・ポート定義（DOM/MapLibre/React 非依存）
+│   ├── adapters/        # ポートの実装（MapLibre, PMTiles, Cookie, fetch, Nominatim, Wikipedia, GA）
+│   ├── presentation/    # React コンポーネント・フック（common/ map/ routeList/）。サービスは Context で注入され adapters を直接参照しない
+│   ├── entrypoints/     # Composition Root（main-*.tsx が初回描画後に mapApp.tsx / routeListApp.tsx を動的 import してハイドレーション、Service Worker 登録）
+│   └── styles/          # Tailwind 入力・アイコン用 CSS（icons.css。HTML head へインライン展開）
+├── sprite-src/          # スプライト元 SVG（配信対象外）
+├── docs/                # 仕様書・補助ドキュメント
+├── tests/               # Vitest / Playwright テスト（src と同じ層構成。E2E は tests/e2e/）
+└── .cloudflare/build.sh # Cloudflare Pages のビルドスクリプト
 ```
 
-### 主要ファイル
+依存は内向きのみ（domain ← application ← adapters / presentation ← entrypoints）。`npm run lint` で検査します。
 
-- `js/entrypoints/mapPage.js`: マップ画面のエントリーポイント
-- `js/application/initializeMap.js`: MapLibre 初期化、コントロール追加、共有URL復元
-- `js/adapters/map/pmtilesLayerAdapter.js`: PMTiles 航路レイヤーの描画、ズーム、ハイライト
-- `js/presentation/map/`: ドロワー、レイヤー切替、コンテキストメニューなどの UI
-- `js/presentation/routeList/`: 航路一覧の表示と検索
-- `js/domain/`: フィルター、共有URL、航路データ整形などの純粋ロジック
+- ViewModel（application）はフレームワーク非依存。React は `useViewModelState`（useSyncExternalStore）で購読します。
+- 地図ページの UI が必要とするサービスは `presentation/map/mapPageServices.tsx` の `MapPageServices` として定義し、`entrypoints/mapServices.ts` が adapters を組み合わせて実装し、`MapServicesProvider` で注入します。
+- MapLibre のコントロール（ハンバーガー・レイヤー・航路フィルター）は adapters の `ContainerControl` が空のコンテナを追加し、React がポータルで中身を描画します。
+- ビルド時プリレンダリング（SSG）: `npm run build` の最後に `src/entrypoints/prerender.tsx` を SSR で描画し、`dist/*.html` の `#app` に静的 HTML（見出し・サイト情報・プライバシーポリシー・一覧の検索 UI 等）を埋め込みます。クライアントは `hydrateRoot` で引き継ぐため、コンポーネントは描画中に window / document / Cookie を参照せず、副作用内で参照してください。Cookie バナーの表示判定は index.html head のインラインスクリプトが `html[data-cookie-banner]` を付けて CSS で行います。
+- 初回表示の高速化: React アプリは静的 HTML の初回描画（FCP）後に動的 import してハイドレーションし、MapLibre は地図生成時に動的 import します。
+- アイコンは Font Awesome Free 6.4.0 のうち使用分だけをインライン SVG で描画します（位置合わせ用 CSS は `src/styles/icons.css`）。新しいアイコンを使うときは、`presentation/common/Icon.tsx` の `ICONS` に登録してください。未登録のアイコンは SVG のない空の `<i>` になり、コンソールに警告が出ます。
 
 ## 仕様書
 
 - [docs/searoute-spec.md](docs/searoute-spec.md): 機能仕様、状態管理、回帰テスト観点をまとめた設計書
+- [docs/service-worker-guide.md](docs/service-worker-guide.md): Service Worker のキャッシュ戦略と更新手順
+- [docs/style-layers.md](docs/style-layers.md): 地図スタイル `public/style/maptiler-basic-ja-custom.json` のレイヤー一覧
 
 ## ライセンス
 
@@ -122,7 +97,7 @@ MIT License
 
 Copyright (c) 2026 [@yy_kuso](https://x.com/yy_kuso)
 
-このソフトウェアは、著作権表示および本許諾表示を含む場合に限り、改変・再配布が可能です。
+このソフトウェアは著作権表示および本許諾表示を含む場合に限り、改変・再配布が可能です。
 
 ## 作者
 

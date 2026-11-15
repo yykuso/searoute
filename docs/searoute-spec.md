@@ -2,7 +2,7 @@
 
 ## 1. 文書の目的
 
-この文書は、おでかけ航路マップの現行仕様を Spec-Driven Development 風に整理し、機能改修時の影響確認と回帰テストの基準として利用する設計書である。
+この文書はおでかけ航路マップの現行仕様を Spec-Driven Development 風に整理し、機能改修時の影響確認と回帰テストの基準として利用する設計書である。
 
 主な用途は以下の通り。
 
@@ -17,9 +17,10 @@
 
 - マップ画面: index.html
 - 航路一覧画面: routeList.html
-- PWA 関連: manifest.json, service-worker.js
-- データ表示ロジック: js 配下のモジュール群
-- 航路・港湾データ: data 配下の GeoJSON / JSON
+- PWA 関連: public/manifest.json, public/service-worker.js
+- データ表示ロジック: src 配下の React + TypeScript モジュール群
+- 航路データ: `https://pmtiles.searoute.info/` から配信する PMTiles と JSON
+- 港湾データ: public/data/portData.geojson
 
 対象外。
 
@@ -29,7 +30,7 @@
 
 ## 3. システム概要
 
-本サイトは、日本国内外の旅客船・フェリー航路情報を地図上で探索できる静的 Web アプリである。利用者は地図上の航路や港湾をクリックして詳細情報を確認し、外部の時刻表や公式サイトへ遷移できる。
+本サイトは日本国内外の旅客船・フェリー航路情報を地図上で探索できる静的 Web アプリである。利用者は地図上の航路や港湾をクリックして詳細情報を確認し、外部の時刻表や公式サイトへ遷移できる。
 
 主要な利用シナリオは以下。
 
@@ -47,17 +48,14 @@
 対象ファイル。
 
 - index.html
-- js/entrypoints/mapPage.js
-- js/application/initializeMap.js
-- js/adapters/map/geoJsonLayerAdapter.js
-- js/adapters/map/pmtilesLayerAdapter.js
-- js/adapters/map/rasterLayerAdapter.js
-- js/adapters/map/layerManager.js
-- js/presentation/map/detailDrawerView.js
-- js/presentation/map/layerControlView.js
-- js/presentation/map/contextMenuView.js
-- js/presentation/map/mapPointerInteractions.js
-- js/config/layerConfig.js
+- src/entrypoints/main-map.tsx / src/entrypoints/mapServices.ts
+- src/presentation/map/MapPage.tsx（ルートコンポーネント）
+- src/presentation/map/DetailDrawer.tsx / detailDrawerController.ts / DrawerBody.tsx
+- src/presentation/map/HamburgerMenu.tsx / LayerControl.tsx / RouteFilterControl.tsx
+- src/presentation/map/ContextMenu.tsx / mapPointerInteractions.ts / touchPanelToggle.ts
+- src/presentation/common/（InfoWindow / PrivacyPolicyWindow / CookieBanner / toast / loadingIndicator）
+- src/adapters/map/mapFactory.ts / controlContainer.ts / geoJsonLayerAdapter.ts / pmtilesLayerAdapter.ts / layerManager.ts
+- src/config/layerConfig.ts
 
 主要 UI 要素。
 
@@ -76,10 +74,10 @@
 対象ファイル。
 
 - routeList.html
-- js/entrypoints/routeListPage.js
-- js/presentation/routeList/routeListView.js
-- js/presentation/routeList/routeListViewModel.js
-- js/adapters/data/routeListRepository.js
+- src/entrypoints/main-routeList.tsx / src/entrypoints/routeListServices.ts
+- src/presentation/routeList/RouteListPage.tsx
+- src/application/viewModels/routeListViewModel.ts
+- src/adapters/data/routeListRepository.ts
 
 主要 UI 要素。
 
@@ -93,17 +91,20 @@
 
 ### 5.1 航路データ
 
-航路データは GeoJSON と詳細 JSON の組み合わせで構成される。
+航路データは PMTiles と詳細 JSON の組み合わせで構成される（設定は src/config/routeLayers.ts）。
 
-- GeoJSON: 線形データと最小限の属性を保持
-- Details JSON: routeId をキーとして詳細情報を保持
+- PMTiles: 線形データと最小限の属性を保持する。4 種類の航路を 1 つのファイル `https://pmtiles.searoute.info/searoute.pmtiles` に収め、source-layer で分ける
+- 詳細 JSON: routeId ごとに 1 ファイル（`https://pmtiles.searoute.info/details/<フォルダ>/<routeId>.json`）。フォルダは source-layer 名、datasetName の順に試し、取得できなければ空の詳細として扱う
+- 一覧用 JSON: 航路一覧画面が読み込む（`https://pmtiles.searoute.info/lightweight/<source-layer>.json`。期間限定航路は一覧に含めない）
 
 主なデータセット。
 
-- data/seaRoute.geojson + data/seaRouteDetails.json
-- data/internationalSeaRoute.geojson + data/internationalSeaRouteDetails.json
-- data/seaRouteKR.geojson + data/seaRouteKRDetails.json
-- data/limitedSeaRoute.geojson + data/limitedSeaRouteDetails.json
+| レイヤー ID | source-layer | datasetName |
+|---|---|---|
+| geojson_sea_route | seaRoute | seaRoute |
+| geojson_international_sea_route | seaRoute_international | internationalSeaRoute |
+| geojson_KR_sea_route | seaRoute_KR | seaRouteKR |
+| geojson_limited_sea_route | seaRoute_limited | limitedSeaRoute |
 
 主なプロパティ。
 
@@ -130,113 +131,126 @@
 
 ### 5.3 港湾データ
 
-港湾データは data/portData.geojson を使用する。主なプロパティは港名と補足情報である。
+港湾データは public/data/portData.geojson（配信時は ./data/portData.geojson）を使用する。主なプロパティは港名と補足情報である。
 
 ## 6. アーキテクチャ概要
 
 ### 6.1 技術要素
 
 - 配信: Cloudflare Pages
-- 実装方式: Vanilla JavaScript モジュール
-- 地図: MapLibre GL JS（`lib/maplibre-gl-js/6.1.0/` のローカル配布ファイルを使用）
-- 検索補助: Maplibre Geocoder + Nominatim（`lib/maplibre-gl-geocoder/1.9.4/` を使用）
-- スタイル: Tailwind CSS と独自 CSS
+- 実装方式: React 19 + TypeScript（strict）、Vite 8 によるマルチページビルド（index.html / routeList.html）
+- 地図: MapLibre GL JS 6.18.0（npm `maplibre-gl`。ワーカーは `?worker&url` でバンドルし setWorkerUrl で指定）
+- タイル: PMTiles 4.5.0（npm `pmtiles`）
+- 検索補助: Maplibre Geocoder 1.9.4（npm `@maplibre/maplibre-gl-geocoder`）+ Nominatim
+- スタイル: Tailwind CSS 4（`@tailwindcss/vite`）と独自 CSS（public/css/）
+- アイコン: Font Awesome Free 6.4.0（npm `@fortawesome/free-solid-svg-icons` / `@fortawesome/free-brands-svg-icons`）をインライン SVG で描画
 - PWA: manifest.json と service-worker.js
 - 計測: Google Analytics
 
 ### 6.2 モジュール責務
 
-依存方向（上から下のみ）。
+依存方向（内向きのみ。`npm run lint` の eslint-plugin-boundaries で検査）。
 
 ```mermaid
 flowchart TD
     E["**entrypoints/**
-    mapPage.js
-    routeListPage.js"]
-
-    A["**application/**
-    initializeMap.js
-    restoreSharedRoute.js
-    getInitialMapView.js"]
-
-    AD["**adapters/**
-    map/ · data/ · analytics/
-    geocoding/ · http/ · persistence/"]
+    main-map.tsx · main-routeList.tsx
+    mapApp.tsx · routeListApp.tsx · mountApp.tsx
+    afterFirstPaint.ts · prerender.tsx
+    mapServices.ts · routeListServices.ts
+    serviceWorkerRegistration.ts"]
 
     P["**presentation/**
-    map/ · routeList/
-    shareDrawer.js · drawerPresenter.js"]
+    common/ · map/ · routeList/ · hooks/"]
+
+    AD["**adapters/**
+    map/ · data/ · analytics/ · browser/
+    geocoding/ · http/ · persistence/"]
+
+    A["**application/**
+    ports.ts · useCases/ · viewModels/"]
 
     D["**domain/**
-    routeFilter.js · shareContext.js
-    geoBounds.js · route.js"]
+    routeFilter · shareContext
+    geoBounds · route · seaRoute"]
 
     C["**config/**
-    layerConfig.js · routeLayers.js
-    rasterLayerConfig.js · mapStyles.js"]
+    layerConfig · routeLayers · mapStyles"]
 
-    E --> A & AD & P
-    A --> AD & D & C
-    P --> AD & D
-    AD --> D & C
+    E --> P & AD & A
+    P --> A & D & C
+    AD --> A & D & C
+    A --> D & C
+    C --> D
 ```
+
+- presentation は adapters を参照しない。地図ページが必要とするサービスは `presentation/map/mapPageServices.tsx` の `MapPageServices`（地図操作は MapLibre 非依存の `MapHandle`）として宣言し、entrypoints が実装して React Context（`MapServicesProvider`）で注入する。
+- MapLibre のコントロール（ハンバーガー・レイヤー・航路フィルター）は adapters の `ContainerControl` が空のコンテナを地図へ追加し、React がポータルで中身を描画する。
+- ビルド時プリレンダリング（SSG）: vite.config.ts の `searoute-prerender` プラグインがクライアントビルド後に `src/entrypoints/prerender.tsx`（react-dom/server の renderToString）を実行し、各ページの静的マークアップとビルド番号を `dist/*.html` の `#app` に埋め込む。クライアントは `hydrateRoot`（開発サーバーでは空のため `createRoot`）。地図・データ取得は副作用で実行するため、プリレンダリング結果は旧版の静的 body と同等（tests/entrypoints/prerender.test.tsx で旧版 HTML と比較）。
+- 読み込み順序（パフォーマンス）: エントリーは小さく保ち、プリレンダリング済み HTML の初回描画（first-contentful-paint）を待ってから React アプリを動的 import してハイドレーションする（startTransition で分割実行）。MapLibre（約 310KB gzip）は地図生成時（ハイドレーション後の副作用）に動的 import する。
+- アイコン: Font Awesome Free 6.4.0 の Web フォント・CSS（CDN）は使わず、使用するアイコンだけを `presentation/common/Icon.tsx` がインライン SVG で描画する（`<i class="fa-solid fa-xxx">` の class は維持）。寸法・位置を再現する CSS は `src/styles/icons.css` で、ビルド時に各 HTML の head へインライン展開する。
+- Cookie バナー: index.html head のインラインスクリプトが同意 Cookie の有無で `<html data-cookie-banner="show">` を付け、インライン CSS で HTML 解析中から表示する（JS 無効・同意済みは非表示）。React は閉じた後の非表示のみ管理する。
 
 レイヤーごとの主な責務。
 
 | レイヤー | ファイル | 責務 |
 |---|---|---|
-| entrypoints | mapPage.js | マップ画面の Composition Root |
-| entrypoints | routeListPage.js | 一覧画面の Composition Root |
-| application | initializeMap.js | MapLibre 初期化・コントロール追加・ロードイベント |
-| application | restoreSharedRoute.js | 共有 URL からのドロワー復元 |
-| application | getInitialMapView.js | Cookie から初期中心座標・ズーム取得 |
-| adapters/map | geoJsonLayerAdapter.js | GeoJSON レイヤー追加・クリックイベント・共有 URL 復元 |
-| adapters/map | pmtilesLayerAdapter.js | PMTiles 航路レイヤー追加・フィルター・ズーム・ハイライト |
-| adapters/map | layerManager.js | ベースマップ切替・オーバーレイ追加削除・表示順管理 |
-| adapters/map | rasterLayerAdapter.js | ラスタータイルレイヤー追加 |
-| adapters/data | dataLoader.js | GeoJSON / JSON 取得、マージ、ローディング制御 |
-| adapters/data | routeDetailsRepository.js | 航路詳細 JSON の取得・キャッシュ |
-| adapters/data | wikipediaImageAdapter.js | Wikipedia API 画像取得 |
-| adapters/geocoding | nominatimGeocodingAdapter.js | Nominatim 地名検索・逆ジオコーディング |
-| adapters/persistence | cookieSettingsRepository.js | Cookie の低レベル読み書き |
-| adapters/persistence | cookieControl.js | Cookie アクセスの薄いラッパー |
-| adapters/analytics | googleAnalyticsAdapter.js | gtag イベント送信ラッパー |
-| presentation/map | detailDrawerView.js | 詳細ドロワー表示・モバイルスナップ・タッチ操作 |
-| presentation/map | layerControlView.js | レイヤー切替パネル UI |
-| presentation/map | mapPointerInteractions.js | ジオコーダー・長押し・右クリック操作 |
-| presentation/map | mapViewportGuard.js | マップリサイズ監視・moveend Cookie 永続化 |
-| presentation/map | sharedLayerRestorer.js | 共有 URL で指定されたレイヤーの有効化 |
-| presentation/map | mapViewModel.js | ベースマップ・表示レイヤーの状態管理 |
-| presentation/map | routeFilterViewModel.js | 航路フィルターの状態管理と永続化判断 |
-| presentation/map | routeFilterSettingsView.js | フィルター入力 UI と ViewModel の接続 |
-| presentation/routeList | routeListViewModel.js | 一覧テーブルの読み込み状態・検索クエリ管理 |
-| presentation | drawerPresenter.js | ドロワー表示ポート（show / hide / openCoordinate） |
-| presentation | drawerViewModel.js | ドロワー種別・開閉・選択状態の管理 |
-| presentation | shareDrawer.js | 共有 URL コンテキスト管理・クリップボードコピー |
-| config | layerConfig.js | レイヤー一覧定義（ベース / オーバーレイ / GeoJSON） |
-| config | routeLayers.js | PMTiles 航路レイヤー設定・共有 URL 初期ビュー |
-| config | rasterLayerConfig.js | ラスタータイル URL・属性情報 |
-| domain | routeFilter.js | フィルター正規化・既定値判定 |
-| domain | shareContext.js | 共有 URL のビルド・パース・対象レイヤー判定 |
-| domain | geoBounds.js | フィーチャー群からの境界ボックス計算 |
-| domain | route.js | 航路データ正規化・検索 |
+| entrypoints | main-map.tsx | マップ画面のエントリー（CSS 読み込み・GA 遅延読み込み・SW 登録。初回描画後に mapApp.tsx を動的 import） |
+| entrypoints | mapApp.tsx / mountApp.tsx / afterFirstPaint.ts | React アプリのマウント（startTransition 内で hydrateRoot）と、FCP 後まで読み込みを遅らせる処理 |
+| entrypoints | mapServices.ts | マップ画面の Composition Root（adapters → MapPageServices。MapLibre を含む adapters/map/mapFactory は地図生成時に動的 import） |
+| entrypoints | main-routeList.tsx / routeListApp.tsx / routeListServices.ts | 一覧画面のエントリー（初回描画後に routeListApp.tsx を動的 import）と Composition Root |
+| entrypoints | serviceWorkerRegistration.ts | Service Worker 登録・即時切替 |
+| entrypoints | prerender.tsx | ビルド時プリレンダリング（サービスを空実装にして各ページを renderToString） |
+| application | ports.ts | ポート（インターフェース）定義 |
+| application | useCases/drawerUseCases.ts | 航路・港湾・座標の選択、共有 URL からの復元、背景クリック |
+| application | useCases/shareUseCases.ts | 共有 URL の復元・コピー・対象レイヤー有効化 |
+| application | useCases/mapUseCases.ts | 初期表示位置、表示位置の永続化、現在地追従ズーム |
+| application | viewModels/drawerViewModel.ts | ドロワーの種別・開閉・本文（表示モデル）、ドロワー操作の登録 |
+| application | viewModels/mapViewModel.ts | ベースマップ・表示レイヤーの状態管理 |
+| application | viewModels/routeFilterViewModel.ts | 航路フィルターの状態管理・Cookie 復元と永続化 |
+| application | viewModels/routeListViewModel.ts | 一覧テーブルの読み込み状態・検索クエリ管理 |
+| adapters/map | mapFactory.ts | MapLibre 地図生成・標準コントロール・ジオコーダー・ピン |
+| adapters/map | controlContainer.ts | React で中身を描画する MapLibre コントロールのコンテナ |
+| adapters/map | geoJsonLayerAdapter.ts | GeoJSON（港湾）レイヤー・クリックイベント・共有航路のフォーカス |
+| adapters/map | pmtilesLayerAdapter.ts | PMTiles 航路レイヤー追加・フィルター・ズーム・ハイライト |
+| adapters/map | layerManager.ts | ベースマップ切替・オーバーレイ追加削除・表示順管理 |
+| adapters/map | mapViewportGuard.ts | マップリサイズ監視・moveend の表示位置永続化 |
+| adapters/map | mapRegistry.ts / mapCamera.ts | 生成済み地図インスタンスの保持・カメラ操作（MapLibre 本体を読み込まずに使う） |
+| adapters/http | fetchWithRetry.ts | 再試行つきの fetch |
+| adapters/data | dataLoader.ts / routeDetailsRepository.ts / routeListRepository.ts / wikipediaImageAdapter.ts | データ取得・キャッシュ・ローディング制御・画像検索 |
+| adapters/geocoding | nominatimGeocodingAdapter.ts | Nominatim 地名検索・逆ジオコーディング |
+| adapters/persistence | cookieControl.ts | Cookie の読み書き（SettingsStore） |
+| adapters/analytics | googleAnalyticsAdapter.ts / googleAnalyticsLoader.ts | gtag イベント送信、gtag.js 読み込みと Cookie 同意 |
+| adapters/browser | browserAdapters.ts | URL・履歴・クリップボード |
+| presentation/map | MapPage.tsx | 地図ページのルート。初期化順序の管理 |
+| presentation/map | DetailDrawer.tsx / detailDrawerController.ts / DrawerBody.tsx | 詳細ドロワー（開閉アニメーション・モバイルスナップ・本文描画） |
+| presentation/map | HamburgerMenu.tsx / LayerControl.tsx / RouteFilterControl.tsx | 地図コントロールの UI |
+| presentation/map | touchPanelToggle.ts | コントロールパネルのホバー・タッチ開閉 |
+| presentation/map | ContextMenu.tsx / mapPointerInteractions.ts | 右クリックメニュー・長押し |
+| presentation/common | InfoWindow.tsx / PrivacyPolicyWindow.tsx / modalController.ts / ModalContext.tsx | モーダルの表示・フォーカス管理 |
+| presentation/common | CookieBanner.tsx / toast.tsx / loadingIndicator.tsx / outsideClickHandler.ts | 共通 UI 部品 |
+| presentation/common | Icon.tsx | Font Awesome アイコンのインライン SVG 描画（使用するアイコンを `ICONS` に登録する） |
+| presentation/routeList | RouteListPage.tsx | 一覧テーブル・検索・ハイライト |
+| presentation/hooks | useViewModelState.ts | ViewModel を useSyncExternalStore で購読 |
+| config | layerConfig.ts / routeLayers.ts / mapStyles.ts | レイヤー一覧・PMTiles 航路レイヤー・地図スタイル定義 |
+| domain | routeFilter.ts / shareContext.ts / geoBounds.ts / route.ts / seaRoute.ts | フィルター正規化・共有 URL・境界計算・航路データ正規化/検索 |
 
 ### 6.3 Presentation パターン（MVVM）
 
 本アプリの Presentation 層は MVVM を採用する。
 
-- View: DOM 描画、入力イベント購読、MapLibre コントロール表示
+- View: React コンポーネント（JSX 描画、入力イベント、MapLibre コントロールへのポータル描画）
 - ViewModel: 画面状態と状態遷移（初期化、検索、フィルター、開閉）
 - Model: Domain / Application / Adapter が提供するデータ・操作
 
 主要な ViewModel は以下。
 
-- js/presentation/routeList/routeListViewModel.js
-- js/presentation/map/mapViewModel.js
-- js/presentation/map/routeFilterViewModel.js
-- js/presentation/drawerViewModel.js
+- src/application/viewModels/routeListViewModel.ts
+- src/application/viewModels/mapViewModel.ts
+- src/application/viewModels/routeFilterViewModel.ts
+- src/application/viewModels/drawerViewModel.ts
 
-Entrypoint は Composition Root として View と ViewModel を接続し、業務ルールは Domain / Application 側へ委譲する。
+ViewModel はフレームワーク非依存で、React からは `useViewModelState`（useSyncExternalStore）で購読する。Entrypoint は Composition Root として依存を組み立てて注入し、業務ルールは Domain / Application 側へ委譲する。
 
 ## 7. 機能仕様
 
@@ -389,11 +403,12 @@ Entrypoint は Composition Root として View と ViewModel を接続し、業�
 - 運行頻度
 - 補足情報
 - 船名一覧
+- 船の画像（Wikipedia で見つかった場合のみ）
 - 外部リンク
 
 期待動作。
 
-- クリック対象の properties を詳細ドロワーに反映する
+- クリック対象の properties と routeId ごとの詳細 JSON を詳細ドロワーに反映する
 - 事業者名に全角括弧が含まれる場合は主表記と副表記に分離する
 - 航路名または区間名クリックでズーム関数を呼ぶ
 - marker_click イベントを計測する
@@ -534,7 +549,7 @@ PC とモバイルで詳細情報を見やすく提示する。
 
 期待動作。
 
-- 各 details JSON を fetch して tbody に行を追加する
+- 各テーブルの一覧用 JSON を fetch して tbody に行を描画する
 - note が season の行は season-row クラスを付与する
 - note が suspend の行は suspend-row クラスを付与する
 - URL があれば別タブで開くリンクを表示する
@@ -560,7 +575,7 @@ PC とモバイルで詳細情報を見やすく提示する。
 受け入れ条件。
 
 - 複数テーブル横断で検索できる
-- ハイライト解除後に元の HTML に戻る
+- ハイライト解除後に元の表示に戻る
 
 ### 7.15 PWA-01 PWA 基本要件
 
@@ -571,8 +586,8 @@ PC とモバイルで詳細情報を見やすく提示する。
 期待動作。
 
 - manifest.json に name, short_name, display, icons が定義されている
-- service-worker.js が install 時に主要静的ファイルをキャッシュする
-- fetch 時にキャッシュ優先でレスポンスを返す
+- service-worker.js が install 時に主要静的ファイル（アイコン画像と style/empty.json）をキャッシュする
+- fetch 時はネットワーク優先で取得し、失敗したときだけキャッシュから返す（詳細は docs/service-worker-guide.md）
 
 受け入れ条件。
 
@@ -672,6 +687,7 @@ Cookie で以下を保持する。
 | mapZoom | 地図ズーム値 | 30 日 |
 | routeFilters | 航路フィルター状態 JSON | 365 日 |
 | showSuspendedRoutes | 休止中航路表示フラグ | 365 日 |
+| cookieConsent | Cookie バナーを閉じたこと（アクセス解析の同意） | 365 日 |
 
 ## 9. 外部依存
 
@@ -681,7 +697,9 @@ Cookie で以下を保持する。
 
 - MapLibre GL JS
 - Maplibre Geocoder
+- 航路データの配信（`https://pmtiles.searoute.info/`）
 - Nominatim 検索 API
+- Wikipedia API（船の画像検索）
 - Google Maps URL スキーム
 - Google Analytics
 - 各種タイルサーバー
@@ -715,10 +733,10 @@ Cookie で以下を保持する。
 
 ### 11.1 レイヤー追加・削除
 
-- js/config/layerConfig.js のレイヤー定義
-- js/config/routeLayers.js の PMTiles ソース設定
-- js/adapters/map/layerManager.js の addOverLayer / removeOverLayer
-- js/adapters/map/geoJsonLayerAdapter.js の描画定義
+- src/config/layerConfig.ts のレイヤー定義
+- src/config/routeLayers.ts の PMTiles ソース設定
+- src/adapters/map/layerManager.ts の addOverLayer / removeOverLayer
+- src/adapters/map/geoJsonLayerAdapter.ts（港湾）と src/adapters/map/pmtilesLayerAdapter.ts（航路）の描画定義
 - Cookie 復元
 - レイヤー順序
 - 一覧ページへの反映有無

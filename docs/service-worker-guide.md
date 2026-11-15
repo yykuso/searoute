@@ -9,14 +9,15 @@ searoute は PWA（Progressive Web App）として動作し、Service Worker を
 ## キャッシュ戦略
 
 ### キャッシュ対象
-- 静的アセット：favicon, apple-touch-icon, icons
+- 静的アセット：favicon, apple-touch-icon, icons（`./img/` 配下）
 - 初期化用 style：`./style/empty.json`
-- **HTML は install キャッシュから除外**（Network-first のため）
+- HTML は install キャッシュから除外（Network-first のため）
+- Vite のビルド成果物（`/assets/<name>-<hash>.js|css`）は、初回アクセス時に fetch 経由でキャッシュされる（同一オリジン）。オフライン時はこのキャッシュから画面を表示する
 
-### キャッシュ戦略：**Network-First with Cache Fallback**
+### キャッシュ戦略：Network-First with Cache Fallback
 1. リクエスト時はまずネットワークを試す
 2. ネットワーク失敗時のみ、キャッシュから取得
-3. ネットワーク成功時は、そのレスポンスをキャッシュに保存（同一オリジンのみ）
+3. ネットワーク成功時はそのレスポンスをキャッシュに保存（同一オリジンのみ）
 4. GET リクエストのみキャッシュ対象
 
 **HTML（index.html）の特別取扱**
@@ -26,7 +27,7 @@ searoute は PWA（Progressive Web App）として動作し、Service Worker を
 
 **メリット**
 - 常に最新の HTML・データを取得できる
-- 新機能追加時、ユーザーが即座に反映される
+- 新機能を追加したとき、ユーザーに即座に反映される
 - オフライン時も静的リソースと最後のアクセス済みキャッシュで基本動作
 
 ---
@@ -39,30 +40,36 @@ searoute は PWA（Progressive Web App）として動作し、Service Worker を
 
 ### activate
 - 現行バージョン（`CACHE_NAME`）以外のキャッシュを全削除
+- 現行キャッシュ内のハッシュ付きアセット（`/assets/<name>-<hash8>.<ext>`）を名前ごとにまとめ、最後に保存したもの以外（古いハッシュ）を削除する（`pruneStaleAssets`）
 - `clients.claim()` を呼び出し、すべての client に適用
 
 ### fetch
 - GET リクエストのみ処理
 - ネットワーク → キャッシュの優先順で動作
+- ハッシュ付きアセットを保存したときは、同じ名前の別ハッシュ版をその場で削除する（デプロイを重ねてもキャッシュが肥大化しない）
 
 ---
 
 ## バージョン管理と更新
 
 ### キャッシュバージョンの変更手順
-1. [service-worker.js](../service-worker.js) の `CACHE_NAME` を更新
+1. [service-worker.js](../public/service-worker.js) の `CACHE_NAME` を更新
    ```javascript
-   const CACHE_NAME = 'searoute-v1.X';  // バージョン番号を上げる
+   const CACHE_NAME = 'searoute-v2.X';  // バージョン番号を上げる
    ```
 2. 新バージョンで activate 時、旧バージョンのキャッシュが自動削除される
 
+**履歴**
+- `searoute-v2.0`：React + TypeScript 化（Vite のハッシュ付きアセット配信に変更）に合わせて更新。旧 `js/`・`lib/` の個別ファイルキャッシュを破棄し、古いハッシュアセットの掃除を追加
+- `searoute-v1.3`：旧 Vanilla JS 版
+
 ### Service Worker の更新タイミング
 - ブラウザは定期的に (通常 24 時間以内) Service Worker の更新をチェック
-- `registration.update()` を呼び出すと即座にチェック
+- `registration.update()` を呼び出すと即座にチェック（本サイトのコードからは呼び出していない）
 - 新バージョンが検出されると `updatefound` イベント発火
 
 ### 即時切替（Skipwait）
-`js/entrypoints/serviceWorkerRegistration.js` では以下の仕組みで待機中の Service Worker を即座に切り替える：
+[`src/entrypoints/serviceWorkerRegistration.ts`](../src/entrypoints/serviceWorkerRegistration.ts)（`main-map.tsx` から呼び出し。index.html のみ登録）では、ページの `load` 後（読み込み済みなら即時）に登録し、以下の仕組みで待機中の Service Worker を即座に切り替える。
 
 ```javascript
 if (registration.waiting) {
@@ -70,7 +77,9 @@ if (registration.waiting) {
 }
 ```
 
-Service Worker 側で：
+登録後に `updatefound` で新しい Service Worker を検出した場合も、`installed` になった時点で（既存の controller があるときのみ）同じメッセージを送る。
+
+Service Worker 側の処理。
 ```javascript
 self.addEventListener('message', (event) => {
   if (event.data.type === 'SKIP_WAITING') {
@@ -106,15 +115,15 @@ navigator.serviceWorker.controller.postMessage({ type: 'PURGE_ALL_CACHES' });
 - ブラウザの DevTools キャッシュクリアでも Service Worker キャッシュが残ることがある
 
 ### 一度限りの緊急リセット（既に実行済み）
-2026-07-17 に以下の緊急処置を実施：
+2026-07-17 に以下の緊急処置を実施した。
 - すべての Service Worker を unregister
 - Cache Storage を全削除
 - 新バージョンの Service Worker を再登録
 
-**これは自動実行される一度限りの処理で、通常運用では動作しません。**
+この処理は一度限りで、現在のコードには含まれていません（通常運用では動作しません）。
 
 ### 再度リセットが必要な場合
-以下のコードを `index.html` に一時的に追加：
+以下のコードを `index.html` に一時的に追加する。
 
 ```javascript
 const runOneTimeReset = async () => {
@@ -139,7 +148,7 @@ runOneTimeReset()
 
 ## ユーザー側でのキャッシュクリア
 
-ユーザーが手作業でキャッシュをクリアしたい場合：
+ユーザーが手作業でキャッシュをクリアしたい場合の手順は次のとおり。
 
 ### Chrome / Edge
 1. DevTools を開く（F12）
@@ -163,7 +172,7 @@ runOneTimeReset()
 | 症状 | 原因 | 対策 |
 |------|------|------|
 | 古いコードが表示される | Service Worker キャッシュが古い | DevTools で Cache Storage を削除 → 再読み込み |
-| オフラインで何も表示されない | キャッシュが空 | 新バージョンで once 初期アクセスしてキャッシュを再構築 |
+| オフラインで何も表示されない | キャッシュが空 | 新バージョンで一度アクセスしてキャッシュを再構築 |
 | Service Worker が登録されない | navigator.serviceWorker が undefined | HTTPS または localhost 環境で確認 |
 | 動作が不安定 | 複数バージョンの Service Worker が混在 | 緊急リセット手順を実施 |
 
@@ -171,11 +180,11 @@ runOneTimeReset()
 
 ## 運用上の注意点
 
-1. **バージョン更新時**：`CACHE_NAME` を明確に変更して、旧キャッシュ確実に削除される
-2. **緊急リセット後**：リセットコードを通常運用に戻すまでの期間を明記してから実行
-3. **ネットワーク優先戦略**：常に最新データを取得する仕様のため、データが同期される遅延はない
-4. **HTTPS 必須**：Service Worker は HTTPS（または localhost）でのみ動作する
-5. **定期的な更新チェック**：`registration.update()` で主動的に更新をチェックして、新バージョンがあれば即座に適用
+1. バージョンを更新するときは `CACHE_NAME` を明確に変更し、旧キャッシュが確実に削除されるようにする
+2. 緊急リセットを実行するときは、リセット用のコードをいつ通常のコードに戻すかを先に決めておく
+3. ネットワーク優先戦略：常に最新データを取得する仕様のため、データが同期される遅延はない
+4. HTTPS 必須：Service Worker は HTTPS（または localhost）でのみ動作する
+5. 更新チェック：更新のチェックはブラウザに任せている。新バージョンを検出したら `SKIP_WAITING` で即座に適用する
 
 ---
 

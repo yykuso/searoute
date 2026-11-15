@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="./img/favicon.ico" />
   <link rel="icon" type="image/svg+xml" href="./img/icon.svg" />
   <link rel="icon" type="image/png" sizes="16x16" href="./img/favicon-16x16.png">
@@ -31,11 +31,7 @@
   <meta name="twitter:description" content="日本全国の旅客船の航路情報をマップ上で確認できるサイト。掲載航路一覧を表示するページ。" />
   <meta name="twitter:image" content="https://searoute.info/searoute/img/twbanner.png" />
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
-  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+  <!-- searoute:icon-css（ビルド時に src/styles/icons.css をインライン展開。Font Awesome のアイコンはインライン SVG） -->
   <link href="./css/route-list.css" rel="stylesheet" media="print" onload="this.media='all'" />
   <noscript><link href="./css/route-list.css" rel="stylesheet"></noscript>
 
@@ -60,122 +56,11 @@
   }
   </script>
 
-  <link rel="modulepreload" href="./js/entrypoints/routeListPage.js">
-
-  <!-- フォントを早期に取得 -->
-  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-
 </head>
 <body>
-  <header class="header">
-    <div class="wrapper-inner">
-      <p>おでかけ航路マップ</p>
-      <nav>
-        <ul>
-          <li>
-            <a href="./" title="マップ">
-              <i class="fas fa-map"></i>
-              <span>マップ</span>
-            </a>
-          </li>
-          <li>
-            <a href="./routeList.html" title="航路一覧">
-              <i class="fas fa-ship"></i>
-              <span>航路一覧</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-  <h1>航路一覧</h1>
-  <div class = "sbox">
-    <div class = "sbox-inner">
-      <input type="text" id="searchbox" placeholder="検索キーワードを入力">
-      <button id="searchbutton">検索</button>
-      <button id="resetbutton">リセット</button>
-    </div>
-    <p id="search-message" style="color: red; font-size: 12px; margin-top: 5px;"></p>
-  </div>
-  <div class="feedback-callout">
-    <p>
-      データの追加・修正依頼や機能要望は
-      <a href="https://forms.gle/xXyqvDkZKNwEXPv27" target="_blank" rel="noopener noreferrer">専用フォーム</a>
-      から送れます。
-    </p>
-  </div>
-  <h2>国内航路</h2>
-  <table class="sea-route-table">
-    <thead>
-      <tr>
-        <th class="route-id">航路ID</th>
-        <th class="business-name">事業者名</th>
-        <th class="route-name">航路名</th>
-        <th class="info">情報</th>
-        <th class="ship-name">船名</th>
-        <th class="url">時刻表</th>
-      </tr>
-    </thead>
-    <tbody>
-    <!-- データがここに挿入される -->
-    </tbody>
-  </table>
-
-  <h2>国際航路</h2>
-  <table class="international-sea-route-table">
-    <thead>
-      <tr>
-        <th class="route-id">航路ID</th>
-        <th class="business-name">事業者名</th>
-        <th class="route-name">航路名</th>
-        <th class="information">情報</th>
-        <th class="ship-name">船名</th>
-        <th class="url">時刻表</th>
-      </tr>
-    </thead>
-    <tbody>
-    <!-- データがここに挿入される -->
-    </tbody>
-  </table>
-
-  <h2>韓国 国内航路</h2>
-  <table class="sea-route-KR-table">
-    <thead>
-      <tr>
-        <th class="route-id">航路ID</th>
-        <th class="business-name">事業者名</th>
-        <th class="route-name">航路名</th>
-        <th class="information">情報</th>
-        <th class="ship-name">船名</th>
-        <th class="url">時刻表</th>
-      </tr>
-    </thead>
-    <tbody>
-    <!-- データがここに挿入される -->
-    </tbody>
-  </table>
+  <!-- 画面は React（src/entrypoints/main-routeList.tsx）が描画する -->
+  <div id="app"></div>
+  <script type="module" src="./src/entrypoints/main-routeList.tsx"></script>
 </body>
-
-<script type="module" src="./js/entrypoints/routeListPage.js"></script>
-
-<script>
-  (function() {
-    var GA_ID = 'G-03DRMSWKPW';
-    function loadGA() {
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      window.gtag = gtag;
-      gtag('js', new Date());
-      gtag('config', GA_ID);
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
-      document.head.appendChild(s);
-    }
-    loadGA();
-  })();
-</script>
 
 </html>
