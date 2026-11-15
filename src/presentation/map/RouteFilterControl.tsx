@@ -9,6 +9,7 @@ import type { RouteFilterViewModel } from '../../application/viewModels/routeFil
 import type { RouteFilterGroup } from '../../domain/routeFilter';
 import { useViewModelState } from '../hooks/useViewModelState';
 import { usePanelToggle } from './touchPanelToggle';
+import { Icon } from '../common/Icon';
 
 interface FilterItem {
     group: RouteFilterGroup;
@@ -66,14 +67,14 @@ export function RouteFilterControl({ container, viewModel }: { container: HTMLEl
                 aria-expanded={open}
                 ref={toggleRef}
             >
-                <i className="fa-solid fa-filter fa-lg"></i>
+                <Icon className="fa-solid fa-filter fa-lg" />
             </button>
             <div className="maplibregl-ctrl-filter-list" style={{ display: open ? 'block' : 'none' }} ref={panelRef}>
                 {ROUTE_FILTER_SECTIONS.map((section, index) => [
                     index > 0 ? <hr key={`${section.title}-hr`} /> : null,
                     <div className="route-filter-section" key={section.title}>
                         <div className="route-filter-section-title">
-                            <i className={section.iconClass}></i><span>{section.title}</span>
+                            <Icon className={section.iconClass} /><span>{section.title}</span>
                         </div>
                         {section.items.map((item) => (
                             <label className="route-filter-item" key={`${item.group}-${item.key}`}>
@@ -84,7 +85,7 @@ export function RouteFilterControl({ container, viewModel }: { container: HTMLEl
                                     checked={isChecked(item)}
                                     onChange={(event) => viewModel.setFilter(item.group, item.key, event.target.checked)}
                                 />
-                                <span className="route-filter-item-label"><i className={item.icon}></i><span>{item.label}</span></span>
+                                <span className="route-filter-item-label"><Icon className={item.icon} /><span>{item.label}</span></span>
                             </label>
                         ))}
                     </div>,

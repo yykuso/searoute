@@ -1,15 +1,13 @@
 /**
  * 地図ページ（index.html）のエントリーポイント
- * 依存を組み立てて React のルートへ注入する
+ * CSS・Service Worker・アクセス解析だけを先に処理し、React アプリ（mapApp.tsx）は
+ * プリレンダリング済み HTML の初回描画後に読み込んでハイドレーションする（MapLibre はさらに地図生成時に読み込む）
  */
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 import '../styles/tailwind.css';
 import { scheduleGoogleAnalyticsLoad, createCookieConsent } from '../adapters/analytics/googleAnalyticsLoader';
-import { MapPage } from '../presentation/map/MapPage';
-import { MapServicesProvider } from '../presentation/map/mapPageServices';
-import { createMapServices } from './mapServices';
-import { mountApp } from './mountApp';
+import { afterFirstPaint } from './afterFirstPaint';
 import { registerServiceWorker } from './serviceWorkerRegistration';
 
 registerServiceWorker();
@@ -19,11 +17,6 @@ if (createCookieConsent().hasConsent()) {
     scheduleGoogleAnalyticsLoad();
 }
 
-const services = createMapServices({ buildNumber: import.meta.env.VITE_BUILD_NUMBER || 'local' });
-
-mountApp(
-    document.getElementById('app') as HTMLElement,
-    <MapServicesProvider services={services}>
-        <MapPage />
-    </MapServicesProvider>,
-);
+afterFirstPaint(() => {
+    void import('./mapApp').then(({ startMapApp }) => startMapApp(document.getElementById('app') as HTMLElement));
+});

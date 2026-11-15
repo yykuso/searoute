@@ -4,6 +4,7 @@
 import { useEffect } from 'react';
 import type { MouseEvent } from 'react';
 import { useModalController, useModalElement } from './ModalContext';
+import { Icon } from './Icon';
 
 export function InfoWindow({ buildNumber }: { buildNumber: string }) {
     const modals = useModalController();
@@ -30,7 +31,7 @@ export function InfoWindow({ buildNumber }: { buildNumber: string }) {
         <div id="info-window" className="text-xs" style={{ display: state.open ? 'block' : 'none' }} ref={ref}>
             <div className="modal-header">
                 <button type="button" className="modal-close-btn" id="info-close-top-btn" aria-label="閉じる" onClick={() => modals.close('info')}>
-                    <i className="fa-solid fa-xmark"></i>
+                    <Icon className="fa-solid fa-xmark" />
                 </button>
             </div>
             <h2 className="heading-tag">サイト情報</h2>
@@ -55,7 +56,7 @@ export function InfoWindow({ buildNumber }: { buildNumber: string }) {
                 <p className="pl-3">
                     航路データの追加・修正依頼や機能要望は、{' '}
                     <a href="https://forms.gle/xXyqvDkZKNwEXPv27" target="_blank" rel="noopener noreferrer" className="font-bold text-sky-600 hover:underline">
-                        <i className="fa-solid fa-pen-to-square"></i> 専用フォーム{' '}
+                        <Icon className="fa-solid fa-pen-to-square" /> 専用フォーム{' '}
                     </a>
                     からお送りください。
                 </p>
@@ -63,13 +64,13 @@ export function InfoWindow({ buildNumber }: { buildNumber: string }) {
                 <ul className="mt-1 space-y-1 pl-3">
                     <li>
                         <a href="https://github.com/yykuso/searoute/" target="_blank" rel="noopener noreferrer" className="font-bold text-sky-600 hover:underline">
-                            <i className="fa-brands fa-github"></i> searoute{' '}
+                            <Icon className="fa-brands fa-github" /> searoute{' '}
                         </a>
                         <span className="text-slate-500">(<span id="site-build-number">{buildNumber}</span>)</span>
                     </li>
                     <li>
                         <a href="https://github.com/yykuso/searoute-pmtiles" target="_blank" rel="noopener noreferrer" className="font-bold text-sky-600 hover:underline">
-                            <i className="fa-brands fa-github"></i> searoute-pmtiles
+                            <Icon className="fa-brands fa-github" /> searoute-pmtiles
                         </a>
                     </li>
                 </ul>
@@ -78,7 +79,7 @@ export function InfoWindow({ buildNumber }: { buildNumber: string }) {
                     Cookieの利用、Googleアナリティクス、個人情報の取り扱いについては、以下のプライバシーポリシーをご確認ください。
                 </p>
                 <button type="button" id="info-privacy-policy-btn" className="pl-3 flex cursor-pointer items-center gap-1 border-0 bg-transparent p-0 font-bold text-sky-600 hover:underline" onClick={openPrivacyPolicy}>
-                    <i className="fa-solid fa-lock"></i>
+                    <Icon className="fa-solid fa-lock" />
                     プライバシーポリシーを読む
                 </button>
                 <h3 className="mt-3 flex w-full border-l-4 border-sky-500 bg-slate-100 px-2 py-1 font-semibold text-slate-700">免責事項</h3>
@@ -103,17 +104,17 @@ export function InfoWindow({ buildNumber }: { buildNumber: string }) {
                 <ul className="space-y-1 ml-3">
                     <li>
                         <a href="https://x.com/yy_kuso" id="twitter-link" target="_blank" rel="noopener noreferrer" className="font-bold text-sky-600 hover:underline">
-                            <i className="fa-brands fa-twitter"></i> Twitter
+                            <Icon className="fa-brands fa-twitter" /> Twitter
                         </a>
                     </li>
                     <li>
                         <a href="https://lnk.yy-kuso.com/" target="_blank" rel="noopener noreferrer" className="font-bold text-sky-600 hover:underline">
-                            <i className="fa-solid fa-link"></i> 開発者のサイト
+                            <Icon className="fa-solid fa-link" /> 開発者のサイト
                         </a>
                     </li>
                     <li>
                         <a href="https://www.amazon.co.jp/hz/wishlist/ls/KF9GONGN9M1K" id="wishlist-link" target="_blank" rel="noopener noreferrer" className="font-bold text-sky-600 hover:underline">
-                            <i className="fa-solid fa-gift"></i> 運営の励みになります（ほしいものリスト）
+                            <Icon className="fa-solid fa-gift" /> 運営の励みになります（ほしいものリスト）
                         </a>
                     </li>
                 </ul>

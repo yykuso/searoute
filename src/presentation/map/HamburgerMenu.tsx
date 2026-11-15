@@ -8,6 +8,7 @@ import { createPortal } from 'react-dom';
 import { setupOutsideClickListener } from '../common/outsideClickHandler';
 import { useModalController } from '../common/ModalContext';
 import { usePanelToggle } from './touchPanelToggle';
+import { Icon } from '../common/Icon';
 
 export function HamburgerMenu({ container }: { container: HTMLElement }) {
     const modals = useModalController();
@@ -45,14 +46,14 @@ export function HamburgerMenu({ container }: { container: HTMLElement }) {
     return createPortal(
         <>
             <div className="maplibregl-ctrl-hamburger-toggle" ref={toggleRef}>
-                <i className="fa-solid fa-bars fa-lg"></i>
+                <Icon className="fa-solid fa-bars fa-lg" />
             </div>
             <div className="maplibregl-ctrl-hamburger-list" style={{ display: open ? 'block' : 'none' }} ref={panelRef}>
                 <div>
-                    <a href="#info-window" onClick={showInfoWindow}><i className="fa-solid fa-circle-info"></i> サイト情報</a>
+                    <a href="#info-window" onClick={showInfoWindow}><Icon className="fa-solid fa-circle-info" /> サイト情報</a>
                 </div>
                 <div>
-                    <a href="./routeList.html"><i className="fa-solid fa-ship"></i> 航路一覧</a>
+                    <a href="./routeList.html"><Icon className="fa-solid fa-ship" /> 航路一覧</a>
                 </div>
             </div>
         </>,

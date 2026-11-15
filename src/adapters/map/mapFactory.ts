@@ -8,7 +8,7 @@ import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder';
 import { PMTiles, Protocol } from 'pmtiles';
 // バンドル後は import.meta.url 基準のワーカー解決が効かないため、ワーカーを別途バンドルして URL を指定する
 import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
-import type { GeocodingService, LngLat, MapCameraPort, MarkerPort, SettingsStore } from '../../application/ports';
+import type { GeocodingService, LngLat, MarkerPort, SettingsStore } from '../../application/ports';
 import { bindGeolocateTrackingZoom, getInitialMapView, getMapRenderScale } from '../../application/useCases/mapUseCases';
 import type { GeolocateControlLike, ZoomableMapLike } from '../../application/useCases/mapUseCases';
 import { addResetClickEvent } from './geoJsonLayerAdapter';
@@ -138,10 +138,6 @@ export function createMarkerAdapter(): MarkerPort {
         },
     };
 }
-
-export const mapCamera: MapCameraPort = {
-    flyTo: (options) => { map.flyTo(options); },
-};
 
 /** 画面座標を地図座標へ変換する（長押し位置の取得用） */
 export function unprojectPoint(x: number, y: number): { lat: number; lng: number } {

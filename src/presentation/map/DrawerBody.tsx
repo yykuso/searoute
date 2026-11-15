@@ -8,6 +8,7 @@ import { executeDrawerAction } from '../../application/viewModels/drawerViewMode
 import type { DrawerBody as DrawerBodyModel } from '../../application/viewModels/drawerViewModel';
 import { summarizeCarriage } from '../../domain/seaRoute';
 import type { PortProperties, RouteDetails, RouteProperties } from '../../domain/seaRoute';
+import { Icon } from '../common/Icon';
 
 /** URL からホスト名を取得 */
 export function getLinkHostname(url: string): string {
@@ -53,7 +54,7 @@ function DrawerSection({ iconClass, title, titleColorClass, iconColorClass, chil
     return (
         <div className="mb-3 pb-2 border-b border-slate-200 flex items-center">
             <h3 className={`flex items-center justify-between text-xs font-semibold ${titleColorClass} w-24 min-w-24 text-center mr-2`}>
-                <i className={`${iconClass} fa-fw mr-1 ${iconColorClass}`}></i><span className="mx-auto">{title}</span>
+                <Icon className={`${iconClass} fa-fw mr-1 ${iconColorClass}`} /><span className="mx-auto">{title}</span>
             </h3>
             {children}
         </div>
@@ -170,13 +171,13 @@ export function CoordinateDrawerBody({ lat, lng, address = '取得中...' }: { l
             </div>
             <div className="mb-3 pb-2 border-b border-slate-200 flex items-center">
                 <h3 className="flex items-center justify-between text-xs font-semibold text-blue-600 w-24 min-w-24 text-center mr-2">
-                    <i className="fas fa-location-dot fa-fw mr-1 text-blue-500"></i><span className="mx-auto">住所</span>
+                    <Icon className="fas fa-location-dot fa-fw mr-1 text-blue-500" /><span className="mx-auto">住所</span>
                 </h3>
                 <span id="reverse-geocode-address" className="block text-xs text-gray-800 mt-1">{address}</span>
             </div>
             <div className="mb-3 pb-2 border-b border-slate-200 flex items-center">
                 <h3 className="flex items-center justify-between text-xs font-semibold text-green-600 w-24 min-w-24 text-center mr-2">
-                    <i className="fas fa-map-location-dot fa-fw mr-1 text-green-500"></i><span className="mx-auto">リンク</span>
+                    <Icon className="fas fa-map-location-dot fa-fw mr-1 text-green-500" /><span className="mx-auto">リンク</span>
                 </h3>
                 <a href={`https://maps.google.com/?q=${lat},${lng}`} target="_blank" rel="noopener noreferrer" className="text-gray-800 underline text-xs hover:text-gray-900 transition-all">ここをGoogleマップで開く</a>
             </div>

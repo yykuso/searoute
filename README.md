@@ -53,8 +53,8 @@ searoute/
 │   ├── application/     # ユースケース・ViewModel・ポート定義（DOM/MapLibre/React 非依存）
 │   ├── adapters/        # ポートの実装（MapLibre, PMTiles, Cookie, fetch, Nominatim, Wikipedia, GA）
 │   ├── presentation/    # React コンポーネント・フック（common/ map/ routeList/）。サービスは Context で注入され adapters を直接参照しない
-│   ├── entrypoints/     # Composition Root（main-map.tsx / main-routeList.tsx で依存を組み立てて createRoot、Service Worker 登録）
-│   └── styles/          # Tailwind 入力
+│   ├── entrypoints/     # Composition Root（main-*.tsx が初回描画後に mapApp.tsx / routeListApp.tsx を動的 import してハイドレーション、Service Worker 登録）
+│   └── styles/          # Tailwind 入力・アイコン用 CSS（icons.css。HTML head へインライン展開）
 ├── sprite-src/          # スプライト元 SVG（配信対象外）
 ├── docs/                # 仕様書・補助ドキュメント
 └── tests/               # Vitest / Playwright テスト（src と同じ層構成）
@@ -66,6 +66,8 @@ searoute/
 - 地図ページの UI が必要とするサービスは `presentation/map/mapPageServices.tsx` の `MapPageServices` として定義し、`entrypoints/mapServices.ts` が adapters を組み合わせて実装、`MapServicesProvider` で注入します。
 - MapLibre のコントロール（ハンバーガー・レイヤー・航路フィルター）は adapters の `ContainerControl` が空のコンテナを追加し、React がポータルで中身を描画します。
 - ビルド時プリレンダリング（SSG）: `npm run build` の最後に `src/entrypoints/prerender.tsx` を SSR で描画し、`dist/*.html` の `#app` に静的 HTML（見出し・サイト情報・プライバシーポリシー・一覧の検索 UI 等）を埋め込みます。クライアントは `hydrateRoot` で引き継ぐため、コンポーネントは描画中に window / document / Cookie を参照しないでください（副作用内で参照する）。Cookie バナーの表示判定は index.html head のインラインスクリプトが `html[data-cookie-banner]` を付けて CSS で行います。
+- 初回表示の高速化: React アプリは静的 HTML の初回描画（FCP）後に動的 import してハイドレーションし、MapLibre は地図生成時に動的 import します。
+- アイコンは Font Awesome Free 6.4.0 のうち使用分だけをインライン SVG で描画します（`presentation/common/Icon.tsx` に登録。位置合わせ用 CSS は `src/styles/icons.css`）。
 
 ## 仕様書
 

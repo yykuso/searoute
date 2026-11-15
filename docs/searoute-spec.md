@@ -180,15 +180,18 @@ flowchart TD
 - presentation は adapters を参照しない。地図ページが必要とするサービスは `presentation/map/mapPageServices.tsx` の `MapPageServices`（地図操作は MapLibre 非依存の `MapHandle`）として宣言し、entrypoints が実装して React Context（`MapServicesProvider`）で注入する。
 - MapLibre のコントロール（ハンバーガー・レイヤー・航路フィルター）は adapters の `ContainerControl` が空のコンテナを地図へ追加し、React がポータルで中身を描画する。
 - ビルド時プリレンダリング（SSG）: vite.config.ts の `searoute-prerender` プラグインがクライアントビルド後に `src/entrypoints/prerender.tsx`（react-dom/server の renderToString）を実行し、各ページの静的マークアップとビルド番号を `dist/*.html` の `#app` に埋め込む。クライアントは `hydrateRoot`（開発サーバーでは空のため `createRoot`）。地図・データ取得は副作用で実行するため、プリレンダリング結果は旧版の静的 body と同等（tests/entrypoints/prerender.test.tsx で旧版 HTML と比較）。
+- 読み込み順序（パフォーマンス）: エントリーは小さく保ち、プリレンダリング済み HTML の初回描画（first-contentful-paint）を待ってから React アプリを動的 import してハイドレーションする（startTransition で分割実行）。MapLibre（約 310KB gzip）は地図生成時（ハイドレーション後の副作用）に動的 import する。
+- アイコン: Font Awesome Free 6.4.0 の Web フォント・CSS（CDN）は使わず、使用するアイコンだけを `presentation/common/Icon.tsx` がインライン SVG で描画する（`<i class="fa-solid fa-xxx">` の class は維持）。寸法・位置を再現する CSS は `src/styles/icons.css` で、ビルド時に各 HTML の head へインライン展開する。
 - Cookie バナー: index.html head のインラインスクリプトが同意 Cookie の有無で `<html data-cookie-banner="show">` を付け、インライン CSS で HTML 解析中から表示する（JS 無効・同意済みは非表示）。React は閉じた後の非表示のみ管理する。
 
 レイヤーごとの主な責務。
 
 | レイヤー | ファイル | 責務 |
 |---|---|---|
-| entrypoints | main-map.tsx | マップ画面のエントリー（CSS 読み込み・GA 遅延読み込み・SW 登録・createRoot） |
-| entrypoints | mapServices.ts | マップ画面の Composition Root（adapters → MapPageServices） |
-| entrypoints | main-routeList.tsx / routeListServices.ts | 一覧画面のエントリーと Composition Root |
+| entrypoints | main-map.tsx | マップ画面のエントリー（CSS 読み込み・GA 遅延読み込み・SW 登録。初回描画後に mapApp.tsx を動的 import） |
+| entrypoints | mapApp.tsx / mountApp.tsx / afterFirstPaint.ts | React アプリのマウント（startTransition 内で hydrateRoot）と、FCP 後まで読み込みを遅らせる処理 |
+| entrypoints | mapServices.ts | マップ画面の Composition Root（adapters → MapPageServices。MapLibre を含む adapters/map/mapFactory は地図生成時に動的 import） |
+| entrypoints | main-routeList.tsx / routeListApp.tsx / routeListServices.ts | 一覧画面のエントリー（初回描画後に routeListApp.tsx を動的 import）と Composition Root |
 | entrypoints | serviceWorkerRegistration.ts | Service Worker 登録・即時切替 |
 | application | ports.ts | ポート（インターフェース）定義 |
 | application | useCases/drawerUseCases.ts | 航路・港湾・座標の選択、共有 URL からの復元、背景クリック |

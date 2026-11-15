@@ -1,0 +1,47 @@
+/*
+ * Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ * Copyright 2023 Fonticons, Inc.
+ *
+ * 使用中のクラス（.fa-solid/.fas/.fa-brands/.fab/.fa-lg/.fa-fw）だけを all.min.css から移植し、
+ * Web フォントのグリフをインライン SVG（presentation/common/Icon.tsx）で再現する。
+ * - <i> の行ボックス（高さ・ベースライン）は Font Awesome フォントと同じ縦メトリクス（ascent 0.875em / descent 0.125em）の
+ *   ローカルフォントで作り、旧版と同じ丸め・位置になるようにする（Web フォントのダウンロードは不要）
+ * - SVG はグリフと同じ位置（ベースラインから -0.125em〜0.875em、幅 = viewBox 幅）に置き、
+ *   上下の負の margin で SVG のマージンボックスを行の中央（ベースラインから 0.375em 上）の高さ 0 の点にして、行ボックスの高さに影響させない
+ * ビルド時に各 HTML の <!-- searoute:icon-css --> へインライン展開する（vite.config.ts）。
+ */
+@font-face {
+  font-family: 'searoute-fa-metrics';
+  src: local('Arial'), local('Helvetica'), local('Roboto'), local('Noto Sans'), local('DejaVu Sans');
+  ascent-override: 87.5%;
+  descent-override: 12.5%;
+  line-gap-override: 0%;
+}
+.fa-solid, .fas, .fa-brands, .fab {
+  display: var(--fa-display, inline-block);
+  font-family: 'searoute-fa-metrics';
+  font-style: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-rendering: auto;
+}
+.fa-solid > svg, .fas > svg, .fa-brands > svg, .fab > svg {
+  /* Tailwind の preflight（svg { display: block }）を打ち消す */
+  display: inline;
+  width: var(--fa-w);
+  height: 1em;
+  margin: -0.5em 0;
+  vertical-align: 0.375em;
+  overflow: visible;
+  fill: currentColor;
+}
+.fa-lg {
+  font-size: 1.25em;
+  line-height: 0.05em;
+  vertical-align: -0.075em;
+}
+.fa-fw {
+  text-align: center;
+  width: 1.25em;
+}

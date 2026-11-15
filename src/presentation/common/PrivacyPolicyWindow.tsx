@@ -3,6 +3,7 @@
  */
 import { useEffect } from 'react';
 import { useModalController, useModalElement } from './ModalContext';
+import { Icon } from './Icon';
 
 export function PrivacyPolicyWindow() {
     const modals = useModalController();
@@ -22,7 +23,7 @@ export function PrivacyPolicyWindow() {
         <div id="privacy-policy-window" className="text-xs" style={{ display: state.open ? 'block' : 'none' }} role="dialog" aria-modal="true" aria-labelledby="privacy-policy-title" tabIndex={-1} ref={ref}>
             <div className="modal-header">
                 <button type="button" className="modal-close-btn" id="privacy-close-top-btn" aria-label="閉じる" onClick={() => modals.close('privacy')}>
-                    <i className="fa-solid fa-xmark"></i>
+                    <Icon className="fa-solid fa-xmark" />
                 </button>
             </div>
             <h2 id="privacy-policy-title" className="heading-tag">プライバシーポリシー</h2>
