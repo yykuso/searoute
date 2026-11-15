@@ -22,7 +22,7 @@ describe('buildRouteListJsonLd', () => {
         const data = JSON.parse(match![1]);
         expect(data['@type']).toBe('ItemList');
         expect(data.itemListElement).toHaveLength(2);
-        expect(data.itemListElement[0].url).toBe('https://searoute.info/index.html?share=route&routeId=2&sourceId=geojson_sea_route');
+        expect(data.itemListElement[0].url).toBe('https://searoute.info/?share=route&routeId=2&sourceId=geojson_sea_route');
         expect(data.itemListElement[0].position).toBe(1);
         expect(data.itemListElement[0].name).toBe('ハートランドフェリー 稚内～利尻');
         expect(match![1]).not.toContain('<');
@@ -49,7 +49,7 @@ describe('buildLlmsFullText', () => {
             visibleColumns: [],
         }], 'https://searoute.info', 'x');
         const line = text.split('\n').find((l) => l.includes('事業者'))!;
-        expect(line).toBe('- 改行 事業者｜航路 名（船 名）: https://searoute.info/index.html?share=route&routeId=9&sourceId=geojson_sea_route / 公式: https://example.com/');
+        expect(line).toBe('- 改行 事業者｜航路 名（船 名）: https://searoute.info/?share=route&routeId=9&sourceId=geojson_sea_route / 公式: https://example.com/');
     });
 
     it('事業者名・航路名が両方空の行は出力しない', () => {
@@ -70,6 +70,6 @@ describe('buildLlmsFullText', () => {
             visibleColumns: [],
         }], 'https://searoute.info', 'x');
         const line = text.split('\n').find((l) => l.includes('routeId=7'))!;
-        expect(line).toBe('- 事業者｜航路（船）［1日2便 冬季運休］: https://searoute.info/index.html?share=route&routeId=7&sourceId=geojson_sea_route');
+        expect(line).toBe('- 事業者｜航路（船）［1日2便 冬季運休］: https://searoute.info/?share=route&routeId=7&sourceId=geojson_sea_route');
     });
 });

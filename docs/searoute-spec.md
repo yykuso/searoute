@@ -691,7 +691,8 @@ JS を実行しない AI クローラー・AI エージェント・検索エン�
 
 期待動作。
 
-- routeList.html: 全航路の表を静的 HTML に含める（LIST-01）。`<head>` に schema.org の `ItemList` JSON-LD を入れ、各要素は `position` / `name`（事業者 航路名）/ `url`（`https://searoute.info/index.html?share=route&...`）を持つ
+- routeList.html: 全航路の表を静的 HTML に含める（LIST-01）。`<head>` に schema.org の `ItemList` JSON-LD を入れ、各要素は `position` / `name`（事業者 航路名）/ `url`（`https://searoute.info/?share=route&...`）を持つ
+- 公開する絶対 URL（canonical、og:url、JSON-LD、llms.txt、llms-full.txt、sitemap.xml、404 ページのリンク）は Cloudflare Pages の正規形にそろえる。Pages は `.html` 付きの URL を 308 でリダイレクトする（`/routeList.html` → `/routeList`、`/index.html` → `/`）ため、リダイレクト元を正規 URL として示さない。サイト内の相対リンク（`./routeList.html`、`index.html?share=...`）は開発サーバーでも動くようにそのままにする
 - 埋め込みデータと JSON-LD は `<` を `<` にエスケープし、航路名に `</script>` が含まれても HTML が壊れないようにする
 - llms.txt: サイト概要と主要ページへのリンク（public/llms.txt を手で管理）。llms-full.txt へのリンクを含める
 - llms-full.txt: ビルド時に一覧用 JSON から生成する Markdown。カテゴリ（国内航路 / 国際航路 / 韓国国内航路）ごとに `- 事業者｜航路名（船名）［運航情報］: 地図URL / 公式: URL` を並べる（無い項目は省略、改行などの空白は 1 つの空白にまとめ、事業者名と航路名が両方空の行は出さない）。末尾に、最新情報は公式を優先する旨の注意書きを置く
