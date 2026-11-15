@@ -1,6 +1,8 @@
 # スタイルレイヤー仕様 (maptiler-basic-ja-custom.json)
 
-ソース: `https://tile.openstreetmap.jp/data/planet.json`（OpenMapTiles スキーマ）
+対象ファイル: `public/style/maptiler-basic-ja-custom.json`（ベースマップ「OSM Custom」）
+
+ソース: `https://tile.openstreetmap.jp/data/planet.json`（OpenMapTiles スキーマ）。北方領土・竹島は別ソース（[特定地域（島）](#特定地域島)）
 
 ---
 
@@ -126,8 +128,8 @@
 | `railway-transit-subway` | 地下鉄 | `transportation` | `transit` | `subway` | brunnel≠tunnel | minzoom 14（タイル：z14から表示） | `hsl(34,32%,30%)` 濃茶 | stops [z14:0, z15:1] | stops [z14:0, z15:1, z18:2, z22:4] | |
 | `railway-transit-tunnel` | 都市鉄道等トンネル | `transportation` | `transit` | `subway`以外 | brunnel=tunnel | minzoom 11（タイル：z11から表示） | `hsl(34,12%,60%)` 中間茶 | stops [z11:0, z12:1] | stops [z11:0, z12:1, z18:2, z22:4] | |
 | `railway-transit` | 都市鉄道等 | `transportation` | `transit` | `subway`以外 | brunnel≠tunnel | minzoom 11（タイル：z11から表示） | `hsl(34,32%,30%)` 濃茶 | stops [z11:0, z12:1] | stops [z11:0, z12:1, z18:2, z22:4] | |
-| `railway` | 鉄道 | `transportation` | `rail` | `funicular`以外 | `service`タグなし | minzoom 8（タイル：z8から表示） | `hsl(34,12%,30%)` 濃茶 | stops [z8:0, z14:1] | stops [z14:1.5, z18:3, z22:6] | [Overpass](https://overpass-turbo.eu/s/2ttj) |
-| `railway-tunnel` | 鉄道トンネル | `transportation` | `rail` | `funicular`以外 | brunnel=tunnel | minzoom 8（タイル：z8から表示） | `hsl(34,12%,60%)` 中間茶 | stops [z8:0, z14:1] | stops [z14:1.5, z18:3, z22:6] | |
+| `railway` | 鉄道 | `transportation` | `rail` | `funicular`以外 | `service`タグなし | minzoom 8（タイル：z8から表示） | `hsl(34,12%,30%)` 濃茶 | stops [z8:0, z14:1] | stops [z8:1, z14:1.5, z18:3, z22:6] | [Overpass](https://overpass-turbo.eu/s/2ttj) |
+| `railway-tunnel` | 鉄道トンネル | `transportation` | `rail` | `funicular`以外 | brunnel=tunnel | minzoom 8（タイル：z8から表示） | `hsl(34,12%,60%)` 中間茶 | stops [z8:0, z14:1] | stops [z8:1, z14:1.5, z18:3, z22:6] | |
 | `railway-service` | 操車場・側線・支線・交差 | `transportation` | `rail` | — | `service`タグあり | minzoom 14（タイル：z14から表示） | `hsl(34,12%,30%)` 濃茶 | stops [z14:0, z15:1] | stops [z14:0.5, z18:1, z22:2] | [yard](https://overpass-turbo.eu/s/2tte) / [siding](https://overpass-turbo.eu/s/2ttg) / [spur](https://overpass-turbo.eu/s/2ttd) / [crossover](https://overpass-turbo.eu/s/2ttm) |
 | `railway-funicular` | ケーブルカー（鋼索鉄道）| `transportation` | `rail` | `funicular` | brunnel≠tunnel | minzoom 14（タイル：z14から表示） | `hsl(34,12%,30%)` 濃茶 | stops [z14:0, z15:1] | stops [z14:1.5, z18:3, z22:6] | [Overpass](https://overpass-turbo.eu/s/2ttp) |
 | `railway-funicular-tunnel` | ケーブルカートンネル | `transportation` | `rail` | `funicular` | brunnel=tunnel | minzoom 14（タイル：z14から表示） | `hsl(34,12%,60%)` 中間茶 | stops [z14:0, z15:1] | stops [z14:1.5, z18:3, z22:6] | [Overpass](https://overpass-turbo.eu/s/2ttp) |
@@ -156,7 +158,7 @@
 | `railway-halt-label` | 鉄道駅（停留所） | `poi` | class=`railway`, subclass=`halt` | minzoom 14 | `railway`（size: z14=0.7 → z20=1.5） | `#000` | 12px（文字は z15 以降表示） |
 | `railway-label` | 鉄道駅（地下鉄・停留所以外） | `poi` | class=`railway`, subclass≠`subway` かつ subclass≠`halt` | minzoom 12 | `railway`（size: z12=0.5 → z14=0.7 → z20=1.5） | `#000` | 12px（文字は z14 以降表示） |
 | `aerialway-label` | ロープウェイ駅 | `poi` | class=`aerialway`, subclass=`station` | minzoom 14 | `aeroway`（size: z14=0.7 → z20=1.5） | `#000` | 12px（文字は z15 以降表示） |
-| `airport-label` | 空港 | `aerodrome_label` | iataタグあり | minzoom 10 | — | `#666` | 11px |
+| `airport-label` | 空港 | `aerodrome_label` | iataタグあり | minzoom 10 | `airport`（size: z10=0.5 → z12=0.7 → z20=1.5） | `#000` | 12px（文字は z12 以降表示） |
 
 ### 道路名・番号
 
@@ -165,12 +167,6 @@
 | `road_major_label` | 道路名 | `transportation_name` | LineString, class≠ferry, class≠aerialway | minzoom 13 | `#000` | stops [z10:8, z20:14] |
 | `aerialway_major_label` | ロープウェイ名 | `transportation_name` | LineString, class=aerialway | minzoom 14 | `#000` | stops [z10:8, z20:14] |
 | `highway-shield` | 路線番号シールド | `transportation_name` | ref_length≤6, 米国路線以外 | minzoom 9 | — | 8px（アイコン: motorway系=`road_green_{ref_length}` / trunk・primary系=`road_yellow_{ref_length}` / その他=`road_black_{ref_length}`） |
-
-### 一般POI
-
-| レイヤーID | 和名 | source-layer | 条件 | ズーム | テキスト色 | テキストサイズ |
-|---|---|---|---|---|---|---|
-| `poi_label` | POIラベル | `poi` | rank=1 | minzoom 14 | `#666` | 11px |
 
 ### 地名
 
@@ -210,10 +206,10 @@
 | z7〜 | 樹林、村名 |
 | z8〜 | 鉄道（フェードイン開始） |
 | z9〜 | 国立公園（フェードイン） |
-| z10〜 | 鉄道（ある程度見える）、2次道路 |
+| z10〜 | 鉄道（ある程度見える）、2次道路、空港アイコン |
 | z11〜 | 地下鉄等（フェードイン開始） |
-| z12〜 | 誘導路、空港ラベル |
+| z12〜 | 誘導路、空港名、駅アイコン（地下鉄・停留所以外） |
 | z13〜 | 細街路、道路名 |
-| z14〜 | 地下鉄等トンネル・ロープウェイ・ケーブルカー（表示開始）、駅アイコン・ロープウェイ駅アイコン・ロープウェイ名、POIラベル |
+| z14〜 | 地下鉄等トンネル・ロープウェイ・ケーブルカー（表示開始）、駅アイコン・ロープウェイ駅アイコン・ロープウェイ名 |
 | z15〜 | 建物（完全表示）、操車場・側線・スパー（表示完了）、バス停 |
 | z17〜 | 住居番号 |

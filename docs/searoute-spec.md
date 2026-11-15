@@ -2,7 +2,7 @@
 
 ## 1. 文書の目的
 
-この文書は、おでかけ航路マップの現行仕様を Spec-Driven Development 風に整理し、機能改修時の影響確認と回帰テストの基準として利用する設計書である。
+この文書はおでかけ航路マップの現行仕様を Spec-Driven Development 風に整理し、機能改修時の影響確認と回帰テストの基準として利用する設計書である。
 
 主な用途は以下の通り。
 
@@ -17,9 +17,10 @@
 
 - マップ画面: index.html
 - 航路一覧画面: routeList.html
-- PWA 関連: manifest.json, service-worker.js
-- データ表示ロジック: js 配下のモジュール群
-- 航路・港湾データ: data 配下の GeoJSON / JSON
+- PWA 関連: public/manifest.json, public/service-worker.js
+- データ表示ロジック: src 配下の React + TypeScript モジュール群
+- 航路データ: `https://pmtiles.searoute.info/` から配信する PMTiles と JSON
+- 港湾データ: public/data/portData.geojson
 
 対象外。
 
@@ -29,7 +30,7 @@
 
 ## 3. システム概要
 
-本サイトは、日本国内外の旅客船・フェリー航路情報を地図上で探索できる静的 Web アプリである。利用者は地図上の航路や港湾をクリックして詳細情報を確認し、外部の時刻表や公式サイトへ遷移できる。
+本サイトは日本国内外の旅客船・フェリー航路情報を地図上で探索できる静的 Web アプリである。利用者は地図上の航路や港湾をクリックして詳細情報を確認し、外部の時刻表や公式サイトへ遷移できる。
 
 主要な利用シナリオは以下。
 
@@ -90,17 +91,20 @@
 
 ### 5.1 航路データ
 
-航路データは GeoJSON と詳細 JSON の組み合わせで構成される。
+航路データは PMTiles と詳細 JSON の組み合わせで構成される（設定は src/config/routeLayers.ts）。
 
-- GeoJSON: 線形データと最小限の属性を保持
-- Details JSON: routeId をキーとして詳細情報を保持
+- PMTiles: 線形データと最小限の属性を保持する。4 種類の航路を 1 つのファイル `https://pmtiles.searoute.info/searoute.pmtiles` に収め、source-layer で分ける
+- 詳細 JSON: routeId ごとに 1 ファイル（`https://pmtiles.searoute.info/details/<フォルダ>/<routeId>.json`）。フォルダは source-layer 名、datasetName の順に試し、取得できなければ空の詳細として扱う
+- 一覧用 JSON: 航路一覧画面が読み込む（`https://pmtiles.searoute.info/lightweight/<source-layer>.json`。期間限定航路は一覧に含めない）
 
 主なデータセット。
 
-- data/seaRoute.geojson + data/seaRouteDetails.json
-- data/internationalSeaRoute.geojson + data/internationalSeaRouteDetails.json
-- data/seaRouteKR.geojson + data/seaRouteKRDetails.json
-- data/limitedSeaRoute.geojson + data/limitedSeaRouteDetails.json
+| レイヤー ID | source-layer | datasetName |
+|---|---|---|
+| geojson_sea_route | seaRoute | seaRoute |
+| geojson_international_sea_route | seaRoute_international | internationalSeaRoute |
+| geojson_KR_sea_route | seaRoute_KR | seaRouteKR |
+| geojson_limited_sea_route | seaRoute_limited | limitedSeaRoute |
 
 主なプロパティ。
 
@@ -127,7 +131,7 @@
 
 ### 5.3 港湾データ
 
-港湾データは data/portData.geojson を使用する。主なプロパティは港名と補足情報である。
+港湾データは public/data/portData.geojson（配信時は ./data/portData.geojson）を使用する。主なプロパティは港名と補足情報である。
 
 ## 6. アーキテクチャ概要
 
@@ -138,7 +142,8 @@
 - 地図: MapLibre GL JS 6.18.0（npm `maplibre-gl`。ワーカーは `?worker&url` でバンドルし setWorkerUrl で指定）
 - タイル: PMTiles 4.5.0（npm `pmtiles`）
 - 検索補助: Maplibre Geocoder 1.9.4（npm `@maplibre/maplibre-gl-geocoder`）+ Nominatim
-- スタイル: Tailwind CSS と独自 CSS
+- スタイル: Tailwind CSS 4（`@tailwindcss/vite`）と独自 CSS（public/css/）
+- アイコン: Font Awesome Free 6.4.0（npm `@fortawesome/free-solid-svg-icons` / `@fortawesome/free-brands-svg-icons`）をインライン SVG で描画
 - PWA: manifest.json と service-worker.js
 - 計測: Google Analytics
 
@@ -150,6 +155,8 @@
 flowchart TD
     E["**entrypoints/**
     main-map.tsx · main-routeList.tsx
+    mapApp.tsx · routeListApp.tsx · mountApp.tsx
+    afterFirstPaint.ts · prerender.tsx
     mapServices.ts · routeListServices.ts
     serviceWorkerRegistration.ts"]
 
@@ -193,6 +200,7 @@ flowchart TD
 | entrypoints | mapServices.ts | マップ画面の Composition Root（adapters → MapPageServices。MapLibre を含む adapters/map/mapFactory は地図生成時に動的 import） |
 | entrypoints | main-routeList.tsx / routeListApp.tsx / routeListServices.ts | 一覧画面のエントリー（初回描画後に routeListApp.tsx を動的 import）と Composition Root |
 | entrypoints | serviceWorkerRegistration.ts | Service Worker 登録・即時切替 |
+| entrypoints | prerender.tsx | ビルド時プリレンダリング（サービスを空実装にして各ページを renderToString） |
 | application | ports.ts | ポート（インターフェース）定義 |
 | application | useCases/drawerUseCases.ts | 航路・港湾・座標の選択、共有 URL からの復元、背景クリック |
 | application | useCases/shareUseCases.ts | 共有 URL の復元・コピー・対象レイヤー有効化 |
@@ -207,6 +215,8 @@ flowchart TD
 | adapters/map | pmtilesLayerAdapter.ts | PMTiles 航路レイヤー追加・フィルター・ズーム・ハイライト |
 | adapters/map | layerManager.ts | ベースマップ切替・オーバーレイ追加削除・表示順管理 |
 | adapters/map | mapViewportGuard.ts | マップリサイズ監視・moveend の表示位置永続化 |
+| adapters/map | mapRegistry.ts / mapCamera.ts | 生成済み地図インスタンスの保持・カメラ操作（MapLibre 本体を読み込まずに使う） |
+| adapters/http | fetchWithRetry.ts | 再試行つきの fetch |
 | adapters/data | dataLoader.ts / routeDetailsRepository.ts / routeListRepository.ts / wikipediaImageAdapter.ts | データ取得・キャッシュ・ローディング制御・画像検索 |
 | adapters/geocoding | nominatimGeocodingAdapter.ts | Nominatim 地名検索・逆ジオコーディング |
 | adapters/persistence | cookieControl.ts | Cookie の読み書き（SettingsStore） |
@@ -219,6 +229,7 @@ flowchart TD
 | presentation/map | ContextMenu.tsx / mapPointerInteractions.ts | 右クリックメニュー・長押し |
 | presentation/common | InfoWindow.tsx / PrivacyPolicyWindow.tsx / modalController.ts / ModalContext.tsx | モーダルの表示・フォーカス管理 |
 | presentation/common | CookieBanner.tsx / toast.tsx / loadingIndicator.tsx / outsideClickHandler.ts | 共通 UI 部品 |
+| presentation/common | Icon.tsx | Font Awesome アイコンのインライン SVG 描画（使用するアイコンを `ICONS` に登録する） |
 | presentation/routeList | RouteListPage.tsx | 一覧テーブル・検索・ハイライト |
 | presentation/hooks | useViewModelState.ts | ViewModel を useSyncExternalStore で購読 |
 | config | layerConfig.ts / routeLayers.ts / mapStyles.ts | レイヤー一覧・PMTiles 航路レイヤー・地図スタイル定義 |
@@ -392,11 +403,12 @@ ViewModel はフレームワーク非依存で、React からは `useViewModelSt
 - 運行頻度
 - 補足情報
 - 船名一覧
+- 船の画像（Wikipedia で見つかった場合のみ）
 - 外部リンク
 
 期待動作。
 
-- クリック対象の properties を詳細ドロワーに反映する
+- クリック対象の properties と routeId ごとの詳細 JSON を詳細ドロワーに反映する
 - 事業者名に全角括弧が含まれる場合は主表記と副表記に分離する
 - 航路名または区間名クリックでズーム関数を呼ぶ
 - marker_click イベントを計測する
@@ -537,7 +549,7 @@ PC とモバイルで詳細情報を見やすく提示する。
 
 期待動作。
 
-- 各 details JSON を fetch して tbody に行を追加する
+- 各テーブルの一覧用 JSON を fetch して tbody に行を描画する
 - note が season の行は season-row クラスを付与する
 - note が suspend の行は suspend-row クラスを付与する
 - URL があれば別タブで開くリンクを表示する
@@ -563,7 +575,7 @@ PC とモバイルで詳細情報を見やすく提示する。
 受け入れ条件。
 
 - 複数テーブル横断で検索できる
-- ハイライト解除後に元の HTML に戻る
+- ハイライト解除後に元の表示に戻る
 
 ### 7.15 PWA-01 PWA 基本要件
 
@@ -574,8 +586,8 @@ PC とモバイルで詳細情報を見やすく提示する。
 期待動作。
 
 - manifest.json に name, short_name, display, icons が定義されている
-- service-worker.js が install 時に主要静的ファイルをキャッシュする
-- fetch 時にキャッシュ優先でレスポンスを返す
+- service-worker.js が install 時に主要静的ファイル（アイコン画像と style/empty.json）をキャッシュする
+- fetch 時はネットワーク優先で取得し、失敗したときだけキャッシュから返す（詳細は docs/service-worker-guide.md）
 
 受け入れ条件。
 
@@ -675,6 +687,7 @@ Cookie で以下を保持する。
 | mapZoom | 地図ズーム値 | 30 日 |
 | routeFilters | 航路フィルター状態 JSON | 365 日 |
 | showSuspendedRoutes | 休止中航路表示フラグ | 365 日 |
+| cookieConsent | Cookie バナーを閉じたこと（アクセス解析の同意） | 365 日 |
 
 ## 9. 外部依存
 
@@ -684,7 +697,9 @@ Cookie で以下を保持する。
 
 - MapLibre GL JS
 - Maplibre Geocoder
+- 航路データの配信（`https://pmtiles.searoute.info/`）
 - Nominatim 検索 API
+- Wikipedia API（船の画像検索）
 - Google Maps URL スキーム
 - Google Analytics
 - 各種タイルサーバー
@@ -721,7 +736,7 @@ Cookie で以下を保持する。
 - src/config/layerConfig.ts のレイヤー定義
 - src/config/routeLayers.ts の PMTiles ソース設定
 - src/adapters/map/layerManager.ts の addOverLayer / removeOverLayer
-- src/adapters/map/geoJsonLayerAdapter.ts の描画定義
+- src/adapters/map/geoJsonLayerAdapter.ts（港湾）と src/adapters/map/pmtilesLayerAdapter.ts（航路）の描画定義
 - Cookie 復元
 - レイヤー順序
 - 一覧ページへの反映有無
