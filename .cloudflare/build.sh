@@ -67,7 +67,9 @@ if [ "${CF_PAGES_BRANCH}" = "main" ]; then
   find deploy -name "*.html" | while read filepath; do
     [ "$(basename "$filepath")" = "404.html" ] && continue
     relative_path="${filepath#deploy/}"
+    # Cloudflare Pages の正規形に合わせる（index.html → ディレクトリ、foo.html → foo。.html 付きは 308 でリダイレクトされる）
     url_path="${relative_path%index.html}"
+    url_path="${url_path%.html}"
     mod_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     echo "  <url><loc>${BASE_URL}/${url_path}</loc><lastmod>${mod_time}</lastmod></url>" >> deploy/sitemap.xml
   done

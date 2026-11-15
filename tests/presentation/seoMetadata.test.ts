@@ -8,7 +8,7 @@ const projectRoot = fileURLToPath(new URL('../../', import.meta.url));
 describe('SEO metadata', () => {
     it.each([
         ['index.html', 'https://searoute.info/'],
-        ['routeList.html', 'https://searoute.info/routeList.html'],
+        ['routeList.html', 'https://searoute.info/routeList'],
     ])('%s はクエリなしの正規 URL を宣言する', (fileName, canonicalUrl) => {
         const html = readFileSync(`${projectRoot}${fileName}`, 'utf8');
         const { document } = new JSDOM(html).window;
@@ -45,7 +45,7 @@ describe('og:image と 404 ページ', () => {
         expect(document.documentElement.getAttribute('lang')).toBe('ja');
         expect(document.querySelector('meta[name="robots"]')?.getAttribute('content')).toBe('noindex');
         expect(document.querySelector('a[href="/"]')).not.toBeNull();
-        expect(document.querySelector('a[href="/routeList.html"]')).not.toBeNull();
+        expect(document.querySelector('a[href="/routeList"]')).not.toBeNull();
         expect(document.querySelector('script')).toBeNull();
     });
 });
@@ -68,5 +68,22 @@ describe('初期レイアウト', () => {
         const interStylesheet = document.querySelector('link[href*="fonts.googleapis.com/css2?family=Inter"]');
 
         expect(interStylesheet?.href).toContain('display=optional');
+    });
+});
+describe('公開 URL は Cloudflare Pages の正規形（.html なし）', () => {
+    it('routeList.html の og:url と JSON-LD の url は /routeList', () => {
+        const html = readFileSync(`${projectRoot}routeList.html`, 'utf8');
+        const { document } = new JSDOM(html).window;
+        const jsonLd = JSON.parse(document.querySelector('script[type="application/ld+json"]')?.textContent ?? '{}');
+
+        expect(document.querySelector('meta[property="og:url"]')?.getAttribute('content')).toBe('https://searoute.info/routeList');
+        expect(jsonLd.url).toBe('https://searoute.info/routeList');
+    });
+
+    it('public/llms.txt は .html 付きの URL を含まない', () => {
+        const text = readFileSync(`${projectRoot}public/llms.txt`, 'utf8');
+
+        expect(text).toContain('https://searoute.info/routeList)');
+        expect(text).not.toMatch(/searoute\.info\/[^\s)]*\.html/);
     });
 });
