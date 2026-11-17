@@ -148,7 +148,7 @@
 - タイル: PMTiles 4.5.0（npm `pmtiles`）
 - 検索補助: Maplibre Geocoder 1.9.4（npm `@maplibre/maplibre-gl-geocoder`）+ Nominatim
 - スタイル: Tailwind CSS 4（`@tailwindcss/vite`）と独自 CSS（public/css/）
-- アイコン: Font Awesome Free 6.4.0（npm `@fortawesome/free-solid-svg-icons` / `@fortawesome/free-brands-svg-icons`）をインライン SVG で描画
+- アイコン: Font Awesome Free 7.3.1（npm `@fortawesome/free-solid-svg-icons` / `@fortawesome/free-brands-svg-icons`）をインライン SVG で描画
 - PWA: manifest.json と service-worker.js
 - 計測: Google Analytics
 
@@ -194,7 +194,7 @@ flowchart TD
 - ビルド時プリレンダリング（SSG）: vite.config.ts の `searoute-prerender` プラグインがクライアントビルド後に `src/entrypoints/prerender.tsx`（react-dom/server の renderToString）を実行し、各ページの静的マークアップとビルド番号を `dist/*.html` の `#app` に埋め込む。クライアントは `hydrateRoot`（開発サーバーでは空のため `createRoot`）。地図・データ取得は副作用で実行するため、プリレンダリング結果は旧版の静的 body と同等（tests/entrypoints/prerender.test.tsx で旧版 HTML と比較）。
 - 航路一覧のビルド時取得: プラグインは `loadPrerenderRouteTables`（lightweight JSON を取得、1 件でも失敗したらビルド失敗）で得た航路データを routeList.html の `#app`（全行）・`<script type="application/json" id="route-list-data">`・`ItemList` JSON-LD として埋め込み、`dist/llms-full.txt` を出力する。クライアントは埋め込みデータがあれば取得せずに ready 状態で開始する。環境変数 `SEAROUTE_SKIP_ROUTE_DATA=1` で取得・埋め込み・llms-full.txt 生成を省略（E2E の webServer で使用）。
 - 読み込み順序（パフォーマンス）: エントリーは小さく保ち、プリレンダリング済み HTML の初回描画（first-contentful-paint）を待ってから React アプリを動的 import してハイドレーションする（startTransition で分割実行）。MapLibre（約 310KB gzip）は地図生成時（ハイドレーション後の副作用）に動的 import する。
-- アイコン: Font Awesome Free 6.4.0 の Web フォント・CSS（CDN）は使わず、使用するアイコンだけを `presentation/common/Icon.tsx` がインライン SVG で描画する（`<i class="fa-solid fa-xxx">` の class は維持）。寸法・位置を再現する CSS は `src/styles/icons.css` で、ビルド時に各 HTML の head へインライン展開する。
+- アイコン: 旧版（Font Awesome Free 6.4.0）の Web フォント・CSS（CDN）は使わず、Font Awesome Free 7.3.1 のうち使用するアイコンだけを `presentation/common/Icon.tsx` がインライン SVG で描画する（`<i class="fa-solid fa-xxx">` の class は維持）。寸法・位置を再現する CSS は `src/styles/icons.css` で、ビルド時に各 HTML の head へインライン展開する。
 - Cookie バナー: index.html head のインラインスクリプトが同意 Cookie の有無で `<html data-cookie-banner="show">` を付け、インライン CSS で HTML 解析中から表示する（JS 無効・同意済みは非表示）。React は閉じた後の非表示のみ管理する。
 
 レイヤーごとの主な責務。

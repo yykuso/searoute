@@ -1,9 +1,9 @@
 /*
- * Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com
+ * Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
- * Copyright 2023 Fonticons, Inc.
+ * Copyright 2026 Fonticons, Inc.
  *
- * 使用中のクラス（.fa-solid/.fas/.fa-brands/.fab/.fa-lg/.fa-fw）だけを all.min.css から移植し、
+ * 使用中のクラス（.fa-solid/.fas/.fa-brands/.fab/.fa-lg/.fa-fw）だけを旧版 6.4.0 の all.min.css から移植し、
  * Web フォントのグリフをインライン SVG（presentation/common/Icon.tsx）で再現する。
  * - <i> の行ボックス（高さ・ベースライン）は Font Awesome フォントと同じ縦メトリクス（ascent 0.875em / descent 0.125em）の
  *   ローカルフォントで作り、旧版と同じ丸め・位置になるようにする（Web フォントのダウンロードは不要）

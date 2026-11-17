@@ -96,7 +96,7 @@ function asyncStylesheets(): Plugin {
 
 const ICON_CSS_PLACEHOLDER = /<!-- searoute:icon-css[\s\S]*?-->/;
 const ICON_CSS_PATH = resolve(root, 'src/styles/icons.css');
-const ICON_LICENSE = '/*! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. */';
+const ICON_LICENSE = '/*! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc. */';
 
 /**
  * アイコン（インライン SVG）用の CSS を各 HTML の head へインライン展開する
