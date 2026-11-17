@@ -94,9 +94,37 @@ function asyncStylesheets(): Plugin {
     };
 }
 
-const ICON_CSS_PLACEHOLDER = /<!-- searoute:icon-css[\s\S]*?-->/;
+const ROUTE_DATA_ORIGIN = 'https://pmtiles.searoute.info';
+const ROUTE_DATA_PROXY_PATH = '/__route-data';
+
+/**
+ * 開発サーバー専用: 航路データ（pmtiles.searoute.info）を同じオリジンのプロキシ経由で取得する
+ * 配信元は本番のオリジンにしか CORS を許可していないため、127.0.0.1:5173 から直接は読めない。
+ * 相対パスなので Quick Tunnel 経由のアクセスでも同じプロキシを通る。
+ * ビルド・プレビュー・Vitest では何もしない（本番の URL のまま。src/config/routeData.ts）。
+ */
+function devRouteDataProxy(): Plugin {
+    return {
+        name: 'searoute-dev-route-data-proxy',
+        apply: (_config, { command }) => command === 'serve' && !process.env.VITEST,
+        config: () => ({
+            define: { __SEAROUTE_DEV_ROUTE_DATA_BASE__: JSON.stringify(ROUTE_DATA_PROXY_PATH) },
+            server: {
+                proxy: {
+                    [ROUTE_DATA_PROXY_PATH]: {
+                        target: ROUTE_DATA_ORIGIN,
+                        changeOrigin: true,
+                        rewrite: (path) => path.slice(ROUTE_DATA_PROXY_PATH.length),
+                    },
+                },
+            },
+        }),
+    };
+}
+
+const ICON_CSS_PLACEHOLDER =/<!-- searoute:icon-css[\s\S]*?-->/;
 const ICON_CSS_PATH = resolve(root, 'src/styles/icons.css');
-const ICON_LICENSE = '/*! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. */';
+const ICON_LICENSE = '/*! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc. */';
 
 /**
  * アイコン（インライン SVG）用の CSS を各 HTML の head へインライン展開する
@@ -117,7 +145,7 @@ function inlineIconStyles(): Plugin {
 }
 
 export default defineConfig({
-    plugins: [react(), tailwindcss(), inlineIconStyles(), asyncStylesheets(), prerenderPages()],
+    plugins: [react(), tailwindcss(), inlineIconStyles(), asyncStylesheets(), prerenderPages(), devRouteDataProxy()],
     // 公開ディレクトリ（data/ style/ img/ manifest.json 等）は同じURLのまま dist 直下へコピーされる
     publicDir: 'public',
     define: DEFINE,

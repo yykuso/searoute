@@ -21,7 +21,7 @@ describe('Icon', () => {
         const { container } = render(<><Icon className="fas fa-info-circle fa-fw" /><Icon className="fa-brands fa-github" /></>);
         const [info, github] = container.querySelectorAll('svg');
         expect(info.getAttribute('viewBox')).toBe('0 0 512 512');
-        expect(github.getAttribute('viewBox')).toBe('0 0 496 512');
+        expect(github.getAttribute('viewBox')).toBe('0 0 512 512');
     });
 
     it('未登録のアイコンは警告して空の <i> を描画する（画面は落とさない）', () => {

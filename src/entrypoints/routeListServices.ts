@@ -5,21 +5,22 @@ import type { RouteTableState } from '../application/viewModels/routeListViewMod
 import { createRouteListViewModel } from '../application/viewModels/routeListViewModel';
 import type { RouteTableConfig } from '../application/viewModels/routeListViewModel';
 import { createRouteListRepository } from '../adapters/data/routeListRepository';
+import { ROUTE_DATA_BASE_URL } from '../config/routeData';
 
 // テーブル設定
 export const ROUTE_LIST_TABLE_CONFIGS: RouteTableConfig[] = [
     {
-        dataPath: 'https://pmtiles.searoute.info/lightweight/seaRoute.json',
+        dataPath: `${ROUTE_DATA_BASE_URL}/lightweight/seaRoute.json`,
         selector: '.sea-route-table tbody',
         sourceId: 'geojson_sea_route'
     },
     {
-        dataPath: 'https://pmtiles.searoute.info/lightweight/seaRoute_international.json',
+        dataPath: `${ROUTE_DATA_BASE_URL}/lightweight/seaRoute_international.json`,
         selector: '.international-sea-route-table tbody',
         sourceId: 'geojson_international_sea_route'
     },
     {
-        dataPath: 'https://pmtiles.searoute.info/lightweight/seaRoute_KR.json',
+        dataPath: `${ROUTE_DATA_BASE_URL}/lightweight/seaRoute_KR.json`,
         selector: '.sea-route-KR-table tbody',
         sourceId: 'geojson_KR_sea_route'
     },

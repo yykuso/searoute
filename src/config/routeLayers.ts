@@ -1,3 +1,5 @@
+import { ROUTE_DATA_BASE_URL } from './routeData';
+
 export interface ShareOverview {
     center: [number, number];
     zoom: number;
@@ -20,7 +22,7 @@ export type RouteLayerId =
     | 'geojson_KR_sea_route'
     | 'geojson_limited_sea_route';
 
-const UNIFIED_PMTILES_PATH = 'https://pmtiles.searoute.info/searoute.pmtiles';
+const UNIFIED_PMTILES_PATH = `${ROUTE_DATA_BASE_URL}/searoute.pmtiles`;
 
 const DEFAULT_SHARE_OVERVIEW: ShareOverview = { center: [137.5, 36.5], zoom: 4 };
 
