@@ -37,6 +37,7 @@ npm run test:e2e   # E2E テスト（ビルド成果物に対して実行）
 ```
 
 - 開発サーバーは `http://127.0.0.1:5173/` で起動します（ポート固定。使用中なら起動しません）。Cloudflare Quick Tunnel（`*.trycloudflare.com`）経由のアクセスも許可しています。
+- 航路データ（`https://pmtiles.searoute.info/`）は本番のオリジンにしか CORS を許可していないため、開発サーバーでは `/__route-data` のプロキシ経由で取得します（`vite.config.ts` の `devRouteDataProxy`）。ビルド・プレビュー・テストでは本番の URL を直接使います。
 - `npm run preview` は `http://localhost:4173/` で起動します。`npm run test:e2e` は `npm run build` のあと `http://127.0.0.1:4173` でプレビューを起動して検証します。
 - Windows では、`npm test` を大文字のドライブ名（`C:\`）で始まるカレントディレクトリから実行してください。Git Bash などで `c:\` のように小文字になっていると、Vitest がモジュールを二重に読み込み、全テストが失敗します。
 
