@@ -1,9 +1,9 @@
 /**
  * Font Awesome アイコン（インライン SVG）
  *
- * Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com
+ * Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
- * Copyright 2023 Fonticons, Inc.
+ * Copyright 2026 Fonticons, Inc.
  *
  * 旧版の Web フォント（<i class="fa-solid fa-xmark">）を置き換える。<i> と class はそのまま残し
  * （CSS セレクター・テストが参照するため）、中に使用するアイコンだけの SVG パスを描画する。
@@ -39,7 +39,7 @@ import {
 import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import type { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 
-/** 使用するアイコンのみ（キーは Font Awesome 6.4.0 のクラス名。旧名の別名も含む） */
+/** 使用するアイコンのみ（キーは旧版（Font Awesome 6.4.0 の Web フォント）のクラス名。旧名の別名も含む） */
 const ICONS: Record<string, IconDefinition> = {
     'fa-ban': faBan,
     'fa-bars': faBars,

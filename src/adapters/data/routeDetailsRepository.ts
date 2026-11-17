@@ -1,4 +1,5 @@
 import type { RouteDetailsRepository } from '../../application/ports';
+import { ROUTE_DATA_BASE_URL } from '../../config/routeData';
 import type { RouteLayerConfig } from '../../config/routeLayers';
 import type { RouteDetails } from '../../domain/seaRoute';
 import type { FetchLike } from '../http/fetchWithRetry';
@@ -13,7 +14,7 @@ export function createRouteDetailsRepository(options: RouteDetailsRepositoryOpti
     const {
         routeLayerConfigs,
         fetchImpl = globalThis.fetch,
-        baseUrl = 'https://pmtiles.searoute.info/details',
+        baseUrl = `${ROUTE_DATA_BASE_URL}/details`,
     } = options;
     const cache = new Map<string, RouteDetails>();
     const inFlight = new Map<string, Promise<RouteDetails>>();

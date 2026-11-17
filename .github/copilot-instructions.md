@@ -21,7 +21,7 @@
 - MapLibre controls are added as empty `ContainerControl`s (adapters) and their content is rendered by React portals. Keep control order: hamburger (before `load`), then layers, then route filter (after `load`).
 - Do not import `maplibre-gl` from presentation; use the `MapHandle` abstraction. MapLibre is loaded by a dynamic import of `adapters/map/mapFactory` when the map is created; keep it out of the entry chunks.
 - Pages are prerendered at build time (SSG) and hydrated. Components must not read `window`, `document` or cookies during render; do it in effects.
-- Icons are inline SVGs from Font Awesome Free 6.4.0 (`src/presentation/common/Icon.tsx`). Register any new icon in `ICONS`; unregistered icons render as an empty `<i>` with a console warning.
+- Icons are inline SVGs from Font Awesome Free 7.3.1 (`src/presentation/common/Icon.tsx`). Register any new icon in `ICONS`; unregistered icons render as an empty `<i>` with a console warning.
 
 ## 3. Coding Guidelines
 - Use small, focused functions and keep side effects localized.

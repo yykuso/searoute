@@ -18,7 +18,7 @@
 - 地図ライブラリ: MapLibre GL JS 6.18.0 / MapLibre Geocoder 1.9.4 / PMTiles 4.5.0（npm パッケージ）
 - 航路データ配信: PMTiles + lightweight JSON（`https://pmtiles.searoute.info/`）
 - スタイリング: Tailwind CSS 4（`@tailwindcss/vite`）+ 静的CSS（`public/css/`）
-- アイコン: Font Awesome Free 6.4.0（`@fortawesome/free-solid-svg-icons` / `@fortawesome/free-brands-svg-icons`）。使用分だけをインライン SVG で描画
+- アイコン: Font Awesome Free 7.3.1（`@fortawesome/free-solid-svg-icons` / `@fortawesome/free-brands-svg-icons`）。使用分だけをインライン SVG で描画
 - テスト: Vitest + React Testing Library / Playwright
 - 静的解析: ESLint + eslint-plugin-boundaries（レイヤー依存ルール）
 - ホスティング: Cloudflare Pages（`.cloudflare/build.sh` → `deploy/`）
@@ -37,6 +37,7 @@ npm run test:e2e   # E2E テスト（ビルド成果物に対して実行）
 ```
 
 - 開発サーバーは `http://127.0.0.1:5173/` で起動します（ポート固定。使用中なら起動しません）。Cloudflare Quick Tunnel（`*.trycloudflare.com`）経由のアクセスも許可しています。
+- 航路データ（`https://pmtiles.searoute.info/`）は本番のオリジンにしか CORS を許可していないため、開発サーバーでは `/__route-data` のプロキシ経由で取得します（`vite.config.ts` の `devRouteDataProxy`）。ビルド・プレビュー・テストでは本番の URL を直接使います。
 - `npm run preview` は `http://localhost:4173/` で起動します。`npm run test:e2e` は `npm run build` のあと `http://127.0.0.1:4173` でプレビューを起動して検証します。
 - Windows では、`npm test` を大文字のドライブ名（`C:\`）で始まるカレントディレクトリから実行してください。Git Bash などで `c:\` のように小文字になっていると、Vitest がモジュールを二重に読み込み、全テストが失敗します。
 
@@ -84,7 +85,7 @@ searoute/
 - ビルド時プリレンダリング（SSG）: `npm run build` の最後に `src/entrypoints/prerender.tsx` を SSR で描画し、`dist/*.html` の `#app` に静的 HTML（見出し・サイト情報・プライバシーポリシー・一覧の検索 UI 等）を埋め込みます。クライアントは `hydrateRoot` で引き継ぐため、コンポーネントは描画中に window / document / Cookie を参照せず、副作用内で参照してください。Cookie バナーの表示判定は index.html head のインラインスクリプトが `html[data-cookie-banner]` を付けて CSS で行います。
 - 航路一覧のビルド時データ: ビルド時に `https://pmtiles.searoute.info/lightweight/*.json` を取得し、`dist/routeList.html` に全航路の行・`route-list-data`（JSON）・`ItemList` JSON-LD を埋め込み、`dist/llms-full.txt`（全航路のテキスト一覧）を生成します。取得に失敗するとビルドも失敗します。ネットワークを使わない検証（E2E など）は `SEAROUTE_SKIP_ROUTE_DATA=1` で取得・埋め込みを省略できます。
 - 初回表示の高速化: React アプリは静的 HTML の初回描画（FCP）後に動的 import してハイドレーションし、MapLibre は地図生成時に動的 import します。
-- アイコンは Font Awesome Free 6.4.0 のうち使用分だけをインライン SVG で描画します（位置合わせ用 CSS は `src/styles/icons.css`）。新しいアイコンを使うときは、`presentation/common/Icon.tsx` の `ICONS` に登録してください。未登録のアイコンは SVG のない空の `<i>` になり、コンソールに警告が出ます。
+- アイコンは Font Awesome Free 7.3.1 のうち使用分だけをインライン SVG で描画します（位置合わせ用 CSS は `src/styles/icons.css`）。新しいアイコンを使うときは、`presentation/common/Icon.tsx` の `ICONS` に登録してください。未登録のアイコンは SVG のない空の `<i>` になり、コンソールに警告が出ます。
 
 ## 仕様書
 
