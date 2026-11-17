@@ -47,7 +47,7 @@
     "vitest": "^5.1.0"
   },
   "dependencies": {
-    "@fortawesome/free-brands-svg-icons": "6.4.0",
+    "@fortawesome/free-brands-svg-icons": "7.3.1",
     "@fortawesome/free-solid-svg-icons": "6.4.0",
     "@maplibre/maplibre-gl-geocoder": "1.9.4",
     "follow-redirects": "^1.16.3",
