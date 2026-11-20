@@ -19,6 +19,37 @@ describe('SEO metadata', () => {
     });
 });
 
+describe('routeList.html の検索向けメタデータ', () => {
+    const html = readFileSync(`${projectRoot}routeList.html`, 'utf8');
+    const { document } = new JSDOM(html).window;
+
+    it('title と description は検索語（フェリー・旅客船・時刻表）を含み、OGP / Twitter と一致する', () => {
+        const title = document.title;
+        const description = document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '';
+
+        for (const keyword of ['フェリー', '旅客船', '航路一覧', '時刻表']) {
+            expect(title).toContain(keyword);
+        }
+        for (const keyword of ['フェリー', '旅客船', '時刻表']) {
+            expect(description).toContain(keyword);
+        }
+        expect(document.querySelector('meta[property="og:title"]')?.getAttribute('content')).toBe(title);
+        expect(document.querySelector('meta[name="twitter:title"]')?.getAttribute('content')).toBe(title);
+        expect(document.querySelector('meta[property="og:description"]')?.getAttribute('content')).toBe(description);
+        expect(document.querySelector('meta[name="twitter:description"]')?.getAttribute('content')).toBe(description);
+    });
+
+    it('index,follow を宣言し、JSON-LD にパンくず（トップ → 航路一覧）を持つ', () => {
+        expect(document.querySelector('meta[name="robots"]')?.getAttribute('content')).toBe('index,follow,max-image-preview:large');
+        const jsonLd = JSON.parse(document.querySelector('script[type="application/ld+json"]')?.textContent ?? '{}');
+        expect(jsonLd.description).toBe(document.querySelector('meta[name="description"]')?.getAttribute('content'));
+        expect(jsonLd.breadcrumb.itemListElement.map((item: { item: string }) => item.item)).toEqual([
+            'https://searoute.info/',
+            'https://searoute.info/routeList',
+        ]);
+    });
+});
+
 describe('og:image と 404 ページ', () => {
     it.each(['index.html', 'routeList.html'])('%s の og:image は絶対URLの banner.png', (fileName) => {
         const html = readFileSync(`${projectRoot}${fileName}`, 'utf8');

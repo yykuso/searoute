@@ -40,7 +40,7 @@ test.describe('JavaScript 無効でもプリレンダリングした静的コン
 
     test('航路一覧ページ', async ({ page }) => {
         await page.goto('/routeList.html');
-        await expect(page.getByRole('heading', { level: 1, name: '航路一覧' })).toBeVisible();
+        await expect(page.getByRole('heading', { level: 1, name: 'フェリー・旅客船 航路一覧' })).toBeVisible();
         await expect(page.getByRole('heading', { level: 2 })).toHaveText(['国内航路', '国際航路', '韓国 国内航路']);
         await expect(page.getByPlaceholder('検索キーワードを入力')).toBeVisible();
         await expect(page.getByRole('button', { name: '検索', exact: true })).toBeVisible();
@@ -55,7 +55,7 @@ test('配信される HTML にプリレンダリング結果とビルド番号�
     expect(indexHtml).toMatch(/<span id="site-build-number">(local|[0-9a-f]{7})<\/span>/);
     expect(indexHtml).toContain('id="privacy-policy-window"');
     const routeListHtml = await (await request.get('/routeList.html')).text();
-    expect(routeListHtml).toContain('<h1>航路一覧</h1>');
+    expect(routeListHtml).toContain('<h1>フェリー・旅客船 航路一覧</h1>');
     expect(routeListHtml).toContain('id="searchbox"');
 });
 

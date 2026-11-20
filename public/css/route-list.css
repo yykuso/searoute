@@ -175,6 +175,12 @@ table td a:hover {
     background-color: #f8d7da; /* 薄い赤 */
 }
 
+.route-list-intro {
+    margin: 0 10px 8px;
+    max-width: 700px;
+    line-height: 1.6;
+}
+
 /* 検索用 */
 .sbox {
     max-width: 300px;

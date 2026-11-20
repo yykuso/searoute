@@ -145,6 +145,18 @@ const TABLES = [
     { title: '韓国 国内航路', tableClassName: 'sea-route-KR-table', infoClassName: 'information' },
 ];
 
+const ROUTE_LIST_INTRO = '日本全国のフェリー・旅客船・高速船の航路を、事業者名・航路名・船名で一覧にしています。'
+    + '航路名を選ぶと地図上で航路と詳細を、「時刻表」列から運航事業者の公式サイトを確認できます。';
+
+/** 「掲載航路数：国内航路 N件、…」。データが無い（開発サーバーで未取得など）ときは空 */
+function routeCountText(tables: RouteTableState[]): string {
+    const counts = TABLES.flatMap(({ title, tableClassName }) => {
+        const count = tables.find((table) => table.selector === `.${tableClassName} tbody`)?.rows.length ?? 0;
+        return count > 0 ? [`${title} ${count}件`] : [];
+    });
+    return counts.length > 0 ? `掲載航路数：${counts.join('、')}。` : '';
+}
+
 export function RouteListPage({ viewModel }: {
     viewModel: Pick<RouteListViewModel, 'getState' | 'subscribe' | 'search' | 'reset'>;
 }) {
@@ -173,7 +185,7 @@ export function RouteListPage({ viewModel }: {
                                 </a>
                             </li>
                             <li>
-                                <a href="./routeList.html" title="航路一覧">
+                                <a href="./routeList" title="航路一覧">
                                     <Icon className="fas fa-ship" />
                                     <span>航路一覧</span>
                                 </a>
@@ -182,7 +194,11 @@ export function RouteListPage({ viewModel }: {
                     </nav>
                 </div>
             </header>
-            <h1>航路一覧</h1>
+            <h1>フェリー・旅客船 航路一覧</h1>
+            <p className="route-list-intro">
+                {ROUTE_LIST_INTRO}
+                {routeCountText(state.tables)}
+            </p>
             <div className="sbox">
                 <div className="sbox-inner">
                     <input type="text" id="searchbox" placeholder="検索キーワードを入力" value={searchText} onChange={(event) => setSearchText(event.target.value)} />
