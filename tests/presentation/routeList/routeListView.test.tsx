@@ -29,7 +29,7 @@ describe('RouteListPage', () => {
         const [row] = domesticRows();
         expect(row.classList.contains('season-row')).toBe(true);
         expect(row.querySelectorAll('td')).toHaveLength(4);
-        expect(screen.getByRole('link', { name: 'Route A' }).getAttribute('href')).toBe('index.html?share=route&routeId=2&sourceId=geojson_sea_route');
+        expect(screen.getByRole('link', { name: 'Route A' }).getAttribute('href')).toBe('./?share=route&routeId=2&sourceId=geojson_sea_route');
         expect(screen.getByRole('link', { name: 'リンク' }).getAttribute('target')).toBe('_blank');
         const table = document.querySelector('.sea-route-table') as HTMLElement;
         expect((table.querySelector('th.ship-name') as HTMLElement).style.display).toBe('none');

@@ -11,7 +11,7 @@ import {
 
 describe('route', () => {
     it('buildRouteMapPath は相対の共有URLを返す', () => {
-        expect(buildRouteMapPath('2', 'geojson_sea_route')).toBe('index.html?share=route&routeId=2&sourceId=geojson_sea_route');
+        expect(buildRouteMapPath('2', 'geojson_sea_route')).toBe('./?share=route&routeId=2&sourceId=geojson_sea_route');
     });
 
     it('lightweight JSONをRoute行へ変換してrouteId順に並べる', () => {

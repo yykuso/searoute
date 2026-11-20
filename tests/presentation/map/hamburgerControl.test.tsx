@@ -41,7 +41,7 @@ describe('HamburgerMenu', () => {
         expect(panel.style.display).toBe('none');
         expect(infoWindow.style.display).toBe('block');
         expect(infoWindow.scrollTop).toBe(0);
-        expect(screen.getByRole('link', { name: '航路一覧', hidden: true }).getAttribute('href')).toBe('./routeList.html');
+        expect(screen.getByRole('link', { name: '航路一覧', hidden: true }).getAttribute('href')).toBe('./routeList');
     });
 
     it('情報ウィンドウ外のクリックで閉じる（開いた直後は 100ms 待つ）', () => {

@@ -24,6 +24,15 @@ function prerendered(fileName: string): Document {
 /** 表示上の差が出ない空白を無視して比較する */
 const compact = (text: string | null | undefined) => (text ?? '').replace(/\s+/g, '');
 
+/** サイト内リンクは .html なし（Cloudflare Pages の正規形）に変えたので、旧版の href を同じ形に読み替える */
+function normalizeLegacyLinks(document: Document): Document {
+    document.querySelectorAll('a[href]').forEach((element) => {
+        const href = element.getAttribute('href') ?? '';
+        element.setAttribute('href', href.replace(/^\.\/routeList\.html$/, './routeList').replace(/^(\.\/)?index\.html(?=\?|$)/, './'));
+    });
+    return document;
+}
+
 function collect(document: Document) {
     const root = document.body;
     return {
@@ -37,7 +46,7 @@ function collect(document: Document) {
 
 describe('プリレンダリング結果は旧版の静的 body と同等', () => {
     it('index.html: 同じ ID・見出し・リンク・ボタン・テキストを持つ（ビルド番号以外）', () => {
-        const legacy = collect(legacyBody('index.html'));
+        const legacy = collect(normalizeLegacyLinks(legacyBody('index.html')));
         const current = collect(prerendered('index.html'));
 
         expect(current.ids).toEqual(legacy.ids);
@@ -65,9 +74,14 @@ describe('プリレンダリング結果は旧版の静的 body と同等', () =
         expect(current.getElementById('site-build-number')?.textContent).toBe(BUILD_NUMBER);
     });
 
-    it('routeList.html: ヘッダー・検索 UI・説明文・テーブル見出しが同じ', () => {
-        const legacy = collect(legacyBody('routeList.html'));
-        const current = collect(prerendered('routeList.html'));
+    it('routeList.html: ヘッダー・検索 UI・説明文・テーブル見出しが同じ（SEO 用に変えた h1 と導入文を除く）', () => {
+        const legacy = collect(normalizeLegacyLinks(legacyBody('routeList.html')));
+        const seoDocument = prerendered('routeList.html');
+        // h1 の文言と導入文（.route-list-intro）は SEO 改善で意図的に変えたので、旧版の形に戻して比較する
+        seoDocument.querySelector('.route-list-intro')?.remove();
+        const h1 = seoDocument.querySelector('h1');
+        if (h1) h1.textContent = '航路一覧';
+        const current = collect(seoDocument);
 
         expect(current.ids).toEqual(legacy.ids);
         expect(current.headings).toEqual(legacy.headings);
@@ -98,6 +112,20 @@ describe('航路データ付きプリレンダリング', () => {
         expect(page.app).toContain('稚内～利尻');
         expect(page.bodyEnd).toContain('id="route-list-data"');
         expect(page.head).toContain('ItemList');
+    });
+
+    it('routeList.html の h1 と導入文に検索語と掲載航路数が入る', () => {
+        const page = renderPages(BUILD_NUMBER, tables)['routeList.html'];
+        const document = new JSDOM(`<!DOCTYPE html><body>${page.app}</body>`).window.document;
+        expect(document.querySelector('h1')?.textContent).toBe('フェリー・旅客船 航路一覧');
+        const intro = document.querySelector('.route-list-intro')?.textContent ?? '';
+        expect(intro).toContain('フェリー・旅客船・高速船');
+        expect(intro).toContain('掲載航路数：国内航路 1件。');
+    });
+
+    it('データが空なら掲載航路数を出さない', () => {
+        const page = renderPages(BUILD_NUMBER, [])['routeList.html'];
+        expect(page.app).not.toContain('掲載航路数');
     });
 
     it('データが空なら head / bodyEnd を付けない', () => {
