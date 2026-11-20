@@ -53,7 +53,7 @@ export function HamburgerMenu({ container }: { container: HTMLElement }) {
                     <a href="#info-window" onClick={showInfoWindow}><Icon className="fa-solid fa-circle-info" /> サイト情報</a>
                 </div>
                 <div>
-                    <a href="./routeList.html"><Icon className="fa-solid fa-ship" /> 航路一覧</a>
+                    <a href="./routeList"><Icon className="fa-solid fa-ship" /> 航路一覧</a>
                 </div>
             </div>
         </>,

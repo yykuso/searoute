@@ -22,6 +22,7 @@ describe('buildRouteListJsonLd', () => {
         const data = JSON.parse(match![1]);
         expect(data['@type']).toBe('ItemList');
         expect(data.itemListElement).toHaveLength(2);
+        expect(data.numberOfItems).toBe(2);
         expect(data.itemListElement[0].url).toBe('https://searoute.info/?share=route&routeId=2&sourceId=geojson_sea_route');
         expect(data.itemListElement[0].position).toBe(1);
         expect(data.itemListElement[0].name).toBe('ハートランドフェリー 稚内～利尻');
