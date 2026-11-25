@@ -25,9 +25,11 @@ import {
     calculateFitBoundsPadding,
     getSeaRouteHandleIds,
     highlightRouteFeatures,
+    loadRouteDetails,
     queryRouteFeatures,
     removeSeaRouteClickEvent,
 } from './pmtilesLayerAdapter';
+import { boundsFromBbox, type GeoBounds } from '../../domain/geoBounds';
 
 export { setRouteFilters, toggleSuspendedRoutes } from './pmtilesLayerAdapter';
 
@@ -108,8 +110,33 @@ async function queryRouteFeaturesWithOverviewFallback(sourceId: string, normaliz
 }
 
 /**
+ * 詳細JSONのbboxへ移動し、移動完了まで待つ。bboxがなければ何もせず false を返す
+ */
+async function flyToDetailsBounds(sourceId: string, routeId: string | number): Promise<boolean> {
+    let bounds: GeoBounds | null = null;
+    try {
+        const details = await loadRouteDetails(routeId, sourceId);
+        bounds = boundsFromBbox(details?.bbox);
+    } catch (error) {
+        console.warn(`Failed to load route bounds for ${routeId}`, error);
+    }
+    if (!bounds) return false;
+
+    const moved = animateToRouteBounds(
+        map as unknown as Parameters<typeof animateToRouteBounds>[0],
+        bounds,
+        calculateFitBoundsPadding({ reserveDrawerSpace: true }),
+    );
+    if (!moved) return false;
+
+    await waitForMapSettled();
+    return true;
+}
+
+/**
  * 共有URLの航路へ移動・強調し、該当フィーチャーを返す
- * 座標付きならその位置へ、座標なしなら概観位置から探索して航路全体へ移動する
+ * 座標付きならその位置へ。座標なしなら詳細JSONのbboxへ直接移動し、
+ * bboxがない・航路が見つからない場合は概観位置から探索して航路全体へ移動する
  */
 export async function focusSharedRoute({ routeId, sourceId, lat, lng, zoom }: SharedRouteTarget): Promise<RouteFeature[]> {
     const hasPosition = !isNaN(lat as number) && !isNaN(lng as number);
@@ -124,13 +151,23 @@ export async function focusSharedRoute({ routeId, sourceId, lat, lng, zoom }: Sh
         await waitForMapSettled();
     }
 
-    const matchingFeatures = hasPosition
+    // 座標なし: 詳細JSONのbboxがあれば概観へジャンプせず直接航路範囲へ移動する
+    let movedToDetailsBounds = false;
+    if (!hasPosition) {
+        movedToDetailsBounds = await flyToDetailsBounds(sourceId, routeId);
+    }
+
+    let matchingFeatures = hasPosition || movedToDetailsBounds
         ? filterByRouteId(sourceId, routeId)
-        : await queryRouteFeaturesWithOverviewFallback(sourceId, routeId);
+        : [];
+    if (!hasPosition && matchingFeatures.length === 0) {
+        movedToDetailsBounds = false;
+        matchingFeatures = await queryRouteFeaturesWithOverviewFallback(sourceId, routeId);
+    }
 
     if (!matchingFeatures[0]) return [];
 
-    if (!hasPosition) {
+    if (!hasPosition && !movedToDetailsBounds) {
         const bounds = calculateBounds(matchingFeatures as Parameters<typeof calculateBounds>[0]);
         if (bounds) {
             animateToRouteBounds(
