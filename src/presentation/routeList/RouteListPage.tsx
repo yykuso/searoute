@@ -165,6 +165,7 @@ export function RouteListPage({ viewModel }: {
     const state = useViewModelState(viewModel);
     const [searchText, setSearchText] = useState('');
     const composingRef = useRef(false);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     // 検索語が空の状態が通知されたら検索ボックスも空にする（旧 resetRoutesInDocument と同じ）
     useEffect(() => {
@@ -209,6 +210,7 @@ export function RouteListPage({ viewModel }: {
                         <input
                             type="search"
                             id="searchbox"
+                            ref={inputRef}
                             placeholder="検索キーワードを入力"
                             value={searchText}
                             onChange={(event) => {
@@ -223,7 +225,11 @@ export function RouteListPage({ viewModel }: {
                             }}
                         />
                         {searchText && (
-                            <button type="button" aria-label="検索語を消去" onClick={() => viewModel.reset()}>✕</button>
+                            <button type="button" aria-label="検索語を消去" onClick={() => {
+                                setSearchText('');
+                                viewModel.reset();
+                                inputRef.current?.focus();
+                            }}>✕</button>
                         )}
                     </form>
                 </div>

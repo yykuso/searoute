@@ -99,6 +99,14 @@ describe('RouteListPage', () => {
         expect(document.getElementById('search-message')?.textContent).toBe('');
     });
 
+    it('✕で消去したあと検索欄にフォーカスが戻る', async () => {
+        await renderPage({ domestic: [{ routeId: '1', routeName: 'Ocean Route' }] });
+        const searchBox = screen.getByPlaceholderText('検索キーワードを入力');
+        fireEvent.change(searchBox, { target: { value: 'zzz' } });
+        fireEvent.click(screen.getByRole('button', { name: '検索語を消去' }));
+        expect(document.activeElement).toBe(searchBox);
+    });
+
     it('検索語が空のとき✕ボタンを出さない', async () => {
         await renderPage({ domestic: [{ routeId: '1', routeName: 'Ocean Route' }] });
         expect(screen.queryByRole('button', { name: '検索語を消去' })).toBeNull();
