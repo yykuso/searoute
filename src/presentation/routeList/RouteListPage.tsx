@@ -191,7 +191,7 @@ export function RouteListPage({ viewModel }: {
 
     return (
         <div className="route-list-page min-h-screen bg-white text-sm text-slate-800">
-            <header className="sticky top-0 z-30 h-(--rl-header-h) bg-sky-200 shadow-sm">
+            <header className="sticky top-0 z-30 h-(--rl-header-h) bg-(--rl-sea) shadow-sm">
                 <div className="mx-auto flex h-full max-w-[1200px] items-center justify-between px-3">
                     <p className="text-lg font-bold">おでかけ航路マップ</p>
                     <nav>

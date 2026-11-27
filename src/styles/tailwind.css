@@ -13,6 +13,8 @@
         --rl-header-h: 3.25rem;
         --rl-search-h: 3.5rem;
         --rl-h2-h: 2.5rem;
+        /* ベースカラー。航路マップの海の色に合わせる（ヘッダー・表見出し） */
+        --rl-sea: #bfd9f2;
         --rl-season-bg: #fffacd;
         --rl-season-bar: var(--color-yellow-500);
         --rl-suspend-bg: #f8d7da;
@@ -70,7 +72,7 @@
         position: sticky;
         top: calc(var(--rl-header-h) + var(--rl-search-h) + var(--rl-h2-h));
         z-index: 1;
-        background-color: var(--color-sky-200);
+        background-color: var(--rl-sea);
         font-weight: 700;
         white-space: nowrap;
     }
