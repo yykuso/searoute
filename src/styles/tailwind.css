@@ -28,6 +28,19 @@
         --rl-border: var(--color-slate-300);
     }
 
+    /* 航路詳細ページの埋め込み地図に置く港名ラベル（MapLibre の Marker 要素） */
+    .route-detail-page .route-detail-port-label {
+        padding: 1px 6px;
+        border: 2px solid var(--rl-sea-ink);
+        border-radius: 6px;
+        background-color: #fff;
+        color: var(--rl-sea-ink);
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.4;
+        white-space: nowrap;
+    }
+
     /* 凡例の色見本（行の背景色＋左端の色帯と同じ） */
     .route-list-page .route-legend-item {
         display: inline-flex;
