@@ -142,9 +142,9 @@ export function countVisibleRows(state: RouteListState): number {
 }
 
 const TABLES = [
-    { title: '国内航路', tableClassName: 'sea-route-table', infoClassName: 'info' },
-    { title: '国際航路', tableClassName: 'international-sea-route-table', infoClassName: 'information' },
-    { title: '韓国 国内航路', tableClassName: 'sea-route-KR-table', infoClassName: 'information' },
+    { title: '国内航路', shortLabel: '国内', anchorId: 'domestic', tableClassName: 'sea-route-table', infoClassName: 'info' },
+    { title: '国際航路', shortLabel: '国際', anchorId: 'international', tableClassName: 'international-sea-route-table', infoClassName: 'information' },
+    { title: '韓国 国内航路', shortLabel: '韓国', anchorId: 'korea', tableClassName: 'sea-route-KR-table', infoClassName: 'information' },
 ];
 
 const ROUTE_LIST_INTRO = '日本全国のフェリー・旅客船・高速船の航路を、事業者名・航路名・船名で一覧にしています。'
@@ -174,6 +174,11 @@ export function RouteListPage({ viewModel }: {
 
     const findTable = (tableClassName: string) => state.tables.find((table) => table.selector === `.${tableClassName} tbody`);
     const visibleCount = state.query ? countVisibleRows(state) : 0;
+    // ジャンプ用チップ：データのある表だけ。件数は検索に関係なく全行数
+    const jumpTargets = TABLES.flatMap(({ shortLabel, anchorId, tableClassName }) => {
+        const count = findTable(tableClassName)?.rows.length ?? 0;
+        return count > 0 ? [{ shortLabel, anchorId, count }] : [];
+    });
     const searchMessage = state.query && visibleCount === 0 ? '見つかりませんでした。' : '';
 
     return (
@@ -236,6 +241,19 @@ export function RouteListPage({ viewModel }: {
                 {state.query && visibleCount > 0 && <p aria-live="polite">{visibleCount}件</p>}
                 <p id="search-message" style={{ color: 'red', fontSize: '12px', marginTop: '5px' }}>{searchMessage}</p>
             </div>
+            {jumpTargets.length > 0 && (
+                <>
+                    <nav aria-label="航路の種類" className="route-jump">
+                        {jumpTargets.map(({ shortLabel, anchorId, count }) => (
+                            <a key={anchorId} href={`#${anchorId}`}>{shortLabel} {count}件</a>
+                        ))}
+                    </nav>
+                    <p className="route-legend">
+                        <span className="route-legend-item route-legend-season">季節運航</span>
+                        <span className="route-legend-item route-legend-suspend">運休</span>
+                    </p>
+                </>
+            )}
             <div className="feedback-callout">
                 <p>
                     データの追加・修正依頼や機能要望は{' '}
@@ -243,9 +261,9 @@ export function RouteListPage({ viewModel }: {
                     から送れます。
                 </p>
             </div>
-            {TABLES.map(({ title, tableClassName, infoClassName }) => (
+            {TABLES.map(({ title, anchorId, tableClassName, infoClassName }) => (
                 <Fragment key={tableClassName}>
-                    <h2>{title}</h2>
+                    <h2 id={anchorId}>{title}</h2>
                     <RouteTable
                         tableClassName={tableClassName}
                         infoClassName={infoClassName}

@@ -82,6 +82,9 @@ describe('プリレンダリング結果は旧版の静的 body と同等', () =
         const seoDocument = prerendered('routeList.html');
         // h1 の文言と導入文（.route-list-intro）は SEO 改善で意図的に変えたので、旧版の形に戻して比較する
         seoDocument.querySelector('.route-list-intro')?.remove();
+        // 表へのジャンプ用チップ・凡例・h2 の id も新設なので、旧版との比較では取り除く
+        seoDocument.querySelectorAll('nav[aria-label="航路の種類"], .route-legend').forEach((element) => element.remove());
+        seoDocument.querySelectorAll('h2[id]').forEach((heading) => heading.removeAttribute('id'));
         const h1 = seoDocument.querySelector('h1');
         if (h1) h1.textContent = '航路一覧';
         const current = collect(seoDocument);

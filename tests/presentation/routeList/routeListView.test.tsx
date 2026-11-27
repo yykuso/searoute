@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { createRouteListViewModel } from '../../../src/application/viewModels/routeListViewModel';
 import type { RouteRow } from '../../../src/domain/route';
@@ -116,5 +116,28 @@ describe('RouteListPage', () => {
         await renderPage({ domestic: [{ routeId: '1', routeName: 'Ocean Route' }] });
         const form = screen.getByPlaceholderText('検索キーワードを入力').closest('form') as HTMLFormElement;
         expect(fireEvent.submit(form)).toBe(false);
+    });
+
+    it('データのある表だけジャンプ用チップを件数付きで出す', async () => {
+        await renderPage({ domestic: [{ routeId: '1', routeName: 'A' }, { routeId: '2', routeName: 'B' }] });
+        const nav = screen.getByRole('navigation', { name: '航路の種類' });
+        const link = within(nav).getByRole('link', { name: /国内/ });
+        expect(link.getAttribute('href')).toBe('#domestic');
+        expect(link.textContent).toContain('2');
+        expect(within(nav).queryByRole('link', { name: /国際/ })).toBeNull();
+        expect(document.getElementById('domestic')?.tagName).toBe('H2');
+    });
+
+    it('データが無いときはジャンプ用ナビを出さない', async () => {
+        await renderPage({});
+        expect(screen.queryByRole('navigation', { name: '航路の種類' })).toBeNull();
+    });
+
+    it('季節運航・運休の凡例を1か所に出す', async () => {
+        await renderPage({ domestic: [{ routeId: '1', routeName: 'A' }] });
+        const legend = document.querySelectorAll('.route-legend');
+        expect(legend).toHaveLength(1);
+        expect(legend[0].textContent).toContain('季節運航');
+        expect(legend[0].textContent).toContain('運休');
     });
 });

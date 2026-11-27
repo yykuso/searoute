@@ -561,6 +561,8 @@ PC とモバイルで詳細情報を見やすく提示する。
 - note が season の行は season-row クラスを付与する
 - note が suspend の行は suspend-row クラスを付与する
 - URL があれば別タブで開くリンクを表示する
+- データのある表だけ、各表（h2 の id は `domestic` / `international` / `korea`）へジャンプするチップを `nav[aria-label="航路の種類"]` に件数付きで出す。件数は検索に関係なく各表の全行数。データが無いときは nav を出さない
+- チップの直後に、季節運航・運休の行の意味を示す凡例（`.route-legend`）を 1 か所だけ出す
 
 受け入れ条件。
 
