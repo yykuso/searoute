@@ -55,7 +55,8 @@ test('配信される HTML にプリレンダリング結果とビルド番号�
     expect(indexHtml).toMatch(/<span id="site-build-number">(local|[0-9a-f]{7})<\/span>/);
     expect(indexHtml).toContain('id="privacy-policy-window"');
     const routeListHtml = await (await request.get('/routeList.html')).text();
-    expect(routeListHtml).toContain('<h1>フェリー・旅客船 航路一覧</h1>');
+    // h1 には Tailwind のクラスが付くので、属性を問わず見出しの文言で確かめる
+    expect(routeListHtml).toMatch(/<h1[^>]*>フェリー・旅客船 航路一覧<\/h1>/);
     expect(routeListHtml).toContain('id="searchbox"');
 });
 

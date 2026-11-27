@@ -2,3 +2,217 @@
 
 @source "../../*.html";
 @source "..";
+
+/*
+ * 航路一覧（routeList.html）専用。すべて .route-list-page の中だけに効くようにして、地図画面には影響させない。
+ * 表・カードのように、セル（td）へ JSX でクラスを付けにくいものだけをここに書く（それ以外は RouteListPage.tsx のユーティリティ）。
+ */
+@layer components {
+    .route-list-page {
+        /* 固定（sticky）要素の高さ。検索バー・h2・thead の top はこれを積んで決める */
+        --rl-header-h: 3.25rem;
+        --rl-search-h: 3.5rem;
+        --rl-h2-h: 2.5rem;
+        --rl-season-bg: #fffacd;
+        --rl-season-bar: var(--color-yellow-500);
+        --rl-suspend-bg: #f8d7da;
+        --rl-suspend-bar: var(--color-red-500);
+        --rl-border: var(--color-slate-300);
+    }
+
+    /* 凡例の色見本（行の背景色＋左端の色帯と同じ） */
+    .route-list-page .route-legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    .route-list-page .route-legend-item::before {
+        content: "";
+        width: 1rem;
+        height: 0.875rem;
+        border: 1px solid var(--rl-border);
+        border-left-width: 4px;
+        border-radius: 2px;
+    }
+    .route-list-page .route-legend-season::before {
+        background-color: var(--rl-season-bg);
+        border-left-color: var(--rl-season-bar);
+    }
+    .route-list-page .route-legend-suspend::before {
+        background-color: var(--rl-suspend-bg);
+        border-left-color: var(--rl-suspend-bar);
+    }
+
+    /* 表（PC）。表の class（sea-route-table など）は旧版のまま残すので要素で指定する */
+    .route-list-page table {
+        width: 100%;
+        margin-bottom: 1.5rem;
+        border-collapse: separate;
+        border-spacing: 0;
+        border: 1px solid var(--rl-border);
+        border-radius: 0.5rem;
+    }
+    .route-list-page th,
+    .route-list-page td {
+        padding: 0.375rem 0.5rem;
+        text-align: left;
+        vertical-align: top;
+        border-bottom: 1px solid var(--color-slate-200);
+    }
+    .route-list-page th + th,
+    .route-list-page td + td {
+        border-left: 1px solid var(--color-slate-200);
+    }
+    .route-list-page tbody tr:last-child td {
+        border-bottom: 0;
+    }
+    .route-list-page thead th {
+        position: sticky;
+        top: calc(var(--rl-header-h) + var(--rl-search-h) + var(--rl-h2-h));
+        z-index: 1;
+        background-color: var(--color-sky-200);
+        font-weight: 700;
+        white-space: nowrap;
+    }
+    .route-list-page thead th:first-child {
+        border-top-left-radius: 0.5rem;
+    }
+    .route-list-page thead th:last-child {
+        border-top-right-radius: 0.5rem;
+    }
+    .route-list-page tbody tr:nth-child(even) {
+        background-color: var(--color-slate-50);
+    }
+    .route-list-page tbody tr:hover {
+        background-color: var(--color-sky-50);
+    }
+    .route-list-page tbody tr.season-row {
+        background-color: var(--rl-season-bg);
+    }
+    .route-list-page tbody tr.suspend-row {
+        background-color: var(--rl-suspend-bg);
+    }
+    .route-list-page tr.season-row > td:first-child {
+        box-shadow: inset 4px 0 0 var(--rl-season-bar);
+    }
+    .route-list-page tr.suspend-row > td:first-child {
+        box-shadow: inset 4px 0 0 var(--rl-suspend-bar);
+    }
+    .route-list-page td a {
+        color: var(--color-blue-600);
+        font-weight: 600;
+    }
+    .route-list-page td a:hover {
+        text-decoration: underline;
+    }
+    .route-list-page td[data-column="routeId"] {
+        white-space: nowrap;
+    }
+
+    /*
+     * スマホ（640px 未満）：1 行 = 1 カード。
+     * 検索で隠す行は tr のインライン display:none なので、ここでは tr の display に !important を使わない
+     */
+    @media (max-width: 639.98px) {
+        .route-list-page table,
+        .route-list-page tbody,
+        .route-list-page tr,
+        .route-list-page td {
+            display: block;
+        }
+        .route-list-page table {
+            border: 0;
+            border-radius: 0;
+        }
+        /* 見出し行は視覚的に隠し、スクリーンリーダー向けには残す（sr-only 相当） */
+        .route-list-page thead {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip-path: inset(50%);
+            white-space: nowrap;
+            border: 0;
+        }
+        .route-list-page tbody tr {
+            position: relative;
+            margin-bottom: 0.75rem;
+            padding: 0.75rem 0.875rem 1.75rem;
+            border: 1px solid var(--rl-border);
+            border-radius: 0.75rem;
+            background-color: #fff;
+            box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+        }
+        .route-list-page tbody tr:nth-child(even),
+        .route-list-page tbody tr:hover {
+            background-color: #fff;
+        }
+        .route-list-page tbody tr.season-row {
+            background-color: var(--rl-season-bg);
+            border-left: 4px solid var(--rl-season-bar);
+        }
+        .route-list-page tbody tr.suspend-row {
+            background-color: var(--rl-suspend-bg);
+            border-left: 4px solid var(--rl-suspend-bar);
+        }
+        .route-list-page tr.season-row > td:first-child,
+        .route-list-page tr.suspend-row > td:first-child {
+            box-shadow: none;
+        }
+        .route-list-page td,
+        .route-list-page td + td {
+            padding: 0.125rem 0;
+            border: 0;
+        }
+        .route-list-page td[data-label]::before {
+            content: attr(data-label);
+            display: inline-block;
+            min-width: 4.5em;
+            margin-right: 0.5rem;
+            color: var(--color-slate-500);
+            font-size: 0.75rem;
+        }
+        .route-list-page td[data-column="routeName"] {
+            padding: 0.125rem 0 0.25rem;
+            font-size: 1.0625rem;
+            font-weight: 700;
+        }
+        .route-list-page td[data-column="routeName"]::before {
+            content: none;
+        }
+        .route-list-page td[data-empty="true"] {
+            display: none;
+        }
+        .route-list-page td[data-column="url"] {
+            padding-top: 0.5rem;
+        }
+        .route-list-page td[data-column="url"] a {
+            display: inline-block;
+            padding: 0.25rem 0.875rem;
+            border: 1px solid var(--color-blue-600);
+            border-radius: 9999px;
+            font-size: 0.8125rem;
+        }
+        .route-list-page td[data-column="url"] a:hover {
+            background-color: var(--color-blue-50);
+            text-decoration: none;
+        }
+        /* 航路 ID は小さく右下に */
+        .route-list-page td[data-column="routeId"] {
+            position: absolute;
+            right: 0.875rem;
+            bottom: 0.5rem;
+            padding: 0;
+            color: var(--color-slate-500);
+            font-size: 0.6875rem;
+            text-align: right;
+        }
+        .route-list-page td[data-column="routeId"]::before {
+            min-width: 0;
+            margin-right: 0.25rem;
+            font-size: inherit;
+        }
+    }
+}

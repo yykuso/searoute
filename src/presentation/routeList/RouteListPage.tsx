@@ -21,7 +21,7 @@ function highlightText(text: string, query: string): ReactNode {
     let match = regex.exec(text);
     while (match) {
         nodes.push(text.slice(lastIndex, match.index));
-        nodes.push(<span key={match.index} className={SEARCH_HIGHLIGHT_CLASS} style={{ backgroundColor: '#ffe46f' }}>{match[0]}</span>);
+        nodes.push(<span key={match.index} className={`${SEARCH_HIGHLIGHT_CLASS} rounded-sm bg-yellow-200`}>{match[0]}</span>);
         lastIndex = regex.lastIndex;
         if (match[0] === '') regex.lastIndex++;
         match = regex.exec(text);
@@ -30,6 +30,18 @@ function highlightText(text: string, query: string): ReactNode {
     nodes.push(text.slice(lastIndex));
     return nodes.map((node, index) => <Fragment key={index}>{node}</Fragment>);
 }
+
+/** 列ごとの見出し（class は旧 HTML のまま。国際・韓国テーブルの情報列は "information"） */
+const HEADER_COLUMNS: Array<{ column: RouteColumn; className: string; label: string }> = [
+    { column: 'routeId', className: 'route-id', label: '航路ID' },
+    { column: 'businessName', className: 'business-name', label: '事業者名' },
+    { column: 'routeName', className: 'route-name', label: '航路名' },
+    { column: 'info', className: 'info', label: '情報' },
+    { column: 'shipName', className: 'ship-name', label: '船名' },
+    { column: 'url', className: 'url', label: '時刻表' },
+];
+
+const COLUMN_LABELS = Object.fromEntries(HEADER_COLUMNS.map(({ column, label }) => [column, label])) as Record<RouteColumn, string>;
 
 interface CellModel {
     column: RouteColumn;
@@ -75,30 +87,26 @@ function RouteTableRow({ row, visibleColumns, sourceId, query }: {
         <tr className={className} style={hidden ? { display: 'none' } : undefined}>
             {cells.map((cell, index) => {
                 const content = matchedCells[index] ? highlightText(cell.text, query) : cell.text;
+                // data-label はスマホのカード表示で項目名に、data-empty は「-」のセルを隠すのに使う（src/styles/tailwind.css）
+                const cellProps = {
+                    'data-label': COLUMN_LABELS[cell.column],
+                    'data-column': cell.column,
+                    'data-empty': !cell.href && cell.text === '-' ? 'true' : undefined,
+                };
                 if (cell.href) {
                     return (
-                        <td key={cell.column}>
+                        <td key={cell.column} {...cellProps}>
                             {cell.external
                                 ? <a href={cell.href} target="_blank" rel="noopener noreferrer">{content}</a>
                                 : <a href={cell.href} rel="noopener noreferrer">{content}</a>}
                         </td>
                     );
                 }
-                return <td key={cell.column}>{content}</td>;
+                return <td key={cell.column} {...cellProps}>{content}</td>;
             })}
         </tr>
     );
 }
-
-/** 列ごとの見出し（class は旧 HTML のまま。国際・韓国テーブルの情報列は "information"） */
-const HEADER_COLUMNS: Array<{ column: RouteColumn; className: string; label: string }> = [
-    { column: 'routeId', className: 'route-id', label: '航路ID' },
-    { column: 'businessName', className: 'business-name', label: '事業者名' },
-    { column: 'routeName', className: 'route-name', label: '航路名' },
-    { column: 'info', className: 'info', label: '情報' },
-    { column: 'shipName', className: 'ship-name', label: '船名' },
-    { column: 'url', className: 'url', label: '時刻表' },
-];
 
 function RouteTable({ tableClassName, infoClassName, table, query }: {
     tableClassName: string;
@@ -182,21 +190,21 @@ export function RouteListPage({ viewModel }: {
     const searchMessage = state.query && visibleCount === 0 ? '見つかりませんでした。' : '';
 
     return (
-        <>
-            <header className="header">
-                <div className="wrapper-inner">
-                    <p>おでかけ航路マップ</p>
+        <div className="route-list-page min-h-screen bg-white text-sm text-slate-800">
+            <header className="sticky top-0 z-30 h-(--rl-header-h) bg-sky-200 shadow-sm">
+                <div className="mx-auto flex h-full max-w-[1200px] items-center justify-between px-3">
+                    <p className="text-lg font-bold">おでかけ航路マップ</p>
                     <nav>
-                        <ul>
+                        <ul className="flex gap-1">
                             <li>
-                                <a href="./" title="マップ">
-                                    <Icon className="fas fa-map" />
+                                <a href="./" title="マップ" className="flex flex-col items-center rounded-md px-2 py-1 text-xs text-slate-800 hover:bg-white/50">
+                                    <Icon className="fas fa-map text-lg" />
                                     <span>マップ</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="./routeList" title="航路一覧">
-                                    <Icon className="fas fa-ship" />
+                                <a href="./routeList" title="航路一覧" aria-current="page" className="flex flex-col items-center rounded-md bg-white/60 px-2 py-1 text-xs font-bold text-sky-900">
+                                    <Icon className="fas fa-ship text-lg" />
                                     <span>航路一覧</span>
                                 </a>
                             </li>
@@ -204,74 +212,82 @@ export function RouteListPage({ viewModel }: {
                     </nav>
                 </div>
             </header>
-            <h1>フェリー・旅客船 航路一覧</h1>
-            <p className="route-list-intro">
-                {ROUTE_LIST_INTRO}
-                {routeCountText(state.tables)}
-            </p>
-            <div className="sbox">
-                <div className="sbox-inner">
-                    <form role="search" onSubmit={(event) => event.preventDefault()}>
-                        <input
-                            type="search"
-                            id="searchbox"
-                            ref={inputRef}
-                            placeholder="検索キーワードを入力"
-                            value={searchText}
-                            onChange={(event) => {
-                                const { value } = event.target;
-                                setSearchText(value);
-                                if (!composingRef.current) viewModel.search(value);
-                            }}
-                            onCompositionStart={() => { composingRef.current = true; }}
-                            onCompositionEnd={(event) => {
-                                composingRef.current = false;
-                                viewModel.search(event.currentTarget.value);
-                            }}
-                        />
-                        {searchText && (
-                            <button type="button" aria-label="検索語を消去" onClick={() => {
-                                setSearchText('');
-                                viewModel.reset();
-                                inputRef.current?.focus();
-                            }}>✕</button>
-                        )}
-                    </form>
-                </div>
-                {state.query && visibleCount > 0 && <p aria-live="polite">{visibleCount}件</p>}
-                <p id="search-message" style={{ color: 'red', fontSize: '12px', marginTop: '5px' }}>{searchMessage}</p>
-            </div>
-            {jumpTargets.length > 0 && (
-                <>
-                    <nav aria-label="航路の種類" className="route-jump">
-                        {jumpTargets.map(({ shortLabel, anchorId, count }) => (
-                            <a key={anchorId} href={`#${anchorId}`}>{shortLabel} {count}件</a>
-                        ))}
-                    </nav>
-                    <p className="route-legend">
-                        <span className="route-legend-item route-legend-season">季節運航</span>
-                        <span className="route-legend-item route-legend-suspend">運休</span>
-                    </p>
-                </>
-            )}
-            <div className="feedback-callout">
-                <p>
-                    データの追加・修正依頼や機能要望は{' '}
-                    <a href="https://forms.gle/xXyqvDkZKNwEXPv27" target="_blank" rel="noopener noreferrer">専用フォーム</a>{' '}
-                    から送れます。
+            <div className="mx-auto max-w-[1200px] px-3 pb-8">
+                <h1 className="mt-4 mb-2 text-xl font-bold sm:text-2xl">フェリー・旅客船 航路一覧</h1>
+                <p className="route-list-intro mb-3 max-w-3xl leading-relaxed text-slate-600">
+                    {ROUTE_LIST_INTRO}
+                    {routeCountText(state.tables)}
                 </p>
+                <div className="sbox sticky top-(--rl-header-h) z-20 flex h-(--rl-search-h) items-center gap-3 bg-white">
+                    <div className="sbox-inner w-full max-w-md">
+                        <form role="search" className="relative" onSubmit={(event) => event.preventDefault()}>
+                            <input
+                                type="search"
+                                id="searchbox"
+                                ref={inputRef}
+                                placeholder="検索キーワードを入力"
+                                className="w-full rounded-full border border-slate-300 bg-white py-2 pr-10 pl-4 text-base outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200 [&::-webkit-search-cancel-button]:appearance-none"
+                                value={searchText}
+                                onChange={(event) => {
+                                    const { value } = event.target;
+                                    setSearchText(value);
+                                    if (!composingRef.current) viewModel.search(value);
+                                }}
+                                onCompositionStart={() => { composingRef.current = true; }}
+                                onCompositionEnd={(event) => {
+                                    composingRef.current = false;
+                                    viewModel.search(event.currentTarget.value);
+                                }}
+                            />
+                            {searchText && (
+                                <button
+                                    type="button"
+                                    aria-label="検索語を消去"
+                                    className="absolute top-1/2 right-2 flex size-7 -translate-y-1/2 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+                                    onClick={() => {
+                                        setSearchText('');
+                                        viewModel.reset();
+                                        inputRef.current?.focus();
+                                    }}
+                                >✕</button>
+                            )}
+                        </form>
+                    </div>
+                    {state.query && visibleCount > 0 && <p aria-live="polite" className="shrink-0 text-slate-600">{visibleCount}件</p>}
+                    <p id="search-message" className="shrink-0 text-xs text-red-600">{searchMessage}</p>
+                </div>
+                {jumpTargets.length > 0 && (
+                    <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+                        <nav aria-label="航路の種類" className="route-jump flex flex-wrap gap-2">
+                            {jumpTargets.map(({ shortLabel, anchorId, count }) => (
+                                <a key={anchorId} href={`#${anchorId}`} className="rounded-full border border-sky-300 bg-sky-50 px-3 py-1 text-sky-900 hover:bg-sky-100">{shortLabel} {count}件</a>
+                            ))}
+                        </nav>
+                        <p className="route-legend flex gap-3 text-xs text-slate-600">
+                            <span className="route-legend-item route-legend-season">季節運航</span>
+                            <span className="route-legend-item route-legend-suspend">運休</span>
+                        </p>
+                    </div>
+                )}
+                <div className="feedback-callout mb-4 w-fit max-w-full border-l-4 border-sky-500 bg-sky-50 px-3 py-2">
+                    <p className="leading-relaxed">
+                        データの追加・修正依頼や機能要望は{' '}
+                        <a href="https://forms.gle/xXyqvDkZKNwEXPv27" target="_blank" rel="noopener noreferrer" className="font-bold text-sky-700 hover:underline">専用フォーム</a>{' '}
+                        から送れます。
+                    </p>
+                </div>
+                {TABLES.map(({ title, anchorId, tableClassName, infoClassName }) => (
+                    <Fragment key={tableClassName}>
+                        <h2 id={anchorId} className="sticky top-[calc(var(--rl-header-h)+var(--rl-search-h))] z-10 flex h-(--rl-h2-h) scroll-mt-[calc(var(--rl-header-h)+var(--rl-search-h))] items-center bg-white text-lg font-bold">{title}</h2>
+                        <RouteTable
+                            tableClassName={tableClassName}
+                            infoClassName={infoClassName}
+                            table={findTable(tableClassName)}
+                            query={state.query}
+                        />
+                    </Fragment>
+                ))}
             </div>
-            {TABLES.map(({ title, anchorId, tableClassName, infoClassName }) => (
-                <Fragment key={tableClassName}>
-                    <h2 id={anchorId}>{title}</h2>
-                    <RouteTable
-                        tableClassName={tableClassName}
-                        infoClassName={infoClassName}
-                        table={findTable(tableClassName)}
-                        query={state.query}
-                    />
-                </Fragment>
-            ))}
-        </>
+        </div>
     );
 }

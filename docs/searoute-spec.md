@@ -147,7 +147,7 @@
 - 地図: MapLibre GL JS 6.18.0（npm `maplibre-gl`。ワーカーは `?worker&url` でバンドルし setWorkerUrl で指定）
 - タイル: PMTiles 4.5.0（npm `pmtiles`）
 - 検索補助: Maplibre Geocoder 1.9.4（npm `@maplibre/maplibre-gl-geocoder`）+ Nominatim
-- スタイル: Tailwind CSS 4（`@tailwindcss/vite`）と独自 CSS（public/css/）
+- スタイル: Tailwind CSS 4（`@tailwindcss/vite`）と独自 CSS（public/css/。航路一覧は Tailwind のみ）
 - アイコン: Font Awesome Free 7.3.1（npm `@fortawesome/free-solid-svg-icons` / `@fortawesome/free-brands-svg-icons`）をインライン SVG で描画
 - PWA: manifest.json と service-worker.js
 - 計測: Google Analytics
@@ -563,6 +563,7 @@ PC とモバイルで詳細情報を見やすく提示する。
 - URL があれば別タブで開くリンクを表示する
 - データのある表だけ、各表（h2 の id は `domestic` / `international` / `korea`）へジャンプするチップを `nav[aria-label="航路の種類"]` に件数付きで出す。件数は検索に関係なく各表の全行数。データが無いときは nav を出さない
 - チップの直後に、季節運航・運休の行の意味を示す凡例（`.route-legend`）を 1 か所だけ出す
+- PC（640px 以上）は表で表示する。スマホ（640px 未満）は 1 行を 1 枚のカードで表示し、見出し行（thead）は視覚的に隠す。各セルは `data-label`（列名）を項目名として出し、値が「-」のセル（`data-empty="true"`）はカードでは隠す
 
 受け入れ条件。
 

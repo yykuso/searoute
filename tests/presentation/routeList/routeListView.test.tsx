@@ -140,4 +140,29 @@ describe('RouteListPage', () => {
         expect(legend[0].textContent).toContain('季節運航');
         expect(legend[0].textContent).toContain('運休');
     });
+
+    it('セルに列名のラベルを付け、空セルに印を付ける', async () => {
+        await renderPage({ domestic: [{ routeId: '2', businessName: 'A', routeName: 'Route A', url: '' }] });
+        const cells = domesticRows()[0].querySelectorAll('td');
+        expect(cells[1].dataset.label).toBe('事業者名');
+        expect(cells[2].dataset.column).toBe('routeName');
+    });
+
+    it('値が「-」のセルにだけ data-empty を付ける', async () => {
+        // 可視列判定で列ごと消えないよう、同じ表に船名のある行を並べる
+        await renderPage({ domestic: [
+            { routeId: '1', businessName: 'A', routeName: 'Route A', shipName: 'Ship A' },
+            { routeId: '2', businessName: 'B', routeName: 'Route B' },
+        ] });
+        const [filled, empty] = domesticRows().map((row) => row.querySelector<HTMLElement>('td[data-column="shipName"]'));
+        expect(filled?.dataset.empty).toBeUndefined();
+        expect(empty?.textContent).toBe('-');
+        expect(empty?.dataset.empty).toBe('true');
+        expect(empty?.dataset.label).toBe('船名');
+    });
+
+    it('ヘッダーの「航路一覧」を現在地にする', async () => {
+        await renderPage({});
+        expect(screen.getByRole('link', { name: '航路一覧' }).getAttribute('aria-current')).toBe('page');
+    });
 });
