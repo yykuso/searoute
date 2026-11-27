@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-11-27T00:00:00.000Z",
+  "totalRecords": 3,
+  "records": [
+    {
+      "routeId": "10101",
+      "layer": "seaRoute",
+      "businessName": "ハートランドフェリー",
+      "routeName": "稚内～利礼島（鴛泊）～礼文（香深）",
+      "url": "https://heartlandferry.jp/timetable/",
+      "freq": 3,
+      "freqInfo": "1日2～3往復",
+      "car": 1,
+      "bike": 1,
+      "bicycle": 1,
+      "shipName": "アマポーラ宗谷, サイプリア宗谷, ボレアース宗谷",
+      "bbox": [141.04616, 45.24146, 141.71621, 45.47422],
+      "lastChecked": "2026-11-25",
+      "ports": [
+        { "name": "稚内", "lon": 141.68254, "lat": 45.41617 },
+        { "name": "鴛泊", "lon": 141.22879, "lat": 45.24182 },
+        { "name": "香深", "lon": 141.04616, "lat": 45.29791 }
+      ]
+    },
+    {
+      "routeId": "10102",
+      "layer": "seaRoute",
+      "businessName": "ハートランドフェリー",
+      "routeName": "利礼島（沓形）～礼文（香深）",
+      "url": "https://heartlandferry.jp/timetable/",
+      "freq": 1,
+      "freqInfo": "6月～9月運航, 1日1往復",
+      "car": 1,
+      "bike": 1,
+      "bicycle": 1,
+      "shipName": "アマポーラ宗谷, サイプリア宗谷, ボレアース宗谷",
+      "note": "season",
+      "bbox": [141.04618, 45.18826, 141.13168, 45.29845],
+      "lastChecked": "2026-11-25",
+      "ports": [
+        { "name": "沓形", "lon": 141.13029, "lat": 45.18826 },
+        { "name": "香深", "lon": 141.04618, "lat": 45.29779 }
+      ]
+    },
+    {
+      "routeId": "KR010101",
+      "layer": "seaRoute_KR",
+      "businessName": "씨스포빌（Seaspovill）",
+      "routeName": "江陵～鬱陵（苧洞）",
+      "url": "https://www.rome2rio.com/map/Gangneung-Ferry-Terminal/Ulleungdo",
+      "freq": 2,
+      "freqInfo": "1日1往復",
+      "shipName": "씨스타5호",
+      "bbox": [128.95282, 37.49638, 130.93199, 37.77268],
+      "ports": [
+        { "name": "江陵", "lon": 128.95282, "lat": 37.77268 },
+        { "name": "苧洞", "lon": 130.91055, "lat": 37.49638 }
+      ]
+    }
+  ]
+}

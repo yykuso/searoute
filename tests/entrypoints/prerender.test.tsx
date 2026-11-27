@@ -3,7 +3,8 @@ import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { RouteTableState } from '../../src/application/viewModels/routeListViewModel';
-import { loadPrerenderRouteTables, renderPages } from '../../src/entrypoints/prerender';
+import { normalizeRoutePages } from '../../src/domain/routePage';
+import { loadPrerenderRoutePages, loadPrerenderRouteTables, renderPages, renderRouteDetailPages } from '../../src/entrypoints/prerender';
 import { ROUTE_LIST_TABLE_CONFIGS } from '../../src/entrypoints/routeListServices';
 
 // 旧版（develop ブランチの Vanilla JS 版）の HTML。body の静的マークアップをプリレンダリング結果と比較する
@@ -158,5 +159,67 @@ describe('loadPrerenderRouteTables', () => {
             expect(call, config.dataPath).toBeDefined();
             expect(call![1]?.signal).toBeInstanceOf(AbortSignal);
         }
+    });
+});
+
+describe('航路詳細ページのプリレンダリング', () => {
+    const fixturePath = 'tests/fixtures/routePages.json';
+    const records = normalizeRoutePages(JSON.parse(readFileSync(fileURLToPath(new URL('../fixtures/routePages.json', import.meta.url)), 'utf8')));
+
+    afterEach(() => {
+        vi.unstubAllEnvs();
+        vi.unstubAllGlobals();
+    });
+
+    it('renderRouteDetailPages: 航路ごとに route/<id>/index.html を返し、本文に h1・head に canonical が入る', () => {
+        const pages = renderRouteDetailPages(records);
+        expect(pages.map(({ fileName }) => fileName)).toEqual([
+            'route/10101/index.html',
+            'route/10102/index.html',
+            'route/KR010101/index.html',
+        ]);
+        const { page } = pages[0];
+        const document = new JSDOM(`<!DOCTYPE html><body>${page.app}</body>`).window.document;
+        expect(document.querySelector('h1')?.textContent).toContain('稚内～利礼島（鴛泊）～礼文（香深）');
+        expect(page.head).toContain('<link rel="canonical" href="https://searoute.info/route/10101/">');
+        // 同じ事業者の他航路（10102）へのリンクが入る
+        expect(page.app).toContain('href="/route/10102/"');
+    });
+
+    it('loadPrerenderRoutePages: SEAROUTE_ROUTE_PAGES_FILE のファイルを読む', async () => {
+        vi.stubEnv('SEAROUTE_ROUTE_PAGES_FILE', fixturePath);
+        const fetchMock = vi.fn();
+        vi.stubGlobal('fetch', fetchMock);
+        const loaded = await loadPrerenderRoutePages();
+        expect(loaded.map((record) => record.routeId)).toEqual(['10101', '10102', 'KR010101']);
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('loadPrerenderRoutePages: SEAROUTE_SKIP_ROUTE_DATA=1 なら取得せず空配列', async () => {
+        vi.stubEnv('SEAROUTE_ROUTE_PAGES_FILE', '');
+        vi.stubEnv('SEAROUTE_SKIP_ROUTE_DATA', '1');
+        const fetchMock = vi.fn();
+        vi.stubGlobal('fetch', fetchMock);
+        expect(await loadPrerenderRoutePages()).toEqual([]);
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('loadPrerenderRoutePages: 既定では routePages.json を ?v= 付き・タイムアウト付きで取得する', async () => {
+        vi.stubEnv('SEAROUTE_ROUTE_PAGES_FILE', '');
+        vi.stubEnv('SEAROUTE_SKIP_ROUTE_DATA', '');
+        const fetchMock = vi.fn(async () => new Response(readFileSync(fileURLToPath(new URL('../fixtures/routePages.json', import.meta.url)), 'utf8')));
+        vi.stubGlobal('fetch', fetchMock);
+        const loaded = await loadPrerenderRoutePages();
+        expect(loaded).toHaveLength(3);
+        const [url, init] = (fetchMock.mock.calls as unknown as [string, RequestInit | undefined][])[0];
+        expect(url).toContain('/lightweight/routePages.json?v=');
+        expect(init?.signal).toBeInstanceOf(AbortSignal);
+    });
+
+    it('loadPrerenderRoutePages: 取得に失敗したら reject する', async () => {
+        vi.stubEnv('SEAROUTE_ROUTE_PAGES_FILE', '');
+        vi.stubEnv('SEAROUTE_SKIP_ROUTE_DATA', '');
+        vi.stubGlobal('fetch', vi.fn(async () => new Response('not found', { status: 404 })));
+        await expect(loadPrerenderRoutePages()).rejects.toThrow();
     });
 });
