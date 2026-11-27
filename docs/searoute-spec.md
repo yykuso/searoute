@@ -696,7 +696,7 @@ JS を実行しない AI クローラー・AI エージェント・検索エン�
 期待動作。
 
 - routeList.html: 全航路の表を静的 HTML に含める（LIST-01）。`<head>` に schema.org の `ItemList` JSON-LD を入れ、各要素は `position` / `name`（事業者 航路名）/ `url`（`https://searoute.info/?share=route&...`）を持つ。`numberOfItems` に全航路数を入れる
-- routeList.html の検索向け文言: title / description / OGP / Twitter は同じ文言で「フェリー」「旅客船」「時刻表」を含める。h1 は「フェリー・旅客船 航路一覧」。h1 の下に導入文（`.route-list-intro`）を置き、データがあればテーブルごとの掲載航路数を添える。`robots` は `index,follow,max-image-preview:large`。WebPage の JSON-LD にパンくず（トップ → 航路一覧）を持つ
+- routeList.html の検索向け文言: title / description / OGP / Twitter は同じ文言で「フェリー」「旅客船」「時刻表」を含める。一覧用 JSON は容量を抑えるため url を持たず一覧に時刻表列は出ないので、時刻表は「航路名から地図の詳細を開くとリンクがある」と書き、一覧で直接開けるようには書かない。h1 は「フェリー・旅客船 航路一覧」。h1 の下に導入文（`.route-list-intro`）を置き、データがあればテーブルごとの掲載航路数を添える。`robots` は `index,follow,max-image-preview:large`。WebPage の JSON-LD にパンくず（トップ → 航路一覧）を持つ
 - 公開する絶対 URL（canonical、og:url、JSON-LD、llms.txt、llms-full.txt、sitemap.xml、404 ページのリンク）は Cloudflare Pages の正規形にそろえる。Pages は `.html` 付きの URL を 308 でリダイレクトする（`/routeList.html` → `/routeList`、`/index.html` → `/`）ため、リダイレクト元を正規 URL として示さない。サイト内の相対リンクも同じ正規形（`./routeList`、`./?share=...`）にし、リダイレクトを挟まないようにする（Vite の開発サーバー・preview も `.html` なしの URL を配信できる）
 - 埋め込みデータと JSON-LD は `<` を `<` にエスケープし、航路名に `</script>` が含まれても HTML が壊れないようにする
 - llms.txt: サイト概要と主要ページへのリンク（public/llms.txt を手で管理）。llms-full.txt へのリンクを含める
