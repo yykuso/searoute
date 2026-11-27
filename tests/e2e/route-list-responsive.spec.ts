@@ -33,7 +33,25 @@ test('スマホ幅では横スクロールせず行をカードで表示する',
     await expect(row).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
     await expect(page.locator('.sea-route-table thead')).toHaveCSS('position', 'absolute'); // sr-only
-    await expect(row).toHaveCSS('display', 'block');
+    await expect(row).toHaveCSS('display', 'flex');
+
+    // カードは航路名から始まる（DOM の列順は 航路ID・事業者名・航路名… のまま、CSS の order で並べ替える）
+    const routeNameBox = await row.locator('td[data-column="routeName"]').boundingBox();
+    const businessNameBox = await row.locator('td[data-column="businessName"]').boundingBox();
+    expect(routeNameBox && businessNameBox && routeNameBox.y < businessNameBox.y).toBe(true);
+});
+
+test('スマホ幅でも検索で一致しない行は隠れたまま', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 800 });
+    await page.goto('/routeList.html');
+    const rows = page.locator('.sea-route-table tbody tr');
+    await expect(rows).toHaveCount(2);
+
+    await page.getByPlaceholder('検索キーワードを入力').fill('[Route]');
+
+    await expect(rows.first()).toBeVisible();
+    await expect(rows.nth(1)).toBeHidden();
+    await expect(rows.nth(1)).toHaveCSS('display', 'none');
 });
 
 test('PC幅では表として表示する', async ({ page }) => {

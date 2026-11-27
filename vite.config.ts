@@ -68,7 +68,7 @@ const ENTRY_CSS_PLACEHOLDER = /<!-- searoute:entry-css[\s\S]*?-->/;
 const INJECTED_STYLESHEET = /[ \t]*<link rel="stylesheet" crossorigin href="(\/assets\/[^"]+\.css)">\n?/g;
 
 /**
- * Vite が注入するスタイルシートを従来どおり非同期読み込み（media=print → all）にし、
+ * Vite が注入するスタイルシートを従来どおり非同期読み込み（media=print → all。JavaScript 無効時は noscript で通常読み込み）にし、
  * index.html のプレースホルダー位置（インライン style より前）へ移して旧来のカスケード順を保つ
  */
 function asyncStylesheets(): Plugin {
@@ -81,6 +81,8 @@ function asyncStylesheets(): Plugin {
                 const links: string[] = [];
                 let result = html.replace(INJECTED_STYLESHEET, (_match, href: string) => {
                     links.push(`<link rel="stylesheet" crossorigin href="${href}" media="print" onload="this.media='all'">`);
+                    // JavaScript 無効だと onload が動かず media=print のままになるので、通常読み込みの代替を添える
+                    links.push(`<noscript><link rel="stylesheet" crossorigin href="${href}"></noscript>`);
                     return '';
                 });
                 if (ENTRY_CSS_PLACEHOLDER.test(result)) {

@@ -136,8 +136,11 @@
             white-space: nowrap;
             border: 0;
         }
+        /* カードの中は航路名 → 事業者名 → 情報 → 船名 → 時刻表の順に並べ替える（下の order） */
         .route-list-page tbody tr {
             position: relative;
+            display: flex;
+            flex-direction: column;
             margin-bottom: 0.75rem;
             padding: 0.75rem 0.875rem 1.75rem;
             border: 1px solid var(--rl-border);
@@ -175,12 +178,25 @@
             font-size: 0.75rem;
         }
         .route-list-page td[data-column="routeName"] {
+            order: 1;
             padding: 0.125rem 0 0.25rem;
             font-size: 1.0625rem;
             font-weight: 700;
         }
         .route-list-page td[data-column="routeName"]::before {
             content: none;
+        }
+        .route-list-page td[data-column="businessName"] {
+            order: 2;
+        }
+        .route-list-page td[data-column="info"] {
+            order: 3;
+        }
+        .route-list-page td[data-column="shipName"] {
+            order: 4;
+        }
+        .route-list-page td[data-column="url"] {
+            order: 5;
         }
         .route-list-page td[data-empty="true"] {
             display: none;
