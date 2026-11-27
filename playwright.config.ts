@@ -21,7 +21,7 @@ export default defineConfig({
         // Vite のビルド成果物を配信して検証する
         command: 'npm run build && npx vite preview --host 127.0.0.1 --port 4173 --strictPort',
         url: 'http://127.0.0.1:4173/index.html',
-        env: { SEAROUTE_SKIP_ROUTE_DATA: '1' },
+        env: { SEAROUTE_SKIP_ROUTE_DATA: '1', SEAROUTE_ROUTE_PAGES_FILE: 'tests/fixtures/routePages.json' },
         reuseExistingServer: !process.env.CI,
         timeout: 180_000,
     },

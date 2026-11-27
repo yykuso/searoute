@@ -1,5 +1,5 @@
-import { readFile, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
@@ -15,6 +15,16 @@ const DEFINE = {
     'import.meta.env.VITE_BUILD_NUMBER': JSON.stringify(BUILD_NUMBER),
 };
 const APP_ROOT = '<div id="app"></div>';
+const ROUTE_DETAIL_TEMPLATE = 'routeDetail.html';
+const ROUTE_HEAD_PLACEHOLDER = /<!-- searoute:route-head[\s\S]*?-->/;
+
+/** プリレンダリング結果を HTML へ埋め込む（<div id="app"> の中身・head 末尾・body 末尾） */
+function applyPrerenderedPage(html: string, page: Prerender.PrerenderedPage): string {
+    let output = html.replace(APP_ROOT, () => `<div id="app">${page.app}</div>`);
+    if (page.head) output = output.replace('</head>', () => `${page.head}\n</head>`);
+    if (page.bodyEnd) output = output.replace('</body>', () => `${page.bodyEnd}\n</body>`);
+    return output;
+}
 
 /**
  * ビルド時プリレンダリング（SSG）
@@ -40,7 +50,10 @@ function prerenderPages(): Plugin {
                 plugins: [react()],
             });
             try {
-                const { renderPages, loadPrerenderRouteTables, buildLlmsFullText, SITE_URL } = await server.ssrLoadModule('/src/entrypoints/prerender.tsx') as typeof Prerender;
+                const {
+                    renderPages, renderRouteDetailPages, loadPrerenderRouteTables, loadPrerenderRoutePages, normalizeRoutePages, buildLlmsFullText,
+                    assertRouteListHasDetailPages, SITE_URL,
+                } = await server.ssrLoadModule('/src/entrypoints/prerender.tsx') as typeof Prerender;
                 // SEAROUTE_SKIP_ROUTE_DATA=1 のときは航路データを取得しない（E2E など）。取得失敗はビルド失敗にする
                 const routeTables = process.env.SEAROUTE_SKIP_ROUTE_DATA === '1' ? [] : await loadPrerenderRouteTables();
                 for (const [fileName, page] of Object.entries(renderPages(BUILD_NUMBER, routeTables))) {
@@ -49,13 +62,33 @@ function prerenderPages(): Plugin {
                     if (!html.includes(APP_ROOT)) {
                         throw new Error(`${fileName} に ${APP_ROOT} が見つかりません`);
                     }
-                    let output = html.replace(APP_ROOT, () => `<div id="app">${page.app}</div>`);
-                    if (page.head) output = output.replace('</head>', () => `${page.head}\n</head>`);
-                    if (page.bodyEnd) output = output.replace('</body>', () => `${page.bodyEnd}\n</body>`);
-                    await writeFile(filePath, output);
+                    await writeFile(filePath, applyPrerenderedPage(html, page));
                 }
+
+                // 航路詳細ページ：dist/routeDetail.html を雛形に route/<routeId>/index.html を書き出し、雛形は消す
+                // SEAROUTE_ROUTE_PAGES_FILE（プロジェクトルートからの相対パス）があればそのファイル、SEAROUTE_SKIP_ROUTE_DATA=1 なら 0 件、
+                // それ以外は配信元から取得する。取得失敗・routeId 重複はビルド失敗
+                const routePagesFile = process.env.SEAROUTE_ROUTE_PAGES_FILE;
+                const routePages = routePagesFile
+                    ? normalizeRoutePages(JSON.parse(await readFile(resolve(root, routePagesFile), 'utf8')))
+                    : process.env.SEAROUTE_SKIP_ROUTE_DATA === '1' ? [] : await loadPrerenderRoutePages();
+                // 一覧の行に詳細ページが無いとリンク切れになるのでビルド失敗にする（一覧が空のときだけ検査しない。一覧があって routePages が 0 件ならビルド失敗）
+                assertRouteListHasDetailPages(routeTables, routePages);
+                const templatePath = resolve(outDir, ROUTE_DETAIL_TEMPLATE);
+                const template = await readFile(templatePath, 'utf8');
+                if (!template.includes(APP_ROOT) || !ROUTE_HEAD_PLACEHOLDER.test(template)) {
+                    throw new Error(`${ROUTE_DETAIL_TEMPLATE} に ${APP_ROOT} または searoute:route-head が見つかりません`);
+                }
+                for (const { fileName, page } of renderRouteDetailPages(routePages)) {
+                    const filePath = resolve(outDir, fileName);
+                    const html = applyPrerenderedPage(template, { app: page.app, bodyEnd: page.bodyEnd })
+                        .replace(ROUTE_HEAD_PLACEHOLDER, () => page.head ?? '');
+                    await mkdir(dirname(filePath), { recursive: true });
+                    await writeFile(filePath, html);
+                }
+                await rm(templatePath);
                 if (routeTables.length > 0) {
-                    await writeFile(resolve(outDir, 'llms-full.txt'), buildLlmsFullText(routeTables, SITE_URL, new Date().toISOString()));
+                    await writeFile(resolve(outDir, 'llms-full.txt'), buildLlmsFullText(routeTables, SITE_URL, new Date().toISOString(), routePages));
                 }
             } finally {
                 await server.close();
@@ -177,6 +210,8 @@ export default defineConfig({
             input: {
                 index: resolve(root, 'index.html'),
                 routeList: resolve(root, 'routeList.html'),
+                // 航路詳細ページの雛形（プリレンダリングで route/<routeId>/index.html に展開し、dist からは消す）
+                routeDetail: resolve(root, ROUTE_DETAIL_TEMPLATE),
             },
         },
     },
