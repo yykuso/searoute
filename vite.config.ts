@@ -72,7 +72,7 @@ function prerenderPages(): Plugin {
                 const routePages = routePagesFile
                     ? normalizeRoutePages(JSON.parse(await readFile(resolve(root, routePagesFile), 'utf8')))
                     : process.env.SEAROUTE_SKIP_ROUTE_DATA === '1' ? [] : await loadPrerenderRoutePages();
-                // 一覧の行に詳細ページが無いとリンク切れになるのでビルド失敗にする（どちらかが空なら検査しない）
+                // 一覧の行に詳細ページが無いとリンク切れになるのでビルド失敗にする（一覧が空のときだけ検査しない。一覧があって routePages が 0 件ならビルド失敗）
                 assertRouteListHasDetailPages(routeTables, routePages);
                 const templatePath = resolve(outDir, ROUTE_DETAIL_TEMPLATE);
                 const template = await readFile(templatePath, 'utf8');

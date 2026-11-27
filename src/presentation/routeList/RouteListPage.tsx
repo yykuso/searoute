@@ -98,7 +98,7 @@ function RouteTableRow({ row, visibleColumns, query }: {
                         <td key={cell.column} {...cellProps}>
                             {cell.external
                                 ? <a href={cell.href} target="_blank" rel="noopener noreferrer">{content}</a>
-                                : <a href={cell.href} rel="noopener noreferrer">{content}</a>}
+                                : <a href={cell.href}>{content}</a>}
                         </td>
                     );
                 }

@@ -32,6 +32,11 @@ describe('normalizeRoutePages', () => {
         })).toThrow(/1/);
     });
 
+    it('routeId が空・欠落のレコードで throw する', () => {
+        expect(() => normalizeRoutePages({ records: [{ routeId: '', layer: 'seaRoute' }] })).toThrow(/routeId が空/);
+        expect(() => normalizeRoutePages({ records: [{ layer: 'seaRoute' }] })).toThrow(/routeId が空/);
+    });
+
     it('records がなければ空配列', () => {
         expect(normalizeRoutePages(null)).toEqual([]);
         expect(normalizeRoutePages({})).toEqual([]);

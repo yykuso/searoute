@@ -31,6 +31,7 @@ describe('RouteListPage', () => {
         expect(row.querySelectorAll('td')).toHaveLength(4);
         const routeLink = screen.getByRole('link', { name: 'Route A' });
         expect(routeLink.getAttribute('href')).toBe('/route/2/');
+        expect(routeLink.getAttribute('rel')).toBeNull();
         expect(routeLink.getAttribute('target')).toBeNull();
         expect(screen.getByRole('link', { name: 'リンク' }).getAttribute('target')).toBe('_blank');
         const table = document.querySelector('.sea-route-table') as HTMLElement;

@@ -86,11 +86,11 @@ export function buildLlmsFullText(
 
 /**
  * 一覧の全 routeId に航路詳細ページ（routePages）があるか検査する。欠けていれば欠けた routeId を列挙して throw
- * 一覧か routePages のどちらかが空（E2E・データ未取得）なら検査しない
+ * 一覧が空（E2E・データ未取得）のときだけ検査しない。一覧があって routePages が 0 件なら全件欠落として throw
  */
 export function assertRouteListHasDetailPages(tables: RouteTableState[], routePages: RoutePageRecord[]): void {
     const routeIds = tables.flatMap((table) => table.rows.map((row) => row.routeId));
-    if (routeIds.length === 0 || routePages.length === 0) return;
+    if (routeIds.length === 0) return;
     const pageIds = new Set(routePages.map((record) => record.routeId));
     const missing = [...new Set(routeIds.filter((routeId) => !pageIds.has(routeId)))];
     if (missing.length > 0) {

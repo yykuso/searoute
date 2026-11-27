@@ -111,8 +111,12 @@ describe('assertRouteListHasDetailPages', () => {
         expect(() => assertRouteListHasDetailPages(twoTables, [page('2')])).toThrow(/3, KR1/);
     });
 
-    it('一覧か routePages のどちらかが空なら検査しない', () => {
-        expect(() => assertRouteListHasDetailPages(tables, [])).not.toThrow();
+    it('一覧があるのに routePages が 0 件なら throw する（取得成功だが空・形式不正の検知）', () => {
+        expect(() => assertRouteListHasDetailPages(tables, [])).toThrow(/2, 3/);
+    });
+
+    it('一覧が空なら検査しない（E2E・データ未取得）', () => {
+        expect(() => assertRouteListHasDetailPages([], [])).not.toThrow();
         expect(() => assertRouteListHasDetailPages([], [page('1')])).not.toThrow();
         expect(() => assertRouteListHasDetailPages([{ ...tables[0], rows: [] }], [page('1')])).not.toThrow();
     });

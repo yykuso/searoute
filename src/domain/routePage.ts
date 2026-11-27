@@ -55,6 +55,9 @@ export function normalizeRoutePages(data: unknown): RoutePageRecord[] {
     for (const raw of source.records as Array<Partial<RoutePageRecord> | null | undefined>) {
         if (!raw || !isRoutePageLayer(raw.layer)) continue;
         const routeId = String(raw.routeId ?? '');
+        if (!routeId) {
+            throw new Error('routePages: routeId が空のレコードがあります');
+        }
         if (seen.has(routeId)) {
             throw new Error(`routePages: routeId が重複しています: ${routeId}`);
         }

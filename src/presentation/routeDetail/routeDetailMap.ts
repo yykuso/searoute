@@ -55,8 +55,8 @@ export function readRouteDetailMapOptions(element: HTMLElement): RouteDetailMapO
     };
     if (bboxText !== undefined) {
         const bbox = parseJson(bboxText);
-        if (!isBounds(bbox)) return null;
-        options.bbox = bbox;
+        // 不正な bbox は無視して ports から範囲を作る
+        if (isBounds(bbox)) options.bbox = bbox;
     }
     return options;
 }
@@ -70,7 +70,10 @@ export function routeDetailMapBounds({ bbox, ports }: Pick<RouteDetailMapOptions
     return [Math.min(...lons), Math.min(...lats), Math.max(...lons), Math.max(...lats)];
 }
 
-/** 埋め込み地図を表示する。要素がない・data 属性が壊れている・範囲が決まらないときは何もしない */
+/**
+ * 埋め込み地図を表示する。要素がない・data 属性が壊れている・範囲が決まらないときは何もしない
+ * 読み込み失敗・WebGL 非対応などで生成に失敗したら、空の枠を残さず hidden にして console.warn に原因を残す
+ */
 export async function mountRouteDetailMap(element: HTMLElement | null): Promise<void> {
     if (!element) return;
     const options = readRouteDetailMapOptions(element);
@@ -78,6 +81,15 @@ export async function mountRouteDetailMap(element: HTMLElement | null): Promise<
     const bounds = routeDetailMapBounds(options);
     if (!bounds) return;
 
+    try {
+        await renderRouteDetailMap(element, options, bounds);
+    } catch (error) {
+        element.hidden = true;
+        console.warn('航路詳細ページの地図を表示できませんでした', error);
+    }
+}
+
+async function renderRouteDetailMap(element: HTMLElement, options: RouteDetailMapOptions, bounds: RouteDetailBounds): Promise<void> {
     const [maplibregl, { Protocol }, { default: workerUrl }] = await Promise.all([
         import('maplibre-gl'),
         import('pmtiles'),

@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readRouteDetailMapOptions, routeDetailMapBounds } from '../../../src/presentation/routeDetail/routeDetailMap';
 
 function mapElement(attributes: Record<string, string>): HTMLElement {
@@ -49,15 +49,50 @@ describe('readRouteDetailMapOptions', () => {
         expect(readRouteDetailMapOptions(element)).toBeNull();
     });
 
-    it('data-bbox が不正な JSON・4 要素の数値配列でなければ null', () => {
-        const base = { 'data-route-id': '10101', 'data-source-layer': 'seaRoute', 'data-ports': '[]' };
-        expect(readRouteDetailMapOptions(mapElement({ ...base, 'data-bbox': 'oops' }))).toBeNull();
-        expect(readRouteDetailMapOptions(mapElement({ ...base, 'data-bbox': '[1,2,3]' }))).toBeNull();
+    it('data-bbox が不正な JSON・4 要素の数値配列でなければ無視して ports だけ返す', () => {
+        const base = { 'data-route-id': '10101', 'data-source-layer': 'seaRoute', 'data-ports': JSON.stringify(ports) };
+        for (const bbox of ['oops', '[1,2,3]']) {
+            const options = readRouteDetailMapOptions(mapElement({ ...base, 'data-bbox': bbox }));
+            expect(options).toEqual({ routeId: '10101', sourceLayer: 'seaRoute', ports });
+            expect(options).not.toHaveProperty('bbox');
+        }
     });
 
     it('routeId がなければ null', () => {
         const element = mapElement({ 'data-source-layer': 'seaRoute', 'data-ports': '[]' });
         expect(readRouteDetailMapOptions(element)).toBeNull();
+    });
+});
+
+describe('mountRouteDetailMap', () => {
+    afterEach(() => vi.restoreAllMocks());
+
+    function validElement(): HTMLElement {
+        return mapElement({
+            'data-route-id': '10101',
+            'data-source-layer': 'seaRoute',
+            'data-ports': JSON.stringify(ports),
+        });
+    }
+
+    it('MapLibre の読み込み・生成に失敗したら地図枠を hidden にして warn する', async () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        vi.doMock('maplibre-gl', () => ({
+            setWorkerUrl: () => {},
+            addProtocol: () => {},
+            Map: class { constructor() { throw new Error('no webgl'); } },
+            NavigationControl: class {},
+            Marker: class {},
+        }));
+        vi.doMock('maplibre-gl/dist/maplibre-gl.css', () => ({}));
+        vi.doMock('maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url', () => ({ default: '/worker.js' }));
+        vi.resetModules();
+        const { mountRouteDetailMap } = await import('../../../src/presentation/routeDetail/routeDetailMap');
+        const element = validElement();
+        await expect(mountRouteDetailMap(element)).resolves.toBeUndefined();
+        expect(element.hidden).toBe(true);
+        expect(warn).toHaveBeenCalled();
+        vi.doUnmock('maplibre-gl');
     });
 });
 
