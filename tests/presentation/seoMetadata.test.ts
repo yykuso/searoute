@@ -30,9 +30,10 @@ describe('routeList.html の検索向けメタデータ', () => {
         for (const keyword of ['フェリー', '旅客船', '航路一覧', '時刻表']) {
             expect(title).toContain(keyword);
         }
-        for (const keyword of ['フェリー', '旅客船', '時刻表']) {
+        for (const keyword of ['フェリー', '旅客船', '時刻表', '運航頻度']) {
             expect(description).toContain(keyword);
         }
+        expect(description).toContain('航路名から詳細ページを開くと、地図・運航頻度・時刻表');
         expect(document.querySelector('meta[property="og:title"]')?.getAttribute('content')).toBe(title);
         expect(document.querySelector('meta[name="twitter:title"]')?.getAttribute('content')).toBe(title);
         expect(document.querySelector('meta[property="og:description"]')?.getAttribute('content')).toBe(description);
@@ -115,6 +116,7 @@ describe('公開 URL は Cloudflare Pages の正規形（.html なし）', () =>
         const text = readFileSync(`${projectRoot}public/llms.txt`, 'utf8');
 
         expect(text).toContain('https://searoute.info/routeList)');
+        expect(text).toContain('航路詳細（例: https://searoute.info/route/10101/）: 航路ごとの事業者・発着港・運航頻度・船名・公式サイト・地図');
         expect(text).not.toMatch(/searoute\.info\/[^\s)]*\.html/);
     });
 });

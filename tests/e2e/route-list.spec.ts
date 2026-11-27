@@ -32,9 +32,8 @@ test('航路一覧を描画して検索・リセットできる', async ({ page 
     await expect(domesticRows.nth(1)).toHaveClass(/season-row/);
 
     const routeLink = domesticRows.first().locator('td').nth(2).getByRole('link');
-    await expect(routeLink).toHaveAttribute('href', /share=route/);
-    await expect(routeLink).toHaveAttribute('href', /routeId=2/);
-    await expect(routeLink).toHaveAttribute('href', /sourceId=geojson_sea_route/);
+    await expect(routeLink).toHaveAttribute('href', '/route/2/');
+    await expect(routeLink).not.toHaveAttribute('target', /./);
 
     await page.getByPlaceholder('検索キーワードを入力').fill('[Route]');
 

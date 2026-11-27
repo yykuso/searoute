@@ -6,7 +6,8 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { RouteListState, RouteListViewModel, RouteTableState } from '../../application/viewModels/routeListViewModel';
-import { buildRouteMapPath, createRouteSearchPattern, matchesRouteSearchText } from '../../domain/route';
+import { createRouteSearchPattern, matchesRouteSearchText } from '../../domain/route';
+import { buildRouteDetailPath } from '../../domain/routePage';
 import type { RouteColumn, RouteRow } from '../../domain/route';
 import { useViewModelState } from '../hooks/useViewModelState';
 import { SiteHeader } from '../common/SiteHeader';
@@ -50,13 +51,13 @@ interface CellModel {
     external?: boolean;
 }
 
-function toCells(row: RouteRow, visibleColumns: RouteColumn[], sourceId: string): CellModel[] {
+function toCells(row: RouteRow, visibleColumns: RouteColumn[]): CellModel[] {
     return visibleColumns.map((column) => {
         if (column === 'routeName') {
             return {
                 column,
                 text: row.routeName || '-',
-                href: buildRouteMapPath(row.routeId, sourceId),
+                href: buildRouteDetailPath(row.routeId),
             };
         }
         if (column === 'url') {
@@ -66,13 +67,12 @@ function toCells(row: RouteRow, visibleColumns: RouteColumn[], sourceId: string)
     });
 }
 
-function RouteTableRow({ row, visibleColumns, sourceId, query }: {
+function RouteTableRow({ row, visibleColumns, query }: {
     row: RouteRow;
     visibleColumns: RouteColumn[];
-    sourceId: string;
     query: string;
 }) {
-    const cells = toCells(row, visibleColumns, sourceId);
+    const cells = toCells(row, visibleColumns);
     const matchedCells = query ? cells.map((cell) => matchesRouteSearchText(cell.text, query)) : [];
     const hidden = Boolean(query) && !matchedCells.some(Boolean);
 
@@ -132,7 +132,6 @@ function RouteTable({ tableClassName, infoClassName, table, query }: {
                         key={`${row.routeId}-${index}`}
                         row={row}
                         visibleColumns={table.visibleColumns}
-                        sourceId={table.sourceId}
                         query={query}
                     />
                 ))}
@@ -145,7 +144,7 @@ function RouteTable({ tableClassName, infoClassName, table, query }: {
 export function countVisibleRows(state: RouteListState): number {
     return state.tables.reduce((total, table) => total + table.rows.filter((row) => (
         !state.query
-        || toCells(row, table.visibleColumns, table.sourceId).some((cell) => matchesRouteSearchText(cell.text, state.query))
+        || toCells(row, table.visibleColumns).some((cell) => matchesRouteSearchText(cell.text, state.query))
     )).length, 0);
 }
 
@@ -156,7 +155,7 @@ const TABLES = [
 ];
 
 const ROUTE_LIST_INTRO = '日本全国のフェリー・旅客船・高速船の航路を、事業者名・航路名・船名で一覧にしています。'
-    + '航路名を選ぶと、地図上で航路の詳細と時刻表（運航事業者の公式サイト）へのリンクを確認できます。';
+    + '航路名を選ぶと、航路の詳細ページで地図・運航頻度・時刻表（運航事業者の公式サイト）へのリンクを確認できます。';
 
 /** 「掲載航路数：国内航路 N件、…」。データが無い（開発サーバーで未取得など）ときは空 */
 function routeCountText(tables: RouteTableState[]): string {

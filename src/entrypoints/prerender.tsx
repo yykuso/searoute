@@ -6,7 +6,7 @@
 import { renderToString } from 'react-dom/server';
 import type { FetchLike } from '../adapters/http/fetchWithRetry';
 import { createRouteListRepository } from '../adapters/data/routeListRepository';
-import { buildLlmsFullText, buildRouteListJsonLd } from '../application/routeListPublication';
+import { assertRouteListHasDetailPages, buildLlmsFullText, buildRouteListJsonLd } from '../application/routeListPublication';
 import { buildRouteDetailHead } from '../application/routeDetailPublication';
 import { serializeRouteListSnapshot } from '../application/routeListSnapshot';
 import { loadRouteListTables } from '../application/useCases/loadRouteListTables';
@@ -68,7 +68,7 @@ export function renderRouteListPage(routeTables: RouteTableState[] = []): string
     return renderToString(<RouteListPage viewModel={viewModel} />);
 }
 
-export { buildLlmsFullText, normalizeRoutePages };
+export { assertRouteListHasDetailPages, buildLlmsFullText, normalizeRoutePages };
 
 export type PrerenderedPage = { app: string; head?: string; bodyEnd?: string };
 

@@ -51,7 +51,8 @@ function prerenderPages(): Plugin {
             });
             try {
                 const {
-                    renderPages, renderRouteDetailPages, loadPrerenderRouteTables, loadPrerenderRoutePages, normalizeRoutePages, buildLlmsFullText, SITE_URL,
+                    renderPages, renderRouteDetailPages, loadPrerenderRouteTables, loadPrerenderRoutePages, normalizeRoutePages, buildLlmsFullText,
+                    assertRouteListHasDetailPages, SITE_URL,
                 } = await server.ssrLoadModule('/src/entrypoints/prerender.tsx') as typeof Prerender;
                 // SEAROUTE_SKIP_ROUTE_DATA=1 のときは航路データを取得しない（E2E など）。取得失敗はビルド失敗にする
                 const routeTables = process.env.SEAROUTE_SKIP_ROUTE_DATA === '1' ? [] : await loadPrerenderRouteTables();
@@ -71,6 +72,8 @@ function prerenderPages(): Plugin {
                 const routePages = routePagesFile
                     ? normalizeRoutePages(JSON.parse(await readFile(resolve(root, routePagesFile), 'utf8')))
                     : process.env.SEAROUTE_SKIP_ROUTE_DATA === '1' ? [] : await loadPrerenderRoutePages();
+                // 一覧の行に詳細ページが無いとリンク切れになるのでビルド失敗にする（どちらかが空なら検査しない）
+                assertRouteListHasDetailPages(routeTables, routePages);
                 const templatePath = resolve(outDir, ROUTE_DETAIL_TEMPLATE);
                 const template = await readFile(templatePath, 'utf8');
                 if (!template.includes(APP_ROOT) || !ROUTE_HEAD_PLACEHOLDER.test(template)) {
@@ -85,7 +88,7 @@ function prerenderPages(): Plugin {
                 }
                 await rm(templatePath);
                 if (routeTables.length > 0) {
-                    await writeFile(resolve(outDir, 'llms-full.txt'), buildLlmsFullText(routeTables, SITE_URL, new Date().toISOString()));
+                    await writeFile(resolve(outDir, 'llms-full.txt'), buildLlmsFullText(routeTables, SITE_URL, new Date().toISOString(), routePages));
                 }
             } finally {
                 await server.close();

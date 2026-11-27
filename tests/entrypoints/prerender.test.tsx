@@ -4,7 +4,9 @@ import { JSDOM } from 'jsdom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { RouteTableState } from '../../src/application/viewModels/routeListViewModel';
 import { normalizeRoutePages } from '../../src/domain/routePage';
-import { loadPrerenderRoutePages, loadPrerenderRouteTables, renderPages, renderRouteDetailPages } from '../../src/entrypoints/prerender';
+import {
+    assertRouteListHasDetailPages, loadPrerenderRoutePages, loadPrerenderRouteTables, renderPages, renderRouteDetailPages,
+} from '../../src/entrypoints/prerender';
 import { ROUTE_LIST_TABLE_CONFIGS } from '../../src/entrypoints/routeListServices';
 
 // 旧版（develop ブランチの Vanilla JS 版）の HTML。body の静的マークアップをプリレンダリング結果と比較する
@@ -128,6 +130,20 @@ describe('航路データ付きプリレンダリング', () => {
         const intro = document.querySelector('.route-list-intro')?.textContent ?? '';
         expect(intro).toContain('フェリー・旅客船・高速船');
         expect(intro).toContain('掲載航路数：国内航路 1件。');
+        expect(intro).toContain('航路名を選ぶと、航路の詳細ページで地図・運航頻度・時刻表（運航事業者の公式サイト）へのリンクを確認できます。');
+    });
+
+    it('routeList.html の航路名リンクと JSON-LD の url は航路詳細ページ', () => {
+        const page = renderPages(BUILD_NUMBER, tables)['routeList.html'];
+        const document = new JSDOM(`<!DOCTYPE html><body>${page.app}</body>`).window.document;
+        expect(document.querySelector('td[data-column="routeName"] a')?.getAttribute('href')).toBe('/route/2/');
+        expect(page.head).toContain('"url":"https://searoute.info/route/2/"');
+    });
+
+    it('assertRouteListHasDetailPages: 一覧の routeId が routePages に無ければ throw する', () => {
+        expect(() => assertRouteListHasDetailPages(tables, [{ routeId: '3', layer: 'seaRoute', ports: [] }]))
+            .toThrow(/2/);
+        expect(() => assertRouteListHasDetailPages(tables, [{ routeId: '2', layer: 'seaRoute', ports: [] }])).not.toThrow();
     });
 
     it('データが空なら掲載航路数を出さない', () => {

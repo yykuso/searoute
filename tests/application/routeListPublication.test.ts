@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { buildLlmsFullText, buildRouteListJsonLd } from '../../src/application/routeListPublication';
+import { assertRouteListHasDetailPages, buildLlmsFullText, buildRouteListJsonLd } from '../../src/application/routeListPublication';
 import type { RouteTableState } from '../../src/application/viewModels/routeListViewModel';
+import type { RoutePageRecord } from '../../src/domain/routePage';
 
 const tables: RouteTableState[] = [
     {
@@ -15,7 +16,7 @@ const tables: RouteTableState[] = [
 ];
 
 describe('buildRouteListJsonLd', () => {
-    it('ItemList を生成し url は地図リンク', () => {
+    it('ItemList を生成し url は航路詳細ページ', () => {
         const html = buildRouteListJsonLd(tables, 'https://searoute.info');
         const match = html.match(/^<script type="application\/ld\+json">([\s\S]*)<\/script>$/);
         expect(match).not.toBeNull();
@@ -23,7 +24,7 @@ describe('buildRouteListJsonLd', () => {
         expect(data['@type']).toBe('ItemList');
         expect(data.itemListElement).toHaveLength(2);
         expect(data.numberOfItems).toBe(2);
-        expect(data.itemListElement[0].url).toBe('https://searoute.info/?share=route&routeId=2&sourceId=geojson_sea_route');
+        expect(data.itemListElement[0].url).toBe('https://searoute.info/route/2/');
         expect(data.itemListElement[0].position).toBe(1);
         expect(data.itemListElement[0].name).toBe('ハートランドフェリー 稚内～利尻');
         expect(match![1]).not.toContain('<');
@@ -50,7 +51,7 @@ describe('buildLlmsFullText', () => {
             visibleColumns: [],
         }], 'https://searoute.info', 'x');
         const line = text.split('\n').find((l) => l.includes('事業者'))!;
-        expect(line).toBe('- 改行 事業者｜航路 名（船 名）: https://searoute.info/?share=route&routeId=9&sourceId=geojson_sea_route / 公式: https://example.com/');
+        expect(line).toBe('- 改行 事業者｜航路 名（船 名）: https://searoute.info/route/9/ / 公式: https://example.com/');
     });
 
     it('事業者名・航路名が両方空の行は出力しない', () => {
@@ -60,7 +61,7 @@ describe('buildLlmsFullText', () => {
             rows: [{ routeId: '8', businessName: '', routeName: ' ' }],
             visibleColumns: [],
         }], 'https://searoute.info', 'x');
-        expect(text).not.toContain('routeId=8');
+        expect(text).not.toContain('/route/8/');
     });
 
     it('info があれば［info］として付ける', () => {
@@ -70,7 +71,49 @@ describe('buildLlmsFullText', () => {
             rows: [{ routeId: '7', businessName: '事業者', routeName: '航路', shipName: '船', info: '1日2便\n冬季運休' }],
             visibleColumns: [],
         }], 'https://searoute.info', 'x');
-        const line = text.split('\n').find((l) => l.includes('routeId=7'))!;
-        expect(line).toBe('- 事業者｜航路（船）［1日2便 冬季運休］: https://searoute.info/?share=route&routeId=7&sourceId=geojson_sea_route');
+        const line = text.split('\n').find((l) => l.includes('/route/7/'))!;
+        expect(line).toBe('- 事業者｜航路（船）［1日2便 冬季運休］: https://searoute.info/route/7/');
+    });
+
+    it('routePages に該当航路があれば［発着港］［運航頻度］を追記する', () => {
+        const routePages: RoutePageRecord[] = [
+            { routeId: '7', layer: 'seaRoute', freqInfo: '1日\n2便', ports: [{ name: '稚内', lon: 141.7, lat: 45.4 }, { name: '利尻', lon: 141.2, lat: 45.2 }] },
+            { routeId: '6', layer: 'seaRoute', ports: [] },
+        ];
+        const text = buildLlmsFullText([{
+            selector: '.a',
+            sourceId: 'geojson_sea_route',
+            rows: [
+                { routeId: '7', businessName: '事業者', routeName: '航路', shipName: '船', info: '冬季運休' },
+                { routeId: '6', businessName: '事業者', routeName: '港なし' },
+                { routeId: '5', businessName: '事業者', routeName: '詳細なし' },
+            ],
+            visibleColumns: [],
+        }], 'https://searoute.info', 'x', routePages);
+        const lines = text.split('\n');
+        expect(lines.find((l) => l.includes('/route/7/'))).toBe('- 事業者｜航路（船）［冬季運休］［発着港: 稚内・利尻］［運航頻度: 1日 2便］: https://searoute.info/route/7/');
+        expect(lines.find((l) => l.includes('/route/6/'))).toBe('- 事業者｜港なし: https://searoute.info/route/6/');
+        expect(lines.find((l) => l.includes('/route/5/'))).toBe('- 事業者｜詳細なし: https://searoute.info/route/5/');
+    });
+});
+
+describe('assertRouteListHasDetailPages', () => {
+    const page = (routeId: string): RoutePageRecord => ({ routeId, layer: 'seaRoute', ports: [] });
+
+    it('一覧の全 routeId が routePages にあれば何もしない', () => {
+        expect(() => assertRouteListHasDetailPages(tables, [page('2'), page('3'), page('99')])).not.toThrow();
+    });
+
+    it('欠けた routeId を列挙して throw する', () => {
+        const twoTables: RouteTableState[] = [...tables, {
+            selector: '.b', sourceId: 'geojson_KR_sea_route', rows: [{ routeId: 'KR1' }], visibleColumns: [],
+        }];
+        expect(() => assertRouteListHasDetailPages(twoTables, [page('2')])).toThrow(/3, KR1/);
+    });
+
+    it('一覧か routePages のどちらかが空なら検査しない', () => {
+        expect(() => assertRouteListHasDetailPages(tables, [])).not.toThrow();
+        expect(() => assertRouteListHasDetailPages([], [page('1')])).not.toThrow();
+        expect(() => assertRouteListHasDetailPages([{ ...tables[0], rows: [] }], [page('1')])).not.toThrow();
     });
 });
