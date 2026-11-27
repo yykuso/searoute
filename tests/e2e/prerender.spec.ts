@@ -23,7 +23,8 @@ test.describe('JavaScript 無効でもプリレンダリングした静的コン
     test('地図ページ', async ({ page }) => {
         await page.goto('/index.html');
         await expect(page.getByRole('heading', { level: 1, name: 'おでかけ航路マップ' })).toBeVisible();
-        await expect(page.locator('noscript')).toHaveCount(1);
+        // head にはスタイルシートの noscript 代替もあるので、本文の警告だけを数える
+        await expect(page.locator('body noscript')).toHaveCount(1);
         // 旧版と同じく、モーダル・ドロワーは DOM にあり初期状態は非表示
         await expect(page.locator('#info-window h2.heading-tag')).toHaveText(['サイト情報', '開発者について']);
         await expect(page.locator('#info-window')).toBeHidden();
@@ -43,7 +44,7 @@ test.describe('JavaScript 無効でもプリレンダリングした静的コン
         await expect(page.getByRole('heading', { level: 1, name: 'フェリー・旅客船 航路一覧' })).toBeVisible();
         await expect(page.getByRole('heading', { level: 2 })).toHaveText(['国内航路', '国際航路', '韓国 国内航路']);
         await expect(page.getByPlaceholder('検索キーワードを入力')).toBeVisible();
-        await expect(page.getByRole('button', { name: '検索', exact: true })).toBeVisible();
+        await expect(page.locator('#searchbox')).toBeVisible();
         await expect(page.getByRole('link', { name: '専用フォーム' })).toBeVisible();
         await expect(page.locator('.sea-route-table thead th')).toHaveCount(6);
     });
@@ -55,8 +56,11 @@ test('配信される HTML にプリレンダリング結果とビルド番号�
     expect(indexHtml).toMatch(/<span id="site-build-number">(local|[0-9a-f]{7})<\/span>/);
     expect(indexHtml).toContain('id="privacy-policy-window"');
     const routeListHtml = await (await request.get('/routeList.html')).text();
-    expect(routeListHtml).toContain('<h1>フェリー・旅客船 航路一覧</h1>');
+    // h1 には Tailwind のクラスが付くので、属性を問わず見出しの文言で確かめる
+    expect(routeListHtml).toMatch(/<h1[^>]*>フェリー・旅客船 航路一覧<\/h1>/);
     expect(routeListHtml).toContain('id="searchbox"');
+    // JavaScript 無効でも CSS が効くよう、非同期読み込みのスタイルシートに noscript の代替がある
+    expect(routeListHtml).toMatch(/<noscript><link rel="stylesheet" crossorigin href="\/assets\/[^"]+\.css"><\/noscript>/);
 });
 
 test('Cookie バナーは同意前はハイドレーション前から表示し、同意後は表示しない', async ({ page }) => {

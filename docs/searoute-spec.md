@@ -147,7 +147,7 @@
 - 地図: MapLibre GL JS 6.18.0（npm `maplibre-gl`。ワーカーは `?worker&url` でバンドルし setWorkerUrl で指定）
 - タイル: PMTiles 4.5.0（npm `pmtiles`）
 - 検索補助: Maplibre Geocoder 1.9.4（npm `@maplibre/maplibre-gl-geocoder`）+ Nominatim
-- スタイル: Tailwind CSS 4（`@tailwindcss/vite`）と独自 CSS（public/css/）
+- スタイル: Tailwind CSS 4（`@tailwindcss/vite`）と独自 CSS（public/css/。航路一覧は Tailwind のみ）
 - アイコン: Font Awesome Free 7.3.1（npm `@fortawesome/free-solid-svg-icons` / `@fortawesome/free-brands-svg-icons`）をインライン SVG で描画
 - PWA: manifest.json と service-worker.js
 - 計測: Google Analytics
@@ -561,6 +561,9 @@ PC とモバイルで詳細情報を見やすく提示する。
 - note が season の行は season-row クラスを付与する
 - note が suspend の行は suspend-row クラスを付与する
 - URL があれば別タブで開くリンクを表示する
+- データのある表だけ、各表（h2 の id は `domestic` / `international` / `korea`）へジャンプするチップを `nav[aria-label="航路の種類"]` に件数付きで出す。件数は検索に関係なく各表の全行数。データが無いときは nav を出さない
+- チップの直後に、季節運航・運休の行の意味を示す凡例（`.route-legend`）を 1 か所だけ出す
+- PC（640px 以上）は表で表示する。スマホ（640px 未満）は 1 行を 1 枚のカードで表示し、見出し行（thead）は視覚的に隠す。各セルは `data-label`（列名）を項目名として出し、値が「-」のセル（`data-empty="true"`）はカードでは隠す
 
 受け入れ条件。
 
@@ -577,10 +580,11 @@ PC とモバイルで詳細情報を見やすく提示する。
 
 期待動作。
 
-- 入力文字列に一致する行だけを表示する
+- 入力するたびに（検索ボタンなしで）一致する行だけを表示する。日本語入力の変換中は絞り込まず、確定時に絞り込む
+- 検索語があるとき一致件数を表示する
 - 一致箇所をハイライト表示する
 - 一件も見つからない場合はメッセージを表示する
-- リセットで検索語、ハイライト、非表示状態を初期化する
+- 検索欄の✕ボタンで検索語、ハイライト、非表示状態を初期化する（検索語が空のときは✕を出さない）。検索・リセットボタンは廃止
 
 受け入れ条件。
 
@@ -692,7 +696,7 @@ JS を実行しない AI クローラー・AI エージェント・検索エン�
 期待動作。
 
 - routeList.html: 全航路の表を静的 HTML に含める（LIST-01）。`<head>` に schema.org の `ItemList` JSON-LD を入れ、各要素は `position` / `name`（事業者 航路名）/ `url`（`https://searoute.info/?share=route&...`）を持つ。`numberOfItems` に全航路数を入れる
-- routeList.html の検索向け文言: title / description / OGP / Twitter は同じ文言で「フェリー」「旅客船」「時刻表」を含める。h1 は「フェリー・旅客船 航路一覧」。h1 の下に導入文（`.route-list-intro`）を置き、データがあればテーブルごとの掲載航路数を添える。`robots` は `index,follow,max-image-preview:large`。WebPage の JSON-LD にパンくず（トップ → 航路一覧）を持つ
+- routeList.html の検索向け文言: title / description / OGP / Twitter は同じ文言で「フェリー」「旅客船」「時刻表」を含める。一覧用 JSON は容量を抑えるため url を持たず一覧に時刻表列は出ないので、時刻表は「航路名から地図の詳細を開くとリンクがある」と書き、一覧で直接開けるようには書かない。h1 は「フェリー・旅客船 航路一覧」。h1 の下に導入文（`.route-list-intro`）を置き、データがあればテーブルごとの掲載航路数を添える。`robots` は `index,follow,max-image-preview:large`。WebPage の JSON-LD にパンくず（トップ → 航路一覧）を持つ
 - 公開する絶対 URL（canonical、og:url、JSON-LD、llms.txt、llms-full.txt、sitemap.xml、404 ページのリンク）は Cloudflare Pages の正規形にそろえる。Pages は `.html` 付きの URL を 308 でリダイレクトする（`/routeList.html` → `/routeList`、`/index.html` → `/`）ため、リダイレクト元を正規 URL として示さない。サイト内の相対リンクも同じ正規形（`./routeList`、`./?share=...`）にし、リダイレクトを挟まないようにする（Vite の開発サーバー・preview も `.html` なしの URL を配信できる）
 - 埋め込みデータと JSON-LD は `<` を `<` にエスケープし、航路名に `</script>` が含まれても HTML が壊れないようにする
 - llms.txt: サイト概要と主要ページへのリンク（public/llms.txt を手で管理）。llms-full.txt へのリンクを含める
