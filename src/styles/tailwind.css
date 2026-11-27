@@ -15,6 +15,10 @@
         --rl-h2-h: 2.5rem;
         /* ベースカラー。航路マップの海の色に合わせる（ヘッダー・表見出し） */
         --rl-sea: #bfd9f2;
+        /* ベースカラーから作った濃淡（チップ・フォーム案内・検索欄の枠・行のホバー） */
+        --rl-sea-tint: #eef5fc;
+        --rl-sea-deep: #6f9fd0;
+        --rl-sea-ink: #1f4e79;
         --rl-season-bg: #fffacd;
         --rl-season-bar: var(--color-yellow-500);
         --rl-suspend-bg: #f8d7da;
@@ -86,7 +90,7 @@
         background-color: var(--color-slate-50);
     }
     .route-list-page tbody tr:hover {
-        background-color: var(--color-sky-50);
+        background-color: var(--rl-sea-tint);
     }
     .route-list-page tbody tr.season-row {
         background-color: var(--rl-season-bg);

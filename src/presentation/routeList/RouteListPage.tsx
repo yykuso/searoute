@@ -203,7 +203,7 @@ export function RouteListPage({ viewModel }: {
                                 </a>
                             </li>
                             <li>
-                                <a href="./routeList" title="航路一覧" aria-current="page" className="flex flex-col items-center rounded-md bg-white/60 px-2 py-1 text-xs font-bold text-sky-900">
+                                <a href="./routeList" title="航路一覧" aria-current="page" className="flex flex-col items-center rounded-md bg-white/60 px-2 py-1 text-xs font-bold text-(--rl-sea-ink)">
                                     <Icon className="fas fa-ship text-lg" />
                                     <span>航路一覧</span>
                                 </a>
@@ -226,7 +226,7 @@ export function RouteListPage({ viewModel }: {
                                 id="searchbox"
                                 ref={inputRef}
                                 placeholder="検索キーワードを入力"
-                                className="w-full rounded-full border border-slate-300 bg-white py-2 pr-10 pl-4 text-base outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200 [&::-webkit-search-cancel-button]:appearance-none"
+                                className="w-full rounded-full border border-slate-300 bg-white py-2 pr-10 pl-4 text-base outline-none focus:border-(--rl-sea-deep) focus:ring-2 focus:ring-(--rl-sea) [&::-webkit-search-cancel-button]:appearance-none"
                                 value={searchText}
                                 onChange={(event) => {
                                     const { value } = event.target;
@@ -260,7 +260,7 @@ export function RouteListPage({ viewModel }: {
                     <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2">
                         <nav aria-label="航路の種類" className="route-jump flex flex-wrap gap-2">
                             {jumpTargets.map(({ shortLabel, anchorId, count }) => (
-                                <a key={anchorId} href={`#${anchorId}`} className="rounded-full border border-sky-300 bg-sky-50 px-3 py-1 text-sky-900 hover:bg-sky-100">{shortLabel} {count}件</a>
+                                <a key={anchorId} href={`#${anchorId}`} className="rounded-full border border-(--rl-sea) bg-(--rl-sea-tint) px-3 py-1 text-(--rl-sea-ink) hover:bg-(--rl-sea)">{shortLabel} {count}件</a>
                             ))}
                         </nav>
                         <p className="route-legend flex gap-3 text-xs text-slate-600">
@@ -269,10 +269,10 @@ export function RouteListPage({ viewModel }: {
                         </p>
                     </div>
                 )}
-                <div className="feedback-callout mb-4 w-fit max-w-full border-l-4 border-sky-500 bg-sky-50 px-3 py-2">
+                <div className="feedback-callout mb-4 w-fit max-w-full border-l-4 border-(--rl-sea-deep) bg-(--rl-sea-tint) px-3 py-2">
                     <p className="leading-relaxed">
                         データの追加・修正依頼や機能要望は{' '}
-                        <a href="https://forms.gle/xXyqvDkZKNwEXPv27" target="_blank" rel="noopener noreferrer" className="font-bold text-sky-700 hover:underline">専用フォーム</a>{' '}
+                        <a href="https://forms.gle/xXyqvDkZKNwEXPv27" target="_blank" rel="noopener noreferrer" className="font-bold text-(--rl-sea-ink) hover:underline">専用フォーム</a>{' '}
                         から送れます。
                     </p>
                 </div>
