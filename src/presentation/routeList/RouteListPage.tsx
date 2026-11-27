@@ -9,7 +9,7 @@ import type { RouteListState, RouteListViewModel, RouteTableState } from '../../
 import { buildRouteMapPath, createRouteSearchPattern, matchesRouteSearchText } from '../../domain/route';
 import type { RouteColumn, RouteRow } from '../../domain/route';
 import { useViewModelState } from '../hooks/useViewModelState';
-import { Icon } from '../common/Icon';
+import { SiteHeader } from '../common/SiteHeader';
 
 const SEARCH_HIGHLIGHT_CLASS = 'route-search-highlight';
 
@@ -191,27 +191,7 @@ export function RouteListPage({ viewModel }: {
 
     return (
         <div className="route-list-page min-h-screen bg-white text-sm text-slate-800">
-            <header className="sticky top-0 z-30 h-(--rl-header-h) bg-(--rl-sea) shadow-sm">
-                <div className="mx-auto flex h-full max-w-[1200px] items-center justify-between px-3">
-                    <p className="text-lg font-bold">おでかけ航路マップ</p>
-                    <nav>
-                        <ul className="flex gap-1">
-                            <li>
-                                <a href="./" title="マップ" className="flex flex-col items-center rounded-md px-2 py-1 text-xs text-slate-800 hover:bg-white/50">
-                                    <Icon className="fas fa-map text-lg" />
-                                    <span>マップ</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="./routeList" title="航路一覧" aria-current="page" className="flex flex-col items-center rounded-md bg-white/60 px-2 py-1 text-xs font-bold text-(--rl-sea-ink)">
-                                    <Icon className="fas fa-ship text-lg" />
-                                    <span>航路一覧</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </header>
+            <SiteHeader rootHref="./" current="routeList" />
             <div className="mx-auto max-w-[1200px] px-3 pb-8">
                 <h1 className="mt-4 mb-2 text-xl font-bold sm:text-2xl">フェリー・旅客船 航路一覧</h1>
                 <p className="route-list-intro mb-3 max-w-3xl leading-relaxed text-slate-600">

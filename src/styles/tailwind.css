@@ -8,7 +8,9 @@
  * 表・カードのように、セル（td）へ JSX でクラスを付けにくいものだけをここに書く（それ以外は RouteListPage.tsx のユーティリティ）。
  */
 @layer components {
-    .route-list-page {
+    /* 航路詳細ページ（/route/<id>/）も共通ヘッダー・配色に同じ変数を使う */
+    .route-list-page,
+    .route-detail-page {
         /* 固定（sticky）要素の高さ。検索バー・h2・thead の top はこれを積んで決める */
         --rl-header-h: 3.25rem;
         --rl-search-h: 3.5rem;
