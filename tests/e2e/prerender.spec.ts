@@ -43,7 +43,7 @@ test.describe('JavaScript 無効でもプリレンダリングした静的コン
         await expect(page.getByRole('heading', { level: 1, name: 'フェリー・旅客船 航路一覧' })).toBeVisible();
         await expect(page.getByRole('heading', { level: 2 })).toHaveText(['国内航路', '国際航路', '韓国 国内航路']);
         await expect(page.getByPlaceholder('検索キーワードを入力')).toBeVisible();
-        await expect(page.getByRole('button', { name: '検索', exact: true })).toBeVisible();
+        await expect(page.locator('#searchbox')).toBeVisible();
         await expect(page.getByRole('link', { name: '専用フォーム' })).toBeVisible();
         await expect(page.locator('.sea-route-table thead th')).toHaveCount(6);
     });

@@ -41,7 +41,6 @@ describe('RouteListPage', () => {
         await renderPage({ domestic: [{ routeId: '1', routeName: 'Ocean Route' }, { routeId: '2', routeName: 'Island Line' }] });
 
         fireEvent.change(screen.getByPlaceholderText('検索キーワードを入力'), { target: { value: 'ocean' } });
-        fireEvent.click(screen.getByRole('button', { name: '検索' }));
 
         const [matchRow, noMatchRow] = domesticRows();
         expect(matchRow.querySelector('.route-search-highlight')?.textContent).toBe('Ocean');
@@ -54,14 +53,12 @@ describe('RouteListPage', () => {
     it('一致する行がない場合はメッセージを表示する', async () => {
         await renderPage({ domestic: [{ routeId: '2', routeName: 'Island Line' }] });
         fireEvent.change(screen.getByPlaceholderText('検索キーワードを入力'), { target: { value: 'Ocean' } });
-        fireEvent.click(screen.getByRole('button', { name: '検索' }));
         expect(document.getElementById('search-message')?.textContent).toBe('見つかりませんでした。');
     });
 
     it('HTML風の文字列を要素化せず、リンク構造を維持する', async () => {
         await renderPage({ domestic: [{ routeId: '2', routeName: '<img src=x onerror=alert(1)> Ocean' }] });
         fireEvent.change(screen.getByPlaceholderText('検索キーワードを入力'), { target: { value: 'img' } });
-        fireEvent.click(screen.getByRole('button', { name: '検索' }));
 
         const cell = domesticRows()[0].querySelectorAll('td')[2];
         expect(cell.querySelector('img')).toBeNull();
@@ -69,17 +66,47 @@ describe('RouteListPage', () => {
         expect(cell.querySelector('.route-search-highlight')?.textContent).toBe('img');
     });
 
-    it('リセットで検索ボックス・ハイライト・非表示行をすべて元に戻す', async () => {
+    it('入力するたびに絞り込み、件数を表示する', async () => {
+        await renderPage({ domestic: [{ routeId: '1', routeName: 'Ocean Route' }, { routeId: '2', routeName: 'Island Line' }] });
+        fireEvent.change(screen.getByPlaceholderText('検索キーワードを入力'), { target: { value: 'ocean' } });
+        const [matchRow, noMatchRow] = domesticRows();
+        expect(matchRow.style.display).toBe('');
+        expect(noMatchRow.style.display).toBe('none');
+        expect(screen.getByText('1件')).toBeTruthy();
+    });
+
+    it('日本語入力の変換中は絞り込まず、確定時に絞り込む', async () => {
+        await renderPage({ domestic: [{ routeId: '1', routeName: '大阪航路' }, { routeId: '2', routeName: '別府航路' }] });
+        const box = screen.getByPlaceholderText('検索キーワードを入力');
+        fireEvent.compositionStart(box);
+        fireEvent.change(box, { target: { value: 'おおさか' } });
+        expect(domesticRows().every((row) => row.style.display === '')).toBe(true);
+        fireEvent.change(box, { target: { value: '大阪' } });
+        fireEvent.compositionEnd(box);
+        expect(domesticRows()[1].style.display).toBe('none');
+    });
+
+    it('✕で検索語・ハイライト・非表示行を元に戻す', async () => {
         await renderPage({ domestic: [{ routeId: '1', routeName: 'Ocean Route' }, { routeId: '2', routeName: 'Island Line' }] });
         const searchBox = screen.getByPlaceholderText('検索キーワードを入力') as HTMLInputElement;
         fireEvent.change(searchBox, { target: { value: 'zzz' } });
-        fireEvent.click(screen.getByRole('button', { name: '検索' }));
-        fireEvent.click(screen.getByRole('button', { name: 'リセット' }));
+        fireEvent.click(screen.getByRole('button', { name: '検索語を消去' }));
 
         expect(searchBox.value).toBe('');
         expect(domesticRows().every((row) => row.style.display === '')).toBe(true);
         expect(document.querySelector('.route-search-highlight')).toBeNull();
         expect(domesticRows()[0].textContent).toContain('Ocean Route');
         expect(document.getElementById('search-message')?.textContent).toBe('');
+    });
+
+    it('検索語が空のとき✕ボタンを出さない', async () => {
+        await renderPage({ domestic: [{ routeId: '1', routeName: 'Ocean Route' }] });
+        expect(screen.queryByRole('button', { name: '検索語を消去' })).toBeNull();
+    });
+
+    it('Enterでフォーム送信しない', async () => {
+        await renderPage({ domestic: [{ routeId: '1', routeName: 'Ocean Route' }] });
+        const form = screen.getByPlaceholderText('検索キーワードを入力').closest('form') as HTMLFormElement;
+        expect(fireEvent.submit(form)).toBe(false);
     });
 });

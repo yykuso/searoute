@@ -75,7 +75,10 @@ describe('プリレンダリング結果は旧版の静的 body と同等', () =
     });
 
     it('routeList.html: ヘッダー・検索 UI・説明文・テーブル見出しが同じ（SEO 用に変えた h1 と導入文を除く）', () => {
-        const legacy = collect(normalizeLegacyLinks(legacyBody('routeList.html')));
+        const legacyDocument = normalizeLegacyLinks(legacyBody('routeList.html'));
+        // 検索・リセットボタンは入力即時の絞り込みに変えて廃止したので、旧版から取り除いて比較する
+        legacyDocument.querySelectorAll('#searchbutton, #resetbutton').forEach((button) => button.remove());
+        const legacy = collect(legacyDocument);
         const seoDocument = prerendered('routeList.html');
         // h1 の文言と導入文（.route-list-intro）は SEO 改善で意図的に変えたので、旧版の形に戻して比較する
         seoDocument.querySelector('.route-list-intro')?.remove();
@@ -89,12 +92,12 @@ describe('プリレンダリング結果は旧版の静的 body と同等', () =
         expect(current.buttons).toEqual(legacy.buttons);
         expect(current.text).toBe(legacy.text);
 
-        const legacyDocument = legacyBody('routeList.html');
+        const legacyTableDocument = legacyBody('routeList.html');
         const currentDocument = prerendered('routeList.html');
         const tableHeaders = (document: Document) => [...document.querySelectorAll('table')].map((table) => (
             `${table.className}:${[...table.querySelectorAll('th')].map((th) => th.className).join(',')}`
         ));
-        expect(tableHeaders(currentDocument)).toEqual(tableHeaders(legacyDocument));
+        expect(tableHeaders(currentDocument)).toEqual(tableHeaders(legacyTableDocument));
         expect(currentDocument.getElementById('searchbox')?.getAttribute('placeholder')).toBe('検索キーワードを入力');
     });
 });

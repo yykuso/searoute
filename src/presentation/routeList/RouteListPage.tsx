@@ -3,7 +3,7 @@
  * - 国内・国際・韓国国内の3テーブルを ViewModel の状態から描画
  * - キーワード検索で一致しない行を隠し、一致箇所をハイライト
  */
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { RouteListState, RouteListViewModel, RouteTableState } from '../../application/viewModels/routeListViewModel';
 import { buildRouteMapPath, createRouteSearchPattern, matchesRouteSearchText } from '../../domain/route';
@@ -133,10 +133,12 @@ function RouteTable({ tableClassName, infoClassName, table, query }: {
     );
 }
 
-function hasVisibleRow(state: RouteListState): boolean {
-    return state.tables.some((table) => table.rows.some((row) => (
-        toCells(row, table.visibleColumns, table.sourceId).some((cell) => matchesRouteSearchText(cell.text, state.query))
-    )));
+/** 表示中の行数。検索語が空なら全行数、あれば一致行数 */
+export function countVisibleRows(state: RouteListState): number {
+    return state.tables.reduce((total, table) => total + table.rows.filter((row) => (
+        !state.query
+        || toCells(row, table.visibleColumns, table.sourceId).some((cell) => matchesRouteSearchText(cell.text, state.query))
+    )).length, 0);
 }
 
 const TABLES = [
@@ -162,6 +164,7 @@ export function RouteListPage({ viewModel }: {
 }) {
     const state = useViewModelState(viewModel);
     const [searchText, setSearchText] = useState('');
+    const composingRef = useRef(false);
 
     // 検索語が空の状態が通知されたら検索ボックスも空にする（旧 resetRoutesInDocument と同じ）
     useEffect(() => {
@@ -169,7 +172,8 @@ export function RouteListPage({ viewModel }: {
     }, [state]);
 
     const findTable = (tableClassName: string) => state.tables.find((table) => table.selector === `.${tableClassName} tbody`);
-    const searchMessage = state.query && !hasVisibleRow(state) ? '見つかりませんでした。' : '';
+    const visibleCount = state.query ? countVisibleRows(state) : 0;
+    const searchMessage = state.query && visibleCount === 0 ? '見つかりませんでした。' : '';
 
     return (
         <>
@@ -201,10 +205,29 @@ export function RouteListPage({ viewModel }: {
             </p>
             <div className="sbox">
                 <div className="sbox-inner">
-                    <input type="text" id="searchbox" placeholder="検索キーワードを入力" value={searchText} onChange={(event) => setSearchText(event.target.value)} />
-                    <button id="searchbutton" onClick={() => viewModel.search(searchText)}>検索</button>
-                    <button id="resetbutton" onClick={() => viewModel.reset()}>リセット</button>
+                    <form role="search" onSubmit={(event) => event.preventDefault()}>
+                        <input
+                            type="search"
+                            id="searchbox"
+                            placeholder="検索キーワードを入力"
+                            value={searchText}
+                            onChange={(event) => {
+                                const { value } = event.target;
+                                setSearchText(value);
+                                if (!composingRef.current) viewModel.search(value);
+                            }}
+                            onCompositionStart={() => { composingRef.current = true; }}
+                            onCompositionEnd={(event) => {
+                                composingRef.current = false;
+                                viewModel.search(event.currentTarget.value);
+                            }}
+                        />
+                        {searchText && (
+                            <button type="button" aria-label="検索語を消去" onClick={() => viewModel.reset()}>✕</button>
+                        )}
+                    </form>
                 </div>
+                {state.query && visibleCount > 0 && <p aria-live="polite">{visibleCount}件</p>}
                 <p id="search-message" style={{ color: 'red', fontSize: '12px', marginTop: '5px' }}>{searchMessage}</p>
             </div>
             <div className="feedback-callout">
