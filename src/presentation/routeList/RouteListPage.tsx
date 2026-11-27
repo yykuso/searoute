@@ -6,10 +6,11 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { RouteListState, RouteListViewModel, RouteTableState } from '../../application/viewModels/routeListViewModel';
-import { buildRouteMapPath, createRouteSearchPattern, matchesRouteSearchText } from '../../domain/route';
+import { createRouteSearchPattern, matchesRouteSearchText } from '../../domain/route';
+import { buildRouteDetailPath } from '../../domain/routePage';
 import type { RouteColumn, RouteRow } from '../../domain/route';
 import { useViewModelState } from '../hooks/useViewModelState';
-import { Icon } from '../common/Icon';
+import { SiteHeader } from '../common/SiteHeader';
 
 const SEARCH_HIGHLIGHT_CLASS = 'route-search-highlight';
 
@@ -50,13 +51,13 @@ interface CellModel {
     external?: boolean;
 }
 
-function toCells(row: RouteRow, visibleColumns: RouteColumn[], sourceId: string): CellModel[] {
+function toCells(row: RouteRow, visibleColumns: RouteColumn[]): CellModel[] {
     return visibleColumns.map((column) => {
         if (column === 'routeName') {
             return {
                 column,
                 text: row.routeName || '-',
-                href: buildRouteMapPath(row.routeId, sourceId),
+                href: buildRouteDetailPath(row.routeId),
             };
         }
         if (column === 'url') {
@@ -66,13 +67,12 @@ function toCells(row: RouteRow, visibleColumns: RouteColumn[], sourceId: string)
     });
 }
 
-function RouteTableRow({ row, visibleColumns, sourceId, query }: {
+function RouteTableRow({ row, visibleColumns, query }: {
     row: RouteRow;
     visibleColumns: RouteColumn[];
-    sourceId: string;
     query: string;
 }) {
-    const cells = toCells(row, visibleColumns, sourceId);
+    const cells = toCells(row, visibleColumns);
     const matchedCells = query ? cells.map((cell) => matchesRouteSearchText(cell.text, query)) : [];
     const hidden = Boolean(query) && !matchedCells.some(Boolean);
 
@@ -98,7 +98,7 @@ function RouteTableRow({ row, visibleColumns, sourceId, query }: {
                         <td key={cell.column} {...cellProps}>
                             {cell.external
                                 ? <a href={cell.href} target="_blank" rel="noopener noreferrer">{content}</a>
-                                : <a href={cell.href} rel="noopener noreferrer">{content}</a>}
+                                : <a href={cell.href}>{content}</a>}
                         </td>
                     );
                 }
@@ -132,7 +132,6 @@ function RouteTable({ tableClassName, infoClassName, table, query }: {
                         key={`${row.routeId}-${index}`}
                         row={row}
                         visibleColumns={table.visibleColumns}
-                        sourceId={table.sourceId}
                         query={query}
                     />
                 ))}
@@ -145,7 +144,7 @@ function RouteTable({ tableClassName, infoClassName, table, query }: {
 export function countVisibleRows(state: RouteListState): number {
     return state.tables.reduce((total, table) => total + table.rows.filter((row) => (
         !state.query
-        || toCells(row, table.visibleColumns, table.sourceId).some((cell) => matchesRouteSearchText(cell.text, state.query))
+        || toCells(row, table.visibleColumns).some((cell) => matchesRouteSearchText(cell.text, state.query))
     )).length, 0);
 }
 
@@ -156,7 +155,7 @@ const TABLES = [
 ];
 
 const ROUTE_LIST_INTRO = '日本全国のフェリー・旅客船・高速船の航路を、事業者名・航路名・船名で一覧にしています。'
-    + '航路名を選ぶと、地図上で航路の詳細と時刻表（運航事業者の公式サイト）へのリンクを確認できます。';
+    + '航路名を選ぶと、航路の詳細ページで地図・運航頻度・時刻表（運航事業者の公式サイト）へのリンクを確認できます。';
 
 /** 「掲載航路数：国内航路 N件、…」。データが無い（開発サーバーで未取得など）ときは空 */
 function routeCountText(tables: RouteTableState[]): string {
@@ -191,27 +190,7 @@ export function RouteListPage({ viewModel }: {
 
     return (
         <div className="route-list-page min-h-screen bg-white text-sm text-slate-800">
-            <header className="sticky top-0 z-30 h-(--rl-header-h) bg-(--rl-sea) shadow-sm">
-                <div className="mx-auto flex h-full max-w-[1200px] items-center justify-between px-3">
-                    <p className="text-lg font-bold">おでかけ航路マップ</p>
-                    <nav>
-                        <ul className="flex gap-1">
-                            <li>
-                                <a href="./" title="マップ" className="flex flex-col items-center rounded-md px-2 py-1 text-xs text-slate-800 hover:bg-white/50">
-                                    <Icon className="fas fa-map text-lg" />
-                                    <span>マップ</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="./routeList" title="航路一覧" aria-current="page" className="flex flex-col items-center rounded-md bg-white/60 px-2 py-1 text-xs font-bold text-(--rl-sea-ink)">
-                                    <Icon className="fas fa-ship text-lg" />
-                                    <span>航路一覧</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </header>
+            <SiteHeader rootHref="./" current="routeList" />
             <div className="mx-auto max-w-[1200px] px-3 pb-8">
                 <h1 className="mt-4 mb-2 text-xl font-bold sm:text-2xl">フェリー・旅客船 航路一覧</h1>
                 <p className="route-list-intro mb-3 max-w-3xl leading-relaxed text-slate-600">

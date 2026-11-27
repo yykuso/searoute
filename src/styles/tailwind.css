@@ -8,7 +8,9 @@
  * 表・カードのように、セル（td）へ JSX でクラスを付けにくいものだけをここに書く（それ以外は RouteListPage.tsx のユーティリティ）。
  */
 @layer components {
-    .route-list-page {
+    /* 航路詳細ページ（/route/<id>/）も共通ヘッダー・配色に同じ変数を使う */
+    .route-list-page,
+    .route-detail-page {
         /* 固定（sticky）要素の高さ。検索バー・h2・thead の top はこれを積んで決める */
         --rl-header-h: 3.25rem;
         --rl-search-h: 3.5rem;
@@ -24,6 +26,19 @@
         --rl-suspend-bg: #f8d7da;
         --rl-suspend-bar: var(--color-red-500);
         --rl-border: var(--color-slate-300);
+    }
+
+    /* 航路詳細ページの埋め込み地図に置く港名ラベル（MapLibre の Marker 要素） */
+    .route-detail-page .route-detail-port-label {
+        padding: 1px 6px;
+        border: 2px solid var(--rl-sea-ink);
+        border-radius: 6px;
+        background-color: #fff;
+        color: var(--rl-sea-ink);
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.4;
+        white-space: nowrap;
     }
 
     /* 凡例の色見本（行の背景色＋左端の色帯と同じ） */
