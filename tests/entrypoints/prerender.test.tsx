@@ -163,11 +163,9 @@ describe('loadPrerenderRouteTables', () => {
 });
 
 describe('航路詳細ページのプリレンダリング', () => {
-    const fixturePath = 'tests/fixtures/routePages.json';
     const records = normalizeRoutePages(JSON.parse(readFileSync(fileURLToPath(new URL('../fixtures/routePages.json', import.meta.url)), 'utf8')));
 
     afterEach(() => {
-        vi.unstubAllEnvs();
         vi.unstubAllGlobals();
     });
 
@@ -186,27 +184,7 @@ describe('航路詳細ページのプリレンダリング', () => {
         expect(page.app).toContain('href="/route/10102/"');
     });
 
-    it('loadPrerenderRoutePages: SEAROUTE_ROUTE_PAGES_FILE のファイルを読む', async () => {
-        vi.stubEnv('SEAROUTE_ROUTE_PAGES_FILE', fixturePath);
-        const fetchMock = vi.fn();
-        vi.stubGlobal('fetch', fetchMock);
-        const loaded = await loadPrerenderRoutePages();
-        expect(loaded.map((record) => record.routeId)).toEqual(['10101', '10102', 'KR010101']);
-        expect(fetchMock).not.toHaveBeenCalled();
-    });
-
-    it('loadPrerenderRoutePages: SEAROUTE_SKIP_ROUTE_DATA=1 なら取得せず空配列', async () => {
-        vi.stubEnv('SEAROUTE_ROUTE_PAGES_FILE', '');
-        vi.stubEnv('SEAROUTE_SKIP_ROUTE_DATA', '1');
-        const fetchMock = vi.fn();
-        vi.stubGlobal('fetch', fetchMock);
-        expect(await loadPrerenderRoutePages()).toEqual([]);
-        expect(fetchMock).not.toHaveBeenCalled();
-    });
-
-    it('loadPrerenderRoutePages: 既定では routePages.json を ?v= 付き・タイムアウト付きで取得する', async () => {
-        vi.stubEnv('SEAROUTE_ROUTE_PAGES_FILE', '');
-        vi.stubEnv('SEAROUTE_SKIP_ROUTE_DATA', '');
+    it('loadPrerenderRoutePages: routePages.json を ?v= 付き・タイムアウト付きで取得する', async () => {
         const fetchMock = vi.fn(async () => new Response(readFileSync(fileURLToPath(new URL('../fixtures/routePages.json', import.meta.url)), 'utf8')));
         vi.stubGlobal('fetch', fetchMock);
         const loaded = await loadPrerenderRoutePages();
@@ -217,8 +195,6 @@ describe('航路詳細ページのプリレンダリング', () => {
     });
 
     it('loadPrerenderRoutePages: 取得に失敗したら reject する', async () => {
-        vi.stubEnv('SEAROUTE_ROUTE_PAGES_FILE', '');
-        vi.stubEnv('SEAROUTE_SKIP_ROUTE_DATA', '');
         vi.stubGlobal('fetch', vi.fn(async () => new Response('not found', { status: 404 })));
         await expect(loadPrerenderRoutePages()).rejects.toThrow();
     });

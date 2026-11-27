@@ -51,7 +51,7 @@ function prerenderPages(): Plugin {
             });
             try {
                 const {
-                    renderPages, renderRouteDetailPages, loadPrerenderRouteTables, loadPrerenderRoutePages, buildLlmsFullText, SITE_URL,
+                    renderPages, renderRouteDetailPages, loadPrerenderRouteTables, loadPrerenderRoutePages, normalizeRoutePages, buildLlmsFullText, SITE_URL,
                 } = await server.ssrLoadModule('/src/entrypoints/prerender.tsx') as typeof Prerender;
                 // SEAROUTE_SKIP_ROUTE_DATA=1 のときは航路データを取得しない（E2E など）。取得失敗はビルド失敗にする
                 const routeTables = process.env.SEAROUTE_SKIP_ROUTE_DATA === '1' ? [] : await loadPrerenderRouteTables();
@@ -65,8 +65,12 @@ function prerenderPages(): Plugin {
                 }
 
                 // 航路詳細ページ：dist/routeDetail.html を雛形に route/<routeId>/index.html を書き出し、雛形は消す
-                // （SEAROUTE_ROUTE_PAGES_FILE があればそのファイル、SEAROUTE_SKIP_ROUTE_DATA=1 なら 0 件。取得失敗・routeId 重複はビルド失敗）
-                const routePages = await loadPrerenderRoutePages();
+                // SEAROUTE_ROUTE_PAGES_FILE（プロジェクトルートからの相対パス）があればそのファイル、SEAROUTE_SKIP_ROUTE_DATA=1 なら 0 件、
+                // それ以外は配信元から取得する。取得失敗・routeId 重複はビルド失敗
+                const routePagesFile = process.env.SEAROUTE_ROUTE_PAGES_FILE;
+                const routePages = routePagesFile
+                    ? normalizeRoutePages(JSON.parse(await readFile(resolve(root, routePagesFile), 'utf8')))
+                    : process.env.SEAROUTE_SKIP_ROUTE_DATA === '1' ? [] : await loadPrerenderRoutePages();
                 const templatePath = resolve(outDir, ROUTE_DETAIL_TEMPLATE);
                 const template = await readFile(templatePath, 'utf8');
                 if (!template.includes(APP_ROOT) || !ROUTE_HEAD_PLACEHOLDER.test(template)) {

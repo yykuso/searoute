@@ -1,12 +1,8 @@
-/// <reference types="node" />
-// ビルド時（Node の SSR）専用のモジュールなので Node の型を使う（routePages.json のファイル読み込み・環境変数）
 /**
  * ビルド時プリレンダリング（SSG）
  * 各ページの React ツリーを HTML 文字列にし、ビルド成果物の <div id="app"> へ埋め込む（vite.config.ts の prerender プラグインから呼ぶ）
  * 地図・データ取得などブラウザ専用の処理は副作用（useEffect）でのみ動くため、ここではサービスを空実装で渡す
  */
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
 import { renderToString } from 'react-dom/server';
 import type { FetchLike } from '../adapters/http/fetchWithRetry';
 import { createRouteListRepository } from '../adapters/data/routeListRepository';
@@ -72,7 +68,7 @@ export function renderRouteListPage(routeTables: RouteTableState[] = []): string
     return renderToString(<RouteListPage viewModel={viewModel} />);
 }
 
-export { buildLlmsFullText };
+export { buildLlmsFullText, normalizeRoutePages };
 
 export type PrerenderedPage = { app: string; head?: string; bodyEnd?: string };
 
@@ -108,19 +104,8 @@ export function renderRouteDetailPages(records: RoutePageRecord[]): Array<{ file
     }));
 }
 
-/**
- * ビルド時に航路詳細ページのデータ（routePages.json）を読む
- * SEAROUTE_ROUTE_PAGES_FILE（プロジェクトルートからの相対パス）があればそのファイル、
- * SEAROUTE_SKIP_ROUTE_DATA=1 なら空、それ以外は配信元から取得する（失敗は reject）
- */
+/** ビルド時に航路詳細ページのデータ（routePages.json）を取得する（失敗・routeId 重複は reject。取得元の切り替えは vite.config.ts） */
 export async function loadPrerenderRoutePages(): Promise<RoutePageRecord[]> {
-    const file = process.env.SEAROUTE_ROUTE_PAGES_FILE;
-    if (file) {
-        return normalizeRoutePages(JSON.parse(await readFile(resolve(process.cwd(), file), 'utf8')));
-    }
-    if (process.env.SEAROUTE_SKIP_ROUTE_DATA === '1') {
-        return [];
-    }
     const url = `${ROUTE_DATA_BASE_URL}/lightweight/routePages.json?v=${Date.now()}`;
     const response = await fetch(url, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
     if (!response.ok) {
