@@ -92,6 +92,25 @@
 - キーワード検索フォーム
 - リセットボタン
 
+### 4.3 航路詳細ページ
+
+`/route/<routeId>/` の静的ページ。ビルド時に航路ごとに生成する（seaRoute_limited は対象外）。
+
+対象ファイル。
+
+- routeDetail.html（雛形。プリレンダリングで `route/<routeId>/index.html` に展開し、dist からは消す）
+- src/entrypoints/main-routeDetail.tsx
+- src/presentation/routeDetail/RouteDetailPage.tsx / routeDetailMap.ts（埋め込み地図）
+- src/domain/routePage.ts（データ型・メタ情報・構造化データ）
+- src/application/routeDetailPublication.ts（ページ単位の生成）
+
+主要 UI 要素。
+
+- 共通ヘッダー
+- 航路情報（事業者・航路名・船名・運航情報・公式サイトなど）と寄港地
+- 埋め込み地図（初回描画後に遅延読み込み。MapLibre と既存の pmtiles を routeId で絞って描画し、範囲は bbox（無ければ寄港地）に合わせる）
+- 地図ページ・一覧ページへのリンク
+
 ## 5. データモデル
 
 ### 5.1 航路データ
@@ -101,6 +120,7 @@
 - PMTiles: 線形データと最小限の属性を保持する。4 種類の航路を 1 つのファイル `https://pmtiles.searoute.info/searoute.pmtiles` に収め、source-layer で分ける
 - 詳細 JSON: routeId ごとに 1 ファイル（`https://pmtiles.searoute.info/details/<フォルダ>/<routeId>.json`）。フォルダは source-layer 名、datasetName の順に試し、取得できなければ空の詳細として扱う
 - 一覧用 JSON: 航路一覧画面が読み込む（`https://pmtiles.searoute.info/lightweight/<source-layer>.json`。期間限定航路は一覧に含めない）
+- 詳細ページ用 JSON: `https://pmtiles.searoute.info/lightweight/routePages.json`。航路詳細ページのビルド時データで、`records` に航路ごとの情報（routeId・layer・businessName・routeName・url・info・freq・freqInfo・car・bike・bicycle・shipName・note・bbox・lastChecked・ports）を持つ。searoute-pmtiles の `scripts/generate-lightweight-json.mjs` が生成し、既存の lightweight JSON と一緒に R2 へアップロードする。seaRoute_limited は含めない
 
 主なデータセット。
 
@@ -193,6 +213,7 @@ flowchart TD
 - MapLibre のコントロール（ハンバーガー・レイヤー・航路フィルター）は adapters の `ContainerControl` が空のコンテナを地図へ追加し、React がポータルで中身を描画する。
 - ビルド時プリレンダリング（SSG）: vite.config.ts の `searoute-prerender` プラグインがクライアントビルド後に `src/entrypoints/prerender.tsx`（react-dom/server の renderToString）を実行し、各ページの静的マークアップとビルド番号を `dist/*.html` の `#app` に埋め込む。クライアントは `hydrateRoot`（開発サーバーでは空のため `createRoot`）。地図・データ取得は副作用で実行するため、プリレンダリング結果は旧版の静的 body と同等（tests/entrypoints/prerender.test.tsx で旧版 HTML と比較）。
 - 航路一覧のビルド時取得: プラグインは `loadPrerenderRouteTables`（lightweight JSON を取得、1 件でも失敗したらビルド失敗）で得た航路データを routeList.html の `#app`（全行）・`<script type="application/json" id="route-list-data">`・`ItemList` JSON-LD として埋め込み、`dist/llms-full.txt` を出力する。クライアントは埋め込みデータがあれば取得せずに ready 状態で開始する。環境変数 `SEAROUTE_SKIP_ROUTE_DATA=1` で取得・埋め込み・llms-full.txt 生成を省略（E2E の webServer で使用）。
+- 航路詳細ページのビルド時生成: プラグインは詳細ページ用データ（`RoutePageRecord`）を次の優先順で決める。(1) `SEAROUTE_ROUTE_PAGES_FILE`（プロジェクトルートからの相対パス）があればそのファイル、(2) `SEAROUTE_SKIP_ROUTE_DATA=1` なら詳細ページなし、(3) それ以外は `${ROUTE_DATA_BASE_URL}/lightweight/routePages.json` を取得。dist/routeDetail.html を雛形に `dist/route/<routeId>/index.html` を書き出し、雛形は削除する。一覧の routeId に詳細ページのレコードが無い場合、または routeId が重複している場合はビルドを失敗させる。一覧・ItemList JSON-LD・llms-full.txt のリンク先は詳細ページ。
 - 読み込み順序（パフォーマンス）: エントリーは小さく保ち、プリレンダリング済み HTML の初回描画（first-contentful-paint）を待ってから React アプリを動的 import してハイドレーションする（startTransition で分割実行）。MapLibre（約 310KB gzip）は地図生成時（ハイドレーション後の副作用）に動的 import する。
 - アイコン: 旧版（Font Awesome Free 6.4.0）の Web フォント・CSS（CDN）は使わず、Font Awesome Free 7.3.1 のうち使用するアイコンだけを `presentation/common/Icon.tsx` がインライン SVG で描画する（`<i class="fa-solid fa-xxx">` の class は維持）。寸法・位置を再現する CSS は `src/styles/icons.css` で、ビルド時に各 HTML の head へインライン展開する。
 - Cookie バナー: index.html head のインラインスクリプトが同意 Cookie の有無で `<html data-cookie-banner="show">` を付け、インライン CSS で HTML 解析中から表示する（JS 無効・同意済みは非表示）。React は閉じた後の非表示のみ管理する。
@@ -558,6 +579,7 @@ PC とモバイルで詳細情報を見やすく提示する。
 - 本番ビルドでは、各テーブルの一覧用 JSON をビルド時に取得し、全行を routeList.html の静的 HTML に描画しておく（JS を実行しないクローラーにも見える。詳細は SEO-01）
 - 同じデータを `<script type="application/json" id="route-list-data">` として埋め込み、ブラウザはそれを初期状態にしてハイドレーションする。このとき一覧用 JSON は取得しない
 - 埋め込みデータが無い・壊れている場合（開発サーバー、`SEAROUTE_SKIP_ROUTE_DATA=1` のビルド）は、従来どおりブラウザで一覧用 JSON を fetch して描画する
+- 航路名は航路詳細ページ（`/route/<routeId>/`）へのリンクにする
 - note が season の行は season-row クラスを付与する
 - note が suspend の行は suspend-row クラスを付与する
 - URL があれば別タブで開くリンクを表示する
@@ -689,13 +711,14 @@ JS を実行しない AI クローラー・AI エージェント・検索エン�
 対象。
 
 - routeList.html（静的 HTML の全航路、埋め込みデータ、構造化データ）
+- route/<routeId>/（航路詳細ページ。title・description・canonical・構造化データ付きの静的 HTML。sitemap.xml にも含まれる）
 - llms.txt / llms-full.txt
 - 404.html
 - sitemap.xml / robots.txt（.cloudflare/build.sh が main ブランチのビルドでのみ生成）
 
 期待動作。
 
-- routeList.html: 全航路の表を静的 HTML に含める（LIST-01）。`<head>` に schema.org の `ItemList` JSON-LD を入れ、各要素は `position` / `name`（事業者 航路名）/ `url`（`https://searoute.info/?share=route&...`）を持つ。`numberOfItems` に全航路数を入れる
+- routeList.html: 全航路の表を静的 HTML に含める（LIST-01）。`<head>` に schema.org の `ItemList` JSON-LD を入れ、各要素は `position` / `name`（事業者 航路名）/ `url`（航路詳細ページ `https://searoute.info/route/<routeId>/`）を持つ。`numberOfItems` に全航路数を入れる
 - routeList.html の検索向け文言: title / description / OGP / Twitter は同じ文言で「フェリー」「旅客船」「時刻表」を含める。一覧用 JSON は容量を抑えるため url を持たず一覧に時刻表列は出ないので、時刻表は「航路名から地図の詳細を開くとリンクがある」と書き、一覧で直接開けるようには書かない。h1 は「フェリー・旅客船 航路一覧」。h1 の下に導入文（`.route-list-intro`）を置き、データがあればテーブルごとの掲載航路数を添える。`robots` は `index,follow,max-image-preview:large`。WebPage の JSON-LD にパンくず（トップ → 航路一覧）を持つ
 - 公開する絶対 URL（canonical、og:url、JSON-LD、llms.txt、llms-full.txt、sitemap.xml、404 ページのリンク）は Cloudflare Pages の正規形にそろえる。Pages は `.html` 付きの URL を 308 でリダイレクトする（`/routeList.html` → `/routeList`、`/index.html` → `/`）ため、リダイレクト元を正規 URL として示さない。サイト内の相対リンクも同じ正規形（`./routeList`、`./?share=...`）にし、リダイレクトを挟まないようにする（Vite の開発サーバー・preview も `.html` なしの URL を配信できる）
 - 埋め込みデータと JSON-LD は `<` を `<` にエスケープし、航路名に `</script>` が含まれても HTML が壊れないようにする
@@ -727,6 +750,8 @@ R2 の航路データが更新されたら、ビルド時に埋め込んだ一�
 - ビルド時の取得: vite.config.ts の `searoute-prerender` プラグインが `loadPrerenderRouteTables` を呼ぶ。一覧用 JSON 3 件（`ROUTE_LIST_TABLE_CONFIGS`）を、CDN キャッシュを避けるクエリ `?v=<時刻>` 付きで、1 件あたり 30 秒のタイムアウトで取得する
 - 次のいずれかでビルドを失敗させる（Cloudflare Pages では前回のデプロイが残る）: 取得失敗（HTTP エラー・タイムアウト）、データが空（`航路データが空です: <URL>`）
 - `SEAROUTE_SKIP_ROUTE_DATA=1` のときは取得・埋め込み・llms-full.txt の生成を行わない（E2E 用。playwright.config.ts の webServer で指定）
+- 詳細ページ用データ: 上記に加えて `lightweight/routePages.json` を取得する（`SEAROUTE_ROUTE_PAGES_FILE` 指定時はそのファイルを読む。E2E は `tests/fixtures/routePages.json`）。一覧の routeId に詳細ページのレコードが無い、または routeId が重複しているとビルドを失敗させる
+- routePages.json は searoute-pmtiles が既存の lightweight JSON と同じ流れで生成・アップロードし、既存の Deploy Hook が詳細ページを含めて再ビルドする
 - 自動再ビルド: searoute-pmtiles の deploy-r2.yml は、`geojson/` または `details/` に変更があると lightweight JSON を作り直して R2 へアップロードし、最後に Cloudflare Pages の Deploy Hook（GitHub Secret `CF_PAGES_DEPLOY_HOOK`、main ブランチ）を呼ぶ。Secret が未設定なら警告のみで失敗にしない
 - develop などのプレビューは Cloudflare Access で保護されているため、外部からの確認はできない（ログインしたブラウザで確認する）
 
@@ -888,6 +913,12 @@ Cookie で以下を保持する。
 5. note に応じた行スタイルが保たれる
 6. 航路名リンクから地図ページへ遷移し、対象航路ドロワーが表示される
 7. 実データでビルドした routeList.html のソースに航路名があり、表示時に lightweight JSON への通信がなく、コンソールにハイドレーションのエラーが出ない
+
+### 12.7 航路詳細ページテスト
+
+1. /route/<routeId>/ が表示され、航路名・事業者・寄港地がソースに含まれる
+2. 一覧の航路名から詳細ページへ遷移できる
+3. 埋め込み地図が初回描画後に読み込まれ、コンソールにハイドレーションのエラーが出ない
 
 ### 12.6 AI・クローラー向け出力テスト
 
